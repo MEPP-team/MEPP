@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mainwindow</class>
+ <widget class="QMainWindow" name="mainwindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1086</width>
+    <height>793</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MEPP</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="mepp.qrc">
+    <normaloff>:/logo/Pictures/MEPP.png</normaloff>:/logo/Pictures/MEPP.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1086</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionOpen_space"/>
+    <addaction name="actionOpen_time"/>
+    <addaction name="actionOpen_and_Add_space"/>
+    <addaction name="actionOpen_and_Add_time"/>
+    <addaction name="actionSave_As"/>
+    <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionClone"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionClose_Window"/>
+    <addaction name="actionClose_All"/>
+    <addaction name="separator"/>
+    <addaction name="actionTile"/>
+    <addaction name="actionCascade"/>
+    <addaction name="separator"/>
+    <addaction name="actionNext"/>
+    <addaction name="actionPrevious"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+    <addaction name="actionAbout_QGLViewer"/>
+    <addaction name="actionAbout_CGAL"/>
+   </widget>
+   <widget class="QMenu" name="menuComponents">
+    <property name="title">
+     <string>Components</string>
+    </property>
+    <widget class="QMenu" name="menuTools">
+     <property name="title">
+      <string>Tools</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuDistance_Quality_measure">
+     <property name="title">
+      <string>Distance / Quality measure</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuAnalysis_Filtering">
+     <property name="title">
+      <string>Analysis / Filtering</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuSegmentation">
+     <property name="title">
+      <string>Segmentation</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuRemeshing_Subdivision">
+     <property name="title">
+      <string>Remeshing / Subdivision</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuCompression">
+     <property name="title">
+      <string>Compression</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuWatermaking">
+     <property name="title">
+      <string>Watermaking</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="menuExamples">
+     <property name="title">
+      <string>Examples</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="menuTools"/>
+    <addaction name="menuDistance_Quality_measure"/>
+    <addaction name="menuAnalysis_Filtering"/>
+    <addaction name="menuSegmentation"/>
+    <addaction name="menuRemeshing_Subdivision"/>
+    <addaction name="menuCompression"/>
+    <addaction name="menuWatermaking"/>
+    <addaction name="separator"/>
+    <addaction name="menuExamples"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuComponents"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="Toolbar_file">
+   <property name="windowTitle">
+    <string>Toolbar_file</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave_As"/>
+  </widget>
+  <widget class="QToolBar" name="Toolbar_viewer">
+   <property name="windowTitle">
+    <string>Toolbar_viewer</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionRender_Point"/>
+   <addaction name="actionRender_Line"/>
+   <addaction name="actionRender_Fill"/>
+   <addaction name="separator"/>
+   <addaction name="actionSuperimpose_Vertices"/>
+   <addaction name="actionSuperimpose_Edges"/>
+   <addaction name="separator"/>
+   <addaction name="actionVertex_Color"/>
+   <addaction name="actionFace_Color"/>
+   <addaction name="separator"/>
+   <addaction name="actionLighting"/>
+   <addaction name="actionSmooth_Shading"/>
+   <addaction name="separator"/>
+   <addaction name="actionAntialiasing"/>
+   <addaction name="actionCulling"/>
+  </widget>
+  <widget class="QToolBar" name="Toolbar_color">
+   <property name="windowTitle">
+    <string>Toolbar_color</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionBackground_color"/>
+   <addaction name="actionVertex_color"/>
+   <addaction name="actionEdge_color"/>
+   <addaction name="actionFace_color"/>
+   <addaction name="separator"/>
+   <addaction name="actionMaterial"/>
+  </widget>
+  <widget class="QToolBar" name="Toolbar_show">
+   <property name="windowTitle">
+    <string>Toolbar_show</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShow_FPS"/>
+   <addaction name="actionShow_axis"/>
+   <addaction name="actionShow_grid"/>
+   <addaction name="separator"/>
+   <addaction name="actionShow_normals"/>
+   <addaction name="separator"/>
+   <addaction name="actionBounding_box"/>
+   <addaction name="actionBounding_box_when_moving"/>
+  </widget>
+  <widget class="QToolBar" name="Toolbar_view">
+   <property name="windowTitle">
+    <string>Toolbar_view</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionReset_viewpoint"/>
+   <addaction name="actionCopy_viewpoint"/>
+   <addaction name="actionPaste_viewpoint"/>
+   <addaction name="separator"/>
+   <addaction name="actionCenter_all_objects"/>
+   <addaction name="actionCouplingRotations"/>
+   <addaction name="separator"/>
+   <addaction name="actionVBO"/>
+  </widget>
+  <widget class="QToolBar" name="Toolbar_capture">
+   <property name="windowTitle">
+    <string>Toolbar_capture</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionScreenshot"/>
+   <addaction name="actionScreenshot_sequence"/>
+   <addaction name="separator"/>
+   <addaction name="actionClipboard_screenshot"/>
+  </widget>
+  <widget class="QToolBar" name="Toolbar_dynamic">
+   <property name="windowTitle">
+    <string>Toolbar_dynamic</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionParams"/>
+   <addaction name="separator"/>
+   <addaction name="actionReverse_start_loop"/>
+   <addaction name="actionReverse_start"/>
+   <addaction name="actionStart"/>
+   <addaction name="actionStart_loop"/>
+   <addaction name="actionStop"/>
+   <addaction name="separator"/>
+   <addaction name="actionDynFirst"/>
+   <addaction name="actionDynPrevious"/>
+   <addaction name="actionDynNext"/>
+   <addaction name="actionDynLast"/>
+   <addaction name="separator"/>
+   <addaction name="actionDynDelete"/>
+  </widget>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/new.png</normaloff>:/icons/Pictures/Icons/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="statusTip">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/open.png</normaloff>:/icons/Pictures/Icons/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionOpen_and_Add_space">
+   <property name="text">
+    <string>Open and Add (space)...</string>
+   </property>
+  </action>
+  <action name="actionSave_As">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/save.png</normaloff>:/icons/Pictures/Icons/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save As...</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionClose_Window">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionClose_All">
+   <property name="text">
+    <string>Close All</string>
+   </property>
+  </action>
+  <action name="actionTile">
+   <property name="text">
+    <string>Tile</string>
+   </property>
+  </action>
+  <action name="actionCascade">
+   <property name="text">
+    <string>Cascade</string>
+   </property>
+  </action>
+  <action name="actionNext">
+   <property name="text">
+    <string>Next</string>
+   </property>
+  </action>
+  <action name="actionPrevious">
+   <property name="text">
+    <string>Previous</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionOpen_and_Add_time">
+   <property name="text">
+    <string>Open and Add (time)...</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionLighting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Lighting.png</normaloff>:/icons/Pictures/Icons/_Lighting.png</iconset>
+   </property>
+   <property name="text">
+    <string>Lighting</string>
+   </property>
+  </action>
+  <action name="actionAntialiasing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Antialiasing.png</normaloff>:/icons/Pictures/Icons/_Antialiasing.png</iconset>
+   </property>
+   <property name="text">
+    <string>Antialiasing</string>
+   </property>
+  </action>
+  <action name="actionVertex_Color">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_VertexColorMode.png</normaloff>:/icons/Pictures/Icons/_VertexColorMode.png</iconset>
+   </property>
+   <property name="text">
+    <string>Vertex Color Mode</string>
+   </property>
+  </action>
+  <action name="actionFace_Color">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_FaceColorMode.png</normaloff>:/icons/Pictures/Icons/_FaceColorMode.png</iconset>
+   </property>
+   <property name="text">
+    <string>Face Color Mode</string>
+   </property>
+  </action>
+  <action name="actionRender_Point">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Vertices.png</normaloff>:/icons/Pictures/Icons/_Vertices.png</iconset>
+   </property>
+   <property name="text">
+    <string>Render Point</string>
+   </property>
+  </action>
+  <action name="actionRender_Line">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Edges.png</normaloff>:/icons/Pictures/Icons/_Edges.png</iconset>
+   </property>
+   <property name="text">
+    <string>Render Line</string>
+   </property>
+  </action>
+  <action name="actionRender_Fill">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_RenderFill.png</normaloff>:/icons/Pictures/Icons/_RenderFill.png</iconset>
+   </property>
+   <property name="text">
+    <string>Render Fill</string>
+   </property>
+  </action>
+  <action name="actionSuperimpose_Edges">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_SuperimposeEdges.png</normaloff>:/icons/Pictures/Icons/_SuperimposeEdges.png</iconset>
+   </property>
+   <property name="text">
+    <string>Superimpose Edges</string>
+   </property>
+  </action>
+  <action name="actionSuperimpose_Vertices">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_SuperimposeVertices.png</normaloff>:/icons/Pictures/Icons/_SuperimposeVertices.png</iconset>
+   </property>
+   <property name="text">
+    <string>Superimpose Vertices</string>
+   </property>
+  </action>
+  <action name="actionSmooth_Shading">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Smoothing.png</normaloff>:/icons/Pictures/Icons/_Smoothing.png</iconset>
+   </property>
+   <property name="text">
+    <string>Smooth Shading</string>
+   </property>
+  </action>
+  <action name="actionCulling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Culling.png</normaloff>:/icons/Pictures/Icons/_Culling.png</iconset>
+   </property>
+   <property name="text">
+    <string>Culling</string>
+   </property>
+  </action>
+  <action name="actionParams">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Params.png</normaloff>:/icons/Pictures/Icons/_Params.png</iconset>
+   </property>
+   <property name="text">
+    <string>Params</string>
+   </property>
+  </action>
+  <action name="actionReverse_start">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_ReverseStart.png</normaloff>:/icons/Pictures/Icons/_ReverseStart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse start</string>
+   </property>
+  </action>
+  <action name="actionReverse_start_loop">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_ReverseStartLoop.png</normaloff>:/icons/Pictures/Icons/_ReverseStartLoop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse start loop</string>
+   </property>
+  </action>
+  <action name="actionStart">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Start.png</normaloff>:/icons/Pictures/Icons/_Start.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionStart_loop">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_StartLoop.png</normaloff>:/icons/Pictures/Icons/_StartLoop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start loop</string>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Stop.png</normaloff>:/icons/Pictures/Icons/_Stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionDynFirst">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_First.png</normaloff>:/icons/Pictures/Icons/_First.png</iconset>
+   </property>
+   <property name="text">
+    <string>First</string>
+   </property>
+  </action>
+  <action name="actionDynPrevious">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Previous.png</normaloff>:/icons/Pictures/Icons/_Previous.png</iconset>
+   </property>
+   <property name="text">
+    <string>Previous</string>
+   </property>
+  </action>
+  <action name="actionDynNext">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Next.png</normaloff>:/icons/Pictures/Icons/_Next.png</iconset>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+  </action>
+  <action name="actionDynLast">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Last.png</normaloff>:/icons/Pictures/Icons/_Last.png</iconset>
+   </property>
+   <property name="text">
+    <string>Last</string>
+   </property>
+  </action>
+  <action name="actionDynDelete">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Delete.png</normaloff>:/icons/Pictures/Icons/_Delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="actionCouplingRotations">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_CoupleRotations.png</normaloff>:/icons/Pictures/Icons/_CoupleRotations.png</iconset>
+   </property>
+   <property name="text">
+    <string>Coupling rotations</string>
+   </property>
+  </action>
+  <action name="actionShow_entire_scene">
+   <property name="text">
+    <string>Show entire scene</string>
+   </property>
+  </action>
+  <action name="actionOpen_space">
+   <property name="text">
+    <string>Open (space)...</string>
+   </property>
+  </action>
+  <action name="actionOpen_time">
+   <property name="text">
+    <string>Open (time)...</string>
+   </property>
+  </action>
+  <action name="actionAbout_QGLViewer">
+   <property name="text">
+    <string>About QGLViewer</string>
+   </property>
+  </action>
+  <action name="actionAbout_CGAL">
+   <property name="text">
+    <string>About CGAL</string>
+   </property>
+  </action>
+  <action name="actionCopy_viewpoint">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_CopyViewpoint.png</normaloff>:/icons/Pictures/Icons/_CopyViewpoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy viewpoint</string>
+   </property>
+  </action>
+  <action name="actionPaste_viewpoint">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_PasteViewpoint.png</normaloff>:/icons/Pictures/Icons/_PasteViewpoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste viewpoint</string>
+   </property>
+  </action>
+  <action name="actionBackground_color">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_BackgroundColor.png</normaloff>:/icons/Pictures/Icons/_BackgroundColor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Background color</string>
+   </property>
+  </action>
+  <action name="actionVertex_color">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_PointColor.png</normaloff>:/icons/Pictures/Icons/_PointColor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Vertex color</string>
+   </property>
+  </action>
+  <action name="actionEdge_color">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_EdgeColor.png</normaloff>:/icons/Pictures/Icons/_EdgeColor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edge color</string>
+   </property>
+  </action>
+  <action name="actionClone">
+   <property name="text">
+    <string>Clone</string>
+   </property>
+  </action>
+  <action name="actionMaterial">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Material.png</normaloff>:/icons/Pictures/Icons/_Material.png</iconset>
+   </property>
+   <property name="text">
+    <string>Material</string>
+   </property>
+  </action>
+  <action name="actionBounding_box">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_BoundingBox.png</normaloff>:/icons/Pictures/Icons/_BoundingBox.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bounding box</string>
+   </property>
+  </action>
+  <action name="actionBounding_box_when_moving">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_BoundingBoxOnMove.png</normaloff>:/icons/Pictures/Icons/_BoundingBoxOnMove.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bounding box when moving</string>
+   </property>
+  </action>
+  <action name="actionScreenshot">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Screenshot.png</normaloff>:/icons/Pictures/Icons/_Screenshot.png</iconset>
+   </property>
+   <property name="text">
+    <string>Screenshot</string>
+   </property>
+  </action>
+  <action name="actionVBO">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_VBO.png</normaloff>:/icons/Pictures/Icons/_VBO.png</iconset>
+   </property>
+   <property name="text">
+    <string>VBO mode</string>
+   </property>
+  </action>
+  <action name="actionFace_color">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_FaceColor.png</normaloff>:/icons/Pictures/Icons/_FaceColor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Face color</string>
+   </property>
+  </action>
+  <action name="actionShow_normals">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Normals.png</normaloff>:/icons/Pictures/Icons/_Normals.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show normals</string>
+   </property>
+  </action>
+  <action name="actionCenter_all_objects">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_CenterAll.png</normaloff>:/icons/Pictures/Icons/_CenterAll.png</iconset>
+   </property>
+   <property name="text">
+    <string>Center all objects</string>
+   </property>
+  </action>
+  <action name="actionScreenshot_sequence">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_ScreenshotSequence.png</normaloff>:/icons/Pictures/Icons/_ScreenshotSequence.png</iconset>
+   </property>
+   <property name="text">
+    <string>Screenshot sequence</string>
+   </property>
+  </action>
+  <action name="actionShow_FPS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_FPS.png</normaloff>:/icons/Pictures/Icons/_FPS.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show FPS</string>
+   </property>
+  </action>
+  <action name="actionShow_axis">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Axis.png</normaloff>:/icons/Pictures/Icons/_Axis.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show axis</string>
+   </property>
+  </action>
+  <action name="actionShow_grid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Grid.png</normaloff>:/icons/Pictures/Icons/_Grid.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show grid</string>
+   </property>
+  </action>
+  <action name="actionShow_light">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show light</string>
+   </property>
+  </action>
+  <action name="actionClipboard_screenshot">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_Clipboard.png</normaloff>:/icons/Pictures/Icons/_Clipboard.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clipboard screenshot</string>
+   </property>
+  </action>
+  <action name="actionReset_viewpoint">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_ShowAll.png</normaloff>:/icons/Pictures/Icons/_ShowAll.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset viewpoint</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="mepp.qrc"/>
+ </resources>
+ <connections/>
+</ui>

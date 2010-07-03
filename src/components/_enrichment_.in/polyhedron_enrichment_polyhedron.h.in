@@ -1,0 +1,3 @@
+#ifdef BUILD_${MEPP_COMPONENT_NAME}
+	public ${MEPP_SHORT_COMPONENT_NAME}_Polyhedron<kernel,items>,
+#endif

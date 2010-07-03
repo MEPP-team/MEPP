@@ -1,0 +1,3 @@
+#ifdef BUILD_${MEPP_COMPONENT_NAME}
+	#include "${MEPP_COMPONENT_DIR}/src/${MEPP_SHORT_COMPONENT_NAME}_Items.h"
+#endif
