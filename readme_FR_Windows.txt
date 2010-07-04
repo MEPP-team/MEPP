@@ -27,12 +27,11 @@ Par exemple, dans C:/mepp/SVN,
 avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
 
 5) utiliser CMake-gui (dans C:\dev32\_cmake-2.8.1-win32-x86_\bin)
- - au premier lancement choisir comme Generator "Visual Studio 9 2008"
  - renseigner le champ "Where is the source code" avec par exemple C:/mepp/SVN/trunk
  - renseigner le champ "Where to build the binaries" avec par exemple C:/mepp/SVN/trunk
- - cliquer sur Configure (en bas à gauche)
+ - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 9 2008"
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau si besoin
  - cliquer sur Generate (en bas à gauche)
- - ouvrir avec Visual Studio la solution .sln générée puis compiler Mepp
+ - ouvrir avec Visual Studio la solution mepp.sln générée puis compiler Mepp
  - se positionner sur le "sous-projet" mepp, faire un "bouton droit" puis cliquer sur "Définir comme projet de démarrage"
