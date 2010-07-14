@@ -28,7 +28,7 @@ avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.
 
 5) utiliser CMake-gui (dans C:\dev32\_cmake-2.8.1-win32-x86_\bin)
  - renseigner le champ "Where is the source code" avec par exemple C:/mepp/SVN/trunk
- - renseigner le champ "Where to build the binaries" avec par exemple C:/mepp/SVN/trunk
+ - renseigner le champ "Where to build the binaries" avec par exemple C:/mepp/SVN/trunk/build
  - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 9 2008"
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau si besoin

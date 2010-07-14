@@ -17,17 +17,18 @@ http://www.macports.org/install.php
 sudo port -v selfupdate
 
 4) installer les paquets suivants avec MacPorts: 
-sudo port -v install cgal +universal
-sudo port -v install qt4-mac +universal
-sudo port -v install libQGLViewer +universal
+sudo port install cgal						(assez long, <= 1 heure)
+sudo port install qt4-mac					(très long, environ 2-3 heures)
+sudo port install libQGLViewer		(très rapide, quelques minutes)
 
 5) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
 
 6a) compiler Mepp avec CMake et Makefile:
 se positionner dans trunk, puis,
- - pour une version Release: cmake . -DCMAKE_C_FLAGS='-arch x86_64 -arch i386' puis make
- - pour une version Debug: cmake . -DCMAKE_C_FLAGS='-arch x86_64 -arch i386' -DCMAKE_BUILD_TYPE=Debug puis make
+ - mkdir build; cd build
+ - pour une version Release: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' puis make
+ - pour une version Debug: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' -DCMAKE_BUILD_TYPE=Debug (2 fois pour la prise en compte du mode Debug) puis make
 note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 
 ou
@@ -42,8 +43,8 @@ Donc, pour générer les projets Qt Creator (.pro), voici la marche à suivre au se
 
 Ouvrir un fichier et choisir en bas 'Fichier de projet CMake'
 puis choisir le CMakeLists.txt de la racine du trunk puis cliquer sur 'suivant'
-puis dans 'Arguments' mettre -DCMAKE_C_FLAGS='-arch x86_64 -arch i386' -DCMAKE_BUILD_TYPE=Debug pour générer les projets Qt Creator (.pro) en Debug
-ou -DCMAKE_C_FLAGS='-arch x86_64 -arch i386' pour générer les projets Qt Creator (.pro) en Release.
+puis dans 'Arguments' mettre -DCMAKE_C_FLAGS='-arch x86_64' -DCMAKE_BUILD_TYPE=Debug pour générer les projets Qt Creator (.pro) en Debug
+ou -DCMAKE_C_FLAGS='-arch x86_64' pour générer les projets Qt Creator (.pro) en Release.
 Cliquer ensuite sur 'Exécuter CMake', puis, après le déroulement de CMake, cliquer sur 'Terminer' et le projet (.pro) se charge dans l'IDE.
 
 ----------------------------------------------------------------------
