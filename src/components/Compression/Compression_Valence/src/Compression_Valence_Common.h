@@ -1,7 +1,7 @@
 #ifndef Compression_Valence_COMMON_H
 #define Compression_Valence_COMMON_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 typedef CGAL::MatrixC33<Enriched_kernel> Matrix;

@@ -7,7 +7,7 @@
 #ifndef Curvature_COMPONENT_H
 #define Curvature_COMPONENT_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Curvature
 
 #include "../../../../mepp/mepp_component.h"

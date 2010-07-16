@@ -1,7 +1,7 @@
 #ifndef Curvature_ITEMS_H
 #define Curvature_ITEMS_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Curvature
 
 #include "../../../../mepp/Polyhedron/polyhedron_shared_items.h"

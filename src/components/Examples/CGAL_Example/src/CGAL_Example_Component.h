@@ -6,7 +6,7 @@
 #ifndef CGAL_Example_COMPONENT_H
 #define CGAL_Example_COMPONENT_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_CGAL_Example
 
 #include "../../../../mepp/mepp_component.h"

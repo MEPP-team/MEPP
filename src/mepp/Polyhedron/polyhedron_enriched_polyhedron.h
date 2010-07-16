@@ -1,16 +1,16 @@
 #ifndef HEADER_ENRICHED_POLYHEDRON
 #define HEADER_ENRICHED_POLYHEDRON
 
-#include "../mepp_config.h"
+#include <mepp_config.h>
 
 #include "polyhedron_shared_items.h"
 
-#include "polyhedron_enrichment_include.h"
+#include <polyhedron_enrichment_include.h>
 
 template <class Refs, class T, class P, class Norm>
 class Enriched_facet :
 	/*************** HERITAGE FACETTE ***************/
-	#include "polyhedron_enrichment_facet.h"
+	#include <polyhedron_enrichment_facet.h>
 	/*************************************************/
 	virtual public MEPP_Common_Facet<Refs, T, Norm>
 {
@@ -19,7 +19,7 @@ class Enriched_facet :
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
 class Enriched_halfedge :
 	/*************** HERITAGE HALFEDGE ***************/
-	#include "polyhedron_enrichment_halfedge.h"
+	#include <polyhedron_enrichment_halfedge.h>
 	/*************************************************/
 	virtual public MEPP_Common_Halfedge<Refs,Tprev,Tvertex,Tface,Norm>
 {
@@ -29,7 +29,7 @@ class Enriched_halfedge :
 template <class Refs, class T, class P, class Norm>
 class Enriched_vertex :
 	/*************** HERITAGE VERTEX ***************/
-	#include "polyhedron_enrichment_vertex.h"
+	#include <polyhedron_enrichment_vertex.h>
 	/*************************************************/
 	virtual public MEPP_Common_Vertex<Refs, T, P, Norm>
 {
@@ -97,7 +97,7 @@ struct Enriched_items : public CGAL::Polyhedron_items_3
 template <class kernel, class items>
 class Enriched_polyhedron :
 	/*************** HERITAGE POLYHEDRON ***************/
-	#include "polyhedron_enrichment_polyhedron.h"
+	#include <polyhedron_enrichment_polyhedron.h>
 	/*************************************************/
 	virtual public MEPP_Common_Polyhedron<kernel,items>
 {

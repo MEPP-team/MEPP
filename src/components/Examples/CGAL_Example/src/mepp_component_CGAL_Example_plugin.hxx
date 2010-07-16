@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_CGAL_Example
 
 #include "../../../../mepp/mepp_component_plugin_interface.h"

@@ -33,5 +33,5 @@ avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau si besoin
  - cliquer sur Generate (en bas à gauche)
- - ouvrir avec Visual Studio la solution mepp.sln générée puis compiler Mepp
+ - ouvrir avec Visual Studio la solution mepp.sln générée dans C:/mepp/SVN/trunk/build puis compiler Mepp
  - se positionner sur le "sous-projet" mepp, faire un "bouton droit" puis cliquer sur "Définir comme projet de démarrage"

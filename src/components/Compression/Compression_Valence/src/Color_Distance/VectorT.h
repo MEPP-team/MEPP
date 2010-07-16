@@ -18,7 +18,7 @@
 #ifndef _VECTORT_
 #define _VECTORT_
 
-#include "../../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 #include <assert.h>

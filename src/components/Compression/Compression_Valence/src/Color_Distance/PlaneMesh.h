@@ -18,7 +18,7 @@
 #ifndef _PLANEMESH_
 #define _PLANEMESH_
 
-#include "../../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 #include "ColorMesh.h"

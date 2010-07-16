@@ -18,7 +18,7 @@
 #ifndef _SAMPLE_
 #define _SAMPLE_
 
-#include "../../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 //#include "MeshDev.h"

@@ -3,7 +3,7 @@
 // Year: 2010
 // CNRS-Lyon, LIRIS UMR 5205
 /////////////////////////////////////////////////////////////////////////// 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_CGAL_Example
 
 #include "mepp_component_CGAL_Example_plugin.hxx"

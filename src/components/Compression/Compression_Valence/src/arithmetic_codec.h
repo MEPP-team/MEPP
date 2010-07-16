@@ -47,7 +47,7 @@
 #ifndef ARITHMETIC_CODEC
 #define ARITHMETIC_CODEC
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 #include <stdio.h>

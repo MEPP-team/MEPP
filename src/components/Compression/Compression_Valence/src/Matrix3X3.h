@@ -18,7 +18,7 @@
 #ifndef CGAL_CARTESIAN_MATRIXC33_H
 #define CGAL_CARTESIAN_MATRIXC33_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 #include <CGAL/Vector_3.h>

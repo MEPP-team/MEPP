@@ -18,7 +18,7 @@
 #ifndef _NEIGHBORHOOD_
 #define _NEIGHBORHOOD_
 
-#include "../../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 //#include "MeshDev.h"

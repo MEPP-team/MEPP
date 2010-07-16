@@ -1,7 +1,7 @@
 #ifndef Compression_Valence_BASEMESH_BUILDER_H
 #define Compression_Valence_BASEMESH_BUILDER_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 #include "../../../../mepp/Polyhedron/Polyhedron_Builder.h"

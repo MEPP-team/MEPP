@@ -6,7 +6,7 @@
 #ifndef CGAL_Example_ITEMS_H
 #define CGAL_Example_ITEMS_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_CGAL_Example
 
 #include "../../../../mepp/Polyhedron/polyhedron_shared_items.h"

@@ -1,7 +1,7 @@
 #ifndef Compression_Valence_ITEMS_H
 #define Compression_Valence_ITEMS_H
 
-#include "../../../../mepp/mepp_config.h"
+#include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
 #include "../../../../mepp/Polyhedron/polyhedron_shared_items.h"
