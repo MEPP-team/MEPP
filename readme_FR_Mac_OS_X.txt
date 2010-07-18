@@ -27,8 +27,8 @@ svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/tr
 6a) compiler Mepp avec CMake et Makefile:
 se positionner dans trunk, puis,
  - mkdir build; cd build
- - pour une version Release: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' (exécuter 2 fois de suite cette commande) puis make
- - pour une version Debug: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' -DCMAKE_BUILD_TYPE=Debug (exécuter 2 fois de suite cette commande) puis make
+ - pour une version Release: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' puis make
+ - pour une version Debug: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' -DCMAKE_BUILD_TYPE=Debug (2 fois pour la prise en compte du mode Debug) puis make
 note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 
 ou
