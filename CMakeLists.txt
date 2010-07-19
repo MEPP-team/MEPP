@@ -49,7 +49,7 @@ else (WIN32)
 	set(BASH bash)
 endif (WIN32)
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/mepp_config.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/mepp_config.h)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/mepp_config.h ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/mepp_config.h)
 
 Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_define h)
 Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_include h)
