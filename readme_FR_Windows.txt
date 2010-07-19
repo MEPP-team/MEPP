@@ -8,10 +8,10 @@ Marche à suivre pour Mepp sous Windows :
 ----------------------------------------
 
 1) récupérer et installer Visual Studio Express 2008 SP1:
-ftp://meppbin:1901bin@gforge.liris.cnrs.fr/pub/meppbin/windows/Visual_C++_2008_Express_with_SP1
+http://download.gforge.liris.cnrs.fr/meppbin/windows/Visual_C++_2008_Express_with_SP1/VS2008ExpressWithSP1FRAx1504731.iso (869 Mo)
 
 2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
-ftp://meppbin:1901bin@gforge.liris.cnrs.fr/pub/meppbin/windows/MEPP
+http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_win32_v01.rar (376 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev32)
 
 3) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):
