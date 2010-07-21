@@ -3,23 +3,23 @@
 
 #include "../../../../mepp/Polyhedron/polyhedron.h"
 #include <CGAL/Gmpq.h>
-#include <CGAL/lazy_exact_nt.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 #include <mepp_config.h>
 #define BOOLEAN_OPERATIONS_DEBUG
 
 enum Bool_Op {UNION, INTER, MINUS, XOR};
 
-//typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>											num_type;
-typedef double num_type;
+typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>											num_type;
+//typedef double											num_type;
+
 typedef CGAL::Simple_cartesian<num_type>										Exact_Kernel;
 
-//typedef CGAL::Vector_3<Exact_Kernel>											Vector_exact;
-typedef Vector											Vector_exact;
-//typedef CGAL::Point_3<Exact_Kernel>												Point3d_exact;
-typedef Point3d												Point3d_exact;
+typedef CGAL::Vector_3<Exact_Kernel>											Vector_exact;
+typedef CGAL::Point_3<Exact_Kernel>												Point3d_exact; 
 
-inline Point3d_exact point_to_exact(Point3d &p)
+
+inline Point3d_exact point_to_exact(Point3d p)
 {
 	return Point3d_exact(p.x(),p.y(),p.z());
 }
