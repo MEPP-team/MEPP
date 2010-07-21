@@ -1,9 +1,18 @@
 #ifndef CPOLYHEDRON_FROM_POLYGON_BUILDER_3
 #define CPOLYHEDRON_FROM_POLYGON_BUILDER_3
 
+/*!
+ * \file CPolyhedron_from_polygon_builder_3.h
+ * \brief An incremental builder to build a polyhedron
+ * \author Cyril Leconte
+ */
+
 #include "../../../../mepp/Polyhedron/polyhedron.h"
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
+/*!
+ *
+ */
 template <class HDS>
 class CPolyhedron_from_polygon_builder_3 : public CGAL::Modifier_base<HDS> {
 
@@ -178,4 +187,4 @@ private:
 	}
 };
 
-#endif
+#endif // CPOLYHEDRON_FROM_POLYGON_BUILDER_3

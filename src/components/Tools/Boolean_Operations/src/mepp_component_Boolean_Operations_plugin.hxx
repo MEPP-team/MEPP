@@ -78,6 +78,6 @@ private:
 	QAction *actionMinus;
 };
 
-#endif // BOOLEAN_OPERATIONS
+#endif // BUILD_component_Boolean_Operations
 
 #endif // HEADER_MEPP_COMPONENT_BOOLEAN_OPERATIONS_PLUGIN_INTERFACE_H

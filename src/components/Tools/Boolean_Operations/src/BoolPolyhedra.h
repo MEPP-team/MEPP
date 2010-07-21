@@ -1574,4 +1574,4 @@ private:
 #endif // BOOLEAN_OPERATIONS_DEBUG
 };
 
-#endif
+#endif // BOOLPOLYHEDRA_H

@@ -13,6 +13,7 @@
 #include <QMdiSubWindow>
 
 #include "Boolean_Operations_Component.h"
+
 typedef boost::shared_ptr<Boolean_Operations_Component> Boolean_Operations_ComponentPtr;
 
 void mepp_component_Boolean_Operations_plugin::New_Position()
@@ -207,4 +208,4 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 
 Q_EXPORT_PLUGIN2(mepp_component_Boolean_Operations_plugin, mepp_component_Boolean_Operations_plugin);
 
-#endif // BOOLEAN_OPERATIONS
+#endif // BUILD_component_Boolean_Operations

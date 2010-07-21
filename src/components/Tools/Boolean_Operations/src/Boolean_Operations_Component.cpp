@@ -97,4 +97,4 @@ void Boolean_Operations_Component::Boolean_Minus(PolyhedronPtr pMin1, Polyhedron
 	//*/
 }
 
-#endif
+#endif // BUILD_component_Boolean_Operations
