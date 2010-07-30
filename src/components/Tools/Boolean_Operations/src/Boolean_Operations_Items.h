@@ -25,11 +25,15 @@ class Boolean_Operations_Facet : virtual public MEPP_Common_Facet<Refs, T, Norm>
 		Boolean_Operations_Facet() {}
 
 		//subdivision :
-		bool Issub; /*!< true if the facet has been subdivided*/
+		/*! \brief true if the facet has been subdivided*/
+		bool Issub;
 		//operations booleennes :
-		bool IsExt; /*!< true if the facet belongs to the result*/
-		bool IsOK; /*!< true if the facet has been processed*/
-		FacetId Label; /*!< an Id for the facet*/
+		/*! \brief true if the facet belongs to the result*/
+		bool IsExt;
+		/*! \brief true if the facet has been processed*/
+		bool IsOK;
+		/*! \brief An Id for the facet*/
+		FacetId Label;
 };
 
 /*!
@@ -44,9 +48,11 @@ class Boolean_Operations_Halfedge : virtual public MEPP_Common_Halfedge<Refs,Tpr
 		Boolean_Operations_Halfedge() {}
 		
 		//subdivision :
-		bool Isnew; /*!< true if the halfedge has been created or subdivided*/
+		/*! \brief true if the halfedge has been created or subdivided*/
+		bool Isnew;
 		//operations booleennes :
-		HalfedgeId Label; /*!< an Id for the halfedge*/
+		/*! \brief An Id for the halfedge*/
+		HalfedgeId Label;
 };
 
 /*!
@@ -61,9 +67,11 @@ class Boolean_Operations_Vertex : virtual public MEPP_Common_Vertex<Refs, T, P, 
 		Boolean_Operations_Vertex() {}
 
 		//subdivision :
-		bool Isnew; /*!< true if the vertex has been created*/
+		/*! \brief true if the vertex has been created*/
+		bool Isnew;
 		//operations booleennes :
-		VertexId Label; /*!< an Id for the vertex*/
+		/*! \brief An Id for the vertex*/
+		VertexId Label;
 };
 
 /*!

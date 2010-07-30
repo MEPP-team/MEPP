@@ -1,6 +1,10 @@
 #ifndef HEADER_MEPP_COMPONENT_BOOLEAN_OPERATIONS_PLUGIN_INTERFACE_H
 #define HEADER_MEPP_COMPONENT_BOOLEAN_OPERATIONS_PLUGIN_INTERFACE_H
 
+/*!
+ * \file mepp_component_Boolean_Operations_plugin.hxx
+ */
+
 #include <QObject>
 
 #include <mepp_config.h>

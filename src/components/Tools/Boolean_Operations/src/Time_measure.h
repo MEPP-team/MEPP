@@ -19,8 +19,10 @@
 class Time_measure
 {
 private:
-	__int64 freq; /*!< clock frequency*/
-	__int64 t0; /*!< initial time*/
+	/*! \brief clock frequency*/
+	__int64 freq;
+	/*! \brief initial time*/
+	__int64 t0;
 
 public:
 	/*!
@@ -69,7 +71,8 @@ public:
 class Time_measure
 {
 private:
-	double t0; /*!< initial time*/
+	/*! \brief initial time*/
+	double t0;
 
 public:
 	/*!

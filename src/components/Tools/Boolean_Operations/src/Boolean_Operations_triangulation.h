@@ -25,10 +25,15 @@ public:
 	};
 
 private:
-	unsigned long m_Label; /*< An Id for the vertex*/
+	/*! \brief An Id for the vertex*/
+	unsigned long m_Label;
 
 public:
+	/*! \brief Accessor
+	 * \param Label : The value to assign*/
 	void set_Label(unsigned long Label) {m_Label = Label;}
+	/*! \brief Accessor
+	 * \return The Label of the vertex*/
 	unsigned long get_Label() {return m_Label;}
 };
 	
@@ -39,10 +44,17 @@ public:
 template <class Gt, class Fb = CGAL::Constrained_triangulation_face_base_2<Gt>>
 class Enriched_face_base : public Fb
 {
-	typedef Fb Base;
-
 public:
+	/*!
+	 * \typedef typename Vertex_handle
+	 * \brief Handle for a vertex of a triangulation
+	 */
 	typedef typename Fb::Triangulation_data_structure::Vertex_handle          Vertex_handle;
+
+	/*!
+	 * \typedef typename Face_handle
+	 * \brief Handle for a face of a triangulation
+	 */
 	typedef typename Fb::Triangulation_data_structure::Face_handle            Face_handle;
 
 	template < typename TDS2 >
@@ -52,20 +64,29 @@ public:
 	};
 
 private:
-	bool m_OK; /*< True if the vertex has been processed*/
-	bool m_Ext; /*< True if the vertex belongs to the result*/
+	/*! \brief True if the vertex has been processed*/
+	bool m_OK;
+	/*! \brief True if the vertex belongs to the result*/
+	bool m_Ext;
 
 public:
-	Enriched_face_base() : Base() {}
-	Enriched_face_base(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2) : Base(v0,v1,v2) {}
+	Enriched_face_base() : Fb() {}
+	Enriched_face_base(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2) : Fb(v0,v1,v2) {}
 	Enriched_face_base(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
-		Face_handle n0, Face_handle n1, Face_handle n2) : Base(v0,v1,v2,n0,n1,n2) {}
+		Face_handle n0, Face_handle n1, Face_handle n2) : Fb(v0,v1,v2,n0,n1,n2) {}
 	Enriched_face_base(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Face_handle n0, Face_handle n1, Face_handle n2,
-					bool c0, bool c1, bool c2 ) : Base(v0,v1,v2,n0,n1,n2) {}
-
+					bool c0, bool c1, bool c2 ) : Fb(v0,v1,v2,n0,n1,n2) {}
+	/*! \brief Accessor
+	 * \param Ext : The value to assign*/
 	void set_Ext(bool Ext) {m_Ext = Ext;}
+	/*! \brief Accessor
+	 * \return true if the triangle of the triangulation belongs to the result*/
 	bool get_Ext() {return m_Ext;}
+	/*! \brief Accessor
+	 * \param OK : The value to assign*/
 	void set_OK(bool OK) {m_OK = OK;}
+	/*! \brief Accessor
+	 * \return true if the parameter m_Ext has been determined*/
 	bool get_OK() {return m_OK;}
 };
 	
@@ -76,7 +97,6 @@ public:
 template <class K>
 class Triangulation
 {
-public:
 	/*!
 	 * \typedef typename Point_3
 	 * \brief 3d point using exact number type
@@ -143,7 +163,7 @@ public:
 	 * \param he : A halfedge incident to the facet
 	 * \param norm_dir : The vector directing the normal of the facet
 	 */
-	Triangulation(Halfedge_handle he, Vector_exact norm_dir)
+	Triangulation(Halfedge_handle &he, Vector_exact &norm_dir)
 	{
 		//find the longest coordinate of the normal vector, and its sign
 		double x = to_double(norm_dir.x());
@@ -184,7 +204,7 @@ public:
 	 * \param p : the point (in 3d)
 	 * \return The projection as a 2d point
 	 */
-	Point_tri get_minvar_point_2(Point_3 p)
+	Point_tri get_minvar_point_2(Point_3 &p)
 	{
 		switch(max_coordinate)
 		{
@@ -217,7 +237,7 @@ public:
 	 * \param Label : The label of the point
 	 * \return The Vertex_handle of the point added 
 	 */
-	Vertex_handle_tri add_new_pt(Point_3 p, unsigned long Label)
+	Vertex_handle_tri add_new_pt(Point_3 &p, unsigned long &Label)
 	{
 		//if the point is not a new one, we verify that the point has not already been added
 		if(Label != 0xFFFFFFFF)
@@ -240,7 +260,7 @@ public:
 	 * \param Label1 : The label of the first point
 	 * \param Label2 : The label of the second point
 	 */
-	void add_segment(Point_3 p1, Point_3 p2, unsigned long Label1, unsigned long Label2)
+	void add_segment(Point_3 &p1, Point_3 &p2, unsigned long &Label1, unsigned long &Label2)
 	{
 		// we add the two points in the triangulation and store their handles in c1 and c2
 		c1 = add_new_pt(p1, Label1);
@@ -374,12 +394,31 @@ public:
 	}
 	
 private:
-	Constrained_Delaunay_tri ct; /*< The triangulation*/
-	vector<InterId> pts_point; /*< List of the id of the points added in the triangulation*/
-	vector<Vertex_handle_tri> pts_vertex; /*< List of the handles of the points added in the triangulation*/
-	Vertex_handle_tri v1, v2, v3, c1, c2; /*< handles of the points corresponding to the 
-										   * three vertices of the facet and the last segment added*/
-	int max_coordinate; /*< code identifying the plane where the triangulation is done*/
+	/*! \brief The triangulation*/
+	Constrained_Delaunay_tri ct;
+	/*! \brief List of the id of the points added in the triangulation*/
+	vector<InterId> pts_point;
+	/*! \brief List of the handles of the points added in the triangulation*/
+	vector<Vertex_handle_tri> pts_vertex;
+	/*! \brief Handle of the point corresponding to the first vertex of the facet*/
+	Vertex_handle_tri v1;
+	/*! \brief Handle of the point corresponding to the second vertex of the facet*/
+	Vertex_handle_tri v2;
+	/*! \brief Handle of the point corresponding to the third vertex of the facet*/
+	Vertex_handle_tri v3;
+	/*! \brief Handle of the point corresponding to the first vertex of the last segment added*/
+	Vertex_handle_tri c1;
+	/*! \brief Handle of the point corresponding to the second vertex of the last segment added*/
+	Vertex_handle_tri c2;
+	/*! \brief Code identifying the plane where the triangulation is done \n
+	 * 0 : Plane (y, z) \n
+	 * 1 : Plane (z, x) \n
+	 * 2 : Plane (x, y) \n
+	 * 3 : Plane (z, y) \n
+	 * 4 : Plane (x, z) \n
+	 * 5 : Plane (y, x)
+	 */
+	int max_coordinate;
 };
 	
 #endif // BOOLEAN_OPERATIONS_TRIANGULATION_H

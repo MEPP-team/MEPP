@@ -12,16 +12,17 @@
 
 void Boolean_Operations_Component::SubdiviserPolyedre(PolyhedronPtr pMesh)
 {
-	//on s'assure que chaque face du polyedre est triangulaire :
+	//Each facet must be triangular
 	if(!pMesh->is_pure_triangle())
 	{
 		pMesh->triangulate();
 		return;
 	}
-	//declaration des iterateurs et variables :
+	
 	Facet_iterator pFacet;
 	Vector Vcenter;
-	
+
+	//Initialization of the tags
 	for (pFacet = pMesh->facets_begin(); pFacet != pMesh->facets_end(); pFacet++)
 	{
 		Halfedge_around_facet_circulator pHEcirc = pFacet->facet_begin();
@@ -35,8 +36,10 @@ void Boolean_Operations_Component::SubdiviserPolyedre(PolyhedronPtr pMesh)
 		pHEcirc->Isnew = false;
 		pHEcirc->vertex()->Isnew = false;
 	}
+	//For each facet of the polyhedron
 	for (pFacet = pMesh->facets_begin(); pFacet != pMesh->facets_end(); pFacet++)
 	{
+		//We subdivide the facet if it is not already done
 		if(!(pFacet->Issub))
 		{
 			Halfedge_handle pHE = pFacet->facet_begin();
@@ -44,10 +47,12 @@ void Boolean_Operations_Component::SubdiviserPolyedre(PolyhedronPtr pMesh)
 			{
 				if(!pHE->Isnew)
 				{
+					//each edge is splited in its center
 					Vcenter = Vector(0.0, 0.0, 0.0);
 					Vcenter = ( (pHE->vertex()->point() - CGAL::ORIGIN) + (pHE->opposite()->vertex()->point() - CGAL::ORIGIN) ) / 2;
 					pHE = pMesh->split_edge(pHE);
 					pHE->vertex()->point() = CGAL::ORIGIN + Vcenter;
+					//update of the tags (the new vertex and the four new halfedges
 					pHE->vertex()->Isnew = true;
 					pHE->Isnew = true;
 					pHE->opposite()->Isnew = true;
@@ -56,6 +61,7 @@ void Boolean_Operations_Component::SubdiviserPolyedre(PolyhedronPtr pMesh)
 				}
 				pHE = pHE->next();
 			}
+			//Three new edges are build between the three new vertices, and the tags of the facets are updated
 			if(!pHE->vertex()->Isnew) pHE = pHE->next();
 			pHE = pMesh->split_facet(pHE, pHE->next()->next());
 			pHE->opposite()->facet()->Issub = true;
