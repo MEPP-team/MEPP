@@ -35,6 +35,8 @@ typedef Polyhedron::Halfedge_handle Halfedge_handle;
 typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
 typedef Polyhedron::HalfedgeDS HalfedgeDS;
 
+typedef Polyhedron::Edge_iterator Edge_iterator;
+
 typedef Polyhedron::Facet Facet;
 typedef Polyhedron::Facet_handle Facet_handle;
 typedef Polyhedron::Facet_iterator Facet_iterator;
