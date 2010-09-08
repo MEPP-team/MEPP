@@ -14,7 +14,7 @@
  * \class Enriched_vertex_base
  * \brief Enriches the vertices of a triangulation
  */
-template <class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt>>
+template <class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
 class Enriched_vertex_base : public Vb
 {
 public:
@@ -41,7 +41,7 @@ public:
  * \class Enriched_face_base
  * \brief Enriches the faces of a triangulation
  */
-template <class Gt, class Fb = CGAL::Constrained_triangulation_face_base_2<Gt>>
+template <class Gt, class Fb = CGAL::Constrained_triangulation_face_base_2<Gt> >
 class Enriched_face_base : public Fb
 {
 public:
@@ -107,13 +107,13 @@ class Triangulation
 	 * \typedef typename Tri_vb
 	 * \brief Vertex base
 	 */
-	typedef typename Enriched_vertex_base<K>										Tri_vb;
+        typedef /*typename*/ Enriched_vertex_base<K>										Tri_vb;
 	
 	/*!
 	 * \typedef typename Tri_fb
 	 * \brief Face base
 	 */
-	typedef typename Enriched_face_base<K>											Tri_fb;
+        typedef /*typename*/ Enriched_face_base<K>											Tri_fb;
 	
 	/*!
 	 * \typedef typename Tri_DS
@@ -279,13 +279,13 @@ public:
 	 * \return The list of the triangles belonging to the result.
 	 * each triangle is defined by a list of three labels
 	 */
-	vector<vector<unsigned long>> get_triangles(bool inv_triangles, bool *IsExt)
+        vector<vector<unsigned long> > get_triangles(bool inv_triangles, bool *IsExt)
 	{
 		//init
 		IsExt[0] = false;
 		IsExt[1] = false;
 		IsExt[2] = false;
-		vector<vector<unsigned long>> tris;
+                vector<vector<unsigned long> > tris;
 		for(Face_iterator_tri fi = ct.faces_begin();fi != ct.faces_end();fi++)
 			fi->set_OK(false);
 
@@ -371,9 +371,9 @@ public:
 	 * \return The list of the triangles belonging to the result.
 	 * each triangle is defined by a list of three labels
 	 */
-	vector<vector<unsigned long>> get_all_triangles(bool inv_triangles)
+        vector<vector<unsigned long> > get_all_triangles(bool inv_triangles)
 	{
-		vector<vector<unsigned long>> tris;
+                vector<vector<unsigned long> > tris;
 		for(Face_iterator_tri f = ct.faces_begin();f != ct.faces_end();f++)
 		{
 			vector<unsigned long> tri;

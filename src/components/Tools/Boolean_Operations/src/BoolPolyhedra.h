@@ -94,7 +94,7 @@ private:
 		/*! \brief An exact vector giving the direction of the normal*/
 		Vector_exact						norm_dir;
 		/*! \brief A list of segments (the intersections with the facets of the other polyhedron)*/
-		std::vector<std::vector<InterId>>	CutList;
+                std::vector<std::vector<InterId> >	CutList;
 		/*! \brief A list of points (when the intersection is a point)*/
 		std::set<InterId>					PtList;
 		/*! \brief The list of the intersections*/
@@ -381,7 +381,7 @@ private:
 				}
 				//get the triangles of the triangulation thay belong to the result
 				//and determine if the three neighboring facets belongs to the result (using IsExt[3])
-				vector<vector<unsigned long>> Tri_set = T.get_triangles((m_BOOP == MINUS && !TriCut.Facet_from_A)?true:false, IsExt);
+                                vector<vector<unsigned long> > Tri_set = T.get_triangles((m_BOOP == MINUS && !TriCut.Facet_from_A)?true:false, IsExt);
 				//add these triangles to the result
 				ppbuilder.add_triangle(Tri_set, he);
 
@@ -1510,7 +1510,7 @@ private:
 				T.add_new_pt(InterPts[*i], *i);
 			}
 			//get all the triangles of the triangulation
-			vector<vector<unsigned long>> Tri_set = T.get_all_triangles((m_BOOP == MINUS && !TriCut.Facet_from_A)?true:false);
+                        vector<vector<unsigned long> > Tri_set = T.get_all_triangles((m_BOOP == MINUS && !TriCut.Facet_from_A)?true:false);
 			//add these triangles to the result
 			ppbuilder.add_triangle(Tri_set, he);
 		}
@@ -1621,7 +1621,7 @@ private:
 	CPolyhedron_from_polygon_builder_3<HDS> ppbuilder;
 
 	/*! \brief Lists the couples of facets that intersect*/
-	std::map<FacetId, std::set<FacetId>> m_Couples;
+        std::map<FacetId, std::set<FacetId> > m_Couples;
 	/*! \brief Lists the exact intersection points computed*/
 	vector<Point3d_exact> InterPts;
 	/*! \brief Informations about the intersected facets*/
