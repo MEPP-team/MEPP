@@ -237,7 +237,7 @@ public:
 	 * \param Label : The label of the point
 	 * \return The Vertex_handle of the point added 
 	 */
-	Vertex_handle_tri add_new_pt(Point_3 &p, unsigned long &Label)
+        Vertex_handle_tri add_new_pt(Point_3 p, unsigned long &Label)   // MT: suppression référence
 	{
 		//if the point is not a new one, we verify that the point has not already been added
 		if(Label != 0xFFFFFFFF)

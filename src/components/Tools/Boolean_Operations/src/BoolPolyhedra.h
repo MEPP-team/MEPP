@@ -61,7 +61,7 @@ public:
 	 * \return The 3d point converted
 	 */
 	
-	inline Point_3 to_K(Enriched_kernel::Point_3 &p) {return Point_3((FT)p.x(), (FT)p.y(), (FT)p.z());}
+        inline Point_3 to_K(Enriched_kernel::Point_3 p) {return Point_3((FT)p.x(), (FT)p.y(), (FT)p.z());}  // MT: suppression référence
 
 private:
 	/*! \brief The handle of the facet used to build the triangle*/
@@ -372,7 +372,7 @@ private:
 				//add the list of intersection points (only happens in case of intersection of two edges)
 				for(std::set<InterId>::iterator i = TriCut.PtList.begin();i != TriCut.PtList.end();++i)
 				{
-					T.add_new_pt(InterPts[*i], *i);
+                                        T.add_new_pt(InterPts[*i], (unsigned long &)*i);    // MT: ajout cast
 				}
 				//add the intersection segments
 				for(int i = 0;i!=TriCut.CutList.size();++i)
@@ -1244,7 +1244,7 @@ private:
 		InterPts.push_back(inter->pt);
 
 		//add this point as a vertex of the result
-		ppbuilder.add_vertex(point_to_double(inter->pt), inter->Id);
+                ppbuilder.add_vertex(point_to_double(inter->pt), inter->Id);
 
 		//if the intersection is on the vertex pointed by the halfedge (he), we update the Id (Label) of this vertex
 		if(inter->IsOnVertex) he->vertex()->Label = I;
@@ -1507,7 +1507,7 @@ private:
 			//add the intersection points to the triangulation
 			for(std::set<InterId>::iterator i = TriCut.PtList.begin();i != TriCut.PtList.end();++i)
 			{
-				T.add_new_pt(InterPts[*i], *i);
+                            T.add_new_pt(InterPts[*i], (unsigned long &)*i);    // MT: ajout cast
 			}
 			//get all the triangles of the triangulation
                         vector<vector<unsigned long> > Tri_set = T.get_all_triangles((m_BOOP == MINUS && !TriCut.Facet_from_A)?true:false);

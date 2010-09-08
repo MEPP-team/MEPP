@@ -157,7 +157,7 @@ public:
 	 * \param p : The point to add
 	 * \param l : The corresponding label
 	 */
-	void add_vertex(Point3d &p, unsigned long &l)
+        void add_vertex(Point3d p, unsigned long &l)    // MT: suppression référence
 	{
 		//The value of the label is updated
 		l = m_Sorted_vertices.size();

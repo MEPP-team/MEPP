@@ -80,7 +80,7 @@ inline Point3d point_to_double(Point3d_exact &pe)
  * \param he : A Halfedge incident to the facet
  * \return The normal direction (exact).
  */
-inline Vector_exact Compute_Normal_direction(Halfedge_handle &he)
+inline Vector_exact Compute_Normal_direction(Halfedge_handle he)   // MT: suppression référence
 {
 	return CGAL::cross_product(	point_to_exact(he->next()->vertex()->point())			- point_to_exact(he->vertex()->point()),
 								point_to_exact(he->next()->next()->vertex()->point())	- point_to_exact(he->vertex()->point()));
