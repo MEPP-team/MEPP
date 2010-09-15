@@ -10,9 +10,13 @@ Marche à suivre pour Mepp sous Windows :
 1) récupérer et installer Visual Studio Express 2008 SP1:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/Visual_C++_2008_Express_with_SP1/VS2008ExpressWithSP1FRAx1504731.iso (869 Mo)
 
-2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
-http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_win32_v02.rar (375 Mo)
+2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_win32_v02.rar (376 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev32)
+
+2b) récupérer les maj des dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_win32_v02_glew_addon.rar (563 Ko)
+et décompresser l'archive dans le même répertoire que celui de l'étape 2a). Répondre "oui" pour écraser le fichier "CGALConfig.cmake".
 
 3) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):
  - bouton « nouveau » : rajouter la variable QTDIR avec comme valeur :

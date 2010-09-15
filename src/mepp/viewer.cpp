@@ -3,10 +3,69 @@
 // Year: 2010
 // CNRS-Lyon, LIRIS UMR 5205
 /////////////////////////////////////////////////////////////////////////// 
+#include <GL/glew.h>
+
 #include "viewer.hxx"
 #include "scene.h"
 
 #include "mepp_component_plugin_interface.h"
+
+// Vertex Array
+GLfloat VertexArray[24] = {
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, -1.0f, 1.0f,
+	1.0f, 1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f
+};
+
+GLfloat ColorArray[24] = {
+	1.0f, 0.0f, 0.0f,
+	1.0f, 0.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	0.0f, 0.0f, 1.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 0.0f,
+	1.0f, 1.0f, 1.0f
+};
+
+GLuint IndiceArrayVA[36] = {
+	0,1,2,2,1,3,
+	4,5,6,6,5,7,
+	3,1,5,5,1,7,
+	0,2,6,6,2,4,
+	6,7,0,0,7,1,
+	2,3,4,4,3,5
+};
+// Vertex Array
+
+// VBO
+GLfloat MeshArray[48] = {
+	1.0f, 0.0f, 0.0f, -1.0f, 1.0f, -1.0f,
+	1.0f, 0.0f, 1.0f, -1.0f, -1.0f, -1.0f,
+	1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+	0.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f,
+	0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+	0.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f,
+	1.0f, 1.0f, 0.0f, 1.0f, 1.0f, -1.0f,
+	1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f
+};
+
+GLuint IndiceArrayVBO[36] = {
+	0,1,2,2,1,3,
+	4,5,6,6,5,7,
+	3,1,5,5,1,7,
+	0,2,6,6,2,4,
+	6,7,0,0,7,1,
+	2,3,4,4,3,5
+};
+
+GLuint MeshBuffers[2];
+// VBO
 
 using namespace qglviewer;
 
@@ -60,6 +119,11 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 
 Viewer::~Viewer()
 {
+	// VBO
+	if (MeshBuffers[0]!=0 && MeshBuffers[1]!=0)
+		glDeleteBuffers(2, MeshBuffers);
+	// VBO
+
 	frame_.clear();
 
 	delete timerDynamic;
@@ -476,6 +540,102 @@ void Viewer::change_material(string mat_name)
 	m_last_material = mat_name;
 }
 
+// VBO
+void renderVBO()
+{
+	// Utilisation des données des buffers
+	glBindBuffer(GL_ARRAY_BUFFER, MeshBuffers[0]);
+	glVertexPointer( 3, GL_FLOAT, 6 * sizeof(float), ((float*)NULL + (3)) );
+	glColorPointer( 3, GL_FLOAT, 6 * sizeof(float), 0 );
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, MeshBuffers[1]);
+
+	// Activation d'utilisation des tableaux
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+
+	// Rendu de notre géométrie
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glDisableClientState( GL_COLOR_ARRAY );
+	glDisableClientState( GL_VERTEX_ARRAY );
+}
+
+// Vertex Array
+void renderVA()
+{
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+
+	glVertexPointer( 3, GL_FLOAT, 0, VertexArray );
+	glColorPointer( 3, GL_FLOAT, 0, ColorArray );
+
+	glDrawElements( GL_TRIANGLES, 36, GL_UNSIGNED_INT, IndiceArrayVA );
+
+	glDisableClientState( GL_COLOR_ARRAY );
+	glDisableClientState( GL_VERTEX_ARRAY );
+}
+
+// Display List
+void createList()
+{
+	glNewList(1, GL_COMPILE); // compile list (don't display now)
+
+		glBegin( GL_TRIANGLES );
+
+		// gauche (x=-1)
+		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
+		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
+		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
+		
+		// droite (x=1)
+		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
+		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
+		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
+		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
+
+		// bas (y=-1)
+		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
+		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
+		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
+		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
+		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
+
+		// haut (y=1)
+		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
+		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
+		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
+
+		// arriere (z=-1)
+		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
+		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
+		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
+
+		// avant (z=1)
+		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
+		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
+		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
+		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
+		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
+		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
+
+		glEnd();
+
+	glEndList(); // list created
+}
+
 void Viewer::render()
 {
 	// shading option
@@ -507,6 +667,7 @@ void Viewer::render()
 	}
 	else
 	{
+		// here
 		if ( glIsEnabled(GL_COLOR_MATERIAL) )
 		{
 			glDisable(GL_COLOR_MATERIAL);
@@ -577,6 +738,17 @@ void Viewer::render()
 	if (!m_Moving || !m_DrawBoundingBoxWhenMoving)
 	{
 		scene_ptr->get_polyhedron()->gl_draw(m_SmoothShading, m_UseNormals, m_UseVertexColor, m_UseFaceColor);
+		//glCallList(1);
+		//renderVA();
+		//renderVBO();
+
+		if (show_normals)
+		{
+			glColor3f(1.f, 0.f, 0.f);
+
+			scene_ptr->get_polyhedron()->draw_normals();
+			//glCallList(4);
+		}
 	}
 
 	// disable lighting
@@ -596,6 +768,7 @@ void Viewer::render()
 
 		// superimpose edges on the mesh
 		scene_ptr->get_polyhedron()->superimpose_edges(m_DrawVoronoiEdges);
+		//glCallList(2);
 	}
 	// end superimpose edges
 
@@ -603,7 +776,9 @@ void Viewer::render()
 	if (m_SuperimposeVertices && !(m_Moving && m_DrawBoundingBoxWhenMoving))
 	{
 		glColor3f(m_VertexColor[0],m_VertexColor[1],m_VertexColor[2]);
+
 		scene_ptr->get_polyhedron()->superimpose_spheres(0.1);
+		//glCallList(3);
 	}
 	// end superimpose vertices
 
@@ -644,6 +819,49 @@ void Viewer::render()
 
 void Viewer::init()
 {
+#if (0)
+	// http://raptor.developpez.com/tutorial/opengl/vbo/ : ok
+	// http://bakura.developpez.com/tutoriels/jeux/utilisation-vbo-avec-opengl-3-x/ : todo
+	// http://www.irit.fr/~Vincent.Forest/teaching/MasterProIIN/Cours_OGL.pdf : doc
+	// --- VBO begin ---
+	GLenum err = glewInit();
+	/*if (GLEW_OK != err) // todo: gestion erreur
+	{
+	  // Problem: glewInit failed, something is seriously wrong.
+	  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+	}*/
+
+	// Génération des buffers
+	glGenBuffers(2, MeshBuffers);
+
+	// Buffer d'informations de vertex
+	glBindBuffer(GL_ARRAY_BUFFER, MeshBuffers[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(MeshArray), MeshArray, GL_STATIC_DRAW);
+
+	// Buffer d'indices
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, MeshBuffers[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndiceArrayVBO), IndiceArrayVBO, GL_STATIC_DRAW);
+	// --- VBO end ---
+#endif
+	//createList();
+
+	glNewList(1, GL_COMPILE); // compile list (don't display now)
+		scene_ptr->get_polyhedron()->gl_draw(m_SmoothShading, m_UseNormals, m_UseVertexColor, m_UseFaceColor);
+	glEndList(); // list created
+
+	glNewList(2, GL_COMPILE); // compile list (don't display now)
+		scene_ptr->get_polyhedron()->superimpose_edges(m_DrawVoronoiEdges);
+	glEndList(); // list created
+
+	glNewList(3, GL_COMPILE); // compile list (don't display now)
+		scene_ptr->get_polyhedron()->superimpose_vertices();
+		//scene_ptr->get_polyhedron()->superimpose_spheres(0.1);
+	glEndList(); // list created
+
+	glNewList(4, GL_COMPILE); // compile list (don't display now)
+		scene_ptr->get_polyhedron()->draw_normals();
+	glEndList(); // list created
+
 	// Swap the CAMERA and FRAME state keys (NoButton and Control)
 	// Save CAMERA binding first. See setHandlerKeyboardModifiers() documentation.
 	/*#if QT_VERSION < 0x040000

@@ -20,6 +20,7 @@ sudo port -v selfupdate
 sudo port install cgal						(assez long, <= 1 heure)
 sudo port install qt4-mac					(très long, environ 2-3 heures)
 sudo port install libQGLViewer		(très rapide, quelques minutes)
+sudo port install glew						(très très rapide, quelques secondes)
 
 5) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk

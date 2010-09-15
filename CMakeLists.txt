@@ -9,6 +9,7 @@ endif (COMMAND cmake_policy)
 # Configuration du projet
 set(PRJ_NAME mepp)
 project( ${PRJ_NAME} )
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 file(
 	GLOB_RECURSE
@@ -77,6 +78,9 @@ if (APPLE)	#cmake . -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	INCLUDE_DIRECTORIES(/usr/X11/include)
 endif (APPLE)
 
+# Find GLEW (for OpenGL-1.5 and OpenGL extensions)
+find_package(GLEW)
+
 # Find QGLViewer
 if (QT4_FOUND)
   include(${QT_USE_FILE})
@@ -88,6 +92,12 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   find_package(Boost)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+  
+  if(GLEW_FOUND)
+    include_directories ( ${GLEW_INCLUDE_PATH} )
+  else(GLEW_FOUND)
+    message(STATUS "NOTICE: GLEW library is not found. VBO rendering will not be available.")
+  endif(GLEW_FOUND) 
 
 	file(
 		GLOB_RECURSE
@@ -128,6 +138,10 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	
 	# Link with libQGLViewer, OpenGL
 	target_link_libraries( ${PRJ_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+	
+	if(GLEW_FOUND)
+    target_link_libraries(${PRJ_NAME} ${GLEW_LIBRARIES})
+  endif()
 	
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

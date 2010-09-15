@@ -620,13 +620,14 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 					::gluSphere(pQuadric,scale*radius,24,24);
 				::glPopMatrix();
 			}
+
 			gluDeleteQuadric(pQuadric);
 		}
 
 		// Render normals
 		virtual void draw_normals()
 		{
-			glColor3f(1.f, 0.f, 0.f);
+			//glColor3f(1.f, 0.f, 0.f);
 			glBegin(GL_LINES);
 			for (Vertex_iterator pVertex = this->vertices_begin(); pVertex !=  this->vertices_end(); pVertex++)
 			{
