@@ -108,6 +108,8 @@ void mepp_component_Boolean_Operations_plugin::Union()
 			polyhedron_ptr_out->compute_bounding_box();
 			polyhedron_ptr_out->compute_normals();
 			polyhedron_ptr_out->compute_type();
+			(void)polyhedron_ptr_out->calc_nb_components();
+			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
 			viewer->show();
 
@@ -151,6 +153,8 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 			polyhedron_ptr_out->compute_bounding_box();
 			polyhedron_ptr_out->compute_normals();
 			polyhedron_ptr_out->compute_type();
+			(void)polyhedron_ptr_out->calc_nb_components();
+			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
 			viewer->show();
 
@@ -194,6 +198,8 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 			polyhedron_ptr_out->compute_bounding_box();
 			polyhedron_ptr_out->compute_normals();
 			polyhedron_ptr_out->compute_type();
+			(void)polyhedron_ptr_out->calc_nb_components();
+			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
 			viewer->show();
 
