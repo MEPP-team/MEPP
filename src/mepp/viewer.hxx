@@ -36,7 +36,8 @@ class Viewer : public QGLViewer
 		int get_nb_frames() { return (int)frame_.size(); }
 		qglviewer::ManipulatedFrame* frame(unsigned short i) { return frame_[i].get(); }
 		void setSelectedFrameNumber(unsigned short nb) { selected = nb; }
-		void addFrame() { frame_.push_back(ManipulatedFramePtr(new qglviewer::ManipulatedFrame())); }
+		void addFrame() { frame_.push_back(ManipulatedFramePtr(new qglviewer::ManipulatedFrame())); glList_.push_back(glGenLists(1)); if (VBO_mode) createLists = true; }
+		GLuint glList(unsigned short i) { return glList_[i]; }
 
 		qglviewer::Vec getInitialCameraPosition() { return initialCameraPosition; }
 		qglviewer::Quaternion getInitialCameraOrientation() { return initialCameraOrientation; }
@@ -141,9 +142,6 @@ class Viewer : public QGLViewer
 		void setCouplingZooms(bool b) { mCouplingZooms = b; updateGL(); }
 		bool getCouplingZooms(bool b) { return mCouplingZooms; }
 
-		void copyViewpoint() {}
-		void pasteViewpoint() {}
-
 		void setVBO_mode(bool b) { VBO_mode = b;  updateGL(); }
 		bool getVBO_mode() { return VBO_mode; }
 		// view options
@@ -222,6 +220,14 @@ class Viewer : public QGLViewer
 		}
 		// dynamic options
 
+		void recreateListsAndUpdateGL()
+		{
+			if (VBO_mode)
+				createLists = true;
+
+			updateGL();
+		}
+
 	protected:
 		virtual void init();
 		virtual void postSelection(const QPoint& point);
@@ -292,6 +298,7 @@ class Viewer : public QGLViewer
 		//
 
 		vector<ManipulatedFramePtr> frame_;
+		vector<GLuint> glList_;
 		unsigned short selected;
 
 		void dessine_space(bool names=false);
@@ -313,6 +320,11 @@ class Viewer : public QGLViewer
 		QTimer *timerDynamic;
 		int m_fps;
 		bool m_reverse, m_loop;
+
+		//
+
+		GLuint glId;
+		bool createLists;
 };
 
 #endif

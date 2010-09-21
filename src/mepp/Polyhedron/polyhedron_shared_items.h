@@ -612,7 +612,37 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			::glEnd(); // // end point assembly
 		}
 
-		void gen_cube()
+		void drawCube()
+		{
+			::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+			glBegin(GL_QUAD_STRIP);
+			  //Quads 1 2 3 4
+				glVertex3f( 0.5f, 0.5f, 0.5f);   //V2
+				glVertex3f( 0.5f,-0.5f, 0.5f);   //V1
+				glVertex3f( 0.5f, 0.5f,-0.5f);   //V4
+				glVertex3f( 0.5f,-0.5f,-0.5f);   //V3
+				glVertex3f(-0.5f, 0.5f,-0.5f);   //V6
+				glVertex3f(-0.5f,-0.5f,-0.5f);   //V5
+				glVertex3f(-0.5f, 0.5f, 0.5f);   //V8
+				glVertex3f(-0.5f,-0.5f, 0.5f);   //V7
+				glVertex3f( 0.5f, 0.5f, 0.5f);   //V2
+				glVertex3f( 0.5f,-0.5f, 0.5f);   //V1
+			glEnd();
+			glBegin(GL_QUADS);
+			  //Quad 5
+				glVertex3f(-0.5f, 0.5f,-0.5f);   //V6
+				glVertex3f(-0.5f, 0.5f, 0.5f);   //V8
+				glVertex3f( 0.5f, 0.5f, 0.5f);   //V2
+				glVertex3f( 0.5f, 0.5f,-0.5f);   //V4
+			  //Quad 6
+				glVertex3f(-0.5f,-0.5f, 0.5f);   //V7
+				glVertex3f(-0.5f,-0.5f,-0.5f);   //V5
+				glVertex3f( 0.5f,-0.5f,-0.5f);   //V3
+				glVertex3f( 0.5f,-0.5f, 0.5f);   //V1
+			glEnd();
+		}
+
+		void gen_glListCube()
 		{
 			if (id_cube)
 				return;
@@ -621,53 +651,40 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				return;
 
 			glNewList(id_cube, GL_COMPILE);
-				::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-				glBegin(GL_QUAD_STRIP);
-				  //Quads 1 2 3 4
-					glVertex3f( 0.5f, 0.5f, 0.5f);   //V2
-					glVertex3f( 0.5f,-0.5f, 0.5f);   //V1
-					glVertex3f( 0.5f, 0.5f,-0.5f);   //V4
-					glVertex3f( 0.5f,-0.5f,-0.5f);   //V3
-					glVertex3f(-0.5f, 0.5f,-0.5f);   //V6
-					glVertex3f(-0.5f,-0.5f,-0.5f);   //V5
-					glVertex3f(-0.5f, 0.5f, 0.5f);   //V8
-					glVertex3f(-0.5f,-0.5f, 0.5f);   //V7
-					glVertex3f( 0.5f, 0.5f, 0.5f);   //V2
-					glVertex3f( 0.5f,-0.5f, 0.5f);   //V1
-				glEnd();
-				glBegin(GL_QUADS);
-				  //Quad 5
-					glVertex3f(-0.5f, 0.5f,-0.5f);   //V6
-					glVertex3f(-0.5f, 0.5f, 0.5f);   //V8
-					glVertex3f( 0.5f, 0.5f, 0.5f);   //V2
-					glVertex3f( 0.5f, 0.5f,-0.5f);   //V4
-				  //Quad 6
-					glVertex3f(-0.5f,-0.5f, 0.5f);   //V7
-					glVertex3f(-0.5f,-0.5f,-0.5f);   //V5
-					glVertex3f( 0.5f,-0.5f,-0.5f);   //V3
-					glVertex3f( 0.5f,-0.5f, 0.5f);   //V1
-				glEnd();
+				drawCube();
 			glEndList();
 		}
 
 		// superimpose vertices
-		virtual void superimpose_spheres(double scale)
+		virtual void superimpose_spheres(bool glList, double scale)
 		{
-			/*GLUquadricObj* pQuadric = gluNewQuadric();
-			::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);*/
+			GLUquadricObj* pQuadric = gluNewQuadric();
+			::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
 			for (Vertex_iterator pVertex = this->vertices_begin(); pVertex !=  this->vertices_end(); pVertex++)
 			{
 				::glPushMatrix();
 					double radius = average_edge_length_around(pVertex)*scale;
 					::glTranslated(pVertex->point().x(), pVertex->point().y(), pVertex->point().z());
-					//::gluSphere(pQuadric,radius,24,24);
-					glScaled(radius, radius, radius);
-					glCallList(id_cube);
+
+					if (glList)
+					{
+						glScaled(radius, radius, radius);
+						glCallList(id_cube);
+					}
+					else
+					{
+						glScaled(radius, radius, radius);
+						drawCube();
+
+						// or
+
+						//::gluSphere(pQuadric,radius,24,24);
+					}
 				::glPopMatrix();
 			}
 
-			//gluDeleteQuadric(pQuadric);
+			gluDeleteQuadric(pQuadric);
 		}
 
 		// Render normals

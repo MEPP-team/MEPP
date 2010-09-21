@@ -111,13 +111,16 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingRotations = mCouplingZooms = false;
 	
 	show_normals = false;
-	VBO_mode = false;
+	VBO_mode = false;//true;
 	save_animation = false;
 
 	timerDynamic = new QTimer(this);
     connect(timerDynamic, SIGNAL(timeout()), this, SLOT(shotDynamic()));
 	m_fps = 24;	//12;
 	m_reverse = m_loop = false;
+
+	createLists = true;
+	glId = 0;
 }
 
 Viewer::~Viewer()
@@ -126,6 +129,12 @@ Viewer::~Viewer()
 	/*if (MeshBuffers[0]!=0 && MeshBuffers[1]!=0)
 		glDeleteBuffers(2, MeshBuffers);*/
 	// VBO
+
+	if (glId)
+		glDeleteLists(glId, 1);
+
+	for (unsigned int i=0; i<frame_.size(); i++)
+		glDeleteLists(glList(i), 1);
 
 	frame_.clear();
 
@@ -721,10 +730,7 @@ void Viewer::render()
 			scene_ptr->get_polyhedron()->superimpose_vertices();
 
 		if (m_SuperimposeVerticesBig)
-		{
-			scene_ptr->get_polyhedron()->gen_cube();
-			scene_ptr->get_polyhedron()->superimpose_spheres(0.1);
-		}
+			scene_ptr->get_polyhedron()->superimpose_spheres(VBO_mode, 0.1);
 	}
 	// end superimpose vertices
 
@@ -789,6 +795,7 @@ void Viewer::init()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndiceArrayVBO), IndiceArrayVBO, GL_STATIC_DRAW);
 	// --- VBO end ---
 #endif
+	glId = glGenLists(1);
 
 	// Swap the CAMERA and FRAME state keys (NoButton and Control)
 	// Save CAMERA binding first. See setHandlerKeyboardModifiers() documentation.
@@ -903,6 +910,9 @@ void Viewer::dessine_space(bool names)
 	int nbMesh = qMin(scene_ptr->get_nb_polyhedrons(), get_nb_frames());
 	for (int i=0; i<nbMesh; i++)
 	{
+		if (VBO_mode)
+			scene_ptr->get_polyhedron(i)->gen_glListCube();
+
 		if (mCouplingRotations)
 			frame(i)->setOrientation(q);
 
@@ -912,11 +922,24 @@ void Viewer::dessine_space(bool names)
 			glMultMatrixd(frame(i)->matrix()); // Multiply matrix to get in the frame coordinate system
 			
 			scene_ptr->set_current_polyhedron(i);
-			render(); // Draws the scene
+			if (VBO_mode)
+			{
+				if (createLists)
+				{
+					glNewList(glList(i), GL_COMPILE); // compile list (don't display now)
+						render(); // Draws the scene
+					glEndList(); // list created
+				}
+				glCallList(glList(i)); // Draws the scene
+			}
+			else
+				render(); // Draws the scene
 
 		if (names) glPopName();
 		glPopMatrix(); // Restore the original (world) coordinate system
 	}
+	if (VBO_mode)
+		createLists = false;
 
 	scene_ptr->set_current_polyhedron(save_polyhedron);
 
@@ -946,7 +969,21 @@ void Viewer::dessine(bool names)
 		glClearColor(m_BackColor[0], m_BackColor[1], m_BackColor[2], 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		render(); // Draws the scene
+		if (VBO_mode)
+		{
+			scene_ptr->get_polyhedron()->gen_glListCube();
+
+			if (createLists)
+			{
+				glNewList(glId, GL_COMPILE); // compile list (don't display now)
+					render(); // Draws the scene
+				glEndList(); // list created
+				createLists = false;
+			}
+			glCallList(glId); // Draws the scene
+		}
+		else
+			render(); // Draws the scene
 	}
 }
 

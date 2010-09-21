@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.31 - 15/09/2010"
+#define MEPP_VERSION "v0.32 - 21/09/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -1265,7 +1265,7 @@ void mainwindow::on_actionCouplingRotations_triggered()
 void mainwindow::on_actionVBO_triggered()
 {
 	if (activeMdiChild() != 0)
-		QMessageBox::information(this, APPLICATION, tr("Function not yet implemented."));
+		((Viewer *)activeMdiChild())->setVBO_mode(actionVBO->isChecked());
 }
 // view options
 
