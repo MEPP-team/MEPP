@@ -54,6 +54,8 @@ class Viewer : public QGLViewer
 		bool getSuperimpose_Edges() { return m_SuperimposeEdges; }
 		void setSuperimpose_Vertices(bool b) { m_SuperimposeVertices = b; updateGL(); }
 		bool getSuperimpose_Vertices() { return m_SuperimposeVertices; }
+		void setSuperimpose_Vertices_big(bool b) { m_SuperimposeVerticesBig = b; updateGL(); }
+		bool getSuperimpose_Vertices_big() { return m_SuperimposeVerticesBig; }
 
 		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) m_UseFaceColor = !b; updateGL(); }
 		bool getVertex_Color() { return m_UseVertexColor; }
@@ -261,6 +263,7 @@ class Viewer : public QGLViewer
 		bool m_FirstView;
 		bool m_SuperimposeEdges;
 		bool m_SuperimposeVertices;
+		bool m_SuperimposeVerticesBig;
 		bool m_Antialiasing;
 		float m_ThicknessControlEdges;
 		float m_PointSize;

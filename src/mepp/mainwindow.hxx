@@ -110,6 +110,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		void on_actionSuperimpose_Edges_triggered();
 		void on_actionSuperimpose_Vertices_triggered();
+		void on_actionSuperimpose_Vertices_big_triggered();
 
 		void on_actionVertex_Color_triggered();
 		void on_actionFace_Color_triggered();

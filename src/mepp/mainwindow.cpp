@@ -445,6 +445,7 @@ void mainwindow::updateMenus()
 
 	actionSuperimpose_Edges->setEnabled(hasMdiChild);
 	actionSuperimpose_Vertices->setEnabled(hasMdiChild);
+	actionSuperimpose_Vertices_big->setEnabled(hasMdiChild);
 
 	actionVertex_Color->setEnabled(hasMdiChild);
 	actionFace_Color->setEnabled(hasMdiChild);
@@ -478,6 +479,7 @@ void mainwindow::updateMenus()
 
 		actionSuperimpose_Edges->setChecked(viewer->getSuperimpose_Edges());
 		actionSuperimpose_Vertices->setChecked(viewer->getSuperimpose_Vertices());
+		actionSuperimpose_Vertices_big->setChecked(viewer->getSuperimpose_Vertices_big());
 
 		actionVertex_Color->setChecked(viewer->getVertex_Color());
 		actionFace_Color->setChecked(viewer->getFace_Color());
@@ -1068,6 +1070,11 @@ void mainwindow::on_actionSuperimpose_Vertices_triggered()
 {
 	if (activeMdiChild() != 0)
 		((Viewer *)activeMdiChild())->setSuperimpose_Vertices(actionSuperimpose_Vertices->isChecked());
+}
+void mainwindow::on_actionSuperimpose_Vertices_big_triggered()
+{
+	if (activeMdiChild() != 0)
+		((Viewer *)activeMdiChild())->setSuperimpose_Vertices_big(actionSuperimpose_Vertices_big->isChecked());
 }
 
 void mainwindow::on_actionVertex_Color_triggered()

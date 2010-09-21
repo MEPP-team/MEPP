@@ -10,6 +10,7 @@
 
 #include "mepp_component_plugin_interface.h"
 
+/*
 // Vertex Array
 GLfloat VertexArray[24] = {
 	-1.0f, 1.0f, -1.0f,
@@ -66,6 +67,7 @@ GLuint IndiceArrayVBO[36] = {
 
 GLuint MeshBuffers[2];
 // VBO
+*/
 
 using namespace qglviewer;
 
@@ -90,6 +92,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	m_DrawVoronoiEdges = false;
 	m_DrawBoundingBox = false;
 	m_SuperimposeVertices = false;
+	m_SuperimposeVerticesBig = false;
 	m_ThicknessControlEdges = 3.0f;
 	m_DrawBoundingBoxWhenMoving = false;
 
@@ -120,8 +123,8 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 Viewer::~Viewer()
 {
 	// VBO
-	if (MeshBuffers[0]!=0 && MeshBuffers[1]!=0)
-		glDeleteBuffers(2, MeshBuffers);
+	/*if (MeshBuffers[0]!=0 && MeshBuffers[1]!=0)
+		glDeleteBuffers(2, MeshBuffers);*/
 	// VBO
 
 	frame_.clear();
@@ -540,6 +543,7 @@ void Viewer::change_material(string mat_name)
 	m_last_material = mat_name;
 }
 
+/*
 // VBO
 void renderVBO()
 {
@@ -575,66 +579,7 @@ void renderVA()
 	glDisableClientState( GL_COLOR_ARRAY );
 	glDisableClientState( GL_VERTEX_ARRAY );
 }
-
-// Display List
-void createList()
-{
-	glNewList(1, GL_COMPILE); // compile list (don't display now)
-
-		glBegin( GL_TRIANGLES );
-
-		// gauche (x=-1)
-		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
-		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
-		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
-		
-		// droite (x=1)
-		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
-		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
-		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
-		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
-
-		// bas (y=-1)
-		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
-		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
-		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
-		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
-		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
-
-		// haut (y=1)
-		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
-		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
-		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
-
-		// arriere (z=-1)
-		glColor3f( 1.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
-		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( -1.0f, 1.0f, -1.0f );
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, -1.0f );
-		glColor3f( 1.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, -1.0f );
-
-		// avant (z=1)
-		glColor3f( 1.0f, 1.0f, 1.0f ); glVertex3f( -1.0f, 1.0f, 1.0f );
-		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
-		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
-		glColor3f( 0.0f, 1.0f, 0.0f ); glVertex3f( 1.0f, 1.0f, 1.0f );
-		glColor3f( 0.0f, 0.0f, 1.0f ); glVertex3f( -1.0f, -1.0f, 1.0f );
-		glColor3f( 0.0f, 1.0f, 1.0f ); glVertex3f( 1.0f, -1.0f, 1.0f );
-
-		glEnd();
-
-	glEndList(); // list created
-}
+*/
 
 void Viewer::render()
 {
@@ -706,7 +651,7 @@ void Viewer::render()
 		glPopMatrix();
 	}
 
-	if (m_SuperimposeEdges || m_SuperimposeVertices)
+	if (m_SuperimposeEdges || m_SuperimposeVertices || m_SuperimposeVerticesBig)
 	{
 		// enable polygon offset
 		glEnable(GL_POLYGON_OFFSET_FILL);
@@ -738,21 +683,17 @@ void Viewer::render()
 	if (!m_Moving || !m_DrawBoundingBoxWhenMoving)
 	{
 		scene_ptr->get_polyhedron()->gl_draw(m_SmoothShading, m_UseNormals, m_UseVertexColor, m_UseFaceColor);
-		//glCallList(1);
-		//renderVA();
-		//renderVBO();
 
 		if (show_normals)
 		{
 			glColor3f(1.f, 0.f, 0.f);
 
 			scene_ptr->get_polyhedron()->draw_normals();
-			//glCallList(4);
 		}
 	}
 
 	// disable lighting
-	if (m_SuperimposeEdges || m_SuperimposeVertices)
+	if (m_SuperimposeEdges || m_SuperimposeVertices || m_SuperimposeVerticesBig)
 	{
         glDisable(GL_LIGHTING);
 	}
@@ -768,22 +709,27 @@ void Viewer::render()
 
 		// superimpose edges on the mesh
 		scene_ptr->get_polyhedron()->superimpose_edges(m_DrawVoronoiEdges);
-		//glCallList(2);
 	}
 	// end superimpose edges
 
 	// superimpose vertices
-	if (m_SuperimposeVertices && !(m_Moving && m_DrawBoundingBoxWhenMoving))
+	if ((m_SuperimposeVertices || m_SuperimposeVerticesBig) && !(m_Moving && m_DrawBoundingBoxWhenMoving))
 	{
 		glColor3f(m_VertexColor[0],m_VertexColor[1],m_VertexColor[2]);
 
-		scene_ptr->get_polyhedron()->superimpose_spheres(0.1);
-		//glCallList(3);
+		if (m_SuperimposeVertices)
+			scene_ptr->get_polyhedron()->superimpose_vertices();
+
+		if (m_SuperimposeVerticesBig)
+		{
+			scene_ptr->get_polyhedron()->gen_cube();
+			scene_ptr->get_polyhedron()->superimpose_spheres(0.1);
+		}
 	}
 	// end superimpose vertices
 
 	// disable polygon offset
-	if (m_SuperimposeEdges || m_SuperimposeVertices)
+	if (m_SuperimposeEdges || m_SuperimposeVertices || m_SuperimposeVerticesBig)
 	{
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
@@ -843,24 +789,6 @@ void Viewer::init()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(IndiceArrayVBO), IndiceArrayVBO, GL_STATIC_DRAW);
 	// --- VBO end ---
 #endif
-	//createList();
-
-	glNewList(1, GL_COMPILE); // compile list (don't display now)
-		scene_ptr->get_polyhedron()->gl_draw(m_SmoothShading, m_UseNormals, m_UseVertexColor, m_UseFaceColor);
-	glEndList(); // list created
-
-	glNewList(2, GL_COMPILE); // compile list (don't display now)
-		scene_ptr->get_polyhedron()->superimpose_edges(m_DrawVoronoiEdges);
-	glEndList(); // list created
-
-	glNewList(3, GL_COMPILE); // compile list (don't display now)
-		scene_ptr->get_polyhedron()->superimpose_vertices();
-		//scene_ptr->get_polyhedron()->superimpose_spheres(0.1);
-	glEndList(); // list created
-
-	glNewList(4, GL_COMPILE); // compile list (don't display now)
-		scene_ptr->get_polyhedron()->draw_normals();
-	glEndList(); // list created
 
 	// Swap the CAMERA and FRAME state keys (NoButton and Control)
 	// Save CAMERA binding first. See setHandlerKeyboardModifiers() documentation.

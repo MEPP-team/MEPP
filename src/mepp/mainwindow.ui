@@ -176,6 +176,7 @@
    <addaction name="actionRender_Fill"/>
    <addaction name="separator"/>
    <addaction name="actionSuperimpose_Vertices"/>
+   <addaction name="actionSuperimpose_Vertices_big"/>
    <addaction name="actionSuperimpose_Edges"/>
    <addaction name="separator"/>
    <addaction name="actionVertex_Color"/>
@@ -852,6 +853,21 @@
    </property>
    <property name="text">
     <string>Reset viewpoint</string>
+   </property>
+  </action>
+  <action name="actionSuperimpose_Vertices_big">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_SuperimposeVertices.png</normaloff>:/icons/Pictures/Icons/_SuperimposeVertices.png</iconset>
+   </property>
+   <property name="text">
+    <string>Superimpose Vertices (bigger)</string>
+   </property>
+   <property name="toolTip">
+    <string>Superimpose Vertices (bigger)</string>
    </property>
   </action>
  </widget>
