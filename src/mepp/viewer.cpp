@@ -111,7 +111,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingRotations = mCouplingZooms = false;
 	
 	show_normals = false;
-	VBO_mode = false;//true;
+	VBO_mode = true;
 	save_animation = false;
 
 	timerDynamic = new QTimer(this);
@@ -119,6 +119,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	m_fps = 24;	//12;
 	m_reverse = m_loop = false;
 
+	if (VBO_mode) m_DrawBoundingBoxWhenMoving = false;
 	createLists = true;
 	glId = 0;
 }
@@ -1021,12 +1022,19 @@ void Viewer::shotDynamic()
 	}
 
 	setDynTitle();
-	updateGL();
+	recreateListsAndUpdateGL();
 }
 
 void Viewer::shotCapture()
 {
 }
+
+void Viewer::setVBO_modeUnchek(bool b)
+{
+	((mainwindow *)m_parent)->actionBounding_box_when_moving->setChecked(!b);
+	setBounding_box_when_moving(!b);
+}
+
 
 void Viewer::mousePressEvent(QMouseEvent *event)
 {

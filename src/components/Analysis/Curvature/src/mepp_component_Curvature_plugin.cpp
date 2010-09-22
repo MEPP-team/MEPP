@@ -146,7 +146,7 @@ void mepp_component_Curvature_plugin::OnDisplayMin()
 		Curvature_ComponentPtr component_ptr = findOrCreateComponentForViewer<Curvature_ComponentPtr, Curvature_Component>(viewer, polyhedron_ptr);
 		component_ptr->ConstructColorMap(polyhedron_ptr,1);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -165,7 +165,7 @@ void mepp_component_Curvature_plugin::OnDisplayMax()
 		Curvature_ComponentPtr component_ptr = findOrCreateComponentForViewer<Curvature_ComponentPtr, Curvature_Component>(viewer, polyhedron_ptr);
 		component_ptr->ConstructColorMap(polyhedron_ptr,2);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -189,7 +189,7 @@ void mepp_component_Curvature_plugin::OnDisplayMinDir()
 				component_ptr->set_displayMinDirections(false);
 		}
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -213,7 +213,7 @@ void mepp_component_Curvature_plugin::OnDisplayMaxDir()
 				component_ptr->set_displayMaxDirections(false);
 		}
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();

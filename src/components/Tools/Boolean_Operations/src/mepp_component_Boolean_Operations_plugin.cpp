@@ -51,7 +51,7 @@ void mepp_component_Boolean_Operations_plugin::New_Position()
 			viewer->frame(i)->setOrientation(0,0,0,1);
 		}
 		viewer->show();
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 	QApplication::restoreOverrideCursor();
 }
@@ -69,7 +69,7 @@ void mepp_component_Boolean_Operations_plugin::Subdiviser()
 		Boolean_Operations_ComponentPtr component_ptr = findOrCreateComponentForViewer<Boolean_Operations_ComponentPtr, Boolean_Operations_Component>(viewer, polyhedron_ptr);
 		component_ptr->SubdiviserPolyedre(polyhedron_ptr);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -113,7 +113,7 @@ void mepp_component_Boolean_Operations_plugin::Union()
 
 			viewer->show();
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 
@@ -158,7 +158,7 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 
 			viewer->show();
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 
@@ -203,7 +203,7 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 
 			viewer->show();
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 

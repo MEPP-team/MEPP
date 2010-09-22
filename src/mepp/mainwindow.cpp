@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.32 - 21/09/2010"
+#define MEPP_VERSION "v0.33 - 22/09/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -720,7 +720,7 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 	int res = viewer->getScenePtr()->add_mesh(fileName, loadType, f, viewer);
 	if (!res)
 	{
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 
 		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
 								.arg(strippedName(fileName))
@@ -1214,7 +1214,15 @@ void mainwindow::on_actionBounding_box_triggered()
 void mainwindow::on_actionBounding_box_when_moving_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
+		if (((Viewer *)activeMdiChild())->getVBO_mode())
+		{
+			actionBounding_box_when_moving->setChecked(false);
+			QMessageBox::information(this, APPLICATION, tr("Sorry, 'bounding box when moving' is not possible with this mode."));
+		}
+
 		((Viewer *)activeMdiChild())->setBounding_box_when_moving(actionBounding_box_when_moving->isChecked());
+	}
 }
 // show options
 

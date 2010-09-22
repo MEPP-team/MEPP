@@ -46,31 +46,31 @@ class Viewer : public QGLViewer
 		string get_material() { return m_last_material; }
 
 		// rendering options
-		void setRender_Point() { m_PolygonMode = GL_POINT; updateGL(); }
-		void setRender_Line() { m_PolygonMode = GL_LINE; updateGL(); }
-		void setRender_Fill() { m_PolygonMode = GL_FILL; updateGL(); }	
+		void setRender_Point() { m_PolygonMode = GL_POINT; recreateListsAndUpdateGL(); }
+		void setRender_Line() { m_PolygonMode = GL_LINE; recreateListsAndUpdateGL(); }
+		void setRender_Fill() { m_PolygonMode = GL_FILL; recreateListsAndUpdateGL(); }	
 		int getRender_Mode() { return m_PolygonMode; }
 
-		void setSuperimpose_Edges(bool b) { m_SuperimposeEdges = b; updateGL(); }
+		void setSuperimpose_Edges(bool b) { m_SuperimposeEdges = b; recreateListsAndUpdateGL(); }
 		bool getSuperimpose_Edges() { return m_SuperimposeEdges; }
-		void setSuperimpose_Vertices(bool b) { m_SuperimposeVertices = b; updateGL(); }
+		void setSuperimpose_Vertices(bool b) { m_SuperimposeVertices = b; recreateListsAndUpdateGL(); }
 		bool getSuperimpose_Vertices() { return m_SuperimposeVertices; }
-		void setSuperimpose_Vertices_big(bool b) { m_SuperimposeVerticesBig = b; updateGL(); }
+		void setSuperimpose_Vertices_big(bool b) { m_SuperimposeVerticesBig = b; recreateListsAndUpdateGL(); }
 		bool getSuperimpose_Vertices_big() { return m_SuperimposeVerticesBig; }
 
-		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) m_UseFaceColor = !b; updateGL(); }
+		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) m_UseFaceColor = !b; recreateListsAndUpdateGL(); }
 		bool getVertex_Color() { return m_UseVertexColor; }
-		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) m_UseVertexColor = !b; updateGL(); }
+		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) m_UseVertexColor = !b; recreateListsAndUpdateGL(); }
 		bool getFace_Color() { return m_UseFaceColor; }
 
-		void setLighting(bool b) { m_Lighting = b; updateGL(); }
+		void setLighting(bool b) { m_Lighting = b; recreateListsAndUpdateGL(); }
 		bool getLighting() { return m_Lighting; }
-		void setSmooth_Shading(bool b) { m_SmoothShading = b; updateGL(); }
+		void setSmooth_Shading(bool b) { m_SmoothShading = b; recreateListsAndUpdateGL(); }
 		bool getSmooth_Shading() { return m_SmoothShading; }
 
-		void setAntialiasing(bool b) { m_Antialiasing = b; updateGL(); }
+		void setAntialiasing(bool b) { m_Antialiasing = b; recreateListsAndUpdateGL(); }
 		bool getAntialiasing() { return m_Antialiasing; }
-		void setCulling(bool b) { m_Culling = b; updateGL(); }
+		void setCulling(bool b) { m_Culling = b; recreateListsAndUpdateGL(); }
 		bool getCulling() { return m_Culling; }
 		// rendering options
 
@@ -78,23 +78,23 @@ class Viewer : public QGLViewer
 		void setViewerBackgroundColor(QColor c) { m_BackColor[0] = float(c.red())/255.; m_BackColor[1] = float(c.green())/255.; m_BackColor[2] = float(c.blue())/255.; updateGL(); }
 		QColor getViewerBackgroundColor() { return QColor(int(m_BackColor[0]*255.), int(m_BackColor[1]*255.), int(m_BackColor[2]*255.)); }
 
-		void setViewerVertexColor(QColor c) { m_VertexColor[0] = float(c.red())/255.; m_VertexColor[1] = float(c.green())/255.; m_VertexColor[2] = float(c.blue())/255.; updateGL(); }
+		void setViewerVertexColor(QColor c) { m_VertexColor[0] = float(c.red())/255.; m_VertexColor[1] = float(c.green())/255.; m_VertexColor[2] = float(c.blue())/255.; recreateListsAndUpdateGL(); }
 		QColor getViewerVertexColor() { return QColor(int(m_VertexColor[0]*255.), int(m_VertexColor[1]*255.), int(m_VertexColor[2]*255.)); }
 
-		void setViewerEdgeColor(QColor c) { m_EdgeColor[0] = float(c.red())/255.; m_EdgeColor[1] = float(c.green())/255.; m_EdgeColor[2] = float(c.blue())/255.; updateGL(); }
+		void setViewerEdgeColor(QColor c) { m_EdgeColor[0] = float(c.red())/255.; m_EdgeColor[1] = float(c.green())/255.; m_EdgeColor[2] = float(c.blue())/255.; recreateListsAndUpdateGL(); }
 		QColor getViewerEdgeColor() { return QColor(int(m_EdgeColor[0]*255.), int(m_EdgeColor[1]*255.), int(m_EdgeColor[2]*255.)); }
 
-		void setViewerFaceColor(QColor c) { m_MeshColor[0] = float(c.red())/255.; m_MeshColor[1] = float(c.green())/255.; m_MeshColor[2] = float(c.blue())/255.; updateGL(); }
+		void setViewerFaceColor(QColor c) { m_MeshColor[0] = float(c.red())/255.; m_MeshColor[1] = float(c.green())/255.; m_MeshColor[2] = float(c.blue())/255.; recreateListsAndUpdateGL(); }
 		QColor getViewerFaceColor() { return QColor(int(m_MeshColor[0]*255.), int(m_MeshColor[1]*255.), int(m_MeshColor[2]*255.)); }
 		// color options
 
 		// show options
-		void setShowNormals(bool b) { show_normals = b; updateGL(); }
+		void setShowNormals(bool b) { show_normals = b; recreateListsAndUpdateGL(); }
 		bool getShowNormals() { return show_normals; }
 
-		void setBounding_box(bool b) { m_DrawBoundingBox = b; updateGL(); }
+		void setBounding_box(bool b) { m_DrawBoundingBox = b; recreateListsAndUpdateGL(); }
 		bool getBounding_box() { return m_DrawBoundingBox; }
-		void setBounding_box_when_moving(bool b) { m_DrawBoundingBoxWhenMoving = b; updateGL(); }
+		void setBounding_box_when_moving(bool b) { m_DrawBoundingBoxWhenMoving = b; recreateListsAndUpdateGL(); }
 		bool getBounding_box_when_moving() { return m_DrawBoundingBoxWhenMoving; }
 		// show options
 
@@ -142,7 +142,7 @@ class Viewer : public QGLViewer
 		void setCouplingZooms(bool b) { mCouplingZooms = b; updateGL(); }
 		bool getCouplingZooms(bool b) { return mCouplingZooms; }
 
-		void setVBO_mode(bool b) { VBO_mode = b;  updateGL(); }
+		void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUnchek(b); recreateListsAndUpdateGL(); }
 		bool getVBO_mode() { return VBO_mode; }
 		// view options
 
@@ -196,10 +196,10 @@ class Viewer : public QGLViewer
 		void setDynStartLoop() { m_reverse = false; m_loop = true; timerDynamic->start(1000/m_fps); }
 		void setDynStop() { timerDynamic->stop(); }
 
-		void setDynFirst() { scene_ptr->set_current_polyhedron(0); setDynTitle(); updateGL(); }
-		void setDynPrevious() { if (scene_ptr->get_current_polyhedron() >= 1) scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()-1); setDynTitle(); updateGL(); }
-		void setDynNext() { if (scene_ptr->get_current_polyhedron() < (scene_ptr->get_nb_polyhedrons()-1)) scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()+1); setDynTitle(); updateGL(); }
-		void setDynLast() { scene_ptr->set_current_polyhedron(scene_ptr->get_nb_polyhedrons()-1); setDynTitle(); updateGL(); }
+		void setDynFirst() { scene_ptr->set_current_polyhedron(0); setDynTitle(); recreateListsAndUpdateGL(); }
+		void setDynPrevious() { if (scene_ptr->get_current_polyhedron() >= 1) scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()-1); setDynTitle(); recreateListsAndUpdateGL(); }
+		void setDynNext() { if (scene_ptr->get_current_polyhedron() < (scene_ptr->get_nb_polyhedrons()-1)) scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()+1); setDynTitle(); recreateListsAndUpdateGL(); }
+		void setDynLast() { scene_ptr->set_current_polyhedron(scene_ptr->get_nb_polyhedrons()-1); setDynTitle(); recreateListsAndUpdateGL(); }
 
 		void setDynDelete()
 		{
@@ -213,7 +213,7 @@ class Viewer : public QGLViewer
 				scene_ptr->set_current_polyhedron(i);
 
 				setDynTitle();
-				updateGL();
+				recreateListsAndUpdateGL();
 			}
 			else
 				QMessageBox::warning(m_parent, APPLICATION, tr("Deleting last mesh not allowed."));
@@ -238,6 +238,8 @@ class Viewer : public QGLViewer
 		void render();
 
 		void closeEvent(QCloseEvent *event);
+
+		void setVBO_modeUnchek(bool b);
 
 		// events
 		virtual void mousePressEvent(QMouseEvent *event);

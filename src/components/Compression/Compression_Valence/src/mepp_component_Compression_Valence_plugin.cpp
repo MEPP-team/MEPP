@@ -227,7 +227,7 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				m_frame->set_status_message(_T("Encoding is done"));*/
 				mw->statusBar()->showMessage(tr("Encoding is done"));
 
-				viewer->updateGL();
+				viewer->recreateListsAndUpdateGL();
 			}
 		}
 	}
@@ -415,7 +415,7 @@ void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event
 
 			}
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 }
@@ -468,7 +468,7 @@ void mepp_component_Compression_Valence_plugin::OnMouseRightUp(QMouseEvent *even
 				}
 			}
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 }
@@ -583,7 +583,7 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 				ShowText();
 			}
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 
@@ -684,7 +684,7 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_one_level()
 				}
 			}
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 }
@@ -748,7 +748,7 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_precedent_level()
 
 			}
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 }
@@ -897,7 +897,7 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 
 			}
 
-			viewer->updateGL();
+			viewer->recreateListsAndUpdateGL();
 		}
 	}
 }

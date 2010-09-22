@@ -150,7 +150,7 @@ void mepp_component_CGAL_Example_plugin::OnMouseLeftDown(QMouseEvent *event)
 				PolyhedronPtr new_polyhedron_ptr(new Polyhedron(*(viewer->getScenePtr()->get_polyhedron())));
 
 				component_ptr->GetClickedVertices(viewer->getScenePtr()->get_polyhedron(), event->x(), event->y(), 10);
-				viewer->updateGL();
+				viewer->recreateListsAndUpdateGL();
 				SleeperThread::msleep(300);
 
 				viewer->getScenePtr()->add_polyhedron(new_polyhedron_ptr);
@@ -163,12 +163,12 @@ void mepp_component_CGAL_Example_plugin::OnMouseLeftDown(QMouseEvent *event)
 													.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
 													.arg(viewer->getScenePtr()->get_nb_polyhedrons()));
 
-				viewer->updateGL();
+				viewer->recreateListsAndUpdateGL();
 			}
 			else if (viewer->getScenePtr()->get_loadType() == Normal)
 			{
 				component_ptr->GetClickedVertices(viewer->getScenePtr()->get_polyhedron(), event->x(), event->y(), 10);
-				viewer->updateGL();
+				viewer->recreateListsAndUpdateGL();
 			}
 		}
 	}
@@ -291,7 +291,7 @@ void mepp_component_CGAL_Example_plugin::step1()
 		component_ptr->TriangulateAndRandomColorFacets(polyhedron_ptr);
 
 		component_ptr->set_init(2);
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -310,7 +310,7 @@ void mepp_component_CGAL_Example_plugin::step2()
 		CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
 		component_ptr->CreateCenterVertex(polyhedron_ptr, false);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -329,7 +329,7 @@ void mepp_component_CGAL_Example_plugin::step3()
 		CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
 		component_ptr->ShowBlackAndWhiteFacets(polyhedron_ptr);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -490,7 +490,7 @@ void mepp_component_CGAL_Example_plugin::example()
 		CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
 		component_ptr->TriangulateAndRandomColorFacets(polyhedron_ptr);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}	
 
 	// active viewer
@@ -502,7 +502,7 @@ void mepp_component_CGAL_Example_plugin::example()
 		CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
 		component_ptr->CreateCenterVertex(polyhedron_ptr, false);
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 	}
 
 	QApplication::restoreOverrideCursor();
