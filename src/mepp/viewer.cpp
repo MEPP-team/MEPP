@@ -970,7 +970,9 @@ void Viewer::dessine(bool names)
 		glClearColor(m_BackColor[0], m_BackColor[1], m_BackColor[2], 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (VBO_mode)
+		if ((scene_ptr->get_loadType()==Time && timerDynamic->isActive()) || (!VBO_mode))
+			render(); // Draws the scene
+		else
 		{
 			scene_ptr->get_polyhedron()->gen_glListCube();
 
@@ -983,8 +985,6 @@ void Viewer::dessine(bool names)
 			}
 			glCallList(glId); // Draws the scene
 		}
-		else
-			render(); // Draws the scene
 	}
 }
 
@@ -1031,7 +1031,7 @@ void Viewer::shotCapture()
 
 void Viewer::setVBO_modeUncheck(bool b)
 {
-        ((mainwindow *)m_parent)->actionBounding_box_when_moving->setChecked(!b);
+	((mainwindow *)m_parent)->actionBounding_box_when_moving->setChecked(!b);
 	setBounding_box_when_moving(!b);
 }
 

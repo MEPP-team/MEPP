@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.33 - 22/09/2010"
+#define MEPP_VERSION "v0.34 - 22/09/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -720,8 +720,6 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 	int res = viewer->getScenePtr()->add_mesh(fileName, loadType, f, viewer);
 	if (!res)
 	{
-		viewer->recreateListsAndUpdateGL();
-
 		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
 								.arg(strippedName(fileName))
 								.arg(viewer->getScenePtr()->get_stringLoadType())
@@ -851,6 +849,7 @@ void mainwindow::actionOpen_and_Add_space_slot(QString title, QString typeFiles,
 
 			++it;
 		}
+		viewer->recreateListsAndUpdateGL();
 	}
 }
 void mainwindow::on_actionOpen_and_Add_space_triggered()
@@ -876,6 +875,7 @@ void mainwindow::actionOpen_and_Add_time_slot(QString title, QString typeFiles, 
 
 			++it;
 		}
+		viewer->recreateListsAndUpdateGL();
 	}
 }
 void mainwindow::on_actionOpen_and_Add_time_triggered()

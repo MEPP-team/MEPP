@@ -36,7 +36,7 @@ class Viewer : public QGLViewer
 		int get_nb_frames() { return (int)frame_.size(); }
 		qglviewer::ManipulatedFrame* frame(unsigned short i) { return frame_[i].get(); }
 		void setSelectedFrameNumber(unsigned short nb) { selected = nb; }
-		void addFrame() { frame_.push_back(ManipulatedFramePtr(new qglviewer::ManipulatedFrame())); glList_.push_back(glGenLists(1)); if (VBO_mode) createLists = true; }
+		void addFrame() { frame_.push_back(ManipulatedFramePtr(new qglviewer::ManipulatedFrame())); glList_.push_back(glGenLists(1)); }
 		GLuint glList(unsigned short i) { return glList_[i]; }
 
 		qglviewer::Vec getInitialCameraPosition() { return initialCameraPosition; }
@@ -226,6 +226,9 @@ class Viewer : public QGLViewer
 				createLists = true;
 
 			updateGL();
+
+			/*if (VBO_mode)
+				createLists = false;*/
 		}
 
 	protected:
@@ -239,7 +242,7 @@ class Viewer : public QGLViewer
 
 		void closeEvent(QCloseEvent *event);
 
-                void setVBO_modeUncheck(bool b);
+		void setVBO_modeUncheck(bool b);
 
 		// events
 		virtual void mousePressEvent(QMouseEvent *event);
