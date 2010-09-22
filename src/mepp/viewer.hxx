@@ -142,7 +142,7 @@ class Viewer : public QGLViewer
 		void setCouplingZooms(bool b) { mCouplingZooms = b; updateGL(); }
 		bool getCouplingZooms(bool b) { return mCouplingZooms; }
 
-		void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUnchek(b); recreateListsAndUpdateGL(); }
+                void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); recreateListsAndUpdateGL(); }
 		bool getVBO_mode() { return VBO_mode; }
 		// view options
 
@@ -239,7 +239,7 @@ class Viewer : public QGLViewer
 
 		void closeEvent(QCloseEvent *event);
 
-		void setVBO_modeUnchek(bool b);
+                void setVBO_modeUncheck(bool b);
 
 		// events
 		virtual void mousePressEvent(QMouseEvent *event);

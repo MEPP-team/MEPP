@@ -3,7 +3,7 @@
 // Year: 2010
 // CNRS-Lyon, LIRIS UMR 5205
 /////////////////////////////////////////////////////////////////////////// 
-#include <GL/glew.h>
+//#include <GL/glew.h>
 
 #include "viewer.hxx"
 #include "scene.h"
@@ -1029,9 +1029,9 @@ void Viewer::shotCapture()
 {
 }
 
-void Viewer::setVBO_modeUnchek(bool b)
+void Viewer::setVBO_modeUncheck(bool b)
 {
-	((mainwindow *)m_parent)->actionBounding_box_when_moving->setChecked(!b);
+        ((mainwindow *)m_parent)->actionBounding_box_when_moving->setChecked(!b);
 	setBounding_box_when_moving(!b);
 }
 

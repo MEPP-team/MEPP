@@ -1215,13 +1215,15 @@ void mainwindow::on_actionBounding_box_when_moving_triggered()
 {
 	if (activeMdiChild() != 0)
 	{
-		if (((Viewer *)activeMdiChild())->getVBO_mode())
+                Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+
+                if (viewer->getVBO_mode())
 		{
 			actionBounding_box_when_moving->setChecked(false);
 			QMessageBox::information(this, APPLICATION, tr("Sorry, 'bounding box when moving' is not possible with this mode."));
 		}
 
-		((Viewer *)activeMdiChild())->setBounding_box_when_moving(actionBounding_box_when_moving->isChecked());
+                viewer->setBounding_box_when_moving(actionBounding_box_when_moving->isChecked());
 	}
 }
 // show options
