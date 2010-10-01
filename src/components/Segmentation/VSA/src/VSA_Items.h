@@ -14,7 +14,7 @@ class VSA_Facet : virtual public MEPP_Common_Facet<Refs, T, Norm>
 		VSA_Facet() {}
 
 		//label issu de la segmentation
-		int Label;		
+		int LabelVSA;		
 		
 		};
 

@@ -84,7 +84,7 @@
 
 			}
 
-			pface->Label=-1;
+			pface->LabelVSA=-1;
 			i++;
 		}
 
@@ -150,7 +150,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				pface	!= m_Poly->facets_end();
 				pface++)
 		{
-			pface->Label=-1;
+			pface->LabelVSA=-1;
 		}
 
 
@@ -159,7 +159,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 		{
 			m_Table_Proxy[i].TabAdj.clear();
 			Facet_iterator f=m_Table_Proxy[i].Seed;
-			f->Label=i;
+			f->LabelVSA=i;
 
 
 			//on extrait les trois triangle
@@ -200,9 +200,9 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 		ListFacet_iterator it;
 		for(it=ListFacet.begin();it!=ListFacet.end();)
 		{
-			if(it->Facet->Label==-1)
+			if(it->Facet->LabelVSA==-1)
 			{
-				it->Facet->Label=it->PossibleCluster;
+				it->Facet->LabelVSA=it->PossibleCluster;
 				//ensuite on met ses triangles adjacents dans la queue
 
 
@@ -216,7 +216,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				if(!pHalfedge->opposite()->is_border())
 				{
 					ff1 = pHalfedge->opposite()->facet();
-					if(ff1->Label==-1 )
+					if(ff1->LabelVSA==-1 )
 					{
 						f1.Facet=ff1;
 						f1.PossibleCluster=it->PossibleCluster;
@@ -227,7 +227,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				if(!pHalfedge->next()->opposite()->is_border())
 				{
 					ff2 = pHalfedge->next()->opposite()->facet();
-					if(ff2->Label==-1)
+					if(ff2->LabelVSA==-1)
 					{
 						f2.Facet=ff2;
 						f2.PossibleCluster=it->PossibleCluster;
@@ -238,7 +238,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				if(!pHalfedge->next()->next()->opposite()->is_border())
 				{
 					ff3 = pHalfedge->next()->next()->opposite()->facet();
-					if(ff3->Label==-1)
+					if(ff3->LabelVSA==-1)
 					{
 						f3.Facet=ff3;
 						f3.PossibleCluster=it->PossibleCluster;
@@ -261,8 +261,8 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 			if(pHalfedge->is_border()||pHalfedge->opposite()->is_border())
 				continue;
 
-			int Label1=pHalfedge->facet()->Label;
-			int Label2=pHalfedge->opposite()->facet()->Label;
+			int Label1=pHalfedge->facet()->LabelVSA;
+			int Label2=pHalfedge->opposite()->facet()->LabelVSA;
 			if(Label1!=Label2)
 			{
 
@@ -310,8 +310,8 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				pface++)
 		{
 			double area=AreaFacetTriangleSeg(pface);
-			TabArea[pface->Label]+=area;
-			TabNormal[pface->Label]=TabNormal[pface->Label]+pface->normal()*area;
+			TabArea[pface->LabelVSA]+=area;
+			TabNormal[pface->LabelVSA]=TabNormal[pface->LabelVSA]+pface->normal()*area;
 
 		}
 
@@ -331,21 +331,21 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				pface	!= m_Poly->facets_end();
 				pface++)
 		{
-			double distance=DistorsionError(pface,m_Table_Proxy[pface->Label]);
-			m_Table_Proxy[pface->Label].TotalDistorsion+=distance;
-			if(distance<DistanceMin[pface->Label])
+			double distance=DistorsionError(pface,m_Table_Proxy[pface->LabelVSA]);
+			m_Table_Proxy[pface->LabelVSA].TotalDistorsion+=distance;
+			if(distance<DistanceMin[pface->LabelVSA])
 			{
 
-				DistanceMin[pface->Label]=distance;
-				m_Table_Proxy[pface->Label].Seed=pface;
+				DistanceMin[pface->LabelVSA]=distance;
+				m_Table_Proxy[pface->LabelVSA].Seed=pface;
 			}
 
 			//on repère la MostDistordedFacet
-			if(distance>DistanceMax[pface->Label])
+			if(distance>DistanceMax[pface->LabelVSA])
 			{
 
-				DistanceMax[pface->Label]=distance;
-				m_Table_Proxy[pface->Label].MostDistordedFacet=pface;
+				DistanceMax[pface->LabelVSA]=distance;
+				m_Table_Proxy[pface->LabelVSA].MostDistordedFacet=pface;
 			}
 
 
@@ -457,7 +457,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 		for(;pFacet	!= pMesh->facets_end();pFacet++)
 		{
 
-			double R=(double)(pFacet->Label)/(double)pMesh->NbFaceLabel*255.;
+			double R=(double)(pFacet->LabelVSA)/(double)pMesh->NbFaceLabel*255.;
 			int indiceLut=floor(R);
 
 			pFacet->color(LUT_Seg[3*indiceLut],LUT_Seg[3*indiceLut+1],LUT_Seg[3*indiceLut+2]);
