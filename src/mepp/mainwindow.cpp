@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.34 - 22/09/2010"
+#define MEPP_VERSION "v0.35b - 04/10/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -36,12 +36,47 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 	clearMenu(menuComponents);
 
 	// dock
-	dock = new QDockWidget(tr(" Components (right-click)"), this);
-	dock->setMinimumWidth(220);
-	inner = new QMainWindow(dock);
+
+	// Components
+	dockComponents = new QDockWidget(tr(" Components (right-click)"), this);
+	dockComponents->setMinimumWidth(220);
+	inner = new QMainWindow(dockComponents);
 	inner->setWindowFlags(Qt::Widget); // <---------
-	dock->setWidget(inner);
-	this->addDockWidget(Qt::LeftDockWidgetArea, dock);
+	dockComponents->setWidget(inner);
+	this->addDockWidget(Qt::LeftDockWidgetArea, dockComponents);
+
+	// ---
+
+	// DirView
+	/*dockDirView = new QDockWidget(tr(" Directory view"), this);
+	dockDirView->setMinimumWidth(260);
+	this->addDockWidget(Qt::RightDockWidgetArea, dockDirView);
+
+		model = new QFileSystemModel;
+		QStringList filters;
+		filters << "*.off" << "*.obj" << "*.smf" << "*.ply";  // extensions
+		model->setNameFilters(filters);
+		model->setNameFilterDisables(false);
+
+		proxyModel = new QSortFilterProxyModel;
+		proxyModel->setSourceModel(model);
+
+		tree = new QTreeView();
+		tree->setModel(proxyModel);	//model
+		tree->setSortingEnabled(true);
+
+		tree->setColumnHidden(2, true);
+		tree->setColumnWidth(0, 260);
+		tree->sortByColumn(0, Qt::AscendingOrder);
+		
+		QString location("C:\\_prj_\\MEPP2\\SVN\\data\\");
+		QModelIndex index = model->setRootPath(location);	//QDir::currentPath()
+		QModelIndex proxyIndex = proxyModel->mapFromSource(index);
+
+		tree->scrollTo(proxyIndex);
+		tree->setExpanded(proxyIndex, true);
+
+    dockDirView->setWidget(tree);*/
 	// dock
 	
 	loadPlugins();
@@ -71,8 +106,17 @@ mainwindow::~mainwindow()
 	}
 
 	// dock
+
+	// Components
 	delete inner;
-	delete dock;
+	delete dockComponents;
+
+	// DirView
+	/*delete tree;
+	delete proxyModel;
+	delete model;
+	delete dockDirView;*/
+	// dock
 
 	delete aboutQGLViewer; // for aboutQGLViewer
 

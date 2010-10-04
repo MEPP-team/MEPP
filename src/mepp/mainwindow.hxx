@@ -212,8 +212,12 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		mepp_action *mainwindowActionOpen_and_Add_space, *mainwindowActionOpen_and_Add_time;
 		mepp_action *mainwindowActionSave_As;
 
-		QDockWidget* dock;
-		QMainWindow* inner;
+		QDockWidget *dockComponents, *dockDirView;
+		QMainWindow *inner;
+
+		QFileSystemModel *model;
+		QSortFilterProxyModel *proxyModel;
+		QTreeView *tree;
 };
 
 #endif
