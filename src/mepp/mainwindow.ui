@@ -745,10 +745,10 @@
    </property>
    <property name="icon">
     <iconset resource="mepp.qrc">
-     <normaloff>:/icons/Pictures/Icons/_VBO.png</normaloff>:/icons/Pictures/Icons/_VBO.png</iconset>
+     <normaloff>:/icons/Pictures/Icons/_DL.png</normaloff>:/icons/Pictures/Icons/_DL.png</iconset>
    </property>
    <property name="text">
-    <string>VBO mode</string>
+    <string>'Display Lists' mode</string>
    </property>
   </action>
   <action name="actionFace_color">
@@ -861,7 +861,7 @@
    </property>
    <property name="icon">
     <iconset resource="mepp.qrc">
-     <normaloff>:/icons/Pictures/Icons/_SuperimposeVertices.png</normaloff>:/icons/Pictures/Icons/_SuperimposeVertices.png</iconset>
+     <normaloff>:/icons/Pictures/Icons/_SuperimposeSpheres.png</normaloff>:/icons/Pictures/Icons/_SuperimposeSpheres.png</iconset>
    </property>
    <property name="text">
     <string>Superimpose Vertices (bigger)</string>
