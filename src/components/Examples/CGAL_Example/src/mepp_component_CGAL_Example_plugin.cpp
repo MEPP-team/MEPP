@@ -8,6 +8,8 @@
 
 #include "mepp_component_CGAL_Example_plugin.hxx"
 
+#include "dialSettings.hxx"
+
 #include <QObject>
 #include <QAction>
 #include <QApplication>
@@ -299,8 +301,6 @@ void mepp_component_CGAL_Example_plugin::step1()
 
 void mepp_component_CGAL_Example_plugin::step2()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -308,9 +308,53 @@ void mepp_component_CGAL_Example_plugin::step2()
 		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
 		CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
-		component_ptr->CreateCenterVertex(polyhedron_ptr, false);
+		
+		//wxColour current_color(m_component->round(m_component->color(0)*255.), m_component->round(m_component->color(1)*255.), m_component->round(m_component->color(2)*255.));
+		//wxColour new_color = ::wxGetColourFromUser(m_frame, current_color);
+		QColor current_color(int(component_ptr->color(0)*255.), int(component_ptr->color(1)*255.), int(component_ptr->color(2)*255.));
+		QColor new_color = QColorDialog::getColor(current_color, viewer);
+		
+		if (new_color.isValid())
+		{
+			component_ptr->color(float(new_color.red())/255., float(new_color.green())/255., float(new_color.blue())/255.);
 
-		viewer->recreateListsAndUpdateGL();
+			SettingsDialog dial;
+			if (dial.exec() == QDialog::Accepted)
+			{
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+
+				//char iterationChar[256];
+				//strcpy(iterationChar, dial.m_textIteration->GetValue().ToAscii());
+				int iteration = dial.Iteration->value();//atoi(iterationChar);
+
+				//wxBusyInfo busy(_T("Create center vertex..."));
+
+				//m_frame->set_status_message(_T("Create center vertex..."));
+				mw->statusBar()->showMessage(tr("Create center vertex..."));
+
+				if (viewer->getScenePtr()->get_nb_polyhedrons()==1)
+					component_ptr->CreateCenterVertex(polyhedron_ptr, true);
+				else
+				{
+					for (int p=0; p<viewer->getScenePtr()->get_nb_polyhedrons(); p++)
+						for (int i=0; i<iteration; i++)
+							component_ptr->CreateCenterVertex(viewer->getScenePtr()->get_polyhedron(p), false);
+				}
+
+				/*m_frame->update_mesh_properties();
+				m_frame->Refresh();
+				m_frame->set_status_message(_T("Create center vertex...done"));*/
+				mw->statusBar()->showMessage(tr("Create center vertex...done"));
+
+				viewer->recreateListsAndUpdateGL();
+
+				QApplication::restoreOverrideCursor();
+				return;
+			}
+		}
+
+		//m_frame->set_status_message(_T("Create center vertex...canceled"));
+		mw->statusBar()->showMessage(tr("Create center vertex...canceled"));
 	}
 
 	QApplication::restoreOverrideCursor();

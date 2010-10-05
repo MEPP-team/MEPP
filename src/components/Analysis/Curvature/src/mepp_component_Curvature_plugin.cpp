@@ -3,6 +3,8 @@
 
 #include "mepp_component_Curvature_plugin.hxx"
 
+#include "dialSettings.hxx"
+
 #include <QObject>
 #include <QAction>
 #include <QApplication>
@@ -89,8 +91,6 @@ void mepp_component_Curvature_plugin::OnMouseLeftDown(QMouseEvent *event)
 
 void mepp_component_Curvature_plugin::OnCurvature()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -103,26 +103,29 @@ void mepp_component_Curvature_plugin::OnCurvature()
 			double radius;
 			//char radiusChar[256];
 
-			//DialogCurv dial(m_frame);
-			//if (dial.ShowModal() == wxID_OK)
+			SettingsDialog dial;
+			if (dial.exec() == QDialog::Accepted)
 			{
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+
 				//strcpy(radiusChar,dial.m_textRadius->GetValue().ToAscii());
 				//radius=atof(radiusChar);
-				radius = 0.001;
+				radius = dial.Radius->value();
 
-				if (1)//if (dial.m_radioGeo->GetSelection()==0)
+				if (dial.radioGeo->isChecked())
 					IsGeo=true;
 				else
 					IsGeo=false;
 
 				//wxBusyInfo busy(_T("Calculating curvature..."));
-				//m_frame->set_status_message(_T("Curvature..."));
 
-				QApplication::setOverrideCursor(Qt::WaitCursor);
+				//m_frame->set_status_message(_T("Curvature..."));
+				mw->statusBar()->showMessage(tr("Curvature..."));
+				
 				component_ptr->principal_curvature(polyhedron_ptr,IsGeo,radius);
-				QApplication::restoreOverrideCursor();
 
 				//m_frame->set_status_message(_T("Curvature...done"));
+				mw->statusBar()->showMessage(tr("Curvature is done"));
 
 				component_ptr->set_init(2);
 				viewer->updateGL();

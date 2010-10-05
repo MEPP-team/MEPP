@@ -3,6 +3,8 @@
 
 #include "mepp_component_VSA_plugin.hxx"
 
+#include "dialSettings.hxx"
+
 #include <QObject>
 #include <QAction>
 #include <QApplication>
@@ -15,8 +17,6 @@ typedef boost::shared_ptr<VSA_Component> VSA_ComponentPtr;
 
 void mepp_component_VSA_plugin::VariationalSegmentation()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -36,7 +36,6 @@ void mepp_component_VSA_plugin::VariationalSegmentation()
 				_T("The mesh owns non-triangular facets")			  
 					   
 				   );*/
-			QApplication::restoreOverrideCursor();
 			QMessageBox::information(mw, APPLICATION, tr("Segmentation not possible: the mesh owns non-triangular facets."));
 			return;
 		}
@@ -46,22 +45,24 @@ void mepp_component_VSA_plugin::VariationalSegmentation()
 				_T("The mesh owns more than one component")			  
 					   
 				   );*/
-			QApplication::restoreOverrideCursor();
 			QMessageBox::information(mw, APPLICATION, tr("Segmentation not possible: the mesh owns more than one component."));
 			return;
 		}
-		/*DialogVarSeg dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		
+		SettingsDialog dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			//strcpy(RegNbChar,dial.m_textCtrlReg->GetValue().ToAscii());
 			//strcpy(IterNbChar,dial.m_textCtrlIter->GetValue().ToAscii());
-			RegNb=15;//atoi(RegNbChar);
-			IterNb=20;//atoi(IterNbChar);
+			RegNb=dial.CtrlReg->value();//atoi(RegNbChar);
+			IterNb=dial.CtrlIter->value();//atoi(IterNbChar);
 
-			/*if(dial.m_radioBoxChoix->GetSelection()==0)
-				IsIncre=false;
-			else*/
+			if (dial.radioInc->isChecked())
 				IsIncre=true;
+			else
+				IsIncre=false;
 
 			//wxBusyInfo busy(_T("Variational Segmentation..."));
 
@@ -75,9 +76,9 @@ void mepp_component_VSA_plugin::VariationalSegmentation()
 
 			//m_frame->set_status_message(_T("Segmentation...done"));
 			mw->statusBar()->showMessage(tr("Segmentation is done"));
-		}
 
-		viewer->recreateListsAndUpdateGL();
+			viewer->recreateListsAndUpdateGL();
+		}
 	}
 
 	QApplication::restoreOverrideCursor();
