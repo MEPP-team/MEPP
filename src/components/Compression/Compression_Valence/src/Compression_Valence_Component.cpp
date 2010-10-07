@@ -3199,13 +3199,15 @@ void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & pMesh, Arithmet
 	
 	int Count_facet_index = 0;	 
 	for (Facet_iterator pFacet = pMesh.facets_begin() ; pFacet != pMesh.facets_end() ; pFacet++)
-	{		
+	{
+		Count_facet_index++;
+
 		Halfedge_handle pHalfedge = pFacet->halfedge();				
 		do
 		{
 			enc.put_bits(pHalfedge->vertex()->Vertex_Number, Facet_index_bit);			
 			pHalfedge = pHalfedge->next();
-			Count_facet_index++;
+			
 
 		} while (pHalfedge != pFacet->halfedge());		
 	}
