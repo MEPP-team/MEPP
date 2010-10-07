@@ -3,6 +3,9 @@
 
 #include "mepp_component_Compression_Valence_plugin.hxx"
 
+#include "dialSettingsComp.hxx"
+#include "dialSettingsDecomp.hxx"
+
 #include <QObject>
 #include <QAction>
 #include <QApplication>
@@ -53,14 +56,6 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				fclose(file);
 			}
 
-			QString fileName = QFileDialog::getSaveFileName(mw, tr("Save P3D File - from Valence"),
-											 QDir::currentPath(), //QString()
-											 tr("P3D files (*.p3d)"));
-			if (fileName.isEmpty())
-				return;
-
-			QApplication::setOverrideCursor(Qt::WaitCursor);
-
 			////////////////////////////////////////////////////
 			unsigned Number_vertices = 0;
 			unsigned Qbit = 0;		
@@ -102,7 +97,14 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 
 
 			if (dial.ShowModal() == wxID_OK)*/
+			SettingsDialogComp dial;
+			if (dial.exec() == QDialog::Accepted)
 			{	
+				QString fileName = dial.file_name->text();
+				if (fileName.isEmpty())
+					return;
+
+				QApplication::setOverrideCursor(Qt::WaitCursor);
 
 				/*wxString N_Path = dial.m_directory->GetPath();
 				wxString N_File_Name = dial.m_file_name->GetValue();
@@ -110,16 +112,16 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 
 				wxString File = N_Path + _T("\\") + N_File_Name; // File name is chosenS*/
 				//wxString File = N_File_Name; // File name is chosenS
-				Qbit = 10;//dial.m_quanti->GetValue();
+				Qbit = dial.quanti->value();
 
-				Is_normal_flipping_selected = false;//dial.m_normal_flipping->GetValue();
+				Is_normal_flipping_selected = dial.normal_flipping->isChecked();
 
-				if (1)//if dial.compression_mode->GetSelection() == 0)
+				if (dial.radioWithout->isChecked())
 					Is_adaptive_quantization_selected = false;
 				else
 					Is_adaptive_quantization_selected = true;
 				
-				if (1)//if (dial.function_mode->GetSelection()==0)
+				if (dial.radioCompression->isChecked())
 				{
 					component_ptr->IsCompressed = true;
 					Is_compression_selected = true;
@@ -127,23 +129,23 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				else
 					Is_compression_selected = false;
 
-				Is_use_metric_selected = false;//dial.m_use_metric->GetValue();
+				Is_use_metric_selected = dial.useMetric->isChecked();
 				//strcpy(String_number_vertices, dial.m_number_vertices->GetValue().ToAscii());
-				Number_vertices = 100;//atoi(String_number_vertices);
+				Number_vertices = dial.number_vertices->value();
 
-				/*if (Is_use_metric_selected == true) // Decided to use metric to select vertices to be removed
+				if (Is_use_metric_selected == true) // Decided to use metric to select vertices to be removed
 				{
-					strcpy(String_MValue, dial.m_metric_value->GetValue().ToAscii());
-					Metric_threshold = atof(String_MValue);
+					//strcpy(String_MValue, dial.m_metric_value->GetValue().ToAscii());
+					Metric_threshold = dial.metric_value->value();
 
-					Is_use_forget_metric_selected = dial.m_forget_metric->GetValue();
+					Is_use_forget_metric_selected = dial.forgetMetric->isChecked();
 
 					if (Is_use_forget_metric_selected == true)
 					{
-						strcpy(String_FValue, dial.m_forget_metric_value->GetValue().ToAscii());
-						Forget_metric_value = atoi(String_FValue);
+						//strcpy(String_FValue, dial.m_forget_metric_value->GetValue().ToAscii());
+						Forget_metric_value = dial.forget_metric_value->value();
 					}
-				}*/
+				}
 
 				char File_Name[256];
 				strcpy(File_Name, fileName.toStdString().c_str()); //strcpy(File_Name,File.ToAscii());
@@ -800,11 +802,13 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 			dial.m_staticText4->SetLabel(Current);
 			dial.m_staticText5->SetLabel(Total);*/
 
-
-			if (1)//dial.ShowModal() == wxID_OK)
+			SettingsDialogDecomp dial;
+			dial.currentLevel->setText(QString("%1").arg(int(CLevel)));
+			dial.maxLevel->setText(QString("%1").arg(int(component_ptr->Total_layer)));
+			if (dial.exec() == QDialog::Accepted)
 			{
 				//strcpy(WL,dial.m_textCtrl3->GetValue().ToAscii());
-				Wanted_level =  0;//atoi(WL);
+				Wanted_level = dial.wantedLevel->value();
 			}
 			else
 				return;
