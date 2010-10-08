@@ -39,8 +39,8 @@ void mepp_component_Curvature_plugin::post_draw()
 							{
 
 								float RayonMoyen=polyhedron_ptr->average_edge_length_around(pVertex);
-								const Point3d& p1 = pVertex->point()-0.4*RayonMoyen*(pVertex->VKmin);
-								const Point3d& p2 = pVertex->point()+0.4*RayonMoyen*(pVertex->VKmin);
+								const Point3d& p1 = pVertex->point()-0.4*RayonMoyen*(pVertex->VKminCurv);
+								const Point3d& p2 = pVertex->point()+0.4*RayonMoyen*(pVertex->VKminCurv);
 								::glVertex3f(p1[0],p1[1],p1[2]);
 								::glVertex3f(p2[0],p2[1],p2[2]);
 							}
@@ -59,8 +59,8 @@ void mepp_component_Curvature_plugin::post_draw()
 							{
 
 								float RayonMoyen=polyhedron_ptr->average_edge_length_around(pVertex);
-								const Point3d& p1 = pVertex->point()-0.4*RayonMoyen*(pVertex->VKmax);
-								const Point3d& p2 = pVertex->point()+0.4*RayonMoyen*(pVertex->VKmax);
+								const Point3d& p1 = pVertex->point()-0.4*RayonMoyen*(pVertex->VKmaxCurv);
+								const Point3d& p2 = pVertex->point()+0.4*RayonMoyen*(pVertex->VKmaxCurv);
 								::glVertex3f(p1[0],p1[1],p1[2]);
 								::glVertex3f(p2[0],p2[1],p2[2]);
 							}

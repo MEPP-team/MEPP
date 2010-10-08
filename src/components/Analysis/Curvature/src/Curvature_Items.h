@@ -33,13 +33,13 @@ class Curvature_Vertex : virtual public MEPP_Common_Vertex<Refs, T, P, Norm>
 
         //attributs
         //MinCurvature
-        double Kmin;
+        double KminCurv;
         //MaxCurvature
-        double Kmax;
+        double KmaxCurv;
 
         //vecteur courbures principales
-        Norm VKmin;
-        Norm VKmax;
+        Norm VKminCurv;
+        Norm VKmaxCurv;
 };
 
 

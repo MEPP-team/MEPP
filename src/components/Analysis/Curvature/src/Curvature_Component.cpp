@@ -295,8 +295,8 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				//recherche des vecteurs et valeurs propres
 				if (ValPro(3,CovMat,1e-15,10000.,VectPro,Valpro)==-1)
 				{
-					pVertex->VKmax=CGAL::NULL_VECTOR;
-					pVertex->VKmin=CGAL::NULL_VECTOR;
+					pVertex->VKmaxCurv=CGAL::NULL_VECTOR;
+					pVertex->VKminCurv=CGAL::NULL_VECTOR;
 					return;
 				}
 			}
@@ -308,8 +308,8 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 
 				}
 			EigSrt(Valpro,VectPro,3);
-			Vector VKmax(VectPro[1][2],VectPro[2][2],VectPro[3][2]);
-			Vector VKmin(VectPro[1][1],VectPro[2][1],VectPro[3][1]);
+			Vector VKmaxCurv(VectPro[1][2],VectPro[2][2],VectPro[3][2]);
+			Vector VKminCurv(VectPro[1][1],VectPro[2][1],VectPro[3][1]);
 
 
 			eigenvalues[0][0]=Valpro[1][1];
@@ -335,11 +335,11 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 
 
 
-			pVertex->VKmax=VKmax;
-			pVertex->VKmin=VKmin;
+			pVertex->VKmaxCurv=VKmaxCurv;
+			pVertex->VKminCurv=VKminCurv;
 
-			pVertex->Kmax=Valpro[1][1];
-			pVertex->Kmin=Valpro[2][2];
+			pVertex->KmaxCurv=Valpro[1][1];
+			pVertex->KminCurv=Valpro[2][2];
 
 
 			for (int i=0;i<(3);i++)
@@ -354,17 +354,17 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 
 
 #ifdef _MSC_VER
-			MinNrmMinCurvature=min(MinNrmMinCurvature,pVertex->Kmin);
-			MaxNrmMinCurvature=max(MaxNrmMinCurvature,pVertex->Kmin);
+			MinNrmMinCurvature=min(MinNrmMinCurvature,pVertex->KminCurv);
+			MaxNrmMinCurvature=max(MaxNrmMinCurvature,pVertex->KminCurv);
 
-			MinNrmMaxCurvature=min(MinNrmMaxCurvature,pVertex->Kmax);
-			MaxNrmMaxCurvature=max(MaxNrmMaxCurvature,pVertex->Kmax);
+			MinNrmMaxCurvature=min(MinNrmMaxCurvature,pVertex->KmaxCurv);
+			MaxNrmMaxCurvature=max(MaxNrmMaxCurvature,pVertex->KmaxCurv);
 #else
-			MinNrmMinCurvature=CGAL::min(MinNrmMinCurvature,pVertex->Kmin);
-			MaxNrmMinCurvature=CGAL::max(MaxNrmMinCurvature,pVertex->Kmin);
+			MinNrmMinCurvature=CGAL::min(MinNrmMinCurvature,pVertex->KminCurv);
+			MaxNrmMinCurvature=CGAL::max(MaxNrmMinCurvature,pVertex->KminCurv);
 
-			MinNrmMaxCurvature=CGAL::min(MinNrmMaxCurvature,pVertex->Kmax);
-			MaxNrmMaxCurvature=CGAL::max(MaxNrmMaxCurvature,pVertex->Kmax);
+			MinNrmMaxCurvature=CGAL::min(MinNrmMaxCurvature,pVertex->KmaxCurv);
+			MaxNrmMaxCurvature=CGAL::max(MaxNrmMaxCurvature,pVertex->KmaxCurv);
 #endif
 
   }
@@ -387,9 +387,9 @@ void Curvature_Component::ConstructColorMap(PolyhedronPtr pMesh,int ColorField)/
 	  {
 
 			if (ColorField==1)
-				R=(pVertex->Kmin-MinNrmMinCurvature)/(MaxNrmMinCurvature-MinNrmMinCurvature)*255;
+				R=(pVertex->KminCurv-MinNrmMinCurvature)/(MaxNrmMinCurvature-MinNrmMinCurvature)*255;
 			else if (ColorField==2)
-				R=(pVertex->Kmax-MinNrmMaxCurvature)/(MaxNrmMaxCurvature-MinNrmMaxCurvature)*255;
+				R=(pVertex->KmaxCurv-MinNrmMaxCurvature)/(MaxNrmMaxCurvature-MinNrmMaxCurvature)*255;
 			else R=1;
 
 			indiceLut=floor(R);
