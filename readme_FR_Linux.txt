@@ -4,10 +4,10 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Ubuntu 9.10 et Ubuntu 10.04 :
+Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 :
 ------------------------------------------------------------
 
-1) installer Ubuntu 9.10 ou 10.04
+1) installer Ubuntu 9.10, 10.04 ou 10.10
 
 2) faire la mise à jour de la distribution et des paquets déjà installés
 
@@ -15,6 +15,9 @@ Marche à suivre pour Mepp sous Ubuntu 9.10 et Ubuntu 10.04 :
 sudo apt-get update
 sudo apt-get install filezilla subversion unrar libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev
 
+-------------------------------
+Suivant votre version d'Ubuntu:
+-------------------------------
 4a) sous Ubuntu 9.10 créer 2 liens:
 cd /usr/lib
 sudo ln -s libqglviewer-qt4.so libQGLViewer.so
@@ -26,6 +29,11 @@ ou
 4b) sous Ubuntu 10.04 créer 1 lien:
 cd /usr/lib
 sudo ln -s libqglviewer-qt4.so libQGLViewer.so
+
+ou
+
+4c) sous Ubuntu 10.10, rien à faire
+-----------------------------------------------
 
 5) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk

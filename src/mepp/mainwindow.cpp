@@ -1370,7 +1370,7 @@ void mainwindow::on_actionClipboard_screenshot_triggered()
 {
 	if (activeMdiChild() != 0)
 #if (QGLVIEWER_VERSION < 0x020303)
-		QMessageBox::information(this, APPLICATION, tr("You need libQGLViewer superior to version 2.3.3 to use this function. But you still can use Ctrl+C to do screenshots."));
+		QMessageBox::information(this, APPLICATION, tr("You need libQGLViewer superior to version 2.3.3 to use this function."));
 #else
 		((Viewer *)activeMdiChild())->snapshotToClipboard();
 #endif
