@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.35b - 04/10/2010"
+#define MEPP_VERSION "v0.36 - 19/10/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -35,6 +35,8 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	clearMenu(menuComponents);
 
+	readSettings();
+
 	// dock
 
 	// Components
@@ -48,7 +50,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 	// ---
 
 	// DirView
-	/*dockDirView = new QDockWidget(tr(" Directory view"), this);
+	dockDirView = new QDockWidget(tr(" Directory view"), this);
 	dockDirView->setMinimumWidth(260);
 	this->addDockWidget(Qt::RightDockWidgetArea, dockDirView);
 
@@ -69,19 +71,21 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 		tree->setColumnWidth(0, 260);
 		tree->sortByColumn(0, Qt::AscendingOrder);
 		
-		QString location("C:\\_prj_\\MEPP2\\SVN\\data\\");
-		QModelIndex index = model->setRootPath(location);	//QDir::currentPath()
+		//QString location("C:\\_prj_\\MEPP2\\SVN\\data\\");
+		QModelIndex index = model->setRootPath(treeLocation);
 		QModelIndex proxyIndex = proxyModel->mapFromSource(index);
 
 		tree->scrollTo(proxyIndex);
 		tree->setExpanded(proxyIndex, true);
+		tree->setCurrentIndex(proxyIndex);
 
-    dockDirView->setWidget(tree);*/
+		tree->setSelectionMode(QAbstractItemView::ExtendedSelection);	//QAbstractItemView::MultiSelection
+		tree->setDragEnabled(true);
+
+    dockDirView->setWidget(tree);
 	// dock
 	
 	loadPlugins();
-
-	readSettings();
 
 	this->setWindowTitle(tr("%1 - %2").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION));
 	aboutQGLViewer = new QGLViewer(); // for aboutQGLViewer
@@ -93,6 +97,9 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 	//setUnifiedTitleAndToolBarOnMac(true);
 
 	setlocale(LC_ALL, "C");
+
+	mdiArea->setMainWindow(this);
+	mdiArea->setAcceptDrops(true);
 }
 
 mainwindow::~mainwindow()
@@ -112,10 +119,10 @@ mainwindow::~mainwindow()
 	delete dockComponents;
 
 	// DirView
-	/*delete tree;
+	delete tree;
 	delete proxyModel;
 	delete model;
-	delete dockDirView;*/
+	delete dockDirView;
 	// dock
 
 	delete aboutQGLViewer; // for aboutQGLViewer
@@ -424,6 +431,14 @@ void mainwindow::writeSettings()
 {
 	QSettings settings(ORGANIZATION, APPLICATION);
 
+	QString path;
+	QFileInfo fileInfo = model->fileInfo(proxyModel->mapToSource(tree->currentIndex()));
+	if (fileInfo.isFile())
+		path = fileInfo.absolutePath();
+	else
+		path = fileInfo.absoluteFilePath();
+	settings.setValue("treeLocation", path);
+
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
@@ -433,6 +448,8 @@ void mainwindow::writeSettings()
 void mainwindow::readSettings()
 {
 	QSettings settings(ORGANIZATION, APPLICATION);
+
+	treeLocation = settings.value("treeLocation", QDir::currentPath()).toString();
 
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(1024, 768)).toSize());
@@ -475,10 +492,13 @@ void mainwindow::updateMenus()
 
 	actionClose_Window->setEnabled(hasMdiChild);
 	actionClose_All->setEnabled(hasMdiChild);
-	actionTile->setEnabled(hasMdiChild);
-	actionCascade->setEnabled(hasMdiChild);
+	actionTile->setEnabled(hasMdiChild && !actionChange_MDI_View_Mode->isChecked());
+	actionCascade->setEnabled(hasMdiChild && !actionChange_MDI_View_Mode->isChecked());
 	actionNext->setEnabled(hasMdiChild);
 	actionPrevious->setEnabled(hasMdiChild);
+
+	actionChange_MDI_View_Mode->setEnabled(hasMdiChild);
+	actionChange_Viewer_Mode_Space_Time->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() != Normal);
 
 	this->setWindowTitle(tr("%1 - %2").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION));
 
@@ -633,6 +653,12 @@ void mainwindow::updateWindowMenu()
 
 	menuWindow->addAction(actionNext);
 	menuWindow->addAction(actionPrevious);
+	menuWindow->addSeparator();
+
+	menuWindow->addAction(actionChange_MDI_View_Mode);
+	menuWindow->addSeparator();
+
+	menuWindow->addAction(actionChange_Viewer_Mode_Space_Time);
 
 	//
 
@@ -673,6 +699,8 @@ void mainwindow::on_actionNew_triggered()
 	int res = the_viewer->getScenePtr()->add_mesh(INTERNAL_MESH, Normal, NULL, the_viewer);
 	if (!res)
 	{
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Normal)"));
+
 		mdiArea->addSubWindow(the_viewer);
 		the_viewer->setWindowTitle(INTERNAL_MESH);
 		the_viewer->show();
@@ -699,6 +727,8 @@ void mainwindow::actionNewEmpty_slot()
 	int res = the_viewer->getScenePtr()->add_mesh(EMPTY_MESH, Normal, NULL, the_viewer);
 	if (!res)
 	{
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Normal)"));
+
 		mdiArea->addSubWindow(the_viewer);
 		the_viewer->setWindowTitle(EMPTY_MESH);
 		the_viewer->show();
@@ -727,6 +757,10 @@ int mainwindow::loadFile(const QString &fileName, int loadType, typeFuncOpenSave
 	int res = the_viewer->getScenePtr()->add_mesh(fileName, loadType, f, the_viewer);
 	if (!res)
 	{
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadType()));
+		if (loadType == Time)
+			actionChange_Viewer_Mode_Space_Time->setChecked(true);
+
 		mdiArea->addSubWindow(the_viewer);
 		the_viewer->setWindowTitle(strippedName(fileName));
 		the_viewer->show();
@@ -764,6 +798,10 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 	int res = viewer->getScenePtr()->add_mesh(fileName, loadType, f, viewer);
 	if (!res)
 	{
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadType()));
+		if (loadType == Time)
+			actionChange_Viewer_Mode_Space_Time->setChecked(true);
+
 		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
 								.arg(strippedName(fileName))
 								.arg(viewer->getScenePtr()->get_stringLoadType())
@@ -940,6 +978,10 @@ void mainwindow::actionAddEmpty_slot()
 		int res = viewer->getScenePtr()->add_mesh(EMPTY_MESH, loadType, NULL, viewer);
 		if (!res)
 		{
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadType()));
+			if (loadType == Time)
+				actionChange_Viewer_Mode_Space_Time->setChecked(true);
+
 			viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
 											.arg(EMPTY_MESH)
 											.arg(viewer->getScenePtr()->get_stringLoadType())
@@ -1004,6 +1046,50 @@ void mainwindow::on_actionClose_Window_triggered()
 void mainwindow::on_actionClose_All_triggered()
 {
 	mdiArea->closeAllSubWindows();
+}
+
+void mainwindow::on_actionChange_MDI_View_Mode_triggered()
+{
+	if (actionChange_MDI_View_Mode->isChecked())
+	{
+		mdiArea->setViewMode(QMdiArea::TabbedView);
+		actionChange_MDI_View_Mode->setText(tr("Change MDI View Mode (Tabbed View)"));
+	}
+	else
+	{
+		mdiArea->setViewMode(QMdiArea::SubWindowView);
+		actionChange_MDI_View_Mode->setText(tr("Change MDI View Mode (SubWindow View)"));
+	}
+
+	updateMenus();
+}
+
+void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
+{
+	if (activeMdiChild() != 0)
+	{
+		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+
+		if (viewer->getScenePtr()->get_loadType() == Space)
+		{
+			viewer->getScenePtr()->set_loadType(Time);
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Time)"));
+		}
+		else
+		{
+			viewer->getScenePtr()->set_loadType(Space);
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Space)"));
+			viewer->getScenePtr()->todoIfModeSpace(viewer);
+		}
+
+		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
+								.arg(viewer->getScenePtr()->userFriendlyCurrentFile())
+								.arg(viewer->getScenePtr()->get_stringLoadType())
+								.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
+								.arg(viewer->getScenePtr()->get_nb_polyhedrons()));
+
+		viewer->recreateListsAndUpdateGL();
+	}
 }
 
 void mainwindow::on_actionExit_triggered()
@@ -1222,7 +1308,10 @@ void mainwindow::on_actionMaterial_triggered()
 		bool ok;
 		QString item = QInputDialog::getItem(this, tr("Select Material"), tr("Material:"), items, items.indexOf(viewer->get_material().c_str()), false, &ok);
 		if (ok && !item.isEmpty())
+		{
 			viewer->change_material(item.toStdString());
+			viewer->recreateListsAndUpdateGL();
+		}
 	}
 }
 // color options

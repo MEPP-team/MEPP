@@ -94,8 +94,18 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 		add_polyhedron(polyhedron_ptr);
 		set_current_polyhedron(get_nb_polyhedrons()-1);
 
-		// mode Space
-		if (m_loadType==Space && (m_polyhedrons.size() > (unsigned)viewer->get_nb_frames()))
+		// if mode Space
+		todoIfModeSpace(viewer);
+	}
+
+	return res;
+}
+
+void Scene::todoIfModeSpace(Viewer* viewer)
+{
+	if (m_loadType==Space && (m_polyhedrons.size() > (unsigned)viewer->get_nb_frames()))
+	{
+		do
 		{
 			if ((unsigned)viewer->get_nb_frames()==0)
 				viewer->addFrame();
@@ -112,10 +122,8 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 			else
 				viewer->frame(i)->setPosition(qglviewer::Vec(0.f, -1.1 * ceil(i/2.), 0.f));
 		}
-		// mode Space
+		while (m_polyhedrons.size() > (unsigned)viewer->get_nb_frames());
 	}
-
-	return res;
 }
 
 int Scene::load_file(PolyhedronPtr polyhedron_ptr, QString filename)

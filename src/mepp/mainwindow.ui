@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QMdiArea" name="mdiArea">
+     <widget class="MdiArea" name="mdiArea">
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
@@ -69,6 +69,10 @@
     <addaction name="separator"/>
     <addaction name="actionNext"/>
     <addaction name="actionPrevious"/>
+    <addaction name="separator"/>
+    <addaction name="actionChange_MDI_View_Mode"/>
+    <addaction name="separator"/>
+    <addaction name="actionChange_Viewer_Mode_Space_Time"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -870,7 +874,31 @@
     <string>Superimpose Vertices (bigger)</string>
    </property>
   </action>
+  <action name="actionChange_MDI_View_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Change MDI View Mode (SubWindow View)</string>
+   </property>
+  </action>
+  <action name="actionChange_Viewer_Mode_Space_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Change Viewer Mode (Normal)</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MdiArea</class>
+   <extends>QMdiArea</extends>
+   <header>mdiarea.hxx</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="mepp.qrc"/>
  </resources>

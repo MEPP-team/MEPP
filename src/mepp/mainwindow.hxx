@@ -36,6 +36,9 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		mepp_action *get_mainwindowActionSave_As() { return mainwindowActionSave_As; }
 
+		int loadFile(const QString &fileName, int loadType, typeFuncOpenSave f);
+		int addFile(Viewer *viewer, const QString &fileName, int loadType, typeFuncOpenSave f);
+
 		QWidget *activeMdiChild()
 		{
 			if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow())
@@ -79,6 +82,9 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		void on_actionClose_Window_triggered();
 		void on_actionClose_All_triggered();
+
+		void on_actionChange_MDI_View_Mode_triggered();
+		void on_actionChange_Viewer_Mode_Space_Time_triggered();
 
 		void on_actionExit_triggered();
 
@@ -189,9 +195,6 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		QLabel *STATUSBAR_COMPONENTS, *STATUSBAR_VERTICES, *STATUSBAR_FACETS, *STATUSBAR_EDGES, *STATUSBAR_BOUNDARIES, *STATUSBAR_GENUS;
 
-		int loadFile(const QString &fileName, int loadType, typeFuncOpenSave f);
-		int addFile(Viewer *viewer, const QString &fileName, int loadType, typeFuncOpenSave f);
-
 		void readSettings();
 		void writeSettings();
 
@@ -218,6 +221,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		QFileSystemModel *model;
 		QSortFilterProxyModel *proxyModel;
 		QTreeView *tree;
+
+		QString treeLocation;
 };
 
 #endif

@@ -18,6 +18,7 @@ class Scene
 		~Scene();
 
 		int add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* viewer);
+		void todoIfModeSpace(Viewer* viewer);
 		int save_file(QString filename, typeFuncOpenSave f, Viewer* viewer);
 
 		QString currentFile() { return curFile; }
