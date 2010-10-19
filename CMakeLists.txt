@@ -60,6 +60,7 @@ Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMA
 Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_polyhedron h)
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
 # Find CGAL and CGAL Qt4
 find_package(CGAL COMPONENTS Qt4)

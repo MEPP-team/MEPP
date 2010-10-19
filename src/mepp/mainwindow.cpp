@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.36 - 19/10/2010"
+#define MEPP_VERSION "v0.36b - 19/10/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -1081,6 +1081,8 @@ void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
 			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Space)"));
 			viewer->getScenePtr()->todoIfModeSpace(viewer);
 		}
+
+		updateMenus();
 
 		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
 								.arg(viewer->getScenePtr()->userFriendlyCurrentFile())
