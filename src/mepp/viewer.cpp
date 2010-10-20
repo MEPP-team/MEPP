@@ -1043,17 +1043,17 @@ void Viewer::mousePressEvent(QMouseEvent *event)
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
 #ifdef __linux__
-		if (QApplication::keyboardModifiers() == Qt::MetaModifier)
+		if (QApplication::keyboardModifiers() & Qt::MetaModifier)
 #else
-		if (QApplication::keyboardModifiers() == Qt::AltModifier)
+		if (QApplication::keyboardModifiers() & Qt::AltModifier)
 #endif
 		{
-			if (event->button() == Qt::LeftButton)
+			if (event->button() & Qt::LeftButton)
 			{
 				for (int p=0; p<lplugin.size(); p++)
 					lplugin[p]->OnMouseLeftDown(event);
 			}
-			else if (event->button() == Qt::RightButton)
+			else if (event->button() & Qt::RightButton)
 			{
 				for (int p=0; p<lplugin.size(); p++)
 					lplugin[p]->OnMouseRightDown(event);
@@ -1070,9 +1070,9 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
 #ifdef __linux__
-		if (QApplication::keyboardModifiers() == Qt::MetaModifier)
+		if (QApplication::keyboardModifiers() & Qt::MetaModifier)
 #else
-		if (QApplication::keyboardModifiers() == Qt::AltModifier)
+		if (QApplication::keyboardModifiers() & Qt::AltModifier)
 #endif
 		{
 			for (int p=0; p<lplugin.size(); p++)
@@ -1090,17 +1090,17 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
 #ifdef __linux__
-		if (QApplication::keyboardModifiers() == Qt::MetaModifier)
+		if (QApplication::keyboardModifiers() & Qt::MetaModifier)
 #else
-		if (QApplication::keyboardModifiers() == Qt::AltModifier)
+		if (QApplication::keyboardModifiers() & Qt::AltModifier)
 #endif
 		{
-			if (event->button() == Qt::LeftButton)
+			if (event->button() & Qt::LeftButton)
 			{
 				for (int p=0; p<lplugin.size(); p++)
 					lplugin[p]->OnMouseLeftUp(event);
 			}
-			else if (event->button() == Qt::RightButton)
+			else if (event->button() & Qt::RightButton)
 			{
 				for (int p=0; p<lplugin.size(); p++)
 					lplugin[p]->OnMouseRightUp(event);
@@ -1116,9 +1116,9 @@ void Viewer::wheelEvent(QWheelEvent *event)
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
 #ifdef __linux__
-		if (QApplication::keyboardModifiers() == Qt::MetaModifier)
+		if (QApplication::keyboardModifiers() & Qt::MetaModifier)
 #else
-		if (QApplication::keyboardModifiers() == Qt::AltModifier)
+		if (QApplication::keyboardModifiers() & Qt::AltModifier)
 #endif
 		{
 			for (int p=0; p<lplugin.size(); p++)
@@ -1134,9 +1134,9 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
 #ifdef __linux__
-		if (QApplication::keyboardModifiers() == Qt::MetaModifier)
+		if (QApplication::keyboardModifiers() & Qt::MetaModifier)
 #else
-		if (QApplication::keyboardModifiers() == Qt::AltModifier)
+		if (QApplication::keyboardModifiers() & Qt::AltModifier)
 #endif
 		{
 			for (int p=0; p<lplugin.size(); p++)
@@ -1152,9 +1152,9 @@ void Viewer::keyReleaseEvent(QKeyEvent *event)
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
 #ifdef __linux__
-		if (QApplication::keyboardModifiers() == Qt::MetaModifier)
+		if (QApplication::keyboardModifiers() & Qt::MetaModifier)
 #else
-		if (QApplication::keyboardModifiers() == Qt::AltModifier)
+		if (QApplication::keyboardModifiers() & Qt::AltModifier)
 #endif
 		{
 			for (int p=0; p<lplugin.size(); p++)

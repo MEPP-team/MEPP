@@ -36,14 +36,14 @@ void MdiArea::dropEvent(QDropEvent *event)
 			{
 				viewer = qobject_cast<Viewer *>(m_mw->activeMdiChild());
 
-				if (event->mouseButtons() == Qt::LeftButton)
+				if (event->mouseButtons() & Qt::LeftButton)
 					res = m_mw->loadFile(urls[i].toLocalFile(), Normal, NULL);
-				else if (event->mouseButtons() == Qt::RightButton)
+				else if (event->mouseButtons() & Qt::RightButton)
 				{
 	#ifdef __linux__
-					if (event->keyboardModifiers() == Qt::MetaModifier)
+					if (event->keyboardModifiers() & Qt::MetaModifier)
 	#else
-					if (event->keyboardModifiers() == Qt::AltModifier)
+					if (event->keyboardModifiers() & Qt::AltModifier)
 	#endif
 						res = m_mw->addFile(viewer, urls[i].toLocalFile(), Time, NULL);
 					else
