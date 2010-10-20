@@ -1,7 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////
-// Author: Guillaume Lavoué
+//Author: Guillaume Lavoué
 // Year: 2008
 // INSA-Lyon, LIRIS UMR 5205, M2DISCO.
+//
+//According to: Restricted Delaunay Triangulations and Normal Cycle
+//			David Cohen-Steiner and J.M. Morvan In Proceedings SoCG'03.
+//
+//Most of this implementation was originally made by Pierre Alliez and David Cohen-Steiner (C) 2002.
+//Thank also to Bruno Lévy for his implementation of the geodesic radius
 ///////////////////////////////////////////////////////////////////////////
 
 #ifndef Curvature_COMPONENT_H
