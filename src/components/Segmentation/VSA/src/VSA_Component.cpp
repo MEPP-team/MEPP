@@ -2,6 +2,9 @@
 // Author: Guillaume Lavoué
 // Year: 2008
 // INSA-Lyon, LIRIS UMR 5205, M2DISCO.
+//
+//According to: Variational Shape Approximation
+//		David Cohen-Steiner, Pierre Alliez and Mathieu Desbrun, SIGGRAPH '2004. 
 ///////////////////////////////////////////////////////////////////////////
 #include <mepp_config.h>
 #ifdef BUILD_component_VSA
