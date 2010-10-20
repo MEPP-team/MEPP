@@ -9,12 +9,22 @@
 
 MdiArea::MdiArea(QWidget *parent) : QMdiArea(parent)
 {
+	bType = bNone;
 }
 
 void MdiArea::dragEnterEvent(QDragEnterEvent *event)
 {
 	if (event->mimeData()->hasUrls())	//hasFormat("text/uri-list")
+	{
+		if (event->mouseButtons() & Qt::LeftButton)
+			bType=bLeft;
+		else if (event->mouseButtons() & Qt::RightButton)
+			bType=bRight;
+		else
+			bType=bNone;
+
 		event->acceptProposedAction();
+	}
 }
 
 void MdiArea::dropEvent(QDropEvent *event)
@@ -36,9 +46,9 @@ void MdiArea::dropEvent(QDropEvent *event)
 			{
 				viewer = qobject_cast<Viewer *>(m_mw->activeMdiChild());
 
-				if (event->mouseButtons() & Qt::LeftButton)
+				if (bType == bLeft)
 					res = m_mw->loadFile(urls[i].toLocalFile(), Normal, NULL);
-				else if (event->mouseButtons() & Qt::RightButton)
+				else if (bType == bRight)
 				{
 	#ifdef __linux__
 					if (event->keyboardModifiers() & Qt::MetaModifier)

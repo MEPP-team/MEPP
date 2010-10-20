@@ -11,6 +11,8 @@
 
 class mainwindow;
 
+enum { bNone, bLeft, bRight };
+
 class MdiArea : public QMdiArea
 {
 	Q_OBJECT
@@ -25,6 +27,7 @@ class MdiArea : public QMdiArea
 
 	private:
 		mainwindow* m_mw;
+		int bType;
 };
 
 #endif
