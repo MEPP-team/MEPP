@@ -5,6 +5,10 @@
 // Author: Cyril Leconte
 // Year: 2010
 // CNRS-Lyon, LIRIS UMR 5205
+//
+//  According to :
+// 	"Exact and Efficient Booleans for Polyhedra", C. Leconte, H. Barki, F. Dupont, Rapport de recherche RR-LIRIS-2010-018, 2010
+//
 ///////////////////////////////////////////////////////////////////////////
 
 #include "BoolPolyhedra.h"

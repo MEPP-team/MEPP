@@ -1,10 +1,16 @@
 #ifndef Boolean_Operations_COMPONENT_H
 #define Boolean_Operations_COMPONENT_H
 
-/*!
- * \file Boolean_Operations_Component.h
- * \author Cyril Leconte
- */
+///////////////////////////////////////////////////////////////////////////
+// Author: Cyril Leconte
+// Year: 2010
+// CNRS-Lyon, LIRIS UMR 5205
+//
+//  According to :
+// 	"Exact and Efficient Booleans for Polyhedra", C. Leconte, H. Barki, F. Dupont, Rapport de recherche RR-LIRIS-2010-018, 2010
+//
+///////////////////////////////////////////////////////////////////////////
+
 
 #include <mepp_config.h>
 #ifdef BUILD_component_Boolean_Operations
