@@ -614,7 +614,8 @@ void Viewer::render()
 
 	if ( m_UseVertexColor || m_UseFaceColor )
 	{
-		if ( !glIsEnabled(GL_COLOR_MATERIAL) )
+		// here
+		//if ( !glIsEnabled(GL_COLOR_MATERIAL) )
 		{
 			glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 			glEnable(GL_COLOR_MATERIAL);
@@ -623,7 +624,7 @@ void Viewer::render()
 	else
 	{
 		// here
-		if ( glIsEnabled(GL_COLOR_MATERIAL) )
+		//if ( glIsEnabled(GL_COLOR_MATERIAL) )
 		{
 			glDisable(GL_COLOR_MATERIAL);
 			change_material(m_last_material);

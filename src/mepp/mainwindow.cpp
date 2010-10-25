@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.36d - 20/10/2010"
+#define MEPP_VERSION "v0.37- 25/10/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -1169,7 +1169,7 @@ void mainwindow::on_actionRender_Point_triggered()
 {
 	if (activeMdiChild() != 0)
 	{
-		((Viewer *)activeMdiChild())->setRender_Point();		
+		((Viewer *)activeMdiChild())->setRender_Point(); actionRender_Point->setChecked(true);	
 		actionRender_Line->setChecked(false);
 		actionRender_Fill->setChecked(false);
 	}
@@ -1178,7 +1178,7 @@ void mainwindow::on_actionRender_Line_triggered()
 {
 	if (activeMdiChild() != 0)
 	{
-		((Viewer *)activeMdiChild())->setRender_Line();
+		((Viewer *)activeMdiChild())->setRender_Line(); actionRender_Line->setChecked(true);
 		actionRender_Point->setChecked(false);
 		actionRender_Fill->setChecked(false);
 	}
@@ -1187,7 +1187,7 @@ void mainwindow::on_actionRender_Fill_triggered()
 {
 	if (activeMdiChild() != 0)
 	{
-		((Viewer *)activeMdiChild())->setRender_Fill();
+		((Viewer *)activeMdiChild())->setRender_Fill(); actionRender_Fill->setChecked(true);
 		actionRender_Point->setChecked(false);
 		actionRender_Line->setChecked(false);
 	}
