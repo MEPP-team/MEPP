@@ -13,7 +13,7 @@ Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 :
 
 3) installer les paquets suivants:
 sudo apt-get update
-sudo apt-get install filezilla subversion unrar libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev
+sudo apt-get install filezilla subversion unrar libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev mencoder ffmpeg
 
 -------------------------------
 Suivant votre version d'Ubuntu:
