@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.37- 25/10/2010"
+#define MEPP_VERSION "v0.37b- 26/10/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -233,11 +233,11 @@ bool mainwindow::initPlugin(QObject* obj)
 	// put plugin into list
 	lplugin << plugin;
 
-	QLabel pLabel(plugin->getPluginName().toUpper() + ": ");
-	pLabel.setStyleSheet("QLabel { color: black; font: bold 10px; }");
-	plugin->mToolBar->addWidget(&pLabel);
-	QLabel pLabelEmpty("");
-	plugin->mToolBar->addWidget(&pLabelEmpty);
+	QLabel *pLabel = new QLabel(plugin->getPluginName().toUpper() + ": ");
+	pLabel->setStyleSheet("QLabel { color: black; font: bold 10px; }");
+	plugin->mToolBar->addWidget(pLabel);
+	QLabel *pLabelEmpty = new QLabel("");
+	plugin->mToolBar->addWidget(pLabelEmpty);
 
 	Q_FOREACH (QAction* action, plugin->actions())
 	{
