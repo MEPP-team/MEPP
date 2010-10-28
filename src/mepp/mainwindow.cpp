@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.37b - 26/10/2010"
+#define MEPP_VERSION "v0.37c - 28/10/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -1472,7 +1472,15 @@ void mainwindow::on_actionClipboard_screenshot_triggered()
 void mainwindow::on_actionParams_triggered()
 {
 	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time)
-		((Viewer *)activeMdiChild())->setDynParams();
+	{
+		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+
+		bool ok;
+		int res = QInputDialog::getInteger(this, tr("Select fps"), tr("Fps:"), viewer->getFps(), 1, 60, 1, &ok);
+
+		if (ok)
+			viewer->setFps(res);
+	}
 }
 
 void mainwindow::on_actionReverse_start_triggered()

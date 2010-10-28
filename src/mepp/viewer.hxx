@@ -142,7 +142,7 @@ class Viewer : public QGLViewer
 		void setCouplingZooms(bool b) { mCouplingZooms = b; updateGL(); }
 		bool getCouplingZooms(bool b) { return mCouplingZooms; }
 
-                void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); recreateListsAndUpdateGL(); }
+        void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); recreateListsAndUpdateGL(); }
 		bool getVBO_mode() { return VBO_mode; }
 		// view options
 
@@ -188,7 +188,8 @@ class Viewer : public QGLViewer
 										.arg(getScenePtr()->get_current_polyhedron()+1)
 										.arg(getScenePtr()->get_nb_polyhedrons())); }
 
-		void setDynParams() { QMessageBox::information(m_parent, APPLICATION, tr("Function not yet implemented.")); }
+		void setFps(int fps) { m_fps = fps; }
+		int getFps() { return m_fps; }
 
 		void setDynReverseStart() { m_reverse = true; m_loop = false; timerDynamic->start(1000/m_fps); }
 		void setDynReverseStartLoop() { m_reverse = true; m_loop = true; timerDynamic->start(1000/m_fps); }
