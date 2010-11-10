@@ -83,8 +83,9 @@ void mepp_component_Boolean_Operations_plugin::Union()
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
+		Viewer* viewerU;
 		
-		if(viewer->getScenePtr()->get_nb_polyhedrons() == 2)
+		if (viewer->getScenePtr()->get_nb_polyhedrons() == 2)
 		{
 			ScenePtr S = viewer->getScenePtr();
 			PolyhedronPtr polyhedron_ptr_in1 = viewer->getScenePtr()->get_polyhedron(0);
@@ -95,10 +96,10 @@ void mepp_component_Boolean_Operations_plugin::Union()
 			
 			for (int i=0; i<lwindow.size(); i++) // all viewers
 			{
-				viewer = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
-				if (viewer->getScenePtr()->get_polyhedron()->empty())
+				viewerU = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
+				if (viewerU->getScenePtr()->get_polyhedron()->empty())
 				{
-					polyhedron_ptr_out = viewer->getScenePtr()->get_polyhedron();
+					polyhedron_ptr_out = viewerU->getScenePtr()->get_polyhedron();
 				}
 			}
 
@@ -111,10 +112,10 @@ void mepp_component_Boolean_Operations_plugin::Union()
 			(void)polyhedron_ptr_out->calc_nb_components();
 			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
-			viewer->showAllScene();
+			viewerU->showAllScene();
 
-			viewer->getScenePtr()->setcurrentFile("Union");
-            viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
+			viewerU->getScenePtr()->setcurrentFile("Union");
+            viewerU->setWindowTitle(viewerU->getScenePtr()->currentFile());
 		}
 	}
 
@@ -129,8 +130,9 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
+		Viewer* viewerI;
 		
-		if(viewer->getScenePtr()->get_nb_polyhedrons() == 2)
+		if (viewer->getScenePtr()->get_nb_polyhedrons() == 2)
 		{
 			ScenePtr S = viewer->getScenePtr();
 			PolyhedronPtr polyhedron_ptr_in1 = viewer->getScenePtr()->get_polyhedron(0);
@@ -141,10 +143,10 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 			
 			for (int i=0; i<lwindow.size(); i++) // all viewers
 			{
-				viewer = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
-				if (viewer->getScenePtr()->get_polyhedron()->empty())
+				viewerI = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
+				if (viewerI->getScenePtr()->get_polyhedron()->empty())
 				{
-					polyhedron_ptr_out = viewer->getScenePtr()->get_polyhedron();
+					polyhedron_ptr_out = viewerI->getScenePtr()->get_polyhedron();
 				}
 			}
 
@@ -157,10 +159,10 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 			(void)polyhedron_ptr_out->calc_nb_components();
 			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
-			viewer->showAllScene();
+			viewerI->showAllScene();
 
-			viewer->getScenePtr()->setcurrentFile("Intersection");
-            viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
+			viewerI->getScenePtr()->setcurrentFile("Intersection");
+            viewerI->setWindowTitle(viewerI->getScenePtr()->currentFile());
 		}
 	}
 
@@ -175,8 +177,9 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
+		Viewer* viewerM;
 		
-		if(viewer->getScenePtr()->get_nb_polyhedrons() == 2)
+		if (viewer->getScenePtr()->get_nb_polyhedrons() == 2)
 		{
 			ScenePtr S = viewer->getScenePtr();
 			PolyhedronPtr polyhedron_ptr_in1 = viewer->getScenePtr()->get_polyhedron(0);
@@ -187,10 +190,10 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 			
 			for (int i=0; i<lwindow.size(); i++) // all viewers
 			{
-				viewer = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
-				if (viewer->getScenePtr()->get_polyhedron()->empty())
+				viewerM = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
+				if (viewerM->getScenePtr()->get_polyhedron()->empty())
 				{
-					polyhedron_ptr_out = viewer->getScenePtr()->get_polyhedron();
+					polyhedron_ptr_out = viewerM->getScenePtr()->get_polyhedron();
 				}
 			}
 
@@ -203,10 +206,10 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 			(void)polyhedron_ptr_out->calc_nb_components();
 			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
-			viewer->showAllScene();
+			viewerM->showAllScene();
 
-			viewer->getScenePtr()->setcurrentFile("Subtraction");
-            viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
+			viewerM->getScenePtr()->setcurrentFile("Subtraction");
+            viewerM->setWindowTitle(viewerM->getScenePtr()->currentFile());
 		}
 	}
 
