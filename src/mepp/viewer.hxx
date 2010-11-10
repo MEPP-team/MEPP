@@ -108,6 +108,9 @@ class Viewer : public QGLViewer
 				setSceneBoundingBox(qglviewer::Vec(p->xmin(),p->ymin(),p->zmin()), qglviewer::Vec(p->xmax(),p->ymax(),p->zmax()));		
 				showEntireScene();
 			}
+
+			initialCameraPosition = camera()->position();
+			initialCameraOrientation = camera()->orientation();
 		}
 
 		void centerAllObjects()

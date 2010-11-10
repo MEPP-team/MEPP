@@ -445,7 +445,7 @@ void mepp_component_CGAL_Example_plugin::step6()
 		viewer->getScenePtr()->setcurrentFile("internal mesh sample from empty");
 		viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
 
-		viewer->updateGL();
+		viewer->recreateListsAndUpdateGL();
 		// step 6a : end
 	}
 	else
@@ -462,6 +462,8 @@ void mepp_component_CGAL_Example_plugin::step6()
 
 				CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
 				component_ptr->CreateTetrahedron(polyhedron_ptr);
+
+				viewer->showAllScene();
 
 				viewer->getScenePtr()->setcurrentFile("internal mesh sample from empty");
                 viewer->setWindowTitle(viewer->getScenePtr()->currentFile());

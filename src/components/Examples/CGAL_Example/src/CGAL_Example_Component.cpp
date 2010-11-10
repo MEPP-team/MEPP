@@ -182,6 +182,9 @@ void CGAL_Example_Component::CreateTetrahedron(PolyhedronPtr pMesh)
 
 		pMesh->compute_normals();
 		pMesh->compute_type();
+
+		(void)pMesh->calc_nb_components();
+		(void)pMesh->calc_nb_boundaries();
 	}
 }
 

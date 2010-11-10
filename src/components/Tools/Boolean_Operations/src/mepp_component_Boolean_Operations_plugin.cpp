@@ -111,9 +111,10 @@ void mepp_component_Boolean_Operations_plugin::Union()
 			(void)polyhedron_ptr_out->calc_nb_components();
 			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
-			viewer->show();
+			viewer->showAllScene();
 
-			viewer->recreateListsAndUpdateGL();
+			viewer->getScenePtr()->setcurrentFile("Union");
+            viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
 		}
 	}
 
@@ -156,9 +157,10 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 			(void)polyhedron_ptr_out->calc_nb_components();
 			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
-			viewer->show();
+			viewer->showAllScene();
 
-			viewer->recreateListsAndUpdateGL();
+			viewer->getScenePtr()->setcurrentFile("Intersection");
+            viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
 		}
 	}
 
@@ -201,9 +203,10 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 			(void)polyhedron_ptr_out->calc_nb_components();
 			(void)polyhedron_ptr_out->calc_nb_boundaries();
 
-			viewer->show();
+			viewer->showAllScene();
 
-			viewer->recreateListsAndUpdateGL();
+			viewer->getScenePtr()->setcurrentFile("Subtraction");
+            viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
 		}
 	}
 

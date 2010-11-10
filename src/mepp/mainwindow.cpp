@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.38 - 10/11/2010"
+#define MEPP_VERSION "v0.38a - 10/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -801,7 +801,7 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 	int res = viewer->getScenePtr()->add_mesh(fileName, loadType, f, viewer);
 	if (!res)
 	{
-		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadType()));
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadType()));
 		if (loadType == Time)
 			actionChange_Viewer_Mode_Space_Time->setChecked(true);
 
@@ -981,7 +981,7 @@ void mainwindow::actionAddEmpty_slot()
 		int res = viewer->getScenePtr()->add_mesh(EMPTY_MESH, loadType, NULL, viewer);
 		if (!res)
 		{
-			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadType()));
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadType()));
 			if (loadType == Time)
 				actionChange_Viewer_Mode_Space_Time->setChecked(true);
 
