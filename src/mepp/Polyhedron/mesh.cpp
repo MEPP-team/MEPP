@@ -25,6 +25,8 @@
 //     distribution.
 //-----------------------------------------------------------------------------
 
+#include <mepp_config.h>
+
 #include <stdexcept>
 //#include <openctm.h>
 #include <cmath>

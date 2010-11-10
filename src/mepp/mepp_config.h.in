@@ -6,6 +6,17 @@
 #ifndef HEADER_MEPP_CONFIG
 #define HEADER_MEPP_CONFIG
 
+#if _WIN64 || __amd64__
+#define PORTABLE_64_BIT
+#define ARCHITECTURE QObject::tr("(64 bits)")
+#ifdef _MSC_VER
+#pragma warning(disable : 4267)
+#endif
+#else
+#define PORTABLE_32_BIT
+#define ARCHITECTURE QObject::tr("(32 bits)")
+#endif
+
 #define ORGANIZATION QObject::tr("LIRIS")
 #define APPLICATION QObject::tr("MEPP")
 

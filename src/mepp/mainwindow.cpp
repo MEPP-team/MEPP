@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.37c - 28/10/2010"
+#define MEPP_VERSION "v0.38 - 10/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -87,7 +87,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 	
 	loadPlugins();
 
-	this->setWindowTitle(tr("%1 - %2").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION));
+	this->setWindowTitle(tr("%1 - %2 - %3").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE));
 	aboutQGLViewer = new QGLViewer(); // for aboutQGLViewer
 
 	viewpointCopied = false;
@@ -166,6 +166,8 @@ void mainwindow::clearMenu(QMenu* menu)
 
 void mainwindow::loadPlugins()
 {
+  int nb_plugins=1;
+
   QDir pluginsDir(qApp->applicationDirPath());
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
   {
@@ -178,7 +180,8 @@ void mainwindow::loadPlugins()
 	  {
         if (initPlugin(obj))
 		{
-			qDebug("### Loading \"%s\"...", fileName.toUtf8().data());
+			qDebug("### %02d: loading \"%s\"...", nb_plugins, fileName.toUtf8().data());
+			nb_plugins++;
 			menuComponents->menuAction()->setEnabled(true);
 		}
 		else
@@ -500,7 +503,7 @@ void mainwindow::updateMenus()
 	actionChange_MDI_View_Mode->setEnabled(hasMdiChild);
 	actionChange_Viewer_Mode_Space_Time->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() != Normal);
 
-	this->setWindowTitle(tr("%1 - %2").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION));
+	this->setWindowTitle(tr("%1 - %2 - %3").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE));
 
 	// rendering options
 	actionRender_Point->setEnabled(hasMdiChild);
