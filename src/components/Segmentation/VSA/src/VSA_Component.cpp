@@ -99,7 +99,8 @@
 	{
 	bool operator()(FacetToIntegrate f1, FacetToIntegrate f2) const
 	{
-		return(f1.DistanceLLoyd<=f2.DistanceLLoyd);
+		
+		return(f1.DistanceLLoyd<f2.DistanceLLoyd);
 
 	}
 	};
@@ -146,8 +147,8 @@ VSA_Component::VSA_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p)
 void VSA_Component::Flooding()///repartition des triangles dans leur proxy respectif
 	{
 		m_Poly->NbFaceLabel=m_NbProxy;
-		typedef std::set<FacetToIntegrate,CompFacet> ListFacet_model;
-		typedef std::set<FacetToIntegrate,CompFacet>::iterator ListFacet_iterator;
+		typedef std::multiset<FacetToIntegrate,CompFacet> ListFacet_model;
+		typedef std::multiset<FacetToIntegrate,CompFacet>::iterator ListFacet_iterator;
 
 		for(Facet_iterator	pface	=	m_Poly->facets_begin();
 				pface	!= m_Poly->facets_end();
@@ -257,7 +258,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 		}
 
 		///on intégre les ionformation de connectivité des proxy
-		for(Halfedge_iterator pHalfedge	=	m_Poly->halfedges_begin();
+	/*	for(Halfedge_iterator pHalfedge	=	m_Poly->halfedges_begin();
 				pHalfedge	!= m_Poly->halfedges_end();
 				pHalfedge++)
 		{
@@ -284,7 +285,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 			}
 
 
-		}
+		}*/
 
 
 
