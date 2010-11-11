@@ -131,11 +131,12 @@ Viewer::~Viewer()
 		glDeleteBuffers(2, MeshBuffers);*/
 	// VBO
 
-	if (glId)
+	// todo: commented because there is a problem when we close a child and that there is another child in rotation
+	/*if (glId)
 		glDeleteLists(glId, 1);
 
 	for (unsigned int i=0; i<frame_.size(); i++)
-		glDeleteLists(glList(i), 1);
+		glDeleteLists(glList(i), 1);*/
 
 	frame_.clear();
 

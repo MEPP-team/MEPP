@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.38b - 11/11/2010"
+#define MEPP_VERSION "v0.38c - 11/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -640,6 +640,12 @@ void mainwindow::updateMenus()
 
 	// status bar
 	update_mesh_properties(false, false);
+
+	/*if (hasMdiChild)
+	{
+		viewer = (Viewer *)activeMdiChild();
+		viewer->recreateListsAndUpdateGL();
+	}*/
 }
 
 void mainwindow::updateWindowMenu()

@@ -288,8 +288,10 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 		virtual ~MEPP_Common_Polyhedron()
 		{
-			if (id_cube)
-				glDeleteLists(id_cube, 1);
+			// todo: commented because there is a problem when we close a child and that there is another child in rotation
+
+			/*if (id_cube)
+				glDeleteLists(id_cube, 1);*/
 		}
 
 		// MT
