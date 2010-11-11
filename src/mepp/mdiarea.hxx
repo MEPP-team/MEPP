@@ -25,6 +25,8 @@ class MdiArea : public QMdiArea
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dropEvent(QDropEvent *event);
 
+		void paintEvent(QPaintEvent *);
+
 	private:
 		mainwindow* m_mw;
 		int bType;

@@ -12,6 +12,19 @@ MdiArea::MdiArea(QWidget *parent) : QMdiArea(parent)
 	bType = bNone;
 }
 
+void MdiArea::paintEvent(QPaintEvent *paintEvent)
+{
+	QMdiArea::paintEvent(paintEvent);
+
+	// and now only paint your image here
+	QPainter painter(viewport());
+ 
+	painter.fillRect(paintEvent->rect(), QColor(23, 74, 124));
+	//painter.drawImage(paintEvent->rect()/*QPoint(0, 0)*/, QImage("./mepp_background.bmp"));
+ 
+	painter.end();
+}
+
 void MdiArea::dragEnterEvent(QDragEnterEvent *event)
 {
 	if (event->mimeData()->hasUrls())	//hasFormat("text/uri-list")
