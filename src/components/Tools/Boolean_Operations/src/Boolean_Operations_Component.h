@@ -31,7 +31,10 @@ public:
 	/*!
 	 * \brief Constructor
 	 */
-	Boolean_Operations_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p) {}
+	Boolean_Operations_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p)
+	{
+		cpt_U = cpt_I = cpt_M = 0;
+	}
 	
 	/*!
 	 * \brief Destructor
@@ -68,6 +71,9 @@ public:
 	 * \param pMout : an empty polyhedron to build the result (pMin1 minus pMin2)
 	 */
 	void Boolean_Minus(PolyhedronPtr pMin1, PolyhedronPtr pMin2, PolyhedronPtr pMout);
+
+	// MT
+	int cpt_U, cpt_I, cpt_M;
 };
 
 #endif // BOOLEAN_OPERATIONS

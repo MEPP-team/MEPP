@@ -36,7 +36,7 @@ void MdiArea::dropEvent(QDropEvent *event)
 	for (int i=0; i<urls.size(); i++)
 	{
 		QFileInfo fi(urls[i].toLocalFile());
-		QString ext = fi.completeSuffix();
+		QString ext = fi.suffix();
 
 		if ((ext.toLower()=="off") || (ext.toLower()=="obj") || (ext.toLower()=="smf") || (ext.toLower()=="ply"))
 		{

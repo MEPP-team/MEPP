@@ -855,10 +855,7 @@ void Viewer::postSelection(const QPoint&)
 		scene_ptr->set_current_polyhedron(selectedName());
 	}
 
-	this->setWindowTitle(tr("%1 - (Space: %2/%3)")
-									.arg(userFriendlyCurrentFile())
-									.arg(scene_ptr->get_current_polyhedron()+1)
-									.arg(scene_ptr->get_nb_polyhedrons()));
+	this->setDynTitle();
 }
 
 void Viewer::drawWithNames()
@@ -984,47 +981,6 @@ void Viewer::dessine(bool names)
 			glCallList(glId); // Draws the scene
 		}
 	}
-}
-
-void Viewer::shotDynamic()
-{
-	if (!m_reverse)
-	{
-		if (scene_ptr->get_current_polyhedron() < (scene_ptr->get_nb_polyhedrons()-1))
-			scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()+1);
-		else
-		{
-			if (m_loop)
-				scene_ptr->set_current_polyhedron(0);
-			else
-			{
-				timerDynamic->stop();
-				return;
-			}
-		}
-	}
-	else
-	{
-		if (scene_ptr->get_current_polyhedron() > 0)
-			scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()-1);
-		else
-		{
-			if (m_loop)
-				scene_ptr->set_current_polyhedron((scene_ptr->get_nb_polyhedrons()-1));
-			else
-			{
-				timerDynamic->stop();
-				return;
-			}
-		}
-	}
-
-	setDynTitle();
-	recreateListsAndUpdateGL();
-}
-
-void Viewer::shotCapture()
-{
 }
 
 void Viewer::setVBO_modeUncheck(bool b)

@@ -52,7 +52,7 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 		hxx_header_files
 		src/*.hxx
 	)
-	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} ../../../mepp/mepp_action.hxx )
+	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} ../../../mepp/mepp_action.hxx ../../../mepp/viewer.hxx )
 	
 	file(
 		GLOB_RECURSE

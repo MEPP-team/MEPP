@@ -158,12 +158,7 @@ void mepp_component_CGAL_Example_plugin::OnMouseLeftDown(QMouseEvent *event)
 				viewer->getScenePtr()->add_polyhedron(new_polyhedron_ptr);
 				viewer->getScenePtr()->set_current_polyhedron(viewer->getScenePtr()->get_nb_polyhedrons()-1);
 
-				// todo: viewer->setDynTitle();
-				viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
-													.arg(viewer->userFriendlyCurrentFile())
-													.arg(viewer->getScenePtr()->get_stringLoadType())
-													.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
-													.arg(viewer->getScenePtr()->get_nb_polyhedrons()));
+				viewer->setDynTitle();
 
 				viewer->recreateListsAndUpdateGL();
 			}
@@ -442,8 +437,8 @@ void mepp_component_CGAL_Example_plugin::step6()
 		polyhedron_ptr = viewer->getScenePtr()->get_polyhedron(nb_polyhedrons-1);
 		component_ptr->CreateTetrahedron(polyhedron_ptr);
 
-		viewer->getScenePtr()->setcurrentFile("internal mesh sample from empty");
-		viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
+		viewer->getScenePtr()->setcurrentFile(tr("internal mesh sample from empty"));
+		viewer->setDynTitle();
 
 		viewer->recreateListsAndUpdateGL();
 		// step 6a : end
@@ -465,8 +460,8 @@ void mepp_component_CGAL_Example_plugin::step6()
 
 				viewer->showAllScene();
 
-				viewer->getScenePtr()->setcurrentFile("internal mesh sample from empty");
-                viewer->setWindowTitle(viewer->getScenePtr()->currentFile());
+				viewer->getScenePtr()->setcurrentFile(tr("internal mesh sample from empty"));
+				viewer->setDynTitle();
 			}
 		}
 		// step 6b : end

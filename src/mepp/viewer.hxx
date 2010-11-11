@@ -185,11 +185,20 @@ class Viewer : public QGLViewer
 		// capture options
 
 		// dynamic options
-		void setDynTitle() { setWindowTitle(tr("%1 - (%2: %3/%4)")
+		void setDynTitle()
+		{
+			if (getScenePtr()->get_loadType() == Normal)
+				setWindowTitle(tr("%1 (id: %2)")
 										.arg(userFriendlyCurrentFile())
+										.arg((qlonglong)this, 0, 16));
+			else
+				setWindowTitle(tr("%1 (id: %2) - (%3: %4/%5)")
+										.arg(userFriendlyCurrentFile())
+										.arg((qlonglong)this, 0, 16)
 										.arg(getScenePtr()->get_stringLoadType())
 										.arg(getScenePtr()->get_current_polyhedron()+1)
-										.arg(getScenePtr()->get_nb_polyhedrons())); }
+										.arg(getScenePtr()->get_nb_polyhedrons()));
+		}
 
 		void setFps(int fps) { m_fps = fps; }
 		int getFps() { return m_fps; }
@@ -257,8 +266,44 @@ class Viewer : public QGLViewer
 		virtual void keyReleaseEvent(QKeyEvent *event);
 
 	private slots:
-		void shotDynamic();
-		void shotCapture();
+		void shotDynamic()
+		{
+			if (!m_reverse)
+			{
+				if (scene_ptr->get_current_polyhedron() < (scene_ptr->get_nb_polyhedrons()-1))
+					scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()+1);
+				else
+				{
+					if (m_loop)
+						scene_ptr->set_current_polyhedron(0);
+					else
+					{
+						timerDynamic->stop();
+						return;
+					}
+				}
+			}
+			else
+			{
+				if (scene_ptr->get_current_polyhedron() > 0)
+					scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()-1);
+				else
+				{
+					if (m_loop)
+						scene_ptr->set_current_polyhedron((scene_ptr->get_nb_polyhedrons()-1));
+					else
+					{
+						timerDynamic->stop();
+						return;
+					}
+				}
+			}
+
+			setDynTitle();
+			recreateListsAndUpdateGL();
+		}
+
+		void shotCapture() {}
 
 	public:
 		QList<mepp_component_plugin_interface *> lplugin;

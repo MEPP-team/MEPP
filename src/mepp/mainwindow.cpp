@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.38a - 10/11/2010"
+#define MEPP_VERSION "v0.38b - 11/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -675,15 +675,20 @@ void mainwindow::updateWindowMenu()
         Viewer *viewer = qobject_cast<Viewer *>(windows.at(i)->widget());
 
         QString text;
-        if (i < 9)
+		if (viewer->getScenePtr()->get_loadType() == Normal)
 		{
-            text = tr("&%1 %2").arg(i + 1)
-                               .arg(viewer->userFriendlyCurrentFile());
+            text = tr("%1 - %2 (id: %3)").arg(i + 1)
+											.arg(viewer->userFriendlyCurrentFile())
+											.arg((qlonglong)viewer, 0, 16);
         }
 		else
 		{
-            text = tr("%1 %2").arg(i + 1)
-                              .arg(viewer->userFriendlyCurrentFile());
+            text = tr("%1 - %2 (id: %3) - (%4: %5/%6)").arg(i + 1)
+															.arg(viewer->userFriendlyCurrentFile())
+															.arg((qlonglong)viewer, 0, 16)
+															.arg(viewer->getScenePtr()->get_stringLoadType())
+															.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
+															.arg(viewer->getScenePtr()->get_nb_polyhedrons());
         }
         QAction *action  = menuWindow->addAction(text);
         action->setCheckable(true);
@@ -705,7 +710,7 @@ void mainwindow::on_actionNew_triggered()
 		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Normal)"));
 
 		mdiArea->addSubWindow(the_viewer);
-		the_viewer->setWindowTitle(INTERNAL_MESH);
+		the_viewer->setDynTitle();
 		the_viewer->show();
 
 		statusBar()->showMessage(tr("Mesh created"), 2000);
@@ -733,7 +738,7 @@ void mainwindow::actionNewEmpty_slot()
 		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Normal)"));
 
 		mdiArea->addSubWindow(the_viewer);
-		the_viewer->setWindowTitle(EMPTY_MESH);
+		the_viewer->setDynTitle();
 		the_viewer->show();
 
 		statusBar()->showMessage(tr("Empty mesh created"), 2000);
@@ -765,7 +770,7 @@ int mainwindow::loadFile(const QString &fileName, int loadType, typeFuncOpenSave
 			actionChange_Viewer_Mode_Space_Time->setChecked(true);
 
 		mdiArea->addSubWindow(the_viewer);
-		the_viewer->setWindowTitle(strippedName(fileName));
+		the_viewer->setDynTitle();
 		the_viewer->show();
 
 		if (f==NULL)
@@ -805,11 +810,8 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 		if (loadType == Time)
 			actionChange_Viewer_Mode_Space_Time->setChecked(true);
 
-		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
-								.arg(strippedName(fileName))
-								.arg(viewer->getScenePtr()->get_stringLoadType())
-								.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
-								.arg(viewer->getScenePtr()->get_nb_polyhedrons()));
+		viewer->setDynTitle();
+
 		if (f==NULL)
 		{
 			setCurrentFile(fileName);
@@ -985,11 +987,8 @@ void mainwindow::actionAddEmpty_slot()
 			if (loadType == Time)
 				actionChange_Viewer_Mode_Space_Time->setChecked(true);
 
-			viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
-											.arg(EMPTY_MESH)
-											.arg(viewer->getScenePtr()->get_stringLoadType())
-											.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
-											.arg(viewer->getScenePtr()->get_nb_polyhedrons()));
+			viewer->setDynTitle();
+
 			statusBar()->showMessage(tr("Empty mesh added"), 2000);
 
 			updateMenus();
@@ -1087,11 +1086,7 @@ void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
 
 		updateMenus();
 
-		viewer->setWindowTitle(tr("%1 - (%2: %3/%4)")
-								.arg(viewer->getScenePtr()->userFriendlyCurrentFile())
-								.arg(viewer->getScenePtr()->get_stringLoadType())
-								.arg(viewer->getScenePtr()->get_current_polyhedron()+1)
-								.arg(viewer->getScenePtr()->get_nb_polyhedrons()));
+		viewer->setDynTitle();
 
 		viewer->recreateListsAndUpdateGL();
 	}

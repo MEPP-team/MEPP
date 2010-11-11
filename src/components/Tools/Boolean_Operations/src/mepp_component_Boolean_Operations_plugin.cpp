@@ -105,6 +105,7 @@ void mepp_component_Boolean_Operations_plugin::Union()
 
 			Boolean_Operations_ComponentPtr component_ptr = findOrCreateComponentForViewer<Boolean_Operations_ComponentPtr, Boolean_Operations_Component>(viewer, polyhedron_ptr_in1);
 			component_ptr->Boolean_Union(polyhedron_ptr_in1, polyhedron_ptr_in2, polyhedron_ptr_out);
+			component_ptr->cpt_U++;
 
 			polyhedron_ptr_out->compute_bounding_box();
 			polyhedron_ptr_out->compute_normals();
@@ -114,8 +115,8 @@ void mepp_component_Boolean_Operations_plugin::Union()
 
 			viewerU->showAllScene();
 
-			viewerU->getScenePtr()->setcurrentFile("Union");
-            viewerU->setWindowTitle(viewerU->getScenePtr()->currentFile());
+			viewerU->getScenePtr()->setcurrentFile(tr("Union %1 from id %2").arg(component_ptr->cpt_U).arg((qlonglong)viewer, 0, 16));
+			viewerU->setDynTitle();
 		}
 	}
 
@@ -152,6 +153,7 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 
 			Boolean_Operations_ComponentPtr component_ptr = findOrCreateComponentForViewer<Boolean_Operations_ComponentPtr, Boolean_Operations_Component>(viewer, polyhedron_ptr_in1);
 			component_ptr->Boolean_Inter(polyhedron_ptr_in1, polyhedron_ptr_in2, polyhedron_ptr_out);
+			component_ptr->cpt_I++;
 
 			polyhedron_ptr_out->compute_bounding_box();
 			polyhedron_ptr_out->compute_normals();
@@ -161,8 +163,8 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 
 			viewerI->showAllScene();
 
-			viewerI->getScenePtr()->setcurrentFile("Intersection");
-            viewerI->setWindowTitle(viewerI->getScenePtr()->currentFile());
+			viewerI->getScenePtr()->setcurrentFile(tr("Intersection %1 from id %2").arg(component_ptr->cpt_I).arg((qlonglong)viewer, 0, 16));
+			viewerI->setDynTitle();
 		}
 	}
 
@@ -199,6 +201,7 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 
 			Boolean_Operations_ComponentPtr component_ptr = findOrCreateComponentForViewer<Boolean_Operations_ComponentPtr, Boolean_Operations_Component>(viewer, polyhedron_ptr_in1);
 			component_ptr->Boolean_Minus(polyhedron_ptr_in1, polyhedron_ptr_in2, polyhedron_ptr_out);
+			component_ptr->cpt_M++;
 
 			polyhedron_ptr_out->compute_bounding_box();
 			polyhedron_ptr_out->compute_normals();
@@ -208,8 +211,8 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 
 			viewerM->showAllScene();
 
-			viewerM->getScenePtr()->setcurrentFile("Subtraction");
-            viewerM->setWindowTitle(viewerM->getScenePtr()->currentFile());
+			viewerM->getScenePtr()->setcurrentFile(tr("Subtraction %1 from id %2").arg(component_ptr->cpt_M).arg((qlonglong)viewer, 0, 16));
+			viewerM->setDynTitle();
 		}
 	}
 
