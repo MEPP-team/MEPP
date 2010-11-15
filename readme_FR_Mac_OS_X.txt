@@ -44,8 +44,9 @@ Donc, pour générer les projets Qt Creator (.pro), voici la marche à suivre au se
 
 Ouvrir un fichier et choisir en bas 'Fichier de projet CMake'
 puis choisir le CMakeLists.txt de la racine du trunk puis cliquer sur 'suivant'
-puis dans 'Arguments' mettre -DCMAKE_C_FLAGS='-arch x86_64' -DCMAKE_BUILD_TYPE=Debug pour générer les projets Qt Creator (.pro) en Debug
-ou -DCMAKE_C_FLAGS='-arch x86_64' pour générer les projets Qt Creator (.pro) en Release.
+puis dans 'Arguments' mettre -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_BUILD_TYPE=Debug pour générer les projets Qt Creator (.pro) en Debug
+ou -DCMAKE_C_FLAGS="-arch x86_64" pour générer les projets Qt Creator (.pro) en Release.
+Renseigner si besoin le chemin pour CMake: /opt/local/bin/cmake 
 Cliquer ensuite sur 'Exécuter CMake', puis, après le déroulement de CMake, cliquer sur 'Terminer' et le projet (.pro) se charge dans l'IDE.
 
 ----------------------------------------------------------------------

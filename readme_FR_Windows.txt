@@ -10,27 +10,23 @@ Marche à suivre pour Mepp sous Windows :
 1) récupérer et installer Visual Studio Express 2008 SP1:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/Visual_C++_2008_Express_with_SP1/VS2008ExpressWithSP1FRAx1504731.iso (869 Mo)
 
-2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
-http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_win32_v02.rar (376 Mo)
+2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_x86_v01.rar (484 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev32)
-
-2b) récupérer les maj des dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
-http://download.gforge.liris.cnrs.fr/meppbin/windows/MEPP/mepp_cmake_dep_prebuilt_binaries_win32_v02_glew_addon.rar (563 Ko)
-et décompresser l'archive dans le même répertoire que celui de l'étape 2a). Répondre "oui" pour écraser le fichier "CGALConfig.cmake".
 
 3) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):
  - bouton « nouveau » : rajouter la variable QTDIR avec comme valeur :
-C:\dev32\Qt\4.6.3 si vous avez décompressez le fichier ci-dessus dans C:\dev32
+C:\dev32\Qt_4.6.3_x86 si vous avez décompressé le fichier ci-dessus dans C:\dev32
  - bouton « nouveau » : rajouter la variable CGAL_DIR avec comme valeur :
-C:\dev32\CGAL-3.6.1 si vous avez décompressez le fichier ci-dessus dans C:\dev32
+C:\dev32\CGAL-3.6.1_x86 si vous avez décompressé le fichier ci-dessus dans C:\dev32
  - bouton « modifier » : rajouter au sein (à la fin par exemple) de la variable Path:
-;C:\dev32\Qt\4.6.3\bin (attention au ;)
+;C:\dev32\Qt_4.6.3_x86\bin (attention au ;)
 
 4) télécharger les sources de Mepp:
 Par exemple, dans C:/mepp/SVN,
 avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
 
-5) utiliser CMake-gui (dans C:\dev32\_cmake-2.8.1-win32-x86_\bin)
+5) utiliser CMake-gui (dans C:\dev32\_cmake-2.8.3-win32-x86_\bin)
  - renseigner le champ "Where is the source code" avec par exemple C:/mepp/SVN/trunk
  - renseigner le champ "Where to build the binaries" avec par exemple C:/mepp/SVN/trunk/build
  - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 9 2008"

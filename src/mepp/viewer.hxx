@@ -157,9 +157,9 @@ class Viewer : public QGLViewer
 		{
 			if (b)
 			{
-				QString fileName = QFileDialog::getSaveFileName(this, tr("Save Screenshot Sequence"),
+				QString fileName = QFileDialog::getSaveFileName(this, QObject::tr("Save Screenshot Sequence"),
 										 QDir::currentPath(),
-										 tr("PNG Files (*.png)"));
+										 QObject::tr("PNG Files (*.png)"));
 				if (!fileName.isEmpty())
 				{
 					QFileInfo fileInfo(fileName);
@@ -188,11 +188,11 @@ class Viewer : public QGLViewer
 		void setDynTitle()
 		{
 			if (getScenePtr()->get_loadType() == Normal)
-				setWindowTitle(tr("%1 (id: %2)")
+				setWindowTitle(QObject::tr("%1 (id: %2)")
 										.arg(userFriendlyCurrentFile())
 										.arg((qlonglong)this, 0, 16));
 			else
-				setWindowTitle(tr("%1 (id: %2) - (%3: %4/%5)")
+				setWindowTitle(QObject::tr("%1 (id: %2) - (%3: %4/%5)")
 										.arg(userFriendlyCurrentFile())
 										.arg((qlonglong)this, 0, 16)
 										.arg(getScenePtr()->get_stringLoadType())
@@ -229,7 +229,7 @@ class Viewer : public QGLViewer
 				recreateListsAndUpdateGL();
 			}
 			else
-				QMessageBox::warning(m_parent, APPLICATION, tr("Deleting last mesh not allowed."));
+				QMessageBox::warning(m_parent, APPLICATION, QObject::tr("Deleting last mesh not allowed."));
 		}
 		// dynamic options
 
