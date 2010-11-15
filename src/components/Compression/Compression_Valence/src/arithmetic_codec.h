@@ -184,7 +184,7 @@ public:
   {
 	  if (mode == 2)
 	  {
-		  return ac_pointer - code_buffer;
+		  return (unsigned)(ac_pointer - code_buffer);	// MT
 	  }
 	  else
 		  return 0;
