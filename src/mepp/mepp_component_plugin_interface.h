@@ -78,9 +78,12 @@ class mepp_component_plugin_interface
 				Viewer* vc = lcomponent[c]->get_viewer();
 				if (viewer == vc)
 				{
-					find = true;
 					component_ptr = boost::dynamic_pointer_cast<COMPONENT>(lcomponent[c]);
-					break;
+					if (component_ptr)
+					{
+						find = true;
+						break;
+					}
 				}
 			}
 
@@ -98,9 +101,12 @@ class mepp_component_plugin_interface
 				Viewer* vc = lcomponent[c]->get_viewer();
 				if (viewer == vc)
 				{
-					find = true;
 					component_ptr = boost::dynamic_pointer_cast<COMPONENT>(lcomponent[c]);
-					break;
+					if (component_ptr)
+					{
+						find = true;
+						break;
+					}
 				}
 			}
 
@@ -124,9 +130,12 @@ class mepp_component_plugin_interface
 				PolyhedronPtr p = lcomponent[c]->get_polyhedron_ptr();
 				if (polyhedron_ptr == p)
 				{
-					find = true;
 					component_ptr = boost::dynamic_pointer_cast<COMPONENT>(lcomponent[c]);
-					break;
+					if (component_ptr)
+					{
+						find = true;
+						break;
+					}
 				}
 			}
 
@@ -144,9 +153,12 @@ class mepp_component_plugin_interface
 				PolyhedronPtr p = lcomponent[c]->get_polyhedron_ptr();
 				if (polyhedron_ptr == p)
 				{
-					find = true;
 					component_ptr = boost::dynamic_pointer_cast<COMPONENT>(lcomponent[c]);
-					break;
+					if (component_ptr)
+					{
+						find = true;
+						break;
+					}
 				}
 			}
 

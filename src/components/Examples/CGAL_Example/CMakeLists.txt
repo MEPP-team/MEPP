@@ -61,6 +61,9 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	)
 	qt4_wrap_ui( UI_FILES ${all_ui_files} ../../../mepp/mainwindow.ui )
 	
+	# Utilisation d'autre(s) composant(s) (sans la gestion des boîtes de dialogue pour le moment)
+	include( ./cmake/use_components.txt )
+	
 	# Configuration de l'exécutable
 	file(
 		GLOB_RECURSE
@@ -71,6 +74,7 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 		${COMPONENT_NAME}
 		SHARED
 		${source_files}
+		${use_components}
 		${MOC_FILES}
 		${UI_FILES}
 	)

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.38d - 11/11/2010"
+#define MEPP_VERSION "v0.39 - 16/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 

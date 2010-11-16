@@ -8,7 +8,7 @@
 
 #include "mepp_component_CGAL_Example_plugin.hxx"
 
-#include "dialSettings.hxx"
+#include "dialSettings_CGAL_Example.hxx"
 
 #include <QObject>
 #include <QAction>
@@ -19,6 +19,11 @@
 
 #include "CGAL_Example_Component.h"
 typedef boost::shared_ptr<CGAL_Example_Component> CGAL_Example_ComponentPtr;
+
+// we want to use Curvature component
+#include "../../../Analysis/Curvature/src/Curvature_Component.h"
+typedef boost::shared_ptr<Curvature_Component> Curvature_ComponentPtr;
+// we want to use Curvature component
 
 void mepp_component_CGAL_Example_plugin::pre_draw()
 {
@@ -313,7 +318,7 @@ void mepp_component_CGAL_Example_plugin::step2()
 		{
 			component_ptr->color(float(new_color.red())/255., float(new_color.green())/255., float(new_color.blue())/255.);
 
-			SettingsDialog dial;
+			SettingsDialog_CGAL_Example dial;
 			if (dial.exec() == QDialog::Accepted)
 			{
 				QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -512,6 +517,46 @@ int mepp_component_plugin_interface::save_file_from_component(PolyhedronPtr poly
 void mepp_component_CGAL_Example_plugin::step8()
 {
 	emit(mw->get_mainwindowActionSave_As()->doSendParams(tr("Save Mesh File - from CGAL_Example"), tr("OFF Files (*.off)"), mepp_component_plugin_interface::save_file_from_component));
+}
+
+void mepp_component_CGAL_Example_plugin::step9()
+{
+	// active viewer
+	if (mw->activeMdiChild() != 0)
+	{
+		Viewer* viewer = (Viewer *)mw->activeMdiChild();
+		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		// we use CGAL_Example component here (as usual)
+			CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
+			component_ptr->TriangulateAndRandomColorFacets(polyhedron_ptr);
+
+			component_ptr->set_init(2);
+		// we use CGAL_Example component here (as usual)
+
+		// we use Curvature component here
+			bool IsGeo;
+			double radius;
+			Curvature_ComponentPtr component_ptr_curvature = findOrCreateComponentForViewer<Curvature_ComponentPtr, Curvature_Component>(viewer, polyhedron_ptr);
+				
+			// params
+			radius = 0.001;
+			IsGeo=true;
+
+			mw->statusBar()->showMessage(tr("Curvature..."));				
+			component_ptr_curvature->principal_curvature(polyhedron_ptr,IsGeo,radius);
+			mw->statusBar()->showMessage(tr("Curvature is done"));
+
+			component_ptr_curvature->set_init(2);
+
+			component_ptr_curvature->ConstructColorMap(polyhedron_ptr,1);
+			viewer->recreateListsAndUpdateGL();
+		// we use Curvature component here
+	}
+
+	QApplication::restoreOverrideCursor();
 }
 
 void mepp_component_CGAL_Example_plugin::example()
