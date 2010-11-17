@@ -1118,6 +1118,138 @@ void Viewer::keyReleaseEvent(QKeyEvent *event)
 	}
 }
 
+void Viewer::setActivePolyhedron(int p)
+{
+	setDynStop();
+
+	scene_ptr->set_current_polyhedron(p);
+
+	setDynTitle();
+
+	if (scene_ptr->get_loadType()==Space)
+    {
+		setManipulatedFrame(frame(p));
+		setSelectedFrameNumber(p);
+	}
+	else if (scene_ptr->get_loadType()==Time)
+		recreateListsAndUpdateGL();
+}
+void Viewer::contextMenuEvent(QContextMenuEvent *event)
+{
+	mainwindow* mw=(mainwindow *)m_parent;
+
+    QMenu menu(this);
+
+	QMenu menu_pid(tr("Pid"), this);
+	menu.addMenu(&menu_pid);
+	menu.addSeparator();
+
+		QSignalMapper *meshMapper = new QSignalMapper(this);
+		connect(meshMapper, SIGNAL(mapped(int)), this, SLOT(setActivePolyhedron(int)));
+
+		QAction *action;
+		for (int p=0; p<scene_ptr->get_nb_polyhedrons(); p++)
+		{
+			action = menu_pid.addAction(tr("%1 - pid: %2").arg(p+1, 3).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
+			action->setCheckable(true);
+			action->setChecked(scene_ptr->get_polyhedron() == scene_ptr->get_polyhedron(p));
+
+			connect(action, SIGNAL(triggered()), meshMapper, SLOT(map()));
+			meshMapper->setMapping(action, p);
+		}
+
+	menu.addAction(mw->actionOpen_and_Add_space);
+	menu.addAction(mw->actionOpen_and_Add_time);
+	menu.addAction(mw->actionSave_As);
+	menu.addSeparator();
+
+	menu.addAction(mw->actionChange_Viewer_Mode_Space_Time);
+	menu.addSeparator();   
+
+	QMenu menu_color(tr("Color"), this);
+	menu.addMenu(&menu_color);
+
+		menu_color.addAction(mw->actionBackground_color);
+		menu_color.addAction(mw->actionVertex_color);
+		menu_color.addAction(mw->actionEdge_color);
+		menu_color.addAction(mw->actionFace_color);
+		menu_color.addSeparator();
+		menu_color.addAction(mw->actionMaterial);
+
+	QMenu menu_show(tr("Show"), this);
+	menu.addMenu(&menu_show);
+
+		menu_show.addAction(mw->actionShow_FPS);
+		menu_show.addAction(mw->actionShow_axis);
+		menu_show.addAction(mw->actionShow_grid);
+		menu_show.addSeparator();
+		menu_show.addAction(mw->actionShow_normals);
+		menu_show.addSeparator();
+		menu_show.addAction(mw->actionBounding_box);
+		menu_show.addAction(mw->actionBounding_box_when_moving);
+
+	QMenu menu_view(tr("View"), this);
+	menu.addMenu(&menu_view);
+
+		menu_view.addAction(mw->actionReset_viewpoint);
+		menu_view.addAction(mw->actionCopy_viewpoint);
+		menu_view.addAction(mw->actionPaste_viewpoint);
+		menu_view.addSeparator();
+		menu_view.addAction(mw->actionCenter_all_objects);
+		menu_view.addAction(mw->actionCouplingRotations);
+		menu_view.addSeparator();
+		menu_view.addAction(mw->actionVBO);
+
+	QMenu menu_capture(tr("Capture"), this);
+	menu.addMenu(&menu_capture);
+
+		menu_capture.addAction(mw->actionScreenshot);
+		menu_capture.addAction(mw->actionScreenshot_sequence);
+		menu_capture.addSeparator();
+		menu_capture.addAction(mw->actionClipboard_screenshot);
+
+	QMenu menu_dynamic(tr("Dynamic"), this);
+	menu.addMenu(&menu_dynamic);
+	menu.addSeparator();
+
+		menu_dynamic.addAction(mw->actionParams);
+		menu_dynamic.addSeparator();
+		menu_dynamic.addAction(mw->actionReverse_start_loop);
+		menu_dynamic.addAction(mw->actionReverse_start);
+		menu_dynamic.addAction(mw->actionStart);
+		menu_dynamic.addAction(mw->actionStart_loop);
+		menu_dynamic.addAction(mw->actionStop);
+		menu_dynamic.addSeparator();
+		menu_dynamic.addAction(mw->actionDynFirst);
+		menu_dynamic.addAction(mw->actionDynPrevious);
+		menu_dynamic.addAction(mw->actionDynNext);
+		menu_dynamic.addAction(mw->actionDynLast);
+		menu_dynamic.addSeparator();
+		menu_dynamic.addAction(mw->actionDynDelete);
+
+	menu.addAction(mw->actionRender_Point);
+	menu.addAction(mw->actionRender_Line);
+	menu.addAction(mw->actionRender_Fill);
+	menu.addSeparator();
+	menu.addAction(mw->actionSuperimpose_Vertices);
+	menu.addAction(mw->actionSuperimpose_Vertices_big);
+	menu.addAction(mw->actionSuperimpose_Edges);
+	menu.addSeparator();
+	menu.addAction(mw->actionVertex_Color);
+	menu.addAction(mw->actionFace_Color);
+	menu.addSeparator();
+	menu.addAction(mw->actionLighting);
+	menu.addAction(mw->actionSmooth_Shading);
+	menu.addSeparator();
+	menu.addAction(mw->actionAntialiasing);
+	menu.addAction(mw->actionCulling);
+	menu.addSeparator();
+
+    menu.exec(event->globalPos());
+
+	delete meshMapper;
+}
+
 QString Viewer::helpString() const
 {
 	QString text(tr("<h2>MEPP</h2>"));

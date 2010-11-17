@@ -22,6 +22,8 @@ C:\dev32\CGAL-3.6.1_x86 si vous avez décompressé le fichier ci-dessus dans C:\de
  - bouton « modifier » : rajouter au sein (à la fin par exemple) de la variable Path:
 ;C:\dev32\Qt_4.6.3_x86\bin (attention au ;)
 
+3b) redémarrer la machine pour la prise en compte des variables ci-dessus
+
 4) télécharger les sources de Mepp:
 Par exemple, dans C:/mepp/SVN,
 avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk

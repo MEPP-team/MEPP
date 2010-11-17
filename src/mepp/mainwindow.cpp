@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.39 - 16/11/2010"
+#define MEPP_VERSION "v0.40 - 17/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -495,13 +495,14 @@ void mainwindow::updateMenus()
 
 	actionClose_Window->setEnabled(hasMdiChild);
 	actionClose_All->setEnabled(hasMdiChild);
-	actionTile->setEnabled(hasMdiChild && !actionChange_MDI_View_Mode->isChecked());
-	actionCascade->setEnabled(hasMdiChild && !actionChange_MDI_View_Mode->isChecked());
+	actionTile->setEnabled(hasMdiChild && (mdiArea->viewMode()==QMdiArea::SubWindowView));
+	actionCascade->setEnabled(hasMdiChild && (mdiArea->viewMode()==QMdiArea::SubWindowView));
 	actionNext->setEnabled(hasMdiChild);
 	actionPrevious->setEnabled(hasMdiChild);
 
 	actionChange_MDI_View_Mode->setEnabled(hasMdiChild);
 	actionChange_Viewer_Mode_Space_Time->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() != Normal);
+	actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Normal)"));
 
 	this->setWindowTitle(tr("%1 - %2 - %3").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE));
 
@@ -577,6 +578,8 @@ void mainwindow::updateMenus()
 		// capture options
 		actionScreenshot_sequence->setChecked(viewer->getSave_animation());
 		// capture options
+
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadTypeForSwap()));
 	}
 	// rendering options
 
@@ -677,13 +680,13 @@ void mainwindow::updateWindowMenu()
         QString text;
 		if (viewer->getScenePtr()->get_loadType() == Normal)
 		{
-            text = tr("%1 - %2 (id: %3)").arg(i + 1)
+            text = tr("%1 - %2 (vid: %3)").arg(i+1, 3)
 											.arg(viewer->userFriendlyCurrentFile())
 											.arg((qlonglong)viewer, 0, 16);
         }
 		else
 		{
-            text = tr("%1 - %2 (id: %3) - (%4: %5/%6)").arg(i + 1)
+            text = tr("%1 - %2 (vid: %3) - (%4: %5/%6)").arg(i+1, 3)
 															.arg(viewer->userFriendlyCurrentFile())
 															.arg((qlonglong)viewer, 0, 16)
 															.arg(viewer->getScenePtr()->get_stringLoadType())
@@ -692,7 +695,7 @@ void mainwindow::updateWindowMenu()
         }
         QAction *action  = menuWindow->addAction(text);
         action->setCheckable(true);
-        action ->setChecked(viewer == activeMdiChild());
+        action->setChecked(viewer == activeMdiChild());
 
         connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));	// to see
         windowMapper->setMapping(action, windows.at(i));
@@ -765,9 +768,7 @@ int mainwindow::loadFile(const QString &fileName, int loadType, typeFuncOpenSave
 	int res = the_viewer->getScenePtr()->add_mesh(fileName, loadType, f, the_viewer);
 	if (!res)
 	{
-		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadType()));
-		if (loadType == Time)
-			actionChange_Viewer_Mode_Space_Time->setChecked(true);
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(the_viewer->getScenePtr()->get_stringLoadTypeForSwap()));
 
 		mdiArea->addSubWindow(the_viewer);
 		the_viewer->setDynTitle();
@@ -796,6 +797,8 @@ int mainwindow::loadFile(const QString &fileName, int loadType, typeFuncOpenSave
 
 	QApplication::restoreOverrideCursor();
 
+	SleeperThread::msleep(3); // important, for dynamic mesh loading, allow refresh
+
 	return res;
 }
 
@@ -806,9 +809,7 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 	int res = viewer->getScenePtr()->add_mesh(fileName, loadType, f, viewer);
 	if (!res)
 	{
-		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadType()));
-		if (loadType == Time)
-			actionChange_Viewer_Mode_Space_Time->setChecked(true);
+		actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadTypeForSwap()));
 
 		viewer->setDynTitle();
 
@@ -831,6 +832,8 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 	}
 
 	QApplication::restoreOverrideCursor();
+
+	SleeperThread::msleep(3); // important, for dynamic mesh loading, allow refresh
 
 	return res;
 }
@@ -983,9 +986,7 @@ void mainwindow::actionAddEmpty_slot()
 		int res = viewer->getScenePtr()->add_mesh(EMPTY_MESH, loadType, NULL, viewer);
 		if (!res)
 		{
-			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadType()));
-			if (loadType == Time)
-				actionChange_Viewer_Mode_Space_Time->setChecked(true);
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (%1)").arg(viewer->getScenePtr()->get_stringLoadTypeForSwap()));
 
 			viewer->setDynTitle();
 
@@ -1027,7 +1028,7 @@ void mainwindow::actionSave_As_slot(QString title, QString typeFiles, typeFuncOp
 }
 void mainwindow::on_actionSave_As_triggered()
 {
-	actionSave_As_slot(tr("Save Mesh File"), tr("OFF Files (*.off)"), NULL);
+	actionSave_As_slot(tr("Save Mesh File"), tr("OFF Files (*.off);;OBJ files (*.obj);;VRML files (*.wrl)"), NULL);
 }
 
 void mainwindow::on_actionClose_triggered()
@@ -1052,15 +1053,15 @@ void mainwindow::on_actionClose_All_triggered()
 
 void mainwindow::on_actionChange_MDI_View_Mode_triggered()
 {
-	if (actionChange_MDI_View_Mode->isChecked())
+	if (mdiArea->viewMode()==QMdiArea::SubWindowView)
 	{
 		mdiArea->setViewMode(QMdiArea::TabbedView);
-		actionChange_MDI_View_Mode->setText(tr("Change MDI View Mode (Tabbed View)"));
+		actionChange_MDI_View_Mode->setText(tr("Change MDI View Mode (-> to SubWindow View)"));
 	}
 	else
 	{
 		mdiArea->setViewMode(QMdiArea::SubWindowView);
-		actionChange_MDI_View_Mode->setText(tr("Change MDI View Mode (SubWindow View)"));
+		actionChange_MDI_View_Mode->setText(tr("Change MDI View Mode (-> to Tabbed View)"));
 	}
 
 	updateMenus();
@@ -1072,22 +1073,25 @@ void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
 	{
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
+		viewer->setDynStop();
+
 		if (viewer->getScenePtr()->get_loadType() == Space)
 		{
 			viewer->getScenePtr()->set_loadType(Time);
-			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Time)"));
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (-> to Space)"));
 		}
 		else
 		{
 			viewer->getScenePtr()->set_loadType(Space);
-			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Space)"));
+			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (-> to Time)"));
 			viewer->getScenePtr()->todoIfModeSpace(viewer);
+
+			viewer->setManipulatedFrame(viewer->frame(viewer->getScenePtr()->get_current_polyhedron()));
+			viewer->setSelectedFrameNumber(viewer->getScenePtr()->get_current_polyhedron());
 		}
 
 		updateMenus();
-
 		viewer->setDynTitle();
-
 		viewer->recreateListsAndUpdateGL();
 	}
 }

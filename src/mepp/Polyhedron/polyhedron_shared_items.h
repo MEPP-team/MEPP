@@ -503,7 +503,6 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return sum / (FT) degree;
 		}
 
-		// draw using OpenGL commands (display lists)
 		virtual void gl_draw(bool smooth_shading, bool use_normals, bool use_vertex_color, bool use_face_color)
 		{
 			// draw polygons
@@ -988,6 +987,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			this->compute_bounding_box();
 		}
 
+#if (0)
 		bool load_mesh(string path)
 		{
 			// Check extension
@@ -1047,6 +1047,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			return true;
 		}
+#endif
 
 		int load_mesh_off(std::string filename)
 		{
@@ -1064,7 +1065,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return 0;
 		}
 
-		int load_mesh_obj(string filename)
+		int load_mesh_obj(std::string filename)
 		{
 			// read from stream
 			std::ifstream stream(filename.c_str());

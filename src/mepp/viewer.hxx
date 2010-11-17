@@ -188,11 +188,11 @@ class Viewer : public QGLViewer
 		void setDynTitle()
 		{
 			if (getScenePtr()->get_loadType() == Normal)
-				setWindowTitle(QObject::tr("%1 (id: %2)")
+				setWindowTitle(QObject::tr("%1 (vid: %2)")
 										.arg(userFriendlyCurrentFile())
 										.arg((qlonglong)this, 0, 16));
 			else
-				setWindowTitle(QObject::tr("%1 (id: %2) - (%3: %4/%5)")
+				setWindowTitle(QObject::tr("%1 (vid: %2) - (%3: %4/%5)")
 										.arg(userFriendlyCurrentFile())
 										.arg((qlonglong)this, 0, 16)
 										.arg(getScenePtr()->get_stringLoadType())
@@ -254,6 +254,7 @@ class Viewer : public QGLViewer
 		void render();
 
 		void closeEvent(QCloseEvent *event);
+		void contextMenuEvent(QContextMenuEvent *event);
 
 		void setVBO_modeUncheck(bool b);
 
@@ -304,6 +305,8 @@ class Viewer : public QGLViewer
 		}
 
 		void shotCapture() {}
+
+		void setActivePolyhedron(int p);
 
 	public:
 		QList<mepp_component_plugin_interface *> lplugin;

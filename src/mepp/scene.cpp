@@ -155,28 +155,74 @@ int Scene::load_file(PolyhedronPtr polyhedron_ptr, QString filename)
 
 int Scene::save_file(QString filename, typeFuncOpenSave f, Viewer* viewer)
 {
-	QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
-
 	int res = 0;
-	QFileInfo fileinfo(filename);
+	/*QFileInfo fileinfo(filename);
 	std::ofstream out(filename.toUtf8());
 
 	if (!out || !fileinfo.isFile() || ! fileinfo.isWritable())
 	{
 		QApplication::restoreOverrideCursor();
 		return -1;
-	}
+	}*/
 
 	if (f != NULL)
 		res = f(get_polyhedron(), filename, viewer);
 	else
 	{
-		out << *get_polyhedron();
+		// ancienne sauvegarde .off
+			/*out << *get_polyhedron();
 
-		if (!out)
+			if (!out)
+			{
+				QApplication::restoreOverrideCursor();
+				return -1;
+			}*/
+		// ancienne sauvegarde .off
+
+		QString fsuffix = QFileInfo(filename).suffix();
+		QString fname = QFileInfo(filename).completeBaseName();
+		QString fpath= QFileInfo(filename).absolutePath ();
+
+		bool save_colors = false;
+		bool save_normals = false;
+		if (fsuffix == "off")
 		{
-			QApplication::restoreOverrideCursor();
-			return -1;
+			QMessageBox::StandardButton reply;
+			reply = QMessageBox::question(viewer, QObject::tr("Save colors"),
+											QObject::tr("Do you want to save colors ?"),
+											QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes)
+				save_colors=true;
+
+			//---
+
+			reply = QMessageBox::question(viewer, QObject::tr("Save normals"),
+											QObject::tr("Do you want to save normals ?"),
+											QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes)
+				save_normals=true;
+		}
+
+		QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
+
+		for (int p=0; p<get_nb_polyhedrons(); p++)
+		{
+			QString fnum;
+			if (get_nb_polyhedrons()>1)
+				fnum = QString("-%1").arg(p+1, 4, 10, QChar('0'));
+			else
+				fnum = "";
+
+			QString f = fpath+"/"+fname+fnum+"."+fsuffix;
+
+			if (fsuffix == "off")
+				get_polyhedron(p)->write_off(f.toStdString(), save_colors, save_normals);
+			else if (fsuffix == "obj")
+				get_polyhedron(p)->write_obj(f.toStdString());
+			else if (fsuffix == "wrl")
+				get_polyhedron(p)->write_vrml(f.toStdString());
+			else
+				return -1;
 		}
 	}
 

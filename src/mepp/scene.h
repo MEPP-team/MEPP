@@ -52,6 +52,16 @@ class Scene
 				default: return "Normal";
 			}
 		}
+		QString get_stringLoadTypeForSwap()
+		{
+			switch (m_loadType)
+			{
+				case 0: return "Normal";
+				case 1: return "-> to Time";
+				case 2: return "-> to Space";
+				default: return "Normal";
+			}
+		}
 
 	private:
 		vector<PolyhedronPtr> m_polyhedrons;
