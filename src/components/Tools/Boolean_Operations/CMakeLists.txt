@@ -1,6 +1,10 @@
 # This is the CMake script for compiling a MEPP component
 # Martial TOLA - Novembre 2010
-cmake_minimum_required(VERSION 2.8)
+IF(APPLE)
+	cmake_minimum_required(VERSION 2.8)
+else(APPLE)
+    cmake_minimum_required(VERSION 2.6)
+endif(APPLE)
 
 if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -14,8 +18,8 @@ message(STATUS "FIND MEPP_COMPONENT_NAME: ${MEPP_COMPONENT_NAME}")
 set(COMPONENT_NAME mepp_${MEPP_COMPONENT_NAME})
 project( ${COMPONENT_NAME} )
 
-# cf. mepp
-SET(plugin_dest_dir bin)
+# cf. CMakeLists de mepp
+SET(plugin_dest_dir "")
 IF(APPLE)
 	SET(plugin_dest_dir ${PRJ_NAME}.app/Contents/MacOS)
 ENDIF(APPLE)

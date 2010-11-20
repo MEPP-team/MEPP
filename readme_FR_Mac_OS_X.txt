@@ -19,7 +19,7 @@ sudo port -v selfupdate
 4) installer les paquets suivants avec MacPorts: 
 sudo port install cgal						(assez long, <= 1 heure)
 sudo port install qt4-mac					(très long, environ 2-3 heures)
-sudo port install libQGLViewer		(très rapide, quelques minutes)
+sudo port install libQGLViewer				(très rapide, quelques minutes)
 sudo port install glew						(très très rapide, quelques secondes)
 
 5) télécharger les sources de Mepp:
@@ -35,7 +35,7 @@ note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 ou
 
 6b) compiler Mepp avec CMake et Qt Creator:
-CMake (ou CMake-gui) est capable de générer (pour le moment) sous Linux des Makefiles Unix ainsi que des projets Code::Blocks ou encore KDevelop,
+CMake (ou CMake-gui) est capable de générer (pour le moment) des Makefiles Unix ainsi que des projets Code::Blocks ou encore KDevelop,
 mais malheureusement pas encore des projets Qt Creator (.pro).
 Qt Creator sait par contre interprêter directement le CMakeLists.txt de cmake
 pour générer les projets Qt Creator (.pro).
