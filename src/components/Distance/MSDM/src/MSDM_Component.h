@@ -31,7 +31,7 @@ class MSDM_Component :
 		void KmaxKmean(PolyhedronPtr polyhedron_ptr,double coef);
 		double getMaxDim(PolyhedronPtr polyhedron_ptr);
 		void ComputeMaxMin(PolyhedronPtr polyhedron_ptr);
-		void MSDM_Component::ConstructColorMap(PolyhedronPtr pMesh);
+		void ConstructColorMap(PolyhedronPtr pMesh);
 
 
 private:

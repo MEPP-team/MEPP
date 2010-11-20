@@ -1,6 +1,6 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - Juin 2010
-cmake_minimum_required(VERSION 2.4.5)
+# Martial TOLA - Novembre 2010
+cmake_minimum_required(VERSION 2.8)
 
 if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
@@ -10,6 +10,8 @@ endif (COMMAND cmake_policy)
 set(PRJ_NAME mepp)
 project( ${PRJ_NAME} )
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy")
 
 file(
 	GLOB_RECURSE
@@ -120,10 +122,21 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	file(
 		GLOB_RECURSE
 		source_files
-		src/mepp/*
+		src/mepp/*.c*
 	)
+	
+# For Apple set the icns file containing icons
+IF(APPLE)
+  # set how it shows up in the Info.plist file
+  SET(MACOSX_BUNDLE_ICON_FILE ${PRJ_NAME}.icns) 
+  # set where in the bundle to put the icns file
+  SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+  # include the icns file in the target
+  SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.icns)
+ENDIF(APPLE)
+	
 	add_executable(
-		${PRJ_NAME}
+		${PRJ_NAME} MACOSX_BUNDLE WIN32
 		${source_files}
 		${MOC_FILES}
 		${UI_FILES}
@@ -141,8 +154,85 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	target_link_libraries( ${PRJ_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 	
 	if(GLEW_FOUND)
-    target_link_libraries(${PRJ_NAME} ${GLEW_LIBRARIES})
-  endif()
+		target_link_libraries(${PRJ_NAME} ${GLEW_LIBRARIES})
+	endif(GLEW_FOUND)
+	
+
+#--------------------------------------------------------------------------------
+# Now the installation stuff : http://www.cmake.org/Wiki/BundleUtilitiesExample
+#--------------------------------------------------------------------------------
+SET(plugin_dest_dir bin)
+SET(qtconf_dest_dir bin)
+SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}")
+IF(APPLE)
+SET(plugin_dest_dir ${PRJ_NAME}.app/Contents/MacOS)
+SET(qtconf_dest_dir ${PRJ_NAME}.app/Contents/Resources)
+SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}.app")
+ENDIF(APPLE)
+IF(WIN32)
+SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}.exe")
+ENDIF(WIN32)
+	
+#--------------------------------------------------------------------------------
+# Install the application, on Apple, the bundle is at the root of the
+# install tree, and on other platforms it'll go into the bin directory.
+INSTALL(TARGETS ${PRJ_NAME} 
+BUNDLE DESTINATION . COMPONENT Runtime
+RUNTIME DESTINATION bin COMPONENT Runtime
+)
+
+#--------------------------------------------------------------------------------
+# Install needed Qt plugins by copying directories from the qt installation
+# One can cull what gets copied by using 'REGEX "..." EXCLUDE'
+INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+
+#--------------------------------------------------------------------------------
+# install a qt.conf file
+# this inserts some cmake code into the install script to write the file
+INSTALL(CODE "
+file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
+" COMPONENT Runtime)
+
+# install qt_menu.nib
+IF(APPLE)
+    INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
+         WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
+ENDIF(APPLE)
+
+# install components
+INSTALL(CODE "execute_process(COMMAND cp ../${plugin_dest_dir}/libmepp_*.dylib \"${plugin_dest_dir}\"
+	WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
+	
+#--------------------------------------------------------------------------------
+# Use BundleUtilities to get all other dependencies for the application to work.
+# It takes a bundle or executable along with possible plugins and inspects it
+# for dependencies.  If they are not system dependencies, they are copied.
+
+# directories to look for dependencies
+SET(DIRS ${QT_LIBRARY_DIRS})
+
+# Now the work of copying dependencies into the bundle/package
+# The quotes are escaped and variables to use at install time have their $ escaped
+# An alternative is the do a configure_file() on a script and use install(SCRIPT  ...).
+# Note that the image plugins depend on QtSvg and QtXml, and it got those copied
+# over.
+INSTALL(CODE "
+file(GLOB_RECURSE QTPLUGINS
+\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+include(BundleUtilities)
+fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
+" COMPONENT Runtime)
+
+
+# To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
+# where CPackConfig.cmake is created by including CPack
+# And then there's ways to customize this as well
+set(CPACK_BINARY_DRAGNDROP ON)
+include(CPack)
+#--------------------------------------------------------------------------------
+# Now the installation stuff : end
+#--------------------------------------------------------------------------------
+
 	
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
