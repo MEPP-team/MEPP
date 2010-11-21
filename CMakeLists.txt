@@ -126,7 +126,7 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	file(
 		GLOB_RECURSE
 		source_files
-		src/mepp/*.c*
+		src/mepp/*
 	)
 	
 	# For Apple set the icns file containing icons
@@ -199,14 +199,10 @@ IF(APPLE)
 	" COMPONENT Runtime)
 
 	# install qt_menu.nib
-	IF(APPLE)
+	IF(APPLE)	# \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
 		INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
 			 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
 	ENDIF(APPLE)
-
-	# install components
-	#INSTALL(CODE "execute_process(COMMAND cp ../${plugin_dest_dir}/libmepp_*.dylib \"${plugin_dest_dir}\"
-	#	WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
 		
 	#--------------------------------------------------------------------------------
 	# Use BundleUtilities to get all other dependencies for the application to work.
@@ -223,11 +219,10 @@ IF(APPLE)
 	# over.
 	INSTALL(CODE "
 	file(GLOB_RECURSE QTPLUGINS
-	\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+	\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/libmepp_*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
 	include(BundleUtilities)
 	fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
 	" COMPONENT Runtime)
-
 
 	# To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
 	# where CPackConfig.cmake is created by including CPack
