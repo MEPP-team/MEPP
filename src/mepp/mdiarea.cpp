@@ -28,7 +28,17 @@ void MdiArea::paintEvent(QPaintEvent *paintEvent)
 void MdiArea::dragEnterEvent(QDragEnterEvent *event)
 {
 	if (event->mimeData()->hasUrls())	//hasFormat("text/uri-list")
+	{
 		event->acceptProposedAction();
+
+// ---------------------------------------------------
+#ifdef __linux__
+	bType=bLeft;
+	if (event->mouseButtons() & Qt::RightButton)
+		bType=bRight;
+#endif
+// ---------------------------------------------------
+	}
 }
 
 void MdiArea::dropEvent(QDropEvent *event)
@@ -37,17 +47,18 @@ void MdiArea::dropEvent(QDropEvent *event)
 	Viewer *viewer = NULL;
 	QList<QUrl> urls = event->mimeData()->urls();
 
-	// ---------
-	bType=bLeft;
-
+// ---------------------------------------------------
 #ifdef __APPLE__
+	bType=bLeft;
 	if (event->keyboardModifiers() & Qt::MetaModifier)
 		bType=bRight;
-#else
+#endif
+#ifdef _MSC_VER
+	bType=bLeft;
 	if (event->mouseButtons() & Qt::RightButton)
 		bType=bRight;
 #endif
-	// ---------
+// ---------------------------------------------------
 
 	for (int i=0; i<urls.size(); i++)
 	{
