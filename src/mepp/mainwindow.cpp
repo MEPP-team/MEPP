@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.40 - 17/11/2010"
+#define MEPP_VERSION "v0.40b - 23/11/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -1010,11 +1010,22 @@ void mainwindow::actionSave_As_slot(QString title, QString typeFiles, typeFuncOp
 	{
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
+		QString suffix;
 		QString fileName = QFileDialog::getSaveFileName(this, title,
 											 QDir::currentPath(),
-											 typeFiles);
+											 typeFiles, &suffix);
+
 		if (!fileName.isEmpty())
 		{
+#ifdef __linux__
+			if (suffix.indexOf(".off") >= 0)
+				fileName += ".off";
+			else if (suffix.indexOf(".obj") >= 0)
+				fileName += ".obj";
+			else if (suffix.indexOf(".wrl") >= 0)
+				fileName += ".wrl";
+#endif
+
 			int res = viewer->getScenePtr()->save_file(fileName, f, viewer);
 
 			if (res==-1)

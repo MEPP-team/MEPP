@@ -107,6 +107,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	m_LeftButtonDown = false;
 	m_RightButtonDown = false;
 	m_Moving = false;
+	m_HasMoved = false;
 
 	mCouplingTranslations = mCouplingRotations = mCouplingZooms = false;
 	
@@ -1021,6 +1022,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event)
 {
 	QGLViewer::mouseMoveEvent(event);
 	m_Moving = true;
+	m_HasMoved = true;
 
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
@@ -1136,6 +1138,12 @@ void Viewer::setActivePolyhedron(int p)
 }
 void Viewer::contextMenuEvent(QContextMenuEvent *event)
 {
+	if (m_HasMoved)
+	{
+		m_HasMoved = false;
+		return;
+	}
+
 	mainwindow* mw=(mainwindow *)m_parent;
 
     QMenu menu(this);

@@ -129,6 +129,8 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 		src/mepp/*
 	)
 	
+	SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.rc)
+	
 	# For Apple set the icns file containing icons
 	IF(APPLE)
 	  # set how it shows up in the Info.plist file

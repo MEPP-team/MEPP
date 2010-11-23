@@ -344,6 +344,7 @@ class Viewer : public QGLViewer
 		bool m_LeftButtonDown;
 		bool m_RightButtonDown;
 		bool m_Moving;
+		bool m_HasMoved;
 
 		string m_last_material;
 
