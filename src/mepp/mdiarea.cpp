@@ -29,10 +29,10 @@ void MdiArea::dragEnterEvent(QDragEnterEvent *event)
 {
 	if (event->mimeData()->hasUrls())	//hasFormat("text/uri-list")
 	{
-		if (event->mouseButtons() & Qt::LeftButton)
-			bType=bLeft;
-		else if (event->mouseButtons() & Qt::RightButton)
+		if (event->mouseButtons() & Qt::RightButton) // because Mac OS X
 			bType=bRight;
+		else if (event->mouseButtons() & Qt::LeftButton)
+			bType=bLeft; 
 		else
 			bType=bNone;
 
