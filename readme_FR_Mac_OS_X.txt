@@ -54,3 +54,8 @@ Note au sujet de l'activation/désactivation des composants avec CMake:
 ----------------------------------------------------------------------
 - activation des composants: passer -DBUILD_component_nomducomposant=ON à CMake (exemple: -DBUILD_component_Curvature=ON)
 - désactivation des composants: passer -DBUILD_component_nomducomposant=OFF à CMake (exemple: -DBUILD_component_Curvature=OFF)
+
+---------------------------------------------------------------
+Note au sujet de la génération d'un bundle portable (mepp.app):
+---------------------------------------------------------------
+"make install" permet de déployer un bundle portable sur un autre système Mac, le bundle généré se trouve dans le dossier mepp_deploy

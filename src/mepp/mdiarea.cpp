@@ -28,16 +28,7 @@ void MdiArea::paintEvent(QPaintEvent *paintEvent)
 void MdiArea::dragEnterEvent(QDragEnterEvent *event)
 {
 	if (event->mimeData()->hasUrls())	//hasFormat("text/uri-list")
-	{
-		if (event->mouseButtons() & Qt::RightButton) // because Mac OS X
-			bType=bRight;
-		else if (event->mouseButtons() & Qt::LeftButton)
-			bType=bLeft; 
-		else
-			bType=bNone;
-
 		event->acceptProposedAction();
-	}
 }
 
 void MdiArea::dropEvent(QDropEvent *event)
@@ -45,6 +36,18 @@ void MdiArea::dropEvent(QDropEvent *event)
 	int res = 0;
 	Viewer *viewer = NULL;
 	QList<QUrl> urls = event->mimeData()->urls();
+
+	// ---------
+	bType=bLeft;
+
+#ifdef __APPLE__
+	if (event->keyboardModifiers() & Qt::MetaModifier)
+		bType=bRight;
+#else
+	if (event->mouseButtons() & Qt::RightButton)
+		bType=bRight;
+#endif
+	// ---------
 
 	for (int i=0; i<urls.size(); i++)
 	{

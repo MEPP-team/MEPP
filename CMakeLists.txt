@@ -129,7 +129,10 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 		src/mepp/*
 	)
 	
-	SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.rc)
+	# For Windows set the ico file with the rc file
+	IF(WIN32)
+		SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.rc)
+	ENDIF(WIN32)
 	
 	# For Apple set the icns file containing icons
 	IF(APPLE)
@@ -172,12 +175,12 @@ IF(APPLE)
 	SET(qtconf_dest_dir bin)
 	SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}")
 	IF(APPLE)
-	SET(plugin_dest_dir ${PRJ_NAME}.app/Contents/MacOS)
-	SET(qtconf_dest_dir ${PRJ_NAME}.app/Contents/Resources)
-	SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}.app")
+		SET(plugin_dest_dir ${PRJ_NAME}.app/Contents/MacOS)
+		SET(qtconf_dest_dir ${PRJ_NAME}.app/Contents/Resources)
+		SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}.app")
 	ENDIF(APPLE)
 	IF(WIN32)
-	SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}.exe")
+		SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}.exe")
 	ENDIF(WIN32)
 		
 	#--------------------------------------------------------------------------------
@@ -191,7 +194,7 @@ IF(APPLE)
 	#--------------------------------------------------------------------------------
 	# Install needed Qt plugins by copying directories from the qt installation
 	# One can cull what gets copied by using 'REGEX "..." EXCLUDE'
-	INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+	#INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
 
 	#--------------------------------------------------------------------------------
 	# install a qt.conf file
@@ -200,9 +203,11 @@ IF(APPLE)
 	file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
 	" COMPONENT Runtime)
 
-	# install qt_menu.nib
+	# install qt_menu.nib (on cherche à 2 endroits...)
 	IF(APPLE)	# \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
 		INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
+			 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
+		INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
 			 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
 	ENDIF(APPLE)
 		
