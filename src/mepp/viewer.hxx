@@ -256,6 +256,8 @@ class Viewer : public QGLViewer
 		void closeEvent(QCloseEvent *event);
 		void contextMenuEvent(QContextMenuEvent *event);
 
+		void MEPPcontextMenuEvent(QMouseEvent *event);
+
 		void setVBO_modeUncheck(bool b);
 
 		// events

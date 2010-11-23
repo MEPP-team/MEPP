@@ -995,6 +995,7 @@ void Viewer::setVBO_modeUncheck(bool b)
 void Viewer::mousePressEvent(QMouseEvent *event)
 {
 	QGLViewer::mousePressEvent(event);
+	m_HasMoved = false;
 
 	if (((mainwindow *)getParent())->activeMdiChild() == this)
 	{
@@ -1063,6 +1064,10 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 					lplugin[p]->OnMouseRightUp(event);
 			}
 		}
+
+		if (event->button() & Qt::RightButton)
+			if (!m_HasMoved)
+				MEPPcontextMenuEvent(event);
 	}
 }
 
@@ -1138,12 +1143,10 @@ void Viewer::setActivePolyhedron(int p)
 }
 void Viewer::contextMenuEvent(QContextMenuEvent *event)
 {
-	if (m_HasMoved)
-	{
-		m_HasMoved = false;
-		return;
-	}
-
+	return;
+}
+void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
+{
 	mainwindow* mw=(mainwindow *)m_parent;
 
     QMenu menu(this);
