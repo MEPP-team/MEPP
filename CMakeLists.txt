@@ -203,12 +203,17 @@ IF(APPLE)
 	file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
 	" COMPONENT Runtime)
 
-	# install qt_menu.nib (on cherche à 2 endroits...)
-	IF(APPLE)	# \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\"
-		INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
-			 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
-		INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
-			 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
+	# install qt_menu.nib
+	IF(APPLE)
+		IF(EXISTS ${QT_LIBRARY_DIR}/Resources/qt_menu.nib)
+			INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
+				 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
+		ELSE(EXISTS ${QT_LIBRARY_DIR}/Resources/qt_menu.nib)
+			IF(EXISTS ${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib)
+				INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
+					 WORKING_DIRECTORY \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})")
+			ENDIF(EXISTS ${QT_LIBRARY_DIR}/QtGui.framework/Resources/qt_menu.nib)
+		ENDIF(EXISTS ${QT_LIBRARY_DIR}/Resources/qt_menu.nib)
 	ENDIF(APPLE)
 		
 	#--------------------------------------------------------------------------------
