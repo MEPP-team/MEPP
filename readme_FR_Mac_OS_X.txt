@@ -4,8 +4,8 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Mac OS X (10.5 ou 10.6) :
---------------------------------------------------------
+Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'* ou '10.6 Snow Leopard') :
+----------------------------------------------------------------------------------
 
 1) installer Xcode:
 http://developer.apple.com/technologies/xcode.html
@@ -59,3 +59,11 @@ Note au sujet de l'activation/désactivation des composants avec CMake:
 Note au sujet de la génération d'un bundle portable (mepp.app):
 ---------------------------------------------------------------
 "make install" permet de déployer un bundle portable sur un autre système Mac, le bundle généré se trouve dans le dossier mepp_deploy
+
+
+
+* Sous Mac OS X 10.5 Leopard, gcc 4 contient un bug lors de la compilation optimisée d'une application avec la librairie CGAL,
+il faut donc utiliser gcc 4.2 à la place:
+cmake .. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.2 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.2
+
+De plus, si votre processeur ne supporte pas le 64 bits, il faut également passer -DCMAKE_C_FLAGS='-arch i386'
