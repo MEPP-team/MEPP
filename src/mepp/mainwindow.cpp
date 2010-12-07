@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.40d - 23/11/2010"
+#define MEPP_VERSION "v0.41 - 07/12/2010"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -680,13 +680,13 @@ void mainwindow::updateWindowMenu()
         QString text;
 		if (viewer->getScenePtr()->get_loadType() == Normal)
 		{
-            text = tr("%1 - %2 (vid: %3)").arg(i+1, 3)
+            text = tr("%1 - vid: %3 - %2").arg(i+1, 3)
 											.arg(viewer->userFriendlyCurrentFile())
 											.arg((qlonglong)viewer, 0, 16);
         }
 		else
 		{
-            text = tr("%1 - %2 (vid: %3) - (%4: %5/%6)").arg(i+1, 3)
+            text = tr("%1 - vid: %3 - (%4: %5/%6) - %2").arg(i+1, 3)
 															.arg(viewer->userFriendlyCurrentFile())
 															.arg((qlonglong)viewer, 0, 16)
 															.arg(viewer->getScenePtr()->get_stringLoadType())

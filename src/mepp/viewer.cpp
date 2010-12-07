@@ -593,8 +593,11 @@ void renderVA()
 }
 */
 
-void Viewer::render()
+void Viewer::render(bool sel, bool grab)
 {
+	if (axisIsDrawn() && sel)
+		drawAxis();
+
 	// shading option
 	if (m_SmoothShading)
 	{
@@ -699,9 +702,10 @@ void Viewer::render()
 
 		if (show_normals)
 		{
-			glColor3f(1.f, 0.f, 0.f);
-
-			scene_ptr->get_polyhedron()->draw_normals();
+			glDisable(GL_LIGHTING);
+				glColor3f(1.f, 0.f, 0.f);
+				scene_ptr->get_polyhedron()->draw_normals();
+			glEnable(GL_LIGHTING);
 		}
 	}
 
@@ -718,10 +722,17 @@ void Viewer::render()
 		glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
 		// edge color
-		glColor3f(m_EdgeColor[0],m_EdgeColor[1],m_EdgeColor[2]);
+		if (grab)
+			glColor3f(1.f-m_EdgeColor[0],0.f,1.f-m_EdgeColor[2]);
+		else if (sel)
+			glColor3f(1.f-m_EdgeColor[0],1.f-m_EdgeColor[1],0.f);
+		else
+			glColor3f(m_EdgeColor[0],m_EdgeColor[1],m_EdgeColor[2]);
 
 		// superimpose edges on the mesh
 		scene_ptr->get_polyhedron()->superimpose_edges(m_DrawVoronoiEdges);
+
+		glColor3f(m_EdgeColor[0],m_EdgeColor[1],m_EdgeColor[2]);
 	}
 	// end superimpose edges
 
@@ -835,9 +846,12 @@ void Viewer::init()
 
 	// back material
 	change_material("Light blue");
+
+	if (!VBO_mode)
+		setMouseTracking(true);	// Absolutely needed for MouseGrabber
 }
 
-void Viewer::postSelection(const QPoint&)
+void Viewer::postSelection(const QPoint& point)
 {
 	if (scene_ptr->get_loadType()!=Space)
 		return;
@@ -851,10 +865,22 @@ void Viewer::postSelection(const QPoint&)
 	}
 	else
 	{
-		setManipulatedFrame(frame(selectedName()));
+		// Compute orig and dir, used to draw a representation of the intersecting line
+		camera()->convertClickToLine(point, orig, dir);
+
+		// Find the selectedPoint coordinates, using camera()->pointUnderPixel().
+		bool found;
+		selectedPoint = camera()->pointUnderPixel(point, found);
+		selectedPoint -= 0.01f*dir; // Small offset to make point clearly visible.
+		// Note that "found" is different from (selectedObjectId()>=0) because of the size of the select region.
+
+		setManipulatedFrame(frame(selectedName()));	frame(selectedName())->moved=false;
 		setSelectedFrameNumber(selectedName());
 
 		scene_ptr->set_current_polyhedron(selectedName());
+
+		if (VBO_mode)
+			createLists = true;
 	}
 
 	this->setDynTitle();
@@ -925,13 +951,19 @@ void Viewer::dessine_space(bool names)
 				if (createLists)
 				{
 					glNewList(glList(i), GL_COMPILE); // compile list (don't display now)
-						render(); // Draws the scene
+						render(selectedName()==i, false); // Draws the scene
 					glEndList(); // list created
 				}
 				glCallList(glList(i)); // Draws the scene
 			}
 			else
-				render(); // Draws the scene
+			{
+				// Draws the scene
+				if (frame(i)->grabsMouse())
+					render(selectedName()==i, true);
+				else
+					render(selectedName()==i, false);
+			}
 
 		if (names) glPopName();
 		glPopMatrix(); // Restore the original (world) coordinate system
@@ -940,6 +972,57 @@ void Viewer::dessine_space(bool names)
 		createLists = false;
 
 	scene_ptr->set_current_polyhedron(save_polyhedron);
+
+	// -----------------------
+
+	if ((!names) && (selectedName()>=0) && (!frame(selectedName())->moved))
+	{
+		glPushMatrix();
+		glDisable(GL_LIGHTING);
+
+		// Draw name
+		glColor3f(1.f, 0.f, 0.f);
+			startScreenCoordinatesSystem();
+				glBegin(GL_POLYGON);
+					Vec proj = camera()->projectedCoordinatesOf(selectedPoint);
+					// The small z offset makes the arrow slightly above the mesh, so that it is always visible
+					glVertex3fv(proj + Vec(-75, 0, -0.001f));
+					glVertex3fv(proj + Vec(-17,-5, -0.001f));
+					glVertex3fv(proj + Vec( -5, 0, -0.001f));
+					glVertex3fv(proj + Vec(-17, 5, -0.001f));
+				glEnd();
+			stopScreenCoordinatesSystem();
+
+			// Draw text id
+			glColor3f(1.f, 1.f, 0.f);
+			drawText(int(proj.x)-202, int(proj.y)+4, tr("%1 (pid: %2)").arg(scene_ptr->userFriendlyCurrentFile()).arg((qlonglong)(scene_ptr->get_polyhedron(selectedName()).get()), 0, 16));
+		glColor3f(0.f, 0.f, 0.f);
+		// Draw name
+
+		// Draw the intersection line
+		/*glLineWidth(3.0);
+		glColor3f(0.f, 0.f, 0.f);
+		
+		glBegin(GL_LINES);
+			glVertex3fv(orig);
+			glVertex3fv(orig + 100.0*dir);
+		glEnd();
+
+		// Draw (approximated) intersection point on selected object
+		glColor3f(1.f, 0.f, 0.f);
+		glPointSize(6.0);
+		glBegin(GL_POINTS);
+			glVertex3fv(selectedPoint);
+		glEnd();
+		glPointSize(1.0);
+
+		glLineWidth(1.0);
+		glColor3f(0.f, 0.f, 0.f);*/
+		// Draw the intersection line
+
+		glEnable(GL_LIGHTING);
+		glPopMatrix();
+	}
 
 	// -----------------------
 
@@ -968,7 +1051,7 @@ void Viewer::dessine(bool names)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if ((scene_ptr->get_loadType()==Time && timerDynamic->isActive()) || (!VBO_mode))
-			render(); // Draws the scene
+			render(false, false); // Draws the scene
 		else
 		{
 			scene_ptr->get_polyhedron()->gen_glListCube();
@@ -976,7 +1059,7 @@ void Viewer::dessine(bool names)
 			if (createLists)
 			{
 				glNewList(glId, GL_COMPILE); // compile list (don't display now)
-					render(); // Draws the scene
+					render(false, false); // Draws the scene
 				glEndList(); // list created
 				createLists = false;
 			}
@@ -1161,13 +1244,16 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 		QAction *action;
 		for (int p=0; p<scene_ptr->get_nb_polyhedrons(); p++)
 		{
-			action = menu_pid.addAction(tr("%1 - pid: %2").arg(p+1, 3).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
+			action = menu_pid.addAction(tr("%1 - %2 (pid: %3)").arg(p+1, 3).arg(scene_ptr->userFriendlyCurrentFile(p)).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
 			action->setCheckable(true);
 			action->setChecked(scene_ptr->get_polyhedron() == scene_ptr->get_polyhedron(p));
 
 			connect(action, SIGNAL(triggered()), meshMapper, SLOT(map()));
 			meshMapper->setMapping(action, p);
 		}
+
+	menu.addAction(mw->actionClose);
+	menu.addSeparator();
 
 	menu.addAction(mw->actionOpen_and_Add_space);
 	menu.addAction(mw->actionOpen_and_Add_time);

@@ -268,7 +268,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		// MT
 		unsigned int m_nb_components;
 		unsigned int m_nb_boundaries;
-
+		
 		GLuint id_cube;
 
 	public:
@@ -297,6 +297,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		// MT
 		unsigned int nb_components() {  return m_nb_components; }
 		unsigned int nb_boundaries() {  return m_nb_boundaries; }
+		string pName;
+		bool pShow;
 
 		// tag : AJOUT Céline
 		int& tag() {  return m_tag; }

@@ -14,7 +14,33 @@
 
 #include "scene.h"
 
-typedef boost::shared_ptr<qglviewer::ManipulatedFrame> ManipulatedFramePtr;
+class MeppManipulatedFrame : public qglviewer::ManipulatedFrame
+{
+	public:
+		void checkIfGrabsMouse(int x, int y, const qglviewer::Camera* const camera)
+		{
+			qglviewer::Vec proj = camera->projectedCoordinatesOf(position());
+			setGrabsMouse((fabs(x-proj.x) < 50) && (fabs(y-proj.y) < 50)); // Rectangular region
+		}
+
+		void mousePressEvent(QMouseEvent *const event, qglviewer::Camera *const camera)
+		{
+			qglviewer::ManipulatedFrame::mousePressEvent(event, camera);
+
+			moved=true;
+		}
+
+		void wheelEvent(QWheelEvent *const event, qglviewer::Camera *const camera)
+		{
+			qglviewer::ManipulatedFrame::wheelEvent(event, camera);
+
+			moved=true;
+		}
+
+	public:
+		bool moved;
+};
+typedef boost::shared_ptr<MeppManipulatedFrame> MeppManipulatedFramePtr;
 
 class mepp_component_plugin_interface;
 
@@ -34,9 +60,9 @@ class Viewer : public QGLViewer
 		QWidget *getParent() { return m_parent; }
 
 		int get_nb_frames() { return (int)frame_.size(); }
-		qglviewer::ManipulatedFrame* frame(unsigned short i) { return frame_[i].get(); }
+		MeppManipulatedFrame* frame(unsigned short i) { return frame_[i].get(); }
 		void setSelectedFrameNumber(unsigned short nb) { selected = nb; }
-		void addFrame() { frame_.push_back(ManipulatedFramePtr(new qglviewer::ManipulatedFrame())); glList_.push_back(glGenLists(1)); }
+		void addFrame() { frame_.push_back(MeppManipulatedFramePtr(new MeppManipulatedFrame())); glList_.push_back(glGenLists(1)); }
 		GLuint glList(unsigned short i) { return glList_[i]; }
 
 		qglviewer::Vec getInitialCameraPosition() { return initialCameraPosition; }
@@ -145,7 +171,7 @@ class Viewer : public QGLViewer
 		void setCouplingZooms(bool b) { mCouplingZooms = b; updateGL(); }
 		bool getCouplingZooms(bool b) { return mCouplingZooms; }
 
-        void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); recreateListsAndUpdateGL(); }
+        void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); setMouseTracking(!b); recreateListsAndUpdateGL(); }
 		bool getVBO_mode() { return VBO_mode; }
 		// view options
 
@@ -188,11 +214,11 @@ class Viewer : public QGLViewer
 		void setDynTitle()
 		{
 			if (getScenePtr()->get_loadType() == Normal)
-				setWindowTitle(QObject::tr("%1 (vid: %2)")
+				setWindowTitle(QObject::tr("vid: %2 - %1")
 										.arg(userFriendlyCurrentFile())
 										.arg((qlonglong)this, 0, 16));
 			else
-				setWindowTitle(QObject::tr("%1 (vid: %2) - (%3: %4/%5)")
+				setWindowTitle(QObject::tr("vid: %2 - (%3: %4/%5) - %1")
 										.arg(userFriendlyCurrentFile())
 										.arg((qlonglong)this, 0, 16)
 										.arg(getScenePtr()->get_stringLoadType())
@@ -251,7 +277,7 @@ class Viewer : public QGLViewer
 		virtual void draw();
 		virtual QString helpString() const;
 
-		void render();
+		void render(bool sel, bool grab);
 
 		void closeEvent(QCloseEvent *event);
 		void contextMenuEvent(QContextMenuEvent *event);
@@ -357,7 +383,7 @@ class Viewer : public QGLViewer
 
 		//
 
-		vector<ManipulatedFramePtr> frame_;
+		vector<MeppManipulatedFramePtr> frame_;
 		vector<GLuint> glList_;
 		unsigned short selected;
 
@@ -385,6 +411,10 @@ class Viewer : public QGLViewer
 
 		GLuint glId;
 		bool createLists;
+
+		//
+
+		qglviewer::Vec orig, dir, selectedPoint;
 };
 
 #endif

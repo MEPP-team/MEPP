@@ -21,10 +21,15 @@ class Scene
 		void todoIfModeSpace(Viewer* viewer);
 		int save_file(QString filename, typeFuncOpenSave f, Viewer* viewer);
 
-		QString currentFile() { return curFile; }
-		QString userFriendlyCurrentFile() { return strippedName(curFile); }
+		QString currentFile() { return QString::fromStdString(get_polyhedron()->pName); }
+		QString userFriendlyCurrentFile() { return strippedName(currentFile()); }
+		QString currentFile(int p) { return QString::fromStdString(get_polyhedron(p)->pName); }
+		QString userFriendlyCurrentFile(int p) { return strippedName(currentFile(p)); }
 
-		void setcurrentFile(QString name) { curFile = name; }
+		void setcurrentFile(QString name) { get_polyhedron()->pName = name.toStdString(); }
+		void setVisible(bool visible) { get_polyhedron()->pShow = visible; }
+		void setcurrentFile(int p, QString name) { get_polyhedron(p)->pName = name.toStdString(); }
+		void setVisible(int p, bool visible) { get_polyhedron(p)->pShow = visible; }
 
 		int get_nb_polyhedrons() { return (int)m_polyhedrons.size(); }
 
@@ -72,7 +77,6 @@ class Scene
 
 		//
 
-		QString curFile;
 		QString strippedName(const QString &fullFileName) { return QFileInfo(fullFileName).fileName(); }
 };
 

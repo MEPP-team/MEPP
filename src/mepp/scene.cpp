@@ -78,8 +78,6 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 
 	if (!res)
 	{
-		curFile = filename;
-
 		if (!polyhedron_ptr->empty())
 		{
 			polyhedron_ptr->compute_bounding_box();
@@ -93,6 +91,9 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 
 		add_polyhedron(polyhedron_ptr);
 		set_current_polyhedron(get_nb_polyhedrons()-1);
+
+		setcurrentFile(filename);
+		setVisible(true);
 
 		// if mode Space
 		todoIfModeSpace(viewer);
