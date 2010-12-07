@@ -115,7 +115,7 @@ void mepp_component_Boolean_Operations_plugin::Union()
 
 			viewerU->showAllScene();
 
-			viewerU->getScenePtr()->setcurrentFile(tr("Union %1 from id %2").arg(component_ptr->cpt_U).arg((qlonglong)viewer, 0, 16));
+			viewerU->getScenePtr()->setcurrentFile(tr("Union %1 from vid %2").arg(component_ptr->cpt_U).arg((qlonglong)viewer, 0, 16));
 			viewerU->setDynTitle();
 		}
 	}
@@ -163,7 +163,7 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 
 			viewerI->showAllScene();
 
-			viewerI->getScenePtr()->setcurrentFile(tr("Intersection %1 from id %2").arg(component_ptr->cpt_I).arg((qlonglong)viewer, 0, 16));
+			viewerI->getScenePtr()->setcurrentFile(tr("Intersection %1 from vid %2").arg(component_ptr->cpt_I).arg((qlonglong)viewer, 0, 16));
 			viewerI->setDynTitle();
 		}
 	}
@@ -211,7 +211,7 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 
 			viewerM->showAllScene();
 
-			viewerM->getScenePtr()->setcurrentFile(tr("Subtraction %1 from id %2").arg(component_ptr->cpt_M).arg((qlonglong)viewer, 0, 16));
+			viewerM->getScenePtr()->setcurrentFile(tr("Subtraction %1 from vid %2").arg(component_ptr->cpt_M).arg((qlonglong)viewer, 0, 16));
 			viewerM->setDynTitle();
 		}
 	}
