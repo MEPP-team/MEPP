@@ -946,23 +946,26 @@ void Viewer::dessine_space(bool names)
 			glMultMatrixd(frame(i)->matrix()); // Multiply matrix to get in the frame coordinate system
 			
 			scene_ptr->set_current_polyhedron(i);
-			if (VBO_mode)
+			if (scene_ptr->get_polyhedron(i)->pShow)
 			{
-				if (createLists)
+				if (VBO_mode)
 				{
-					glNewList(glList(i), GL_COMPILE); // compile list (don't display now)
-						render(selectedName()==i, false); // Draws the scene
-					glEndList(); // list created
+					if (createLists)
+					{
+						glNewList(glList(i), GL_COMPILE); // compile list (don't display now)
+							render(selectedName()==i, false); // Draws the scene
+						glEndList(); // list created
+					}
+					glCallList(glList(i)); // Draws the scene
 				}
-				glCallList(glList(i)); // Draws the scene
-			}
-			else
-			{
-				// Draws the scene
-				if (frame(i)->grabsMouse())
-					render(selectedName()==i, true);
 				else
-					render(selectedName()==i, false);
+				{
+					// Draws the scene
+					if (frame(i)->grabsMouse())
+						render(selectedName()==i, true);
+					else
+						render(selectedName()==i, false);
+				}
 			}
 
 		if (names) glPopName();
@@ -977,51 +980,54 @@ void Viewer::dessine_space(bool names)
 
 	if ((!names) && (selectedName()>=0) && (!frame(selectedName())->moved))
 	{
-		glPushMatrix();
-		glDisable(GL_LIGHTING);
+		if (scene_ptr->get_polyhedron(selectedName())->pShow)
+		{
+			glPushMatrix();
+			glDisable(GL_LIGHTING);
 
-		// Draw name
-		glColor3f(1.f, 0.f, 0.f);
-			startScreenCoordinatesSystem();
-				glBegin(GL_POLYGON);
-					Vec proj = camera()->projectedCoordinatesOf(selectedPoint);
-					// The small z offset makes the arrow slightly above the mesh, so that it is always visible
-					glVertex3fv(proj + Vec(-75, 0, -0.001f));
-					glVertex3fv(proj + Vec(-17,-5, -0.001f));
-					glVertex3fv(proj + Vec( -5, 0, -0.001f));
-					glVertex3fv(proj + Vec(-17, 5, -0.001f));
-				glEnd();
-			stopScreenCoordinatesSystem();
+			// Draw name
+			glColor3f(1.f, 0.f, 0.f);
+				startScreenCoordinatesSystem();
+					glBegin(GL_POLYGON);
+						Vec proj = camera()->projectedCoordinatesOf(selectedPoint);
+						// The small z offset makes the arrow slightly above the mesh, so that it is always visible
+						glVertex3fv(proj + Vec(-75, 0, -0.001f));
+						glVertex3fv(proj + Vec(-17,-5, -0.001f));
+						glVertex3fv(proj + Vec( -5, 0, -0.001f));
+						glVertex3fv(proj + Vec(-17, 5, -0.001f));
+					glEnd();
+				stopScreenCoordinatesSystem();
 
-			// Draw text id
-			glColor3f(1.f, 1.f, 0.f);
-			drawText(int(proj.x)-202, int(proj.y)+4, tr("%1 (pid: %2)").arg(scene_ptr->userFriendlyCurrentFile()).arg((qlonglong)(scene_ptr->get_polyhedron(selectedName()).get()), 0, 16));
-		glColor3f(0.f, 0.f, 0.f);
-		// Draw name
+				// Draw text id
+				glColor3f(1.f, 1.f, 0.f);
+				drawText(int(proj.x)-202, int(proj.y)+4, tr("%1 (pid: %2)").arg(scene_ptr->userFriendlyCurrentFile()).arg((qlonglong)(scene_ptr->get_polyhedron(selectedName()).get()), 0, 16));
+			glColor3f(0.f, 0.f, 0.f);
+			// Draw name
 
-		// Draw the intersection line
-		/*glLineWidth(3.0);
-		glColor3f(0.f, 0.f, 0.f);
-		
-		glBegin(GL_LINES);
-			glVertex3fv(orig);
-			glVertex3fv(orig + 100.0*dir);
-		glEnd();
+			// Draw the intersection line
+			/*glLineWidth(3.0);
+			glColor3f(0.f, 0.f, 0.f);
+			
+			glBegin(GL_LINES);
+				glVertex3fv(orig);
+				glVertex3fv(orig + 100.0*dir);
+			glEnd();
 
-		// Draw (approximated) intersection point on selected object
-		glColor3f(1.f, 0.f, 0.f);
-		glPointSize(6.0);
-		glBegin(GL_POINTS);
-			glVertex3fv(selectedPoint);
-		glEnd();
-		glPointSize(1.0);
+			// Draw (approximated) intersection point on selected object
+			glColor3f(1.f, 0.f, 0.f);
+			glPointSize(6.0);
+			glBegin(GL_POINTS);
+				glVertex3fv(selectedPoint);
+			glEnd();
+			glPointSize(1.0);
 
-		glLineWidth(1.0);
-		glColor3f(0.f, 0.f, 0.f);*/
-		// Draw the intersection line
+			glLineWidth(1.0);
+			glColor3f(0.f, 0.f, 0.f);*/
+			// Draw the intersection line
 
-		glEnable(GL_LIGHTING);
-		glPopMatrix();
+			glEnable(GL_LIGHTING);
+			glPopMatrix();
+		}
 	}
 
 	// -----------------------
@@ -1212,17 +1218,36 @@ void Viewer::setActivePolyhedron(int p)
 {
 	setDynStop();
 
-	scene_ptr->set_current_polyhedron(p);
+	// ---
 
-	setDynTitle();
+	if (scene_ptr->get_polyhedron() == scene_ptr->get_polyhedron(p))
+		scene_ptr->get_polyhedron(p)->pShow = !scene_ptr->get_polyhedron(p)->pShow;
+	else
+		scene_ptr->get_polyhedron(p)->pShow=true;
 
-	if (scene_ptr->get_loadType()==Space)
-    {
-		setManipulatedFrame(frame(p));
-		setSelectedFrameNumber(p);
+	// ---
+
+	if (scene_ptr->get_polyhedron(p)->pShow)
+	{
+		scene_ptr->set_current_polyhedron(p);
+
+		setDynTitle();
+
+		if (scene_ptr->get_loadType()==Space)
+		{
+			setManipulatedFrame(frame(p)); frame(p)->moved=false;
+			setSelectedFrameNumber(p);
+
+			setSelectedName(p);
+
+			selectedPoint = frame(p)->position();
+
+			if (VBO_mode)
+				createLists = true;
+		}
+		else if (scene_ptr->get_loadType()==Time)
+			recreateListsAndUpdateGL();
 	}
-	else if (scene_ptr->get_loadType()==Time)
-		recreateListsAndUpdateGL();
 }
 void Viewer::contextMenuEvent(QContextMenuEvent *event)
 {
