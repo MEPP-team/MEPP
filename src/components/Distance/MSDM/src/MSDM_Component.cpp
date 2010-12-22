@@ -413,21 +413,25 @@ double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double m
 			double R;
 			int indiceLut;
 			Vertex_iterator pVertex = NULL;
-		  for (pVertex = pMesh->vertices_begin();
-			  pVertex != pMesh->vertices_end();
-			  pVertex++)
-		  {
 
-				
-				R=(pVertex->MSDM_Local-MinMSDM)/(MaxMSDM-MinMSDM)*255;
-				
-				indiceLut=floor(R);
-				pVertex->color(LUT_CourbureClust[3*indiceLut],LUT_CourbureClust[3*indiceLut+1],LUT_CourbureClust[3*indiceLut+2]);
+			if(MaxMSDM>MinMSDM)
+			{
+			  for (pVertex = pMesh->vertices_begin();
+				  pVertex != pMesh->vertices_end();
+				  pVertex++)
+			  {
+
+					
+					R=(pVertex->MSDM_Local-MinMSDM)/(MaxMSDM-MinMSDM)*255;
+					
+					indiceLut=floor(R);
+					pVertex->color(LUT_CourbureClust[3*indiceLut],LUT_CourbureClust[3*indiceLut+1],LUT_CourbureClust[3*indiceLut+2]);
 
 
 
 
-		  }
+			  }
+			}
 	}
 }
 	
