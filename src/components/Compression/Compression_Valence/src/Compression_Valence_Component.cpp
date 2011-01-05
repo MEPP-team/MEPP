@@ -6825,6 +6825,8 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 	Vertex_iterator pV_BM = Base_Mesh->vertices_begin();
 	for(Vertex_iterator pV = _pMesh.vertices_begin(); pV != _pMesh.vertices_end(); pV++)
 	{
+		//pV->color(0.5, 0.5, 0.5);
+
 		pV_BM->Seed_Edge = pV->Seed_Edge;
 		pV_BM->Component_Number = pV->Component_Number;		
 
@@ -6938,19 +6940,7 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 
 	this->Compression(*Base_Mesh, "Output.p3d", _Qbit, Connectivity_size, Color_size, Total_size, Initial_file_size);			
 
-	FILE * f_insert = fopen("Inserted_bits.txt", "w");
-	fprintf(f_insert, "Inserted bits \n");
-	
-	Number_inserted_bits = 0;
-	while(!this->m_Watermarks.empty())
-	{
-		int Watermark = m_Watermarks.front();
-		m_Watermarks.pop_front();
-		Number_inserted_bits++;
-
-		fprintf(f_insert, "%d \n", Watermark);
-	}
-	fclose(f_insert);
+	Number_inserted_bits = this->N_Inserted_Watermarks;
 
 	return 0;	
 }
@@ -7285,15 +7275,16 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 	}
 	
 	// random generaion of watermark bits
-	vector<int> Watermarks_to_insert;
-	srand(time(NULL));
+	vector<int> Watermarks_to_insert(this->m_NumberRegion, -1);
+	
+	//srand(time(NULL));
 
-	for(int i = 0; i < this->m_NumberRegion; i++)
-	{				
-		int Bit_to_insert = rand() % 2;		
-		//Bit_to_insert = 0;
-		Watermarks_to_insert.push_back(Bit_to_insert);
-	}		
+	//for(int i = 0; i < this->m_NumberRegion; i++)
+	//{				
+	//	int Bit_to_insert = rand() % 2;		
+	//	//Bit_to_insert = 0;
+	//	Watermarks_to_insert.push_back(Bit_to_insert);
+	//}		
 
 	vector<int> Cases;
 	vector<int> Directions(this->m_NumberRegion, -1);	
@@ -7331,7 +7322,34 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 		if(abs(Diff_CM) < 2 * this->m_EmbeddingLevel)
 		{
 			Cases.push_back(0);
-			this->m_Watermarks.push_back(Watermarks_to_insert[i]);
+			//
+
+			//for(int i = 0; i < this->m_NumberRegion; i++)
+			//{				
+			//	int Bit_to_insert = rand() % 2;		
+			//	//Bit_to_insert = 0;
+			//	Watermarks_to_insert.push_back(Bit_to_insert);
+			//}	
+			int Bit_to_insert;
+			if(!this->m_Watermarks.empty())
+			{
+				Bit_to_insert = this->m_Watermarks.front();
+				this->m_Watermarks.pop_front();
+
+				this->N_Inserted_Watermarks++;
+			}
+			else
+			{
+				this->N_Inserted_Watermarks++;
+
+				srand(time(NULL));
+				Bit_to_insert = rand() % 2;
+
+				FILE * f_insert = fopen("Inserted_watermarks.txt", "a");				
+				fprintf(f_insert, "%d \n", Bit_to_insert);
+				fclose(f_insert);
+			}
+			Watermarks_to_insert[i] = Bit_to_insert;			
 		}
 		else
 		{
@@ -7480,12 +7498,12 @@ vector<int> Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Waterm
 	FILE * f_extract;
 	if(this->Decompress_count == 0)
 	{
-		f_extract = fopen("Extracted_bits.txt", "w");
+		f_extract = fopen("Extracted_watermark.txt", "w");
 		fprintf(f_extract, "Extracted bits \n");	
 	}
 	else
 	{
-		f_extract = fopen("Extracted_bits.txt", "a");			
+		f_extract = fopen("Extracted_watermark.txt", "a");			
 	}
 
         vector<vector<int> > Hist_inserted_vertices;
@@ -7575,12 +7593,14 @@ vector<int> Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Waterm
 				Direction[i] = 1;
 				Watermarks[i] = 1;
 				fprintf(f_extract, "1\t%d\n", this->Decompress_count);
+				this->m_Watermarks.push_back(1);
 			}
 			else
 			{
 				Direction[i] = 0;
 				Watermarks[i] = 0;
 				fprintf(f_extract, "0\t%d\n", this->Decompress_count);
+				this->m_Watermarks.push_back(0);
 			}
 		}		
 	}	
@@ -10517,7 +10537,12 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 			JCW_ERROR.pop_front();
 			g->vertex()->JCW_Move_Error[0] = Err[0];
 			g->vertex()->JCW_Move_Error[1] = Err[1];
-			g->vertex()->JCW_Move_Error[2] = Err[2];			
+			g->vertex()->JCW_Move_Error[2] = Err[2];
+
+			if((Err[0] != 0) || (Err[1] != 0) || (Err[2] != 0))
+			{
+				g->vertex()->color(1., 0., 0.);
+			}
 
 			// Vertex flags
 			g->vertex()->Vertex_Flag = CONQUERED;
@@ -10788,6 +10813,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				g->vertex()->JCW_Move_Error[1] = Err[1];
 				g->vertex()->JCW_Move_Error[2] = Err[2];
 
+				if((Err[0] != 0) || (Err[1] != 0) || (Err[2] != 0))
+				{
+					g->vertex()->color(1., 0., 0.);
+				}
+
 				g = h;
 				g->facet()->Facet_Flag = TO_BE_REMOVED;
 				g->vertex()->Vertex_Flag = CONQUERED;
@@ -10951,7 +10981,12 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				JCW_ERROR.pop_front();
 				g->vertex()->JCW_Move_Error[0] = Err[0];
 				g->vertex()->JCW_Move_Error[1] = Err[1];
-				g->vertex()->JCW_Move_Error[2] = Err[2];				
+				g->vertex()->JCW_Move_Error[2] = Err[2];		
+
+				if((Err[0] != 0) || (Err[1] != 0) || (Err[2] != 0))
+				{
+					g->vertex()->color(1., 0., 0.);
+				}
 		
 				
 				Halfedge_handle Tag_handle;
@@ -11171,6 +11206,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				g->vertex()->JCW_Move_Error[0] = Err[0];
 				g->vertex()->JCW_Move_Error[1] = Err[1];
 				g->vertex()->JCW_Move_Error[2] = Err[2];
+
+				if((Err[0] != 0) || (Err[1] != 0) || (Err[2] != 0))
+				{
+					g->vertex()->color(1., 0., 0.);
+				}
 
 				//vertex_tag
 				if (Number_jump == 0)
@@ -12412,11 +12452,56 @@ void Compression_Valence_Component::Read_Information_To_Hide()
 		{
 			--N_char;
 			int bit = (c & (1 << N_char) ? 1 : 0);
-			//this->m_Watermarks.push_back(bit);
+			this->m_Watermarks.push_back(bit);
 		}
 
 		i++;
-	}		
+	}
+
+	FILE * f_insert = fopen("Inserted_watermarks.txt", "w");
+	fprintf(f_insert, "Inserted bits \n");
+	
+	for(list<int>::iterator it = this->m_Watermarks.begin(); it != this->m_Watermarks.end(); it++)
+	{
+		int Watermark = *it;
+		fprintf(f_insert, "%d \n", Watermark);
+	}
+	fclose(f_insert);
 }
+
+QString Compression_Valence_Component::Write_Information_To_Hide()
+{
+	list<int>::iterator it = this->m_Watermarks.begin();
+
+	unsigned int Size_watermarks = this->m_Watermarks.size();
+
+	int N_char = (int)(Size_watermarks / 8);
+
+	vector<char> ret;
+
+	for(int i = 0; i < N_char; i++)
+	{
+		char c = 0;
+		for(int j = 0; j < 8; j++)
+		{
+			if(*it == 1)
+			{
+				c += (char)pow(2.0, 7-j);
+			}
+			it++;
+		}
+
+		ret.push_back(c);
+	}
+	
+	QString q;
+
+	for(int i = 0; i <N_char; i++)
+		q.append(ret[i]);	
+
+	return q;
+	
+}
+
 
 #endif

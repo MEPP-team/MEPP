@@ -1022,6 +1022,7 @@ void mepp_component_Compression_Valence_plugin::ShowText(void)
 			m_frame->Refresh();
 
 			m_frame->set_status_message(string);*/
+			string += component_ptr->Message;
 			mw->statusBar()->showMessage(string);
 		}
 	}
@@ -1123,6 +1124,9 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 					WriteInfo();
 
 				component_ptr->Current_level = component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(),component_ptr->File_name.c_str());
+				component_ptr->Message = component_ptr->Write_Information_To_Hide();
+
+
 				if (component_ptr->Current_level > component_ptr->Process_level)
 				{
 					component_ptr->Process_level++;
@@ -1168,6 +1172,7 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 					component_ptr->Visu_level++;
 
 					component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str());
+					component_ptr->Message = component_ptr->Write_Information_To_Hide();					
 
 					WriteInfo();
 

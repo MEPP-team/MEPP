@@ -133,6 +133,8 @@ class Compression_Valence_Component :
 
 			m_Mode = 0;
 
+			N_Inserted_Watermarks = 0;
+
 			m_VC[0] = 0.;
 			m_VC[1] = 0.;
 			m_VC[2] = 0.;
@@ -310,6 +312,7 @@ class Compression_Valence_Component :
 		int  JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name);
 		
 		void Read_Information_To_Hide();
+		QString Write_Information_To_Hide();
 	private:
 		
 		Polyhedron * UnderquantizedMesh;
@@ -447,6 +450,8 @@ class Compression_Valence_Component :
 		vector<int> m_Number_Vertices_Per_Regions;
 		list<int> m_Watermarks;
 
+		int N_Inserted_Watermarks;
+
 		vector<int> m_N_remained_vertices;
 		vector<int> m_N_treated_vertices;
 		vector<double> m_Rad_decision;
@@ -473,6 +478,7 @@ class Compression_Valence_Component :
 		
 		vector<float> Prog;
 		vector<float> Ratio;
+		QString Message;
 
 	public://private:
 		CCopyPoly<Polyhedron, Enriched_kernel> Copy_Polyhedron;
