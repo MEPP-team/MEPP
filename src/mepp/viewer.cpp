@@ -1153,10 +1153,12 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 					lplugin[p]->OnMouseRightUp(event);
 			}
 		}
-
-		if (event->button() & Qt::RightButton)
-			if (!m_HasMoved)
-				MEPPcontextMenuEvent(event);
+		else
+		{
+			if (event->button() & Qt::RightButton)
+				if (!m_HasMoved)
+					MEPPcontextMenuEvent(event);
+		}
 	}
 }
 
