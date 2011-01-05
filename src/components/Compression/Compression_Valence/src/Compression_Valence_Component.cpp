@@ -4994,7 +4994,7 @@ void Compression_Valence_Component::Color_Under_Quantization(Polyhedron &pMesh, 
 	int Vertex_index = 0;
 
 	// Color table which stocks all present colors
-	vector<vector<int>> Color_table;
+        vector<vector<int> > Color_table;
 
 	while(!vertices.empty())
 	{
@@ -6127,7 +6127,7 @@ void Compression_Valence_Component::Color_Up_Quantization(Polyhedron &pMesh, Ari
 	}	
 	
 	// Generation of color table
-	vector<vector<int>> Color_table;
+        vector<vector<int> > Color_table;
 
 	std::queue<Vertex*> vertices;				
 	// push a input gate to begin loop 
@@ -6864,7 +6864,7 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 		list<Point_Int> SP_Watermarked_Position;
 		list<Point3d> SP_Original_Position;
 
-		list<vector<int>> JCW_ERROR;
+                list<vector<int> > JCW_ERROR;
 		
 		// Insert operation gives the watermarked position of each inserted vertex and its position when we extract the watermark.
 		this->JCW_Region_Mass_Center_Insert_Watermark(_pMesh, FP_Geometry, FP_Region_Number, SP_Watermarked_Position, SP_Moved_Position, SP_Original_Position, JCW_ERROR);
@@ -7218,10 +7218,10 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 																			list<Point_Int> & SP_Watermarked_Position, 
 																			list<Point3d> & SP_Moved_Position,
 																			list<Point3d> & SP_Original_Position,
-																			list<vector<int>> & JCW_Error)
+                                                                                                                                                        list<vector<int> > & JCW_Error)
 {		
-	vector<vector<int>> Hist_inserted_vertices;
-	vector<vector<int>> Hist_remained_vertices;
+        vector<vector<int> > Hist_inserted_vertices;
+        vector<vector<int> > Hist_remained_vertices;
 
 	vector<int> Temp(this->m_NumberBin + OVER_HISTOGRAM, 0);
 	
@@ -7488,8 +7488,8 @@ vector<int> Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Waterm
 		f_extract = fopen("Extracted_bits.txt", "a");			
 	}
 
-	vector<vector<int>> Hist_inserted_vertices;
-	vector<vector<int>> Hist_remained_vertices;
+        vector<vector<int> > Hist_inserted_vertices;
+        vector<vector<int> > Hist_remained_vertices;
 
 	vector<int> Temp(this->m_NumberBin + OVER_HISTOGRAM, 0);
 	for(int i = 0; i < this->m_NumberRegion; i++)
@@ -10316,7 +10316,7 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 																	list<Point3d> & SP_Moved_Position,
 																	list<Point3d> & SP_Original_Position,
 																	list<Point_Int> & SP_Watermarked_Position,
-																	list<vector<int>> & JCW_ERROR)
+                                                                                                                                        list<vector<int> > & JCW_ERROR)
 {	
 	Init(pMesh);	
 
@@ -10574,7 +10574,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 																	list<Point3d> & SP_Moved_Position, 
 																	list<Point3d> & SP_Original_Position,
 																	list<Point_Int> & SP_Watermarked_Position,
-																	list<vector<int>> & JCW_ERROR)
+                                                                                                                                        list<vector<int> > & JCW_ERROR)
 {
 	Init(pMesh);
 	
@@ -12175,6 +12175,8 @@ bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron          
 
 int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name)
 {
+        int res;
+
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	this->Decoder.stop_decoder();
 	
@@ -12201,11 +12203,11 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, c
 		FILE * fp = fopen("Keys.txt", "rb");
 		if(fp!=NULL)
 		{		
-			fread(&this->m_VC[0], sizeof(double), 1, fp);
-			fread(&this->m_VC[1], sizeof(double), 1, fp);
-			fread(&this->m_VC[2], sizeof(double), 1, fp);
+                        res = fread(&this->m_VC[0], sizeof(double), 1, fp);
+                        res = fread(&this->m_VC[1], sizeof(double), 1, fp);
+                        res = fread(&this->m_VC[2], sizeof(double), 1, fp);
 			
-			fread(&this->m_Dist, sizeof(double), 1, fp);
+                        res = fread(&this->m_Dist, sizeof(double), 1, fp);
 			fclose(fp);
 		}
 
@@ -12281,6 +12283,8 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, c
 
 int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name)
 {
+        int res;
+
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	this->Decoder.stop_decoder();
 	
@@ -12308,11 +12312,11 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 		if(fp != NULL)
 		{
 		
-			fread(&this->m_VC[0], sizeof(double), 1, fp);
-			fread(&this->m_VC[1], sizeof(double), 1, fp);
-			fread(&this->m_VC[2], sizeof(double), 1, fp);
+                        res = fread(&this->m_VC[0], sizeof(double), 1, fp);
+                        res = fread(&this->m_VC[1], sizeof(double), 1, fp);
+                        res = fread(&this->m_VC[2], sizeof(double), 1, fp);
 			
-			fread(&this->m_Dist, sizeof(double), 1, fp);
+                        res = fread(&this->m_Dist, sizeof(double), 1, fp);
 			fclose(fp);
 		}
 
@@ -12390,11 +12394,13 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 
 void Compression_Valence_Component::Read_Information_To_Hide()
 {
+        char *res;
+
 	FILE * fp = fopen("Inserted_message.txt", "r");
 	char buffer[200];
 	if(fp != NULL)
 	{
-		fgets(buffer, 200, fp);
+                res = fgets(buffer, 200, fp);
 	}	
 
 	int i = 0;	
