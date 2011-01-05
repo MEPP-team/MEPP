@@ -25,6 +25,9 @@ class mepp_component_Compression_Valence_plugin :
 			delete actionCompress; delete actionOpen_P3D_file; delete actionDecompress_all;
 			delete actionDecompress_one_level; delete actionDecompress_precedent_level; delete actionDecompress_go_to_specific_level;
 			delete actionDecompress_mesh_sequence_on_off;
+			delete actionJCW;
+			delete actionJCWdecompres;
+			delete actionJCWdecompress_without_extraction;
 		}
 
 		void init(mainwindow* mainWindow, QList<QMdiSubWindow *> lw)
@@ -37,7 +40,7 @@ class mepp_component_Compression_Valence_plugin :
 			// menuCompression, menuWatermaking, menuExamples
 			mParentMenu = mainWindow->menuCompression;
 
-			// début --- actions ---
+			// debut --- actions ---
 			actionCompress = new QAction(tr("Compress"), this);
 			if (actionCompress)
 				connect(actionCompress, SIGNAL(triggered()), this, SLOT(OnCompress()));
@@ -65,6 +68,19 @@ class mepp_component_Compression_Valence_plugin :
 			actionDecompress_mesh_sequence_on_off = new QAction(tr("Decompress: mesh sequence on/off"), this);
 			if (actionDecompress_mesh_sequence_on_off)
 				connect(actionDecompress_mesh_sequence_on_off, SIGNAL(triggered()), this, SLOT(OnDecompress_mesh_sequence_on_off()));
+			
+			actionJCW = new QAction(tr("JCW: Insertion"), this);
+			if (actionJCW)
+				connect(actionJCW, SIGNAL(triggered()), this, SLOT(OnJCW()));
+			
+			actionJCWdecompres = new QAction(tr("JCW: Decompress one level"), this);
+			if (actionJCWdecompres)
+				connect(actionJCWdecompres, SIGNAL(triggered()), this, SLOT(OnJCWdecompres()));
+			
+			actionJCWdecompress_without_extraction = new QAction(tr("JCW: Decompress one level without extraction"), this);
+			if (actionJCWdecompress_without_extraction)
+				connect(actionJCWdecompress_without_extraction, SIGNAL(triggered()), this, SLOT(OnJCWdecompress_without_extraction()));
+
 			// fin --- actions ---
 		}
 
@@ -79,7 +95,11 @@ class mepp_component_Compression_Valence_plugin :
 										<< actionDecompress_precedent_level
 										<< actionDecompress_go_to_specific_level
 										<< NULL
-										<< actionDecompress_mesh_sequence_on_off;
+										<< actionDecompress_mesh_sequence_on_off
+										<< NULL
+										<< actionJCW
+										<< actionJCWdecompres
+										<< actionJCWdecompress_without_extraction;
 		}
 		
 		virtual void pre_draw() {}
@@ -107,6 +127,11 @@ class mepp_component_Compression_Valence_plugin :
 
 		void OnDecompress_mesh_sequence_on_off();
 
+		void OnJCW();
+
+		void OnJCWdecompres();
+		void OnJCWdecompress_without_extraction();
+
 	protected:
 		void ShowText(void);
 		void WriteInfo(void);
@@ -117,6 +142,8 @@ class mepp_component_Compression_Valence_plugin :
 
 		QAction *actionDecompress_all, *actionDecompress_one_level, *actionDecompress_precedent_level, *actionDecompress_go_to_specific_level;
 		QAction *actionDecompress_mesh_sequence_on_off;
+		QAction *actionJCW;
+		QAction *actionJCWdecompres, * actionJCWdecompress_without_extraction;
 };
 
 #endif

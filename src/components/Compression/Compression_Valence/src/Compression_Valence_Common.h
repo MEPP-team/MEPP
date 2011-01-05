@@ -159,57 +159,12 @@ double Area_Facet_Triangle(const Point3d &P,const Point3d &Q, const Point3d &R)
 
 
 
-int Calulate_Proper_Quantization_Precision(Polyhedron & pMesh, const double & volume, const double & area, const int & number_vertices)
+int Estimate_Geometry_Quantization(Polyhedron & pMesh, const double & volume, const double & area, const int & number_vertices)
 {
-	/*
-	pMesh.compute_bounding_box();
-	float xmin = pMesh.xmin();
-	float ymin = pMesh.ymin();
-	float zmin = pMesh.zmin();
-	float xmax = pMesh.xmax();
-	float ymax = pMesh.ymax();
-	float zmax = pMesh.zmax();
-
-	Vector e1(xmax-xmin, 0., 0.);
-	Vector e2(0., ymax-ymin, 0.);
-
-	Vector normal = CGAL::cross_product(e1,e2);
-	double area = sqrt(normal * normal);
-	double volume = area * (zmax - zmin);	
-	
-	double mesh_area = 0;
-	for (Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
-	{
-		Halfedge_handle h = pFacet->halfedge();
-		mesh_area += Area_Facet_Triangle(h);
-	}	
-	
-	double C = volume / mesh_area / (double)pMesh.size_of_vertices();
-
-	double a = -1.248;
-	double b = -0.9538;
-
-	int Q = floor(a * log(C) + b + 0.5);
-
-	double Real_volume = 0;
-	for (Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
-	{
-		Halfedge_handle h = pFacet->halfedge();
-		Vector V0 = h->vertex()->point() - CGAL::ORIGIN;
-		Vector V1 = h->next()->vertex()->point() - CGAL::ORIGIN;
-		Vector V2 = h->prev()->vertex()->point() - CGAL::ORIGIN;
-		
-		Vector Temp = CGAL::cross_product(V1, V2);
-		Real_volume += V0 * Temp;
-	}
-	Real_volume /= 6.0;
-
-	*/
-
 	double C = (double)volume / (double)area / number_vertices;
 
 	double a = -1.248;
-	double b = -0.9538;
+	double b = -0.954;
 
 	int Q = floor(a * log(C) + b + 0.5);
 
@@ -251,9 +206,9 @@ Vector Triangle_Normal(const Point3d & P,const Point3d & Q,const Point3d &R)
 }
 
 // Description : To find a correspondent type to retriangulate.
-int Find_Type(const Halfedge_handle &h, const unsigned int &valence)
+int Find_Type(const Halfedge_handle &h, const int & valence)
 {
-	int type = 0;
+	int type = 0;	
 
 	if (valence == 3)
 	{
@@ -516,7 +471,7 @@ Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &
 		S[0] = D2;
 	else	
 		S[0] = D1;	
-	M = product_matrices(S[0],M);
+	M = product_matrices(S[0], M);
 	
 	if (M.Get(1,2) < 0)
 		S[1] = D3;	
@@ -626,6 +581,7 @@ Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &
 	New_Coordinates.y = (int)u.y();
 	New_Coordinates.z = (int)u.z();	
 	
+	delete []S;
 	return New_Coordinates;
 }
 
@@ -733,7 +689,7 @@ Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,cons
 	Matrix R3(std::cos(theta),-std::sin(theta),0,  std::sin(theta),std::cos(theta),0,  0,0,1);	
 	Matrix R3inv = inverse_matrix(R3);
 	Matrix S16 = product_matrices(R3inv,M);
-	Vector u(Frenet.x,Frenet.y,Frenet.z);
+	Vector u(Frenet.x, Frenet.y, Frenet.z);
 	
 	Matrix m_inter;
 		
@@ -755,6 +711,7 @@ Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,cons
 	Dist.y = (int)u.y();
 	Dist.z = (int)u.z();
 	
+	delete []S;
 	return Dist;
 }
 
@@ -1022,8 +979,8 @@ bool Is_Geometric_Metric_Violated(const Halfedge_handle &h,const int &type,const
 		check = true;
 
 	// tp free memory.
-	delete Points;
-	delete Vectors;
+	delete[] Points;
+	delete[] Vectors;
 
 	return check;
 }
@@ -1032,7 +989,7 @@ bool Is_Geometric_Metric_Violated(const Halfedge_handle &h,const int &type,const
 // Descrpition :: To check if removal of the front vertex can cause a normal flipping problem.
 bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence)
 {
-	int type = Find_Type(h,valence);
+	int type = Find_Type(h, valence);
 	bool check = false;
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1046,7 +1003,7 @@ bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence
 		V_normal = V_normal / length;
 
 	Point3d *Points = new Point3d[valence];
-    Vector * Normal = new Vector[valence - 2];
+  Vector  *Normal = new Vector[valence - 2];
 
 
 	for (unsigned int i=0;i<valence;i++)
@@ -1106,18 +1063,18 @@ bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence
 
 	else if ((type == 13) || (type == 16)) // 0 1 5,  1 2 3 , 3 4 5, 1 3 5
 	{
-        Normal[0] = Triangle_Normal(Points[0],Points[1],Points[5]);
+    Normal[0] = Triangle_Normal(Points[0],Points[1],Points[5]);
 		Normal[1] = Triangle_Normal(Points[1],Points[2],Points[3]);
 		Normal[2] = Triangle_Normal(Points[3],Points[4],Points[5]);
-        Normal[3] = Triangle_Normal(Points[1],Points[3],Points[5]);
+    Normal[3] = Triangle_Normal(Points[1],Points[3],Points[5]);
 	}
 
 	else if ((type == 14) || (type == 15)) // 0 1 2 , 2 3 4 , 4 5 0, 0 2 4
 	{
-	    Normal[0] = Triangle_Normal(Points[0],Points[1],Points[2]);
+	  Normal[0] = Triangle_Normal(Points[0],Points[1],Points[2]);
 		Normal[1] = Triangle_Normal(Points[2],Points[3],Points[4]);
 		Normal[2] = Triangle_Normal(Points[4],Points[5],Points[0]);
-        Normal[3] = Triangle_Normal(Points[0],Points[2],Points[4]);
+    Normal[3] = Triangle_Normal(Points[0],Points[2],Points[4]);
 
 	}
 
@@ -1136,6 +1093,8 @@ bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence
         if (cosine_rad >= PI/2)
             check = true;
     }
+	delete []Points;
+    delete []Normal;
 
 	return check;
 }
@@ -1151,7 +1110,10 @@ bool Is_Border_Vertex(const Halfedge_handle & h)
 	CGAL_For_all(hvc,hvc_end)
 	{
 		if (hvc->is_border_edge())
+		{
 			check = true;
+			break;
+		}
 	}
 	
 	return check;	
@@ -1161,7 +1123,7 @@ bool Is_Border_Vertex(const Halfedge_handle & h)
 Vector Normal_Patch(const Halfedge_handle& const_h, const unsigned int &valence)
 {
 	Halfedge_handle h = const_h;
-	int type = Find_Type(h,valence);
+	int type = Find_Type(h, valence);
 	
 	double area[5]={0,0,0,0,0};
 	
@@ -1306,7 +1268,8 @@ Vector Normal_Patch(const Halfedge_handle& const_h, const unsigned int &valence)
 	double length = std::sqrt(normal*normal);
 	if (length != 0)
 		normal = normal / length;
-
+	
+	delete []normals;
 	return normal;
 }
 
@@ -1336,16 +1299,20 @@ Point3d Barycenter_Patch_After_Removal(const Halfedge_handle & h,const int &vale
 //Descrpition :: To give the position of the barycenter of the patch for regulation conquest.
 Point3d Barycenter_Patch_Before_Removal(const Halfedge_handle & h)
 {
-	int valence = (int)h->next()->vertex_degree();
 	Halfedge_handle g = h;
+	int valence = (int)g->next()->vertex_degree();	
+
 	double x = 0., y = 0., z = 0.;
-	for (int i = 0;i < valence; i++)
+
+	Halfedge_around_vertex_circulator vh_it = g->next()->vertex_begin();
+    Halfedge_around_vertex_circulator vh_it_end = vh_it;
+
+	CGAL_For_all(vh_it, vh_it_end)
 	{
-		Point3d pt = g->vertex()->point();
+		Point3d pt = vh_it->opposite()->vertex()->point();
 		x += pt.x();
 		y += pt.y();
-		z += pt.z();
-		g = g->next()->opposite()->next();
+		z += pt.z();		
 	}	
 	
 	x = x / (double)valence;
@@ -1356,9 +1323,9 @@ Point3d Barycenter_Patch_Before_Removal(const Halfedge_handle & h)
 }
 
 // Description :: To retriangulate the hole left by a removal of a vertex.
-void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsigned &valence, const unsigned & Vertex_number)
+void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsigned &valence, const unsigned & Vertex_number, const int & Component_ID)
 {
-	int type = Find_Type(ch,valence);
+	int type = Find_Type(ch, valence);
 	Halfedge_handle h;
 	h = ch;
 	Halfedge_handle g;
@@ -1373,6 +1340,8 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 				
 		h->facet()->normal() = Triangle_Normal(h);
 		
+		h->facet()->Component_Number = Component_ID;
+
 		if (g->vertex()->Vertex_Sign == NOSIGN)		
 			g->vertex()->Vertex_Sign = PLUS;
 	}
@@ -1380,6 +1349,8 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 	{
 		h->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->facet()->Patch_Index = Vertex_number;
+		
+		h->facet()->Component_Number = Component_ID;
 		
 		h->facet()->normal() = Triangle_Normal(h);
 		
@@ -1396,17 +1367,16 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 			g->next()->vertex()->Vertex_Sign = MINUS;
 
 		h = h->prev();		
-		h = pMesh.split_facet(h,g);
-
+		h = pMesh.split_facet(h, g); 
 		
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		
-		h->facet()->Facet_Flag = TO_BE_REMOVED;
-		//h->facet()->Patch_Index = Vertex_number;
-		
+		h->facet()->Facet_Flag = TO_BE_REMOVED;		
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
-		//h->opposite()->facet()->Patch_Index = Vertex_number;
 
 	}
 
@@ -1420,15 +1390,16 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = g->next();		
 		h = pMesh.split_facet(h,g);
 		
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		
 		h->facet()->Facet_Flag = TO_BE_REMOVED;
-		//h->facet()->Patch_Index = Vertex_number;
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
 	}
-
 	// pentagone
 	else if ((type == 9) || (type == 12))
 	{
@@ -1443,6 +1414,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 
 		h = pMesh.split_facet(h,g);
 		
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;		
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
@@ -1450,6 +1424,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = h->next()->next();
 		h = pMesh.split_facet(h,g);
 		
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		
@@ -1471,7 +1448,11 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = h;
 		h = h->prev()->prev();
 
-		h = pMesh.split_facet(h,g);		
+		h = pMesh.split_facet(h,g);	
+
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
@@ -1481,6 +1462,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 
 		h = pMesh.split_facet(h,g);
 		
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 
@@ -1503,6 +1487,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = g->next();		
 		h = pMesh.split_facet(h,g);
 
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
 		
@@ -1510,6 +1497,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = h->next()->next();
 		
 		h = pMesh.split_facet(h,g);
+
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
 		
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
@@ -1534,15 +1524,20 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 
 		h = h->prev();		
 		h = pMesh.split_facet(h,g);
+
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
 		
-		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
-		
+		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());		
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
 		
 		
 		g = h->next()->next();		
 		h = pMesh.split_facet(h,g);
+
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
 
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
@@ -1551,6 +1546,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		
 		g = h->next()->next();		
 		h = pMesh.split_facet(h,g);
+
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
 		
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
@@ -1577,6 +1575,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = g->next();		
 		h = pMesh.split_facet(h,g);
 
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
 		
@@ -1585,6 +1586,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = h->next()->next();		
 		h = pMesh.split_facet(h,g);
 
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
+
 		h->opposite()->facet()->Facet_Flag = TO_BE_REMOVED;
 		//h->opposite()->facet()->Patch_Index = Vertex_number;
 
@@ -1592,6 +1596,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		
 		g = h->next()->next();		
 		h = pMesh.split_facet(h,g);
+
+		h->facet()->Component_Number = Component_ID;
+		h->opposite()->facet()->Component_Number = Component_ID;
 		
 		h->facet()->normal() = Triangle_Normal(h);
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
@@ -1603,8 +1610,80 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 	}
 }
 
+bool Is_Border_Manifold_Property_Violated(const Halfedge_handle & g, const Halfedge_handle & First_border_edge, const int & Type, const int & Valence)
+{	
+	bool res = false;
 
+	// Added by Adrien Maglo.
+	// Test if we are not in the case of a mesh pimple.
+	
+   // Get the two patch border vertices.
+   Vertex_handle vh1 = First_border_edge->next()->vertex();
+   Vertex_handle vh2 = First_border_edge->opposite()->vertex();
+   Halfedge_around_vertex_circulator vh_it = vh1->vertex_begin();
+   Halfedge_around_vertex_circulator vh_it_end = vh_it;
 
+   // Test if the two patch border vertices are not connected
+   // by an edge.
+   CGAL_For_all(vh_it, vh_it_end)
+   {
+	   if (vh_it->opposite()->vertex() == vh2)
+	   {
+		   res = true;
+		   break;
+	   }
+   }
+	
+	
+	/*if(Valence == 3)
+	{
+		int Ref = Border_edge->next()->vertex()->Vertex_Number;
+		
+		Halfedge_around_vertex_circulator Hvc = Border_edge->opposite()->vertex()->vertex_begin();
+		Halfedge_around_vertex_circulator Hvc_end = Hvc;
+		
+		CGAL_For_all(Hvc, Hvc_end)
+		{
+			if(Hvc->opposite()->vertex()->Vertex_Number == Ref)
+				res = true;
+		}
+	}
+
+	else if(Valence == 4)
+	{
+		if( ((Number_jump == 0) && ((Type == 5) || (Type == 8))) ||
+			((Number_jump == 1) && ((Type == 6) || (Type == 7))) ||
+			((Number_jump == 2) && ((Type == 5) || (Type == 8))) )
+		{
+			int Ref = Border_edge->opposite()->prev()->opposite()->next()->vertex()->Vertex_Number;
+
+			Halfedge_around_vertex_circulator Hvc = Border_edge->opposite()->vertex()->vertex_begin();
+			Halfedge_around_vertex_circulator Hvc_end = Hvc;
+			
+			CGAL_For_all(Hvc, Hvc_end)
+			{
+				if(Hvc->opposite()->vertex()->Vertex_Number == Ref)
+					res = true;
+			}
+		}
+		else if ( ((Number_jump == 0) && ((Type == 6) || (Type == 7))) ||
+				  ((Number_jump == 1) && ((Type == 5) || (Type == 8))) ||
+				  ((Number_jump == 2) && ((Type == 6) || (Type == 7))) )	
+		{
+			int Ref = Border_edge->next()->vertex()->Vertex_Number;
+
+			Halfedge_around_vertex_circulator Hvc = Border_edge->opposite()->next()->vertex()->vertex_begin();
+			Halfedge_around_vertex_circulator Hvc_end = Hvc;
+			
+			CGAL_For_all(Hvc, Hvc_end)
+			{
+				if(Hvc->opposite()->vertex()->Vertex_Number == Ref)
+					res = true;
+			}
+		}
+	}*/
+	return res;
+}
 //Description :: Check if removal of this vertex would violate the manifold_property or not.
 bool Is_Manifold_Property_Violated(const Halfedge_handle & h, const int &type,const int &valence)
 {
@@ -1804,6 +1883,8 @@ bool Is_Manifold_Property_Violated(const Halfedge_handle & h, const int &type,co
 			}
 		}
 	}
+
+	delete []Points_index;
 	return check;
 }
 

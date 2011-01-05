@@ -2,7 +2,7 @@
                                   VectorT.h
                              -------------------
     update               : 2003-02-07
-    copyright            : (C) 2002-2003 by Michaël Roy
+    copyright            : (C) 2002-2003 by Michael Roy
     email                : michaelroy@users.sourceforge.net
  ***************************************************************************/
 

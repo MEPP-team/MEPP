@@ -2,7 +2,7 @@
                                 BoundingBox.h
                              -------------------
     update               : 2003-01-16
-    copyright            : (C) 2002-2003 by Michaël Roy
+    copyright            : (C) 2002-2003 by Michael Roy
     email                : michaelroy@users.sourceforge.net
  ***************************************************************************/
 

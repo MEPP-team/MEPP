@@ -5,7 +5,7 @@
                               Neighborhood.cxx
                              -------------------
     update               : 2002-02-07
-    copyright            : (C) 2002 by Michaël ROY
+    copyright            : (C) 2002 by Michael ROY
     email                : michaelroy@users.sourceforge.net
  ***************************************************************************/
 
