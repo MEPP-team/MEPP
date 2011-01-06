@@ -89,7 +89,7 @@
     </property>
     <widget class="QMenu" name="menuTools">
      <property name="title">
-      <string>Tools</string>
+      <string>Tools / Processing</string>
      </property>
      <addaction name="separator"/>
     </widget>

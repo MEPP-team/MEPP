@@ -7,4 +7,4 @@ if (COMMAND cmake_policy)
 endif (COMMAND cmake_policy)
 
 # Ici, on utilise le composant Curvature (par exemple)
-set( use_components ../../Analysis/Curvature/src/Curvature_Component.cpp ../../Analysis/Curvature/src/extract_Vpropres.cpp )
+#set( use_components ../../Analysis/Curvature/src/Curvature_Component.cpp ../../Analysis/Curvature/src/extract_Vpropres.cpp )

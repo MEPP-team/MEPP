@@ -20,10 +20,12 @@
 #include "CGAL_Example_Component.h"
 typedef boost::shared_ptr<CGAL_Example_Component> CGAL_Example_ComponentPtr;
 
+#if (0)
 // we want to use Curvature component
 #include "../../../Analysis/Curvature/src/Curvature_Component.h"
 typedef boost::shared_ptr<Curvature_Component> Curvature_ComponentPtr;
 // we want to use Curvature component
+#endif
 
 void mepp_component_CGAL_Example_plugin::pre_draw()
 {
@@ -536,6 +538,7 @@ void mepp_component_CGAL_Example_plugin::step9()
 			component_ptr->set_init(2);
 		// we use CGAL_Example component here (as usual)
 
+#if (0)
 		// we use Curvature component here
 			bool IsGeo;
 			double radius;
@@ -554,6 +557,7 @@ void mepp_component_CGAL_Example_plugin::step9()
 			component_ptr_curvature->ConstructColorMap(polyhedron_ptr,1);
 			viewer->recreateListsAndUpdateGL();
 		// we use Curvature component here
+#endif
 	}
 
 	QApplication::restoreOverrideCursor();
