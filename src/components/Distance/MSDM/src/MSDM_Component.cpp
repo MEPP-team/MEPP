@@ -22,9 +22,6 @@
 #include<vector>
 #include<stack>
 
-// subdivision
-#include "../../../../mepp/Tools/Tools_sqrt3.h"
-
 double MSDM_Component::Processroughness_curve_Dual(PolyhedronPtr m_PolyOriginal, PolyhedronPtr m_PolyDegrad,double radius, double maxdim,bool IsGauss)
 {
 	

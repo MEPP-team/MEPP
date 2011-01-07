@@ -53,6 +53,10 @@ typedef CGAL::Vector_3<Enriched_kernel> Vector;
 
 //----
 
+typedef CGAL::Aff_transformation_3<Enriched_kernel> Affine_transformation;
+
+//----
+
 typedef boost::shared_ptr<Polyhedron> PolyhedronPtr;
 
 typedef int (*typeFuncOpenSave)(PolyhedronPtr, QString, Viewer*);

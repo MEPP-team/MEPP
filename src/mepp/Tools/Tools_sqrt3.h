@@ -40,19 +40,19 @@ class CSubdivider_sqrt3
                   int iter)
     {
       // check for valid polygon mesh
-      if (P.size_of_facets() == 0)
+      if(P.size_of_facets() == 0)
         return false;
 
       // normalize border
       P.normalize_border();
 
-      for (int i=0;i<iter;i++)
+      for(int i=0;i<iter;i++)
       {
         // subdivision
         subdivide(P);
 
         // boundary subdivision
-        if (i & 1)
+        if(i & 1)
           subdivide_border(P);
       }
       return true;
@@ -62,7 +62,7 @@ class CSubdivider_sqrt3
     void flip_edge(Polyhedron& P,
                    Halfedge_handle e)
     {
-      if (e->is_border_edge())
+      if(e->is_border_edge())
         return;
       Halfedge_handle h = e->next();
       P.join_facet( e);
@@ -195,7 +195,7 @@ class CSubdivider_sqrt3
             do {
                 // Even degree and border edges indicated non-manifold
                 // vertex with two holes.
-                if ( h->is_border())
+                if( h->is_border())
                 {
                     std::cerr << "Error: non-manifold vertex. Erroneous smoothing."
                               << std::endl;

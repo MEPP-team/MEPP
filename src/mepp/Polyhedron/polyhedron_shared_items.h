@@ -941,15 +941,16 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return (2*c+e-b-f-v)/2;
 		}
 
-		/*MEPP: void copy_from(MEPP_Common_Polyhedron<kernel,items>* new_mesh)
+		void copy_from(MEPP_Common_Polyhedron<kernel, items> *new_mesh)
 		{
 			this->clear();
-			CCopyPoly<MEPP_Common_Polyhedron<kernel, items>, kernel> copier;
+
+			CCopyPoly<MEPP_Common_Polyhedron<kernel, items>, kernel > copier;
 			copier.copy(new_mesh, this);
 			
 			this->compute_normals();
 			this->compute_type();
-		}*/
+		}
 
 		bool has_color() { return m_has_color; }
 		void has_color(bool has_col) { m_has_color = has_col; }
