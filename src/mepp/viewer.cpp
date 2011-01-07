@@ -1153,7 +1153,9 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event)
 					lplugin[p]->OnMouseRightUp(event);
 			}
 		}
-		else
+
+		if (!((QApplication::keyboardModifiers() & Qt::ShiftModifier) || (QApplication::keyboardModifiers() & Qt::ControlModifier) ||
+			(QApplication::keyboardModifiers() & Qt::AltModifier) || (QApplication::keyboardModifiers() & Qt::MetaModifier)))
 		{
 			if (event->button() & Qt::RightButton)
 				if (!m_HasMoved)
