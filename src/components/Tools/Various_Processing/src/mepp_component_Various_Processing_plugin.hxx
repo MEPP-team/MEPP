@@ -84,7 +84,9 @@ class mepp_component_Various_Processing_plugin :
 										<< NULL			// menu separator
 										<< actionSurfaceSubdivision
 #ifndef __linux__
+#ifndef __APPLE__
                                                                                 << actionSurfaceSimplification
+#endif
 #endif
                                                                                 ;
 		}	
