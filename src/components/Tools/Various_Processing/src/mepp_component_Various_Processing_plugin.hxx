@@ -83,7 +83,10 @@ class mepp_component_Various_Processing_plugin :
 										<< actionUniformScaling
 										<< NULL			// menu separator
 										<< actionSurfaceSubdivision
-										<< actionSurfaceSimplification;
+#ifndef __linux__
+                                                                                << actionSurfaceSimplification
+#endif
+                                                                                ;
 		}	
 		
 		virtual void pre_draw() {}

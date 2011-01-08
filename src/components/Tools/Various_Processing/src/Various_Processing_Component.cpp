@@ -13,9 +13,12 @@
 #include "Various_Processing_Component.h"
 
 #include <CGAL/Subdivision_method_3.h>
+
+#ifndef __linux__
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#endif
 
 double PI = 3.1415926535;
 
@@ -398,6 +401,7 @@ typedef CGAL::Polyhedron_3<Kernel,Enriched_items> Surface;
 
 void Various_Processing_Component::Simplification (Polyhedron *pMesh, int targetEdgeNum)
 {
+#ifndef __linux__
 	CGAL::Surface_mesh_simplification::Count_stop_predicate<Surface> stop(targetEdgeNum);
 
 	// upcast... it is indeed ugly... sorry for that. trying to find new solutions...
@@ -412,5 +416,6 @@ void Various_Processing_Component::Simplification (Polyhedron *pMesh, int target
 
 	pMesh->compute_type();
 	pMesh->compute_normals();
+#endif
 }
 #endif
