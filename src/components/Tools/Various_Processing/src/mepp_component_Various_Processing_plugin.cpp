@@ -3,7 +3,14 @@
 
 #include "mepp_component_Various_Processing_plugin.hxx"
 
-//#include "dialSettings_Various_Processing.hxx"
+#include "dialSettings_Various_Processing_Noise.hxx"
+#include "dialSettings_Various_Processing_Smoothing.hxx"
+#include "dialSettings_Various_Processing_Quantization.hxx"
+#include "dialSettings_Various_Processing_Translation.hxx"
+#include "dialSettings_Various_Processing_Rotation.hxx"
+#include "dialSettings_Various_Processing_Uniform_Scaling.hxx"
+#include "dialSettings_Various_Processing_Subdivision.hxx"
+#include "dialSettings_Various_Processing_Simplification.hxx"
 
 #include <QObject>
 #include <QAction>
@@ -17,8 +24,6 @@ typedef boost::shared_ptr<Various_Processing_Component> Various_Processing_Compo
 
 void mepp_component_Various_Processing_plugin::NoiseAddition()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -27,20 +32,22 @@ void mepp_component_Various_Processing_plugin::NoiseAddition()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*NoiseDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Noise dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			/*char itensityChar[256];
 			strcpy(itensityChar, dial.m_textCtrlIntensity->GetValue().ToAscii());*/
-			double itensity = 0.0005;//atof(itensityChar);
+			double itensity = dial.Intensity->value();
 
 			Noise_type noiseType = UNIFORM;
-			/*if (dial.m_radioBoxNoiseType->GetSelection()==0)
+			if (dial.radioUniform->isChecked())
 				noiseType = UNIFORM;
-			else if (dial.m_radioBoxNoiseType->GetSelection()==1)
-				noiseType = GAUSSIAN;*/
+			else
+				noiseType = GAUSSIAN;
 
-			bool preserveBoundaries = false;//dial.m_checkBoxPreserveBoundaries->GetValue();
+			bool preserveBoundaries = dial.PreserveBoundaries->isChecked();
 
 			//wxBusyInfo busy(_T("Add random noise..."));
 			//m_frame->set_status_message(_T("Add random noise..."));
@@ -65,8 +72,6 @@ void mepp_component_Various_Processing_plugin::NoiseAddition()
 }
 void mepp_component_Various_Processing_plugin::LaplacianSmoothing()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -75,18 +80,20 @@ void mepp_component_Various_Processing_plugin::LaplacianSmoothing()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*SmoothingDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Smoothing dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			/*char deformFactorChar[256];
 			strcpy(deformFactorChar, dial.m_textCtrlDeformFactor->GetValue().ToAscii());*/
-			double deformFactor = 0.03;//atof(deformFactorChar);
+			double deformFactor = dial.DeformFactor->value();
 
 			/*char IteraNumChar[256];
 			strcpy(IteraNumChar, dial.m_textCtrlIteraNum->GetValue().ToAscii());*/
-			int iteraNum = 10;//atoi(IteraNumChar);
+			int iteraNum = dial.IteraNum->value();
 
-			bool preserveBoundaries = true;//dial.m_checkBoxPreserveBoundaries->GetValue();
+			bool preserveBoundaries = dial.PreserveBoundaries->isChecked();
 
 			//wxBusyInfo busy(_T("Laplacian smoothing..."));
 			//m_frame->set_status_message(_T("Laplacian smoothing..."));
@@ -111,8 +118,6 @@ void mepp_component_Various_Processing_plugin::LaplacianSmoothing()
 }
 void mepp_component_Various_Processing_plugin::CoordinateQuantization()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -121,12 +126,14 @@ void mepp_component_Various_Processing_plugin::CoordinateQuantization()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*QuantizationDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Quantization dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			/*char bitDepthChar[256];
 			strcpy(bitDepthChar, dial.m_textCtrlBitDepth->GetValue().ToAscii());*/
-			int bitDepth = 10;//atoi(bitDepthChar);
+			int bitDepth = dial.CtrlBitDepth->value();
 
 			//wxBusyInfo busy(_T("Coordinate quantization..."));
 			//m_frame->set_status_message(_T("Coordinate quantization..."));
@@ -152,8 +159,6 @@ void mepp_component_Various_Processing_plugin::CoordinateQuantization()
 
 void mepp_component_Various_Processing_plugin::Translation()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -162,20 +167,22 @@ void mepp_component_Various_Processing_plugin::Translation()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*TranslationDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Translation dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			/*char xTranslationChar[256];
 			strcpy(xTranslationChar, dial.m_textCtrlTranslationX->GetValue().ToAscii());*/
-			double xTranslation = 0.2;//atof(xTranslationChar);
+			double xTranslation = dial.CtrlTranslationX->value();
 
 			/*char yTranslationChar[256];
 			strcpy(yTranslationChar, dial.m_textCtrlTranslationY->GetValue().ToAscii());*/
-			double yTranslation = 0.2;//atof(yTranslationChar);
+			double yTranslation = dial.CtrlTranslationY->value();
 
 			/*char zTranslationChar[256];
 			strcpy(zTranslationChar, dial.m_textCtrlTranslationZ->GetValue().ToAscii());*/
-			double zTranslation = 0.2;//atof(zTranslationChar);
+			double zTranslation = dial.CtrlTranslationZ->value();
 
 			//wxBusyInfo busy(_T("Object translation..."));
 			//m_frame->set_status_message(_T("Object translation..."));
@@ -200,8 +207,6 @@ void mepp_component_Various_Processing_plugin::Translation()
 }
 void mepp_component_Various_Processing_plugin::Rotation()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -210,24 +215,26 @@ void mepp_component_Various_Processing_plugin::Rotation()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*RotationDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Rotation dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			/*char xAxisChar[256];
 			strcpy(xAxisChar, dial.m_textCtrlXForAxis->GetValue().ToAscii());*/
-			double xAxis = 1.0;//atof(xAxisChar);
+			double xAxis = dial.CtrlXForAxis->value();
 
 			/*char yAxisChar[256];
 			strcpy(yAxisChar, dial.m_textCtrlYForAxis->GetValue().ToAscii());*/
-			double yAxis = 0.0;//atof(yAxisChar);
+			double yAxis = dial.CtrlYForAxis->value();
 
 			/*char zAxisChar[256];
 			strcpy(zAxisChar, dial.m_textCtrlZForAxis->GetValue().ToAscii());*/
-			double zAxis = 0.0;//atof(zAxisChar);
+			double zAxis = dial.CtrlZForAxis->value();
 
 			/*char angleChar[256];
 			strcpy(angleChar, dial.m_textCtrlAngle->GetValue().ToAscii());*/
-			double angle = 90.0;//atof(angleChar);
+			double angle = dial.CtrlAngle->value();
 
 			//wxBusyInfo busy(_T("Object rotation..."));
 			//m_frame->set_status_message(_T("Object rotation..."));
@@ -252,8 +259,6 @@ void mepp_component_Various_Processing_plugin::Rotation()
 }
 void mepp_component_Various_Processing_plugin::UniformScaling()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -262,12 +267,14 @@ void mepp_component_Various_Processing_plugin::UniformScaling()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*UniformScalingDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Uniform_Scaling dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 			/*char scalingFactorChar[256];
 			strcpy(scalingFactorChar, dial.m_textCtrlScalingFactor->GetValue().ToAscii());*/
-			double scalingFactor = 1.5;//atof(scalingFactorChar);
+			double scalingFactor = dial.ScalingFactor->value();
 
 			//wxBusyInfo busy(_T("Object uniform scaling..."));
 			//m_frame->set_status_message(_T("Object uniform scaling..."));
@@ -301,24 +308,24 @@ void mepp_component_Various_Processing_plugin::SurfaceSubdivision()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*SubdivisionDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Subdivision dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
 			/*char depthChar[256];
 			strcpy(depthChar, dial.m_textCtrlDepth->GetValue().ToAscii());*/
-			int depth = 1;//atoi(depthChar);
+			int depth = dial.Depth->value();
 
 			Subdivision_type subdivisionType = CATMULLCLARK;
-			/*if (dial.m_radioBoxSubdivisionType->GetSelection()==0)
+			if (dial.radioCatmullClark->isChecked())
 				subdivisionType = CATMULLCLARK;
-			else if (dial.m_radioBoxSubdivisionType->GetSelection()==1)
+			else if (dial.radioLoop->isChecked())
 				subdivisionType = LOOP;
-			else if (dial.m_radioBoxSubdivisionType->GetSelection()==2)
+			else if (dial.radioDooSabin->isChecked())
 				subdivisionType = DOOSABIN;
-			else if (dial.m_radioBoxSubdivisionType->GetSelection()==3)
+			else if (dial.radioSqrt3->isChecked())
 				subdivisionType = SQRT3;
-			else if (dial.m_radioBoxSubdivisionType->GetSelection()==4)
-				subdivisionType = MIDPOINT;*/
+			else if (dial.radioMidpoint->isChecked())
+				subdivisionType = MIDPOINT;
 
 			if (subdivisionType==LOOP)
 			{
@@ -377,8 +384,8 @@ void mepp_component_Various_Processing_plugin::SurfaceSimplification()
 
 		Various_Processing_ComponentPtr component_ptr = findOrCreateComponentForViewer<Various_Processing_ComponentPtr, Various_Processing_Component>(viewer, polyhedron_ptr);
 
-		/*SimplificationDialogue dial(m_frame);
-		if (dial.ShowModal() == wxID_OK)*/
+		SettingsDialog_Various_Processing_Simplification dial;
+		if (dial.exec() == QDialog::Accepted)
 		{
 			if (!polyhedron_ptr->is_pure_triangle())
 			{
@@ -393,7 +400,7 @@ void mepp_component_Various_Processing_plugin::SurfaceSimplification()
 
 			/*char targetEdgeNumChar[256];
 			strcpy(targetEdgeNumChar, dial.m_textCtrlEdgeNum->GetValue().ToAscii());*/
-			int targetEdgeNum = 80;//atoi(targetEdgeNumChar);
+			int targetEdgeNum = dial.EdgeNum->value();
 
 			//wxBusyInfo busy(_T("Mesh simplification..."));
 			//m_frame->set_status_message(_T("Mesh simplification..."));
