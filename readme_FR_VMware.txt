@@ -1,10 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010
+// Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Vous trouverez ici http://download.gforge.liris.cnrs.fr/meppbin/windows/VMware/ une machine virtuelle VMware prête à l'emploi avec VMware Player (gratuit) fournit au même endroit.
+Vous trouverez ici http://download.gforge.liris.cnrs.fr/meppbin/vmware/ une machine virtuelle VMware prête à l'emploi avec VMware Player (gratuit) fournit au même endroit.
 
 Il suffit de décompresser la machine (format 7z mais se décompresse aussi avec Winrar) puis de démarrer la machine avec VMware Player.
 
