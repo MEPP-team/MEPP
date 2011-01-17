@@ -8,10 +8,10 @@ Marche à suivre pour Mepp (32 bits) sous Windows avec Visual Studio Express 2008
 --------------------------------------------------------------------------------------
 
 1) récupérer et installer Visual Studio Express 2008 SP1:
-http://download.gforge.liris.cnrs.fr/meppbin/vs2008/VS2008ExpressWithSP1FRAx1504731.iso (869 Mo)
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/VS2008ExpressWithSP1FRAx1504731.iso (869 Mo)
 
 2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
-http://download.gforge.liris.cnrs.fr/meppbin/vs2008/MEPP/mepp_prebuilt_binaries_vs2008_x86_v01.rar (484 Mo)
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/MEPP/mepp_prebuilt_binaries_vs2008_x86_v01.rar (484 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev32)
 
 3) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):
