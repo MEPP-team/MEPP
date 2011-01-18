@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.42 - 08/01/2011"
+#define MEPP_VERSION "v0.42b - 18/01/2011"
 
 #include "mepp_component_plugin_interface.h"
 
@@ -1170,9 +1170,9 @@ void mainwindow::on_actionAbout_CGAL_triggered()
 	QIcon icon(":/logo/Pictures/cgal.png");
 	QMessageBox messageBox(QMessageBox::NoIcon,
 		tr("About CGAL"),
-		tr("<h2>Computational Geometry Algorithms Library</h2>"
+		tr("<h2>Computational Geometry Algorithms Library - v%1</h2>"
            "<p>CGAL provides efficient and reliable geometric algorithms in the form of a C++ library.</p>"
-           "<p>For more information visit <a href=\"http://www.cgal.org/\">www.cgal.org</a>.</p>")/*.arg(CGAL_VERSION)*/, QMessageBox::Ok);
+           "<p>For more information visit <a href=\"http://www.cgal.org/\">www.cgal.org</a>.</p>").arg(CGAL_VERSION_STR), QMessageBox::Ok);
 	messageBox.setIconPixmap(icon.pixmap(157, 41));
 	messageBox.exec();
 }
