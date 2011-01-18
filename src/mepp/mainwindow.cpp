@@ -7,6 +7,12 @@
 
 #define MEPP_VERSION "v0.42b - 18/01/2011"
 
+#ifndef CGAL_VERSION_STR
+#define CGAL_xstr(s) #s
+#define CGAL_str(s) CGAL_xstr(s)
+#define CGAL_VERSION_STR CGAL_str(CGAL_VERSION)
+#endif
+
 #include "mepp_component_plugin_interface.h"
 
 typedef boost::shared_ptr<QAction> QActionPtr;
