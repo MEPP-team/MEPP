@@ -2,6 +2,8 @@
 #include <xiot/X3DAttributes.h>
 #include <cassert>
 
+#include <stdio.h>
+
 X3DLogNodeHandler::X3DLogNodeHandler(std::string fileName)
 {
 	//fileName.erase(fileName.find_last_of("."));
