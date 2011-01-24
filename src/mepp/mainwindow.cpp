@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.42b - 18/01/2011"
+#define MEPP_VERSION "v0.42c - 24/01/2011"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -378,13 +378,13 @@ void mainwindow::update_mesh_properties(bool update_component, bool update_bound
 
 		edges = QString(tr(" %1 edges ")).arg(e);
 
-		if (m_nb_components == 0)
+		if (m_nb_boundaries == 0)
 			boundaries = QString(tr(" no boundary "));
 		else
-			if (m_nb_components == 1)
+			if (m_nb_boundaries == 1)
 				boundaries = QString(tr(" 1 boundary "));
 			else
-				boundaries = QString(tr(" %1 boundaries ")).arg(m_nb_components);
+				boundaries = QString(tr(" %1 boundaries ")).arg(m_nb_boundaries);
 
 		genus = QString(tr(" genus %1 ")).arg(g);
 	}
