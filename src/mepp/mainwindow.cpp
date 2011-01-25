@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.42c - 24/01/2011"
+#define MEPP_VERSION "v0.42d - 24/01/2011"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -177,7 +177,7 @@ void mainwindow::loadPlugins()
   QDir pluginsDir(qApp->applicationDirPath());
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
   {
-    if (fileName.contains("mepp_") && QLibrary::isLibrary(fileName))
+    if (fileName.contains("component_") && QLibrary::isLibrary(fileName))
 	{
       QPluginLoader loader;
       loader.setFileName(pluginsDir.absoluteFilePath(fileName));
