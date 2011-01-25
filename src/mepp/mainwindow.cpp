@@ -1176,7 +1176,7 @@ void mainwindow::on_actionAbout_CGAL_triggered()
 	QIcon icon(":/logo/Pictures/cgal.png");
 	QMessageBox messageBox(QMessageBox::NoIcon,
 		tr("About CGAL"),
-		tr("<h2>Computational Geometry Algorithms Library - v%1</h2>"
+		tr("<h4>Computational Geometry Algorithms Library - v%1</h4>"
            "<p>CGAL provides efficient and reliable geometric algorithms in the form of a C++ library.</p>"
            "<p>For more information visit <a href=\"http://www.cgal.org/\">www.cgal.org</a>.</p>").arg(CGAL_VERSION_STR), QMessageBox::Ok);
 	messageBox.setIconPixmap(icon.pixmap(157, 41));

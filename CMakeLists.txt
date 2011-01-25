@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - Novembre 2010
+# Martial TOLA - Janvier 2011
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -8,6 +8,9 @@ endif(APPLE)
 
 if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  IF(POLICY CMP0017)
+	cmake_policy(SET CMP0017 OLD) # or NEW
+  ENDIF()
 endif (COMMAND cmake_policy)
 
 # Configuration du projet
@@ -165,6 +168,12 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	if(GLEW_FOUND)
 		target_link_libraries(${PRJ_NAME} ${GLEW_LIBRARIES})
 	endif(GLEW_FOUND)
+	
+	#Documentation
+	option(BUILD_${PRJ_NAME}_DOC "Build Doxygen documentation for ${PRJ_NAME}" ON)
+	if(BUILD_${PRJ_NAME}_DOC)
+	  include(TargetDoc)
+	endif(BUILD_${PRJ_NAME}_DOC)
 
 
 IF(APPLE)

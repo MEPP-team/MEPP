@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a MEPP component
-# Martial TOLA - Novembre 2010
+# Martial TOLA - Janvier 2011
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -8,6 +8,9 @@ endif(APPLE)
 
 if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  IF(POLICY CMP0017)
+	cmake_policy(SET CMP0017 OLD) # or NEW
+  ENDIF()
 endif (COMMAND cmake_policy)
 
 # Configuration du projet
@@ -15,7 +18,7 @@ find_path (MEPP_COMPONENT_DIR CMakeLists.txt .)
 get_filename_component (MEPP_COMPONENT_NAME "${MEPP_COMPONENT_DIR}" NAME)
 message(STATUS "FIND MEPP_COMPONENT_NAME: ${MEPP_COMPONENT_NAME}")
 
-set(COMPONENT_NAME mepp_${MEPP_COMPONENT_NAME})
+set(COMPONENT_NAME component_${MEPP_COMPONENT_NAME})
 project( ${COMPONENT_NAME} )
 
 # cf. CMakeLists de mepp
@@ -99,6 +102,12 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	
 	# Link with libQGLViewer, OpenGL
 	target_link_libraries( ${COMPONENT_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+	
+	#Documentation
+	option(BUILD_${COMPONENT_NAME}_DOC "Build Doxygen documentation for ${COMPONENT_NAME}" ON)
+	if(BUILD_${COMPONENT_NAME}_DOC)
+	  include(TargetDoc)
+	endif(BUILD_${COMPONENT_NAME}_DOC)
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
