@@ -8,6 +8,7 @@
 // as you know, generally I do not write good programs...
 // so please send me any of your comments (or rather critics) in order to improve my programming skill and this component.
 // Thank you!
+#include <mepp_config.h> // just for disable 64 bits warnings
 
 #include "Processing_Kai.h"
 
