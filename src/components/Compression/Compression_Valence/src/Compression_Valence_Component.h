@@ -138,7 +138,7 @@ class Compression_Valence_Component :
 			m_VC[0] = 0.;
 			m_VC[1] = 0.;
 			m_VC[2] = 0.;
-			m_Dist = 0.5;
+			m_Dist = 0.0005;
 
 			// MEPP 2
 			componentName = "Compression_Valence_Component";
@@ -250,12 +250,10 @@ class Compression_Valence_Component :
 		double Joint_Compression_Watermarking(Polyhedron &pMesh, const int &NVertices, const bool Normal_flipping, const bool Use_metric, const float & Metric_thread, const bool Use_forget_metric, const int &Forget_value, const int &Qbit, int & Number_bits,
 											  unsigned int & Connectivity_size,unsigned int & Color_size, unsigned int & Total_size,unsigned int & Initial_file_size);
 		int JCW_Decimation_For_Segmentation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value, const int & Component_ID);													
-		int JCW_Regulation_For_Segmentation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value, const int & Component_ID);			
+		int JCW_Regulation_For_Segmentation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value, const int & Component_ID);					
 		
-		//list<Point3d> SP_Moved_Position;
-		
-                void JCW_Un_Regulation_For_Insertion(Polyhedron &pMesh, const int & Component_ID, list<int> & FP_Connectivity, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<Point_Int> & SP_Watermarked_Position, list<vector<int> > & JCW_ERROR);
-                void JCW_Un_Decimation_For_Insertion(Polyhedron &pMesh, const int & Component_ID, list<int> & FP_Connectivity, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<Point_Int> & SP_Watermarked_Position, list<vector<int> > & JCW_ERROR);
+        void JCW_Un_Regulation_For_Insertion(Polyhedron &pMesh, const int & Component_ID, list<int> & FP_Connectivity, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<Point_Int> & SP_Watermarked_Position, list<vector<int> > & JCW_ERROR);
+        void JCW_Un_Decimation_For_Insertion(Polyhedron &pMesh, const int & Component_ID, list<int> & FP_Connectivity, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<Point_Int> & SP_Watermarked_Position, list<vector<int> > & JCW_ERROR);
 
 		Point3d JCW_Barycenter_Patch_Before_Removal(const Halfedge_handle & h, const int & Direction);
 		Point3d JCW_Barycenter_Patch_After_Removal(const Halfedge_handle & h, const int & valence, const int & Direction);
@@ -296,10 +294,11 @@ class Compression_Valence_Component :
 		void JCW_Expand_Mesh(Polyhedron &pMesh);
 		void JCW_Quantization(Polyhedron &pMesh);
 		void JCW_Generate_Regions_On_Base_Mesh(Polyhedron &pMesh);
-                void JCW_Region_Mass_Center_Insert_Watermark(Polyhedron & pMesh, list<Point3d> & FP_Geometry, list<int> & FP_Region_Number, list<Point_Int> & SP_Watermarked_Position, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<vector<int> > & JCW_ERROR);
+        void JCW_Region_Mass_Center_Insert_Watermark(Polyhedron & pMesh, list<Point3d> & FP_Geometry, list<int> & FP_Region_Number, list<Point_Int> & SP_Watermarked_Position, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<vector<int> > & JCW_ERROR);
 		void JCW_Choose_Valid_Vertices(Polyhedron & pMesh);
 		vector<int> JCW_Region_Mass_Center_Extract_Watermark(Polyhedron & pMesh);
-
+		
+		
 		void JCW_Code_Difference_Histogram_Shifting(Polyhedron &pMesh,const int & Component_ID);
 		void JCW_Decode_Difference_Histogram_Shifting(Polyhedron &pMesh, const int & Component_ID);
 
@@ -310,9 +309,12 @@ class Compression_Valence_Component :
 
 		int  JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name);
 		int  JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name);
-		
-		void Read_Information_To_Hide();
+
+		int  JCW_Divide_Big_Regions(Polyhedron &pMesh);
+		void JCW_Colorify_Regions(Polyhedron & pMesh);
+		void    Read_Information_To_Hide();
 		QString Write_Information_To_Hide();
+
 	private:
 		
 		Polyhedron * UnderquantizedMesh;
@@ -330,19 +332,19 @@ class Compression_Valence_Component :
 		//CCopyPoly<Polyhedron, Enriched_kernel> Copy_Polyhedron;	//MT
 		
 		// To encode each type of operation between decimation and increase of quantization resolution
-                vector<list<int> >		 ListOperation;
-                vector<list<int> >		 Connectivity;
-                vector<list<Point_Int> >  Geometry;
-                vector<list<int> >		 NumberSymbol;
-                vector<list<int> >		 NumberVertices;
+        vector<list<int> >		 ListOperation;
+        vector<list<int> >		 Connectivity;
+        vector<list<Point_Int> > Geometry;
+        vector<list<int> >		 NumberSymbol;
+        vector<list<int> >		 NumberVertices;
 			
 		list<Point_Int>          InterGeometry;
 		list<int>		         InterConnectivity;		
 
-                vector<list<int> > AlphaRange;
-                vector<list<int> > AlphaOffset;
-                vector<list<int> > GammaRange;
-                vector<list<int> > GammaOffset;
+        vector<list<int> > AlphaRange;
+        vector<list<int> > AlphaOffset;
+        vector<list<int> > GammaRange;
+        vector<list<int> > GammaOffset;
 		
 		// Quantization
 		vector<unsigned>	Qbit; 
@@ -365,13 +367,13 @@ class Compression_Valence_Component :
 		vector<int>    ComponentNumberVertices;
 		
 		// Used for adatative quantization.				
-                vector<list<int> > QuantizationCorrectVector;
-                vector<list<int> > NumberQuantizationLayer;
+        vector<list<int> > QuantizationCorrectVector;
+        vector<list<int> > NumberQuantizationLayer;
 		
 		//for color
-                vector<list<int> > NumberProcessedVertices;
-                vector<list<int> > ColorChildcellIndex;
-                vector<list<int> > ColorEncoderIndex;
+        vector<list<int> > NumberProcessedVertices;
+        vector<list<int> > ColorChildcellIndex;
+        vector<list<int> > ColorEncoderIndex;
 
 		// Colors
 		vector<list<Color_Unit> > VertexColor; // contain color error of all removed vertices
@@ -456,7 +458,7 @@ class Compression_Valence_Component :
 		vector<int> m_N_treated_vertices;
 		vector<double> m_Rad_decision;
 
-                list<vector<int> > m_JCW_Move_Error;
+        list<vector<int> > m_JCW_Move_Error;
 		list<int> m_N_Errors;
 
 		Adaptive_Data_Model DM_JCW_MOVE_ERROR;

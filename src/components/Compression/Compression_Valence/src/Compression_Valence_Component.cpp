@@ -13,6 +13,7 @@
 #include "Matrix3X3.h"
 #include "Compression_Valence_Common.h"
 #include <CGAL/Timer.h>
+#include "Processing_Kai.h"
 
 #include "Color_Distance/VectorT.h"
 #include "Color_Distance/Deviation.h"
@@ -53,18 +54,23 @@
 //#define SPLIT_FILE_EACH_RESOLUTION
 
 #define JCW
-#define NUMBER_BIN 256
-#define NUMBER_REGION 20
-#define LIMIT_NUMBER 30
 #define THRES_ANGLE 0.002
+
 #define MODE_COMPRESSION 0
 #define MODE_JCW 1
 
 //#define JCW_CORRECT
+#define JCW_DIVIDE_BIG_REGIONS
+#define JCW_COLORIFY_REGIONS
 
-const int EMBEDDING_LEVEL = 4;
+const int EMBEDDING_LEVEL = 3;
 const int OVER_HISTOGRAM = EMBEDDING_LEVEL * 2 + 3;
 const int MINIMUM_PREDICTION_NUMBER = 2;
+const int NUMBER_BIN = 256;
+const int NUMBER_REGION = 20;
+const int LIMIT_NUMBER = 200;
+const int THRES_NUMBER_VERTICES_FOR_REGION_DIVISION = 1000;
+
 
 double Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 													const char*      _File_Name,
@@ -120,13 +126,13 @@ void Compression_Valence_Component::Global_Initialization(Polyhedron & _pMesh,
 
 	#ifdef MEASURE_COLOR_DEVIATION	
 	// To compare with the original colored mesh
-	this->Set_Original_Color_Mesh(pMesh, File_Name);
+	this->Set_Original_Color_Mesh(_pMesh, File_Name);
 	#endif			
 	
 	#ifndef USE_ESTIMATION_ADAPTIVE_QUANTIZATION	
 	// To compare with the original mesh
 	if (Adaptive_quantization)
-		pMesh.write_off("original_temp.off",false,false);
+		_pMesh.write_off("original_temp.off",false,false);
 	#endif
 
 	
@@ -353,7 +359,7 @@ void Compression_Valence_Component::Multiple_Components_Initialization(Polyhedro
 /*
 	Description : Quantize all vertices so that the new positions 
 	are reguliraly spaced in the 3D space. */
-void Compression_Valence_Component::Quantization(Polyhedron & pMesh) 
+void Compression_Valence_Component::Quantization(Polyhedron & _pMesh) 
 {
 	// Quantization step for each component
 	for (int i = 0; i < this->NumberComponents; i++)
@@ -373,7 +379,7 @@ void Compression_Valence_Component::Quantization(Polyhedron & pMesh)
 	}	
 
 	// Vertex quantization
-	for (Vertex_iterator pVert = pMesh.vertices_begin();pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin();pVert != _pMesh.vertices_end(); pVert++)
 	{
 		double x = pVert->point().x();
 		double y = pVert->point().y();
@@ -400,18 +406,18 @@ void Compression_Valence_Component::Quantization(Polyhedron & pMesh)
 
 
 // this->ColorArray -> contains all initial colors present in the input mesh.
-void Compression_Valence_Component::Color_Initialization(Polyhedron &pMesh)
+void Compression_Valence_Component::Color_Initialization(Polyhedron &_pMesh)
 {	
 	
 	// (1) To determine if the mesh is colored.
 	//     We consider the mesh is colored if the number of colors are > 2.	
-	Vertex_iterator pVertex = pMesh.vertices_begin();	
+	Vertex_iterator pVertex = _pMesh.vertices_begin();	
 	
 	this->OnlyColor[0] = pVertex->color(0);
 	this->OnlyColor[1] = pVertex->color(1);
 	this->OnlyColor[2] = pVertex->color(2);
 	
-	for (; pVertex != pMesh.vertices_end(); pVertex++)
+	for (; pVertex != _pMesh.vertices_end(); pVertex++)
 	{	
 		if ((pVertex->color(0) != this->OnlyColor[0]) || (pVertex->color(1) != this->OnlyColor[1]) || (pVertex->color(2) != this->OnlyColor[2]))
 		{
@@ -440,7 +446,7 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &pMesh)
 		float C0_max = -5000, C1_max = -5000, C2_max = -5000;
 		
 			// calculate new color and find min values.
-		for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+		for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 		{
 			Temp_color[0] = pVertex->color(0);
 			Temp_color[1] = pVertex->color(1);
@@ -493,7 +499,7 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &pMesh)
 		float Reconstructed_color[3];
 
 		int Color_index = 0;
-		for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+		for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 		{
 			Temp_color[0] = pVertex->color(0);
 			Temp_color[1] = pVertex->color(1);
@@ -556,7 +562,7 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &pMesh)
 		}
 
 		#ifdef COLOR_QUANTIZATION
-		this->Color_Quantization(pMesh);
+		this->Color_Quantization(_pMesh);
 		#endif
 
 		#ifdef GET_COLOR_TABLE_HISTOGRAM
@@ -598,7 +604,7 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &pMesh)
 
 /* To quantize color */
 #ifdef COLOR_QUANTIZATION
-void Compression_Valence_Component::Color_Quantization(Polyhedron &pMesh)
+void Compression_Valence_Component::Color_Quantization(Polyhedron &_pMesh)
 {
 	// Contains the most frequent colors(Seed colors).(index of this->ColorArray)
 	vector<int> Seed_containers;		
@@ -736,7 +742,7 @@ void Compression_Valence_Component::Color_Quantization(Polyhedron &pMesh)
 	int Color_diff_max_c0 = -5000, Color_diff_max_c1 = -5000, Color_diff_max_c2 = -5000;
 	int Color_diff_min_c0 =  5000, Color_diff_min_c1 =  5000, Color_diff_min_c2 =  5000;	
 	
-	for (Vertex_iterator pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+	for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 	{
 		int Vertex_color_index = pVertex->Vertex_Color_Index; // original color index
 		int New_index = Color_repartition[Vertex_color_index]; // corresponding quantized color index
@@ -790,7 +796,7 @@ void Compression_Valence_Component::Color_Quantization(Polyhedron &pMesh)
 }
 #endif
 
-void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh, 
+void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh, 
 													      const int   & _NVertices, 
 														  const bool    _Normal_flipping,
 														  const bool    _Use_metric,
@@ -806,7 +812,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 	{
 		//bool Is_any_vertex_removed = true;
 		unsigned Last_Number = 0;
-		unsigned Current_Number = pMesh.size_of_vertices();			
+		unsigned Current_Number = _pMesh.size_of_vertices();			
 		int Operation_choice = -1;
 
 		//int Old_Q;
@@ -825,10 +831,10 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 					int temp = 0;
 
 					// Calculate area of each component.
-					this->Recalculate_Component_Area(pMesh, Component_ID, temp);
+					this->Recalculate_Component_Area(_pMesh, Component_ID, temp);
 					
 					// Estimated quantization precision of geometry
-					int QG = Estimate_Geometry_Quantization(pMesh, this->ComponentVolume[Component_ID], this->ComponentArea[Component_ID], this->ComponentNumberVertices[Component_ID]);
+					int QG = Estimate_Geometry_Quantization(_pMesh, this->ComponentVolume[Component_ID], this->ComponentArea[Component_ID], this->ComponentNumberVertices[Component_ID]);
 
 					if (QG < 4)
 						QG = 4;		
@@ -840,7 +846,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 						Operation_choice = 1;
 						
 						// Reducing of quantization precision of 1 bit.
-						this->Under_Quantization(pMesh, Component_ID);
+						this->Under_Quantization(_pMesh, Component_ID);
 
 						this->Qbit[Component_ID]--;
 						this->NumberChangeQuantization[Component_ID]++;			
@@ -853,17 +859,17 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 					{					
 						Operation_choice = 0;
 
-						unsigned Initial_number_vertices = pMesh.size_of_vertices();
+						unsigned Initial_number_vertices = _pMesh.size_of_vertices();
 						
 						// Decimation and regulation conquests.
-						this->Decimation_Conquest(pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
-						this->Regulation(pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
+						this->Decimation_Conquest(_pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
+						this->Regulation(_pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
 						
 						this->NumberDecimation[Component_ID] += 1;						
 						this->ComponentOperations[Component_ID] += 1;
 						this->ListOperation[Component_ID].push_front(Operation_choice);	
 						
-						unsigned Diff_number_vertices = pMesh.size_of_vertices() - Initial_number_vertices;
+						unsigned Diff_number_vertices = _pMesh.size_of_vertices() - Initial_number_vertices;
 						this->ComponentNumberVertices[Component_ID] += Diff_number_vertices;						
 						
 						if (Diff_number_vertices == 0)
@@ -875,7 +881,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 				}				
 			}
 
-			Current_Number = pMesh.size_of_vertices();	
+			Current_Number = _pMesh.size_of_vertices();	
 			
 			if (Continue)
 				this->GlobalCountOperation++;			
@@ -888,7 +894,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 			
 		}while((Current_Number != Last_Number) || (Continue));
 		
-		pMesh.compute_normals();
+		_pMesh.compute_normals();
 	}
 
 	// if mesh is colored
@@ -899,7 +905,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 
 	    //bool Is_any_vertex_removed = true;
 		unsigned Last_Number = 0;
-		unsigned Current_Number = pMesh.size_of_vertices();			
+		unsigned Current_Number = _pMesh.size_of_vertices();			
 		int Operation_choice = -1;
 		
 		vector<int> QC_Initials;
@@ -912,7 +918,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 			int Number_vertices = 0;
 			
 			// Calculate max and mean color error.
-			this->Calculate_Edge_Color_Difference(pMesh, Component_ID, Max_color, Mean_color, Number_vertices);
+			this->Calculate_Edge_Color_Difference(_pMesh, Component_ID, Max_color, Mean_color, Number_vertices);
 			double Mean_Max = Mean_color / Max_color;
 	
 			//int QC_Initial = floor(-56.334*Mean_Max*Mean_Max +4.6838*Mean_Max +7.8632 + 0.5);
@@ -938,15 +944,15 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 				if (this->ComponentOperations[Component_ID] == this->GlobalCountOperation)
 				{
 					int temp = 0;
-					this->Recalculate_Component_Area(pMesh, Component_ID, temp);
+					this->Recalculate_Component_Area(_pMesh, Component_ID, temp);
 					int Number_of_vertices = 0;
 					double Max_color = 0., Mean_color = 0.;
-					this->Calculate_Edge_Color_Difference(pMesh, Component_ID, Max_color, Mean_color, Number_of_vertices);	
+					this->Calculate_Edge_Color_Difference(_pMesh, Component_ID, Max_color, Mean_color, Number_of_vertices);	
 					double Mean_Max = Mean_color / Max_color;
 
 					// Estimated color quantization(QC) and geometry quantization (QG)
 					int QC = floor(-1.181 * log(Mean_Max*this->ComponentArea[Component_ID] / (double)Number_of_vertices) + 0.3281 + 0.5);
-					int QG = Estimate_Geometry_Quantization(pMesh, this->ComponentVolume[Component_ID], this->ComponentArea[Component_ID], this->ComponentNumberVertices[Component_ID]);
+					int QG = Estimate_Geometry_Quantization(_pMesh, this->ComponentVolume[Component_ID], this->ComponentArea[Component_ID], this->ComponentNumberVertices[Component_ID]);
 					
 					// If the current color quantization precision > QC_INIT -> Decrease one bit from color quantization resolution.					
 					if ((8 - this->NumberColorQuantization[Component_ID] > QC_Initials[Component_ID]) && (!this->IsOneColor))// && (QC_Final < 8 - this->NumberColorQuantization))
@@ -955,7 +961,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 						Continue = true;
 						
 						// Reducing color quantization precision of 1 bit.
-						this->Color_Under_Quantization(pMesh, Component_ID);
+						this->Color_Under_Quantization(_pMesh, Component_ID);
 
 						this->NumberColorQuantization[Component_ID]++;
 						this->ComponentOperations[Component_ID]++;
@@ -968,7 +974,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 						Continue = true;
 						
 						// Reducing color quantization precision of 1 bit.
-						this->Color_Under_Quantization(pMesh, Component_ID);
+						this->Color_Under_Quantization(_pMesh, Component_ID);
 
 						this->NumberColorQuantization[Component_ID]++;
 						this->ComponentOperations[Component_ID]++;
@@ -982,7 +988,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 						Operation_choice = 1;
 						
 						// Reducuing geometry quantization precision of 1 bit.
-						this->Under_Quantization(pMesh, Component_ID);
+						this->Under_Quantization(_pMesh, Component_ID);
 
 						this->Qbit[Component_ID]--;
 						this->NumberChangeQuantization[Component_ID]++;			
@@ -996,14 +1002,14 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 					{					
 						Operation_choice = 0;
 
-						unsigned Initial_number_vertices = pMesh.size_of_vertices();
+						unsigned Initial_number_vertices = _pMesh.size_of_vertices();
 						
 						// Decimation and regulation conquests.
-						this->Decimation_Conquest(pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
-						this->Regulation(pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
+						this->Decimation_Conquest(_pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
+						this->Regulation(_pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, Component_ID);
 
 						this->NumberDecimation[Component_ID] += 1;
-						unsigned Diff_number_vertices = pMesh.size_of_vertices() - Initial_number_vertices;
+						unsigned Diff_number_vertices = _pMesh.size_of_vertices() - Initial_number_vertices;
 						
 						this->ComponentOperations[Component_ID] += 1;
 						this->ListOperation[Component_ID].push_front(Operation_choice);	
@@ -1022,7 +1028,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 				}
 			}
 
-			Current_Number = pMesh.size_of_vertices();	
+			Current_Number = _pMesh.size_of_vertices();	
 			
 			if (Continue)
 				this->GlobalCountOperation++;
@@ -1036,7 +1042,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 			
 		}while((Current_Number != Last_Number) || (Continue));
 		
-		pMesh.compute_normals();
+		_pMesh.compute_normals();
 
 		fclose(Operation_order);
 	}
@@ -1049,7 +1055,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 	double hausdorff = 0, hausdorffwrtBB = 0;	
 
 	// Calcul de distance avec quantization.
-	this->Adaptive_Quantization_Preparation(pMesh, mrms, mrmswrtBB, hausdorff, hausdorffwrtBB);
+	this->Adaptive_Quantization_Preparation(_pMesh, mrms, mrmswrtBB, hausdorff, hausdorffwrtBB);
 	bool Is_any_vertex_removed = true;
 	
 	unsigned Last_Number = 0;
@@ -1060,11 +1066,11 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 	{		
 		Last_Number = Current_Number;		
 		
-		Operation_choice = this->Test_Next_Operation(pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit);
+		Operation_choice = this->Test_Next_Operation(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit);
 		this->ListOperation.push_front(Operation_choice);		
 		
 		// If no vertex has been decimated, stop the loop.
-		Current_Number = pMesh.size_of_vertices();
+		Current_Number = _pMesh.size_of_vertices();
 		
 		if (Current_Number <= (unsigned)NVertices)
 		{
@@ -1074,7 +1080,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 		
 	}while((Operation_choice == 1)||(Current_Number != Last_Number));
 	
-	pMesh.compute_normals();	
+	_pMesh.compute_normals();	
 
 		// if last loop didn't remove any vertex, pop all element of the last loop.
 	if (Is_any_vertex_removed)	
@@ -1088,7 +1094,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & pMesh,
 }
 
 // Description : This function select a set of independent vertices to be removed
-int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
+int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 													   const bool    Normal_flipping,
 													   const bool    Use_metric,
 													   const float & Metric_thread,
@@ -1106,20 +1112,20 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 	double Max_color, Mean_color;
 	int Temp_NV = 0;
 	int Number_facets;
-	this->Calculate_Edge_Color_Difference(pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
-	this->Recalculate_Component_Area(pMesh, Component_ID, Number_facets);
+	this->Calculate_Edge_Color_Difference(_pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
+	this->Recalculate_Component_Area(_pMesh, Component_ID, Number_facets);
 	double Mean_area = (double)this->ComponentArea[Component_ID] / (double)Number_facets;
 
 
 	// Initialize vertex and face flags.
-	Init(pMesh);
+	Init(_pMesh);
 		
 	// to count number of independent vertices and number of symbol of connectivity.
 	int Number_vertices = 0; 
 	int Number_symbol = 0;	
 
 	// To find first edge.
-	Halfedge_iterator hi = pMesh.halfedges_begin();			
+	Halfedge_iterator hi = _pMesh.halfedges_begin();			
 	
 	while((hi->vertex()->Seed_Edge != 2 * Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2 * Component_ID+1))
 		hi++;
@@ -1180,7 +1186,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 			{
 				if (Use_forget_metric)
 				{
-					if (pMesh.size_of_vertices() > (unsigned)Forget_value)
+					if (_pMesh.size_of_vertices() > (unsigned)Forget_value)
 						Geometric_metric_condition = false;
 					else
 						Geometric_metric_condition = Is_Geometric_Metric_Violated(h, type, valence, Metric_thread);
@@ -1192,7 +1198,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 			
 			#ifdef USE_COLOR_METRIC
 			if(this->IsColored)
-				Is_Color_Too_Important = this->Error_Projected_Surface(pMesh, h, Component_ID, Mean_color, Mean_area);
+				Is_Color_Too_Important = this->Error_Projected_Surface(_pMesh, h, Component_ID, Mean_color, Mean_area);
 			#endif
 
 			// remove the front vertex if its removal does not viloate the manifold property and some metrics			
@@ -1265,7 +1271,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 				Point_Int BC = Change_Real_Int(Barycenter, Component_ID);
 
 				// remove the front vertex
-				pMesh.erase_center_vertex(g->next()); 
+				_pMesh.erase_center_vertex(g->next()); 
 
 				g = h;
 				g->facet()->Facet_Flag = TEMP_FLAG;				
@@ -1283,7 +1289,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 				}
 				g = h;							
 												
-				Retriangulation(pMesh, g, valence, 0, Component_ID);
+				Retriangulation(_pMesh, g, valence, 0, Component_ID);
 				
 				Vector normal = Normal_Patch(g, valence);
 				Vector T2 = CGAL::NULL_VECTOR;
@@ -1502,7 +1508,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 					Temp = Temp->opposite();
 					
 					CGAL_assertion(!Temp->is_border());
-					pMesh.erase_facet(Temp);
+					_pMesh.erase_facet(Temp);
 				}
 								
 				if (valence == 3)
@@ -1510,7 +1516,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 					Halfedge_handle Retriangulation_edge = Border_edges[valence - 2]->opposite()->prev();
 					
 					// One triangle has to be created to smooth the mesh boundary					
-					pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());					
+					_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());					
 										
 					Halfedge_handle Input_gate = Border_edges[Number_jump]->opposite();					
 
@@ -1588,10 +1594,10 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 						   ( (Number_jump == 2) && ((type == 5) || (type == 8)) )  )
 
 					{						
-						pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[1]->opposite());
+						_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[1]->opposite());
 						Border_edges[1]->opposite()->facet()->Facet_Flag = CONQUERED;						
 
-						pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());
+						_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());
 						Border_edges[0]->opposite()->facet()->Facet_Flag = CONQUERED;						
 					}
 
@@ -1599,11 +1605,11 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 								( (Number_jump == 1) && ((type == 5) || (type == 8)) ) ||
 								( (Number_jump == 2) && ((type == 6) || (type == 7)) )  )
 					{												
-						pMesh.add_facet_to_border(Border_edges[2]->opposite(), Border_edges[0]->opposite());
+						_pMesh.add_facet_to_border(Border_edges[2]->opposite(), Border_edges[0]->opposite());
 						Border_edges[1]->opposite()->facet()->Facet_Flag = CONQUERED;						
 						Halfedge_handle Temp_border = Border_edges[2]->opposite()->next();
 						
-						pMesh.add_facet_to_border(Retriangulation_edge, Temp_border);
+						_pMesh.add_facet_to_border(Retriangulation_edge, Temp_border);
 						Border_edges[2]->opposite()->facet()->Facet_Flag = CONQUERED;						
 					}					
 
@@ -1832,7 +1838,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & pMesh,
 
 
 // Description : Regulation conquest
-int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
+int Compression_Valence_Component::Regulation(Polyhedron  & _pMesh,
 								              const bool    Normal_flipping,
 								              const bool    Use_metric,
 											  const float & Metric_thread,
@@ -1852,12 +1858,12 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 	double Max_color, Mean_color;
 	int Temp_NV = 0;
 	int Number_facets;
-	this->Calculate_Edge_Color_Difference(pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
-	this->Recalculate_Component_Area(pMesh, Component_ID,Number_facets);
+	this->Calculate_Edge_Color_Difference(_pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
+	this->Recalculate_Component_Area(_pMesh, Component_ID,Number_facets);
 	double Mean_area = (double)this->ComponentArea[Component_ID] / (double)Number_facets;
 
 	// Initialization
-	Init(pMesh);
+	Init(_pMesh);
 	
 	
 	
@@ -1865,7 +1871,7 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 	int Number_vertices = 0;
 	int Number_symbol = 0;
 
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))
 		hi++;	
@@ -1905,7 +1911,7 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 			{
 				if (Use_forget_metric == true)
 				{
-					if (pMesh.size_of_vertices() > (unsigned)Forget_value)
+					if (_pMesh.size_of_vertices() > (unsigned)Forget_value)
 						Geometric_metric_condition = false;
 					else
 						Geometric_metric_condition = Is_Geometric_Metric_Violated(h, type, valence, Metric_thread);
@@ -1919,7 +1925,7 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 			#ifdef USE_COLOR_METRIC
 			if(this->IsColored)
 			{
-				Is_Color_Too_Important = this->Error_Projected_Surface(pMesh, h, Component_ID, Mean_color, Mean_area);
+				Is_Color_Too_Important = this->Error_Projected_Surface(_pMesh, h, Component_ID, Mean_color, Mean_area);
 			}
 			#endif
 
@@ -2082,7 +2088,7 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 	
 	// Removal of all vertices with TO_BE_REMOVED flag
 	Vertex_iterator pVertex = NULL;
-	for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end();)
+	for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end();)
 	{
 		Vertex_handle vh = pVertex;
 		pVertex++;
@@ -2090,7 +2096,7 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 		if (vh->Vertex_Flag == TO_BE_REMOVED)
 		{
 			Halfedge_handle temp = vh->halfedge();
-			temp = pMesh.erase_center_vertex(temp);
+			temp = _pMesh.erase_center_vertex(temp);
 			temp->facet()->Component_Number = Component_ID;
 		}
 	}	
@@ -2143,13 +2149,13 @@ int Compression_Valence_Component::Regulation(Polyhedron  & pMesh,
 
 
 // Description : Decoding of the regulation conquest
-void Compression_Valence_Component::Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID)
+void Compression_Valence_Component::Un_Regulation(Polyhedron &_pMesh, Arithmetic_Codec & Decoder, const int & Component_ID)
 {	
-	Init(pMesh);
+	Init(_pMesh);
 
 	Adaptive_Data_Model Connectivity(2);
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];
@@ -2332,7 +2338,7 @@ void Compression_Valence_Component::Un_Regulation(Polyhedron &pMesh, Arithmetic_
 
 			
 			// Vertex insertion
-			g = pMesh.create_center_vertex(g);
+			g = _pMesh.create_center_vertex(g);
 			
 			g->vertex()->point() = Center_vertex;
 			g->vertex()->Seed_Edge = -1;		
@@ -2494,11 +2500,11 @@ void Compression_Valence_Component::Un_Regulation(Polyhedron &pMesh, Arithmetic_
 
 
 // Description : Decoding function of decimation conquest
-void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pMesh, 
+void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _pMesh, 
 														   Arithmetic_Codec & Decoder,
 														   const int        & Component_ID)
 {
-	Init(pMesh);
+	Init(_pMesh);
 	
 	int Number_connectivity_symbols;
 	if (this->IsClosed[Component_ID])
@@ -2508,7 +2514,7 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 
 	Adaptive_Data_Model Connectivity(Number_connectivity_symbols);	
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;	
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];
@@ -2616,7 +2622,7 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 			}
 
 			// remove edges to re_find polygon and (check. and attribute sign flag.)
-			bool Check_Validity = Remove_Edges(pMesh, g, type);
+			bool Check_Validity = Remove_Edges(_pMesh, g, type);
 			Check_Validity = false;
 
 			//Check_Validity = false;// * * * * * * * * * * *////
@@ -2709,7 +2715,7 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 					}
 				}
 				
-				g = pMesh.create_center_vertex(g);
+				g = _pMesh.create_center_vertex(g);
 				g->vertex()->point() = Center_vertex;
 
 				g->vertex()->Region_Number = Selected_region;				
@@ -2953,12 +2959,12 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 				g = g->prev();
 				Border_edges.push_back(g->opposite());
 
-				pMesh.erase_facet(g);
+				_pMesh.erase_facet(g);
 
 				Halfedge_handle Prev_edge = Border_edges[1]->opposite()->prev();
 					
 				// g points the new vertex
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());
 				g->vertex()->point() = Center_vertex;
 				g->vertex()->Vertex_Flag = CONQUERED;
 
@@ -3022,7 +3028,7 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 
 
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());			
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());			
 				
 				Halfedge_handle Tag_handle;
 
@@ -3067,8 +3073,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 						Border_edges.push_back(g->prev()->opposite()->next()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					// jump == 1;
@@ -3080,8 +3086,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
 					}
 					
 					// jump == 2;
@@ -3093,8 +3099,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 						Border_edges.push_back(g->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 				}
 				else
@@ -3107,8 +3113,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 						Border_edges.push_back(g->next()->opposite()->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					else if (g->next()->opposite()->prev()->is_border_edge())
@@ -3119,8 +3125,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 					else
 					{
@@ -3130,8 +3136,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 						Border_edges.push_back(g->prev()->opposite());
 						Border_edges.push_back(g->next()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 				}
@@ -3156,7 +3162,7 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 				
 				// to create the new facets
 				Halfedge_handle Prev_edge = Border_edges[2]->opposite()->prev();
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
 				g->vertex()->point() = Center_vertex;				
 					
 				#ifdef PREDICTION_METHOD
@@ -3234,8 +3240,8 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 					g->vertex()->color(this->OnlyColor[0],this->OnlyColor[1],this->OnlyColor[2]);
 				}
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
 
 
 				//vertex_tag
@@ -3350,7 +3356,7 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & pM
 
 
 
-int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread,
+int Compression_Valence_Component::Test_Next_Operation(Polyhedron &_pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread,
 											const bool Use_forget_metric,const int &Forget_value,const int &Qbit)
 {
 		
@@ -3359,15 +3365,15 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//double mesh_area = 0;
-	//for (Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
+	//for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
 	//{
 	//	Halfedge_handle h = pFacet->halfedge();
 	//	mesh_area += Area_Facet_Triangle(h);
 	//}
-	//int Number_vvv = pMesh.size_of_vertices();
+	//int Number_vvv = _pMesh.size_of_vertices();
 
 	//double Real_volume = 0;
-	//for (Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
+	//for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
 	//{
 	//	Halfedge_handle h = pFacet->halfedge();
 	//	Vector V0 = h->vertex()->point() - CGAL::ORIGIN;
@@ -3405,8 +3411,8 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 	//Polyhedron * Under_mesh = new Polyhedron;
 	//Polyhedron * Deci_mesh = new Polyhedron;
 	//
-	//Copy_Polyhedron.copy(&(pMesh),Deci_mesh);
-	//Attibute_Seed_Gate_Flag(pMesh,*Deci_mesh);	
+	//Copy_Polyhedron.copy(&(_pMesh),Deci_mesh);
+	//Attibute_Seed_Gate_Flag(_pMesh,*Deci_mesh);	
 	//
 	//int v1 = this->Decimation_Conquest(*Deci_mesh,Normal_flipping,Use_metric,Metric_thread,Use_forget_metric,Forget_value);
 	//int v2 = this->Regulation(*Deci_mesh,Normal_flipping,Use_metric,Metric_thread,Use_forget_metric,Forget_value);		
@@ -3418,8 +3424,8 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 	//{	
 	//	Is_limit_quantization = false;		
 
-	//	Copy_Polyhedron.copy(&(pMesh),Under_mesh);
-	//	Attibute_Seed_Gate_Flag(pMesh,*Under_mesh);
+	//	Copy_Polyhedron.copy(&(_pMesh),Under_mesh);
+	//	Attibute_Seed_Gate_Flag(_pMesh,*Under_mesh);
 	//	this->Under_Quantization(*Under_mesh);	
 	//	Under_mesh->compute_normals();
 	//	Under_mesh->write_off("UnderquantizedMesh.off", false, false);
@@ -3580,7 +3586,7 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 
 
 	//	// bits need for under_quantization
-	//	Under_number_vertices = pMesh.size_of_vertices();
+	//	Under_number_vertices = _pMesh.size_of_vertices();
 	//	Under_cost_bits = 0;
 
 	//	if (!Is_limit_quantization)
@@ -3618,13 +3624,13 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 	//	this->NumberDecimation++;
 
 	//	// Change the actual mesh
-	//	pMesh.clear();
-	//	Copy_Polyhedron.copy(Deci_mesh, &(pMesh));
-	//	Attibute_Seed_Gate_Flag(*Deci_mesh, pMesh);	
-	//	pMesh.compute_normals();
+	//	_pMesh.clear();
+	//	Copy_Polyhedron.copy(Deci_mesh, &(_pMesh));
+	//	Attibute_Seed_Gate_Flag(*Deci_mesh, _pMesh);	
+	//	_pMesh.compute_normals();
 	//	
 	//	this->TotalBits += Decimation_cost_bits;
-	//	//fprintf(this->LogFile,"%d \t %d \t %d \t %d \t %lf \t %lf \t %lf\n", Operation_choice, Number_vvv, pMesh.size_of_vertices(), this->Qbit, C, Real_volume, mesh_area);		
+	//	//fprintf(this->LogFile,"%d \t %d \t %d \t %d \t %lf \t %lf \t %lf\n", Operation_choice, Number_vvv, _pMesh.size_of_vertices(), this->Qbit, C, Real_volume, mesh_area);		
 	//				
 	//	//fprintf(this->RD_MRMS,"%d \t %f \t %f \n", this->CountOperation, Deci_mrms, Deci_mrmswrtBB);
 	//	//fprintf(this->RD_HAUSDORFF,"%d \t %f \t %f \n", this->CountOperation, Deci_hausdorff, Deci_hausdorffwrtBB);
@@ -3646,10 +3652,10 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 	//	this->Qbit--;
 	//	this->NumberChangeQuantization++;
 
-	//	pMesh.clear();
-	//	Copy_Polyhedron.copy(Under_mesh,&(pMesh));
-	//	Attibute_Seed_Gate_Flag(*Under_mesh,pMesh);
-	//	pMesh.compute_normals();
+	//	_pMesh.clear();
+	//	Copy_Polyhedron.copy(Under_mesh,&(_pMesh));
+	//	Attibute_Seed_Gate_Flag(*Under_mesh,_pMesh);
+	//	_pMesh.compute_normals();
 	//	
 	//	this->OldDistortion = Under_mrmswrtBB;
 	//	
@@ -3668,7 +3674,7 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 
 
 	//	this->TotalBits += Under_cost_bits;
-	//	//fprintf(this->LogFile,"%d \t %d \t %d \t %d \t %lf \t %lf \t %lf\n", Operation_choice, Number_vvv, pMesh.size_of_vertices(), this->Qbit, C, Real_volume, mesh_area);		
+	//	//fprintf(this->LogFile,"%d \t %d \t %d \t %d \t %lf \t %lf \t %lf\n", Operation_choice, Number_vvv, _pMesh.size_of_vertices(), this->Qbit, C, Real_volume, mesh_area);		
 	//	//fprintf(this->RD_MRMS,"%d\t%f\t%f\n", this->CountOperation, Under_mrms, Under_mrmswrtBB);
 	//	//fprintf(this->RD_HAUSDORFF,"%d\t%f\t%f\n", this->CountOperation, Under_hausdorff, Under_hausdorffwrtBB);		
 	//}
@@ -3678,7 +3684,7 @@ int Compression_Valence_Component::Test_Next_Operation(Polyhedron &pMesh,const b
 	//wxString Outputfile = "output";
 	//Outputfile += wxString::Format("%d",this->CountOperation);
 	//Outputfile += ".off";
-	//pMesh.write_off(Outputfile.ToAscii(), false, false);
+	//_pMesh.write_off(Outputfile.ToAscii(), false, false);
 	//#endif
 
 	//delete Deci_mesh;
@@ -3709,7 +3715,7 @@ void Compression_Valence_Component::Remove_Last_Phase_Elements(const int & Compo
 
 
 // To store information needed for the reconstruction of the base mesh.
-void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & pMesh, Arithmetic_Codec & enc, unsigned &Connectivity_size, unsigned & Color_size, const int & Num_color_base_mesh)
+void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & _pMesh, Arithmetic_Codec & enc, unsigned &Connectivity_size, unsigned & Color_size, const int & Num_color_base_mesh)
 {
 
 	unsigned int Max_Qbit = 0;
@@ -3724,8 +3730,8 @@ void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & pMesh, Arithmet
 			Max_Qbit = this->Qbit[i];
 	}
 		
-	enc.put_bits(pMesh.size_of_vertices(), 15);									    // number of vertices of base mesh < 4096
-	enc.put_bits(pMesh.size_of_facets(), 16);										  // number of facets of base mesh < 8192	
+	enc.put_bits(_pMesh.size_of_vertices(), 15);									    // number of vertices of base mesh < 4096
+	enc.put_bits(_pMesh.size_of_facets(), 16);										  // number of facets of base mesh < 8192	
 
 	int Base_color_index_bit = 0;
 
@@ -3744,7 +3750,7 @@ void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & pMesh, Arithmet
 
 		
 	// Encoding of vertex information of base mesh //
-	for (Vertex_iterator pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); Basemesh_vertex_number++, pVertex++)
+	for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); Basemesh_vertex_number++, pVertex++)
 	{			
 		pVertex->Vertex_Number = Basemesh_vertex_number;
 		
@@ -3806,10 +3812,10 @@ void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & pMesh, Arithmet
 	}
 	
 	// Bits needed for each edge.
-	int Facet_index_bit = (int)ceil(log((double)(pMesh.size_of_vertices()+1))/log((double)2));
+	int Facet_index_bit = (int)ceil(log((double)(_pMesh.size_of_vertices()+1))/log((double)2));
 	
 	int Count_facet_index = 0;	 
-	for (Facet_iterator pFacet = pMesh.facets_begin() ; pFacet != pMesh.facets_end() ; pFacet++)
+	for (Facet_iterator pFacet = _pMesh.facets_begin() ; pFacet != _pMesh.facets_end() ; pFacet++)
 	{
 		Count_facet_index++;
 
@@ -3969,7 +3975,7 @@ void Compression_Valence_Component::Calculate_Geometry_Color_Offset_Range()
 }
 
 
-void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &pMesh, double &min, double &max,double &mean, double &rms)
+void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &_pMesh, double &min, double &max,double &mean, double &rms)
 {
 	Mesh_roy * Simplified = new Mesh_roy;
 	Mesh_roy * Temp = new Mesh_roy;	
@@ -3991,7 +3997,7 @@ void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &pMesh, double &
 	}
 
 
-	for (Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		Point3d pt = pVert->point();
 
@@ -4007,9 +4013,9 @@ void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &pMesh, double &
 		Simplified->AddColor(Color);
 	}
 	
-	pMesh.set_index_vertices();
+	_pMesh.set_index_vertices();
 
-	for (Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
+	for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
 	{
 		int count = 0;
 
@@ -4042,7 +4048,7 @@ void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &pMesh, double &
 }
 
 
-void Compression_Valence_Component::Simplification(Polyhedron  & pMesh,
+void Compression_Valence_Component::Simplification(Polyhedron  & _pMesh,
 									   const int   & NVertices, 
 									   const bool    Normal_flipping,
 									   const bool    Use_metric,
@@ -4057,14 +4063,14 @@ void Compression_Valence_Component::Simplification(Polyhedron  & pMesh,
 	double Color_min, Color_max, Color_mean, Color_rms;
 	if (this->IsColored)
 	{
-		this->Color_Metric_Roy(pMesh, Color_min, Color_max, Color_mean, Color_rms);
-		//fprintf(this->LogColor," Q \t %d \t %lf \t %lf \t %lf \t %lf\n", pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);
-		fprintf(temp," Q \t %d \t %lf \t %lf \t %lf \t %lf\n", pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);
+		this->Color_Metric_Roy(_pMesh, Color_min, Color_max, Color_mean, Color_rms);
+		//fprintf(this->LogColor," Q \t %d \t %lf \t %lf \t %lf \t %lf\n", _pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);
+		fprintf(temp," Q \t %d \t %lf \t %lf \t %lf \t %lf\n", _pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);
 		fclose(temp);
 
-		//Write_SMF(pMesh, "Quantized.smf", true);
+		//Write_SMF(_pMesh, "Quantized.smf", true);
 		//this->Calculate_Sqrt_Colors("Original.smf", "Quantized.smf", Color_min, Color_max, Color_mean);
-		//fprintf(LogColor," Q \t %d \t %lf \t %lf \t %lf \n", pMesh.size_of_vertices(), Color_min, Color_max, Color_mean);
+		//fprintf(LogColor," Q \t %d \t %lf \t %lf \t %lf \n", _pMesh.size_of_vertices(), Color_min, Color_max, Color_mean);
 	}
 
 	#endif
@@ -4072,7 +4078,7 @@ void Compression_Valence_Component::Simplification(Polyhedron  & pMesh,
 	bool Is_any_vertex_removed = true;
 	
 	unsigned Last_Number = 0;
-	unsigned Current_Number = pMesh.size_of_vertices();
+	unsigned Current_Number = _pMesh.size_of_vertices();
 
 	int Operation_choice = -1;
 	
@@ -4086,12 +4092,12 @@ void Compression_Valence_Component::Simplification(Polyhedron  & pMesh,
 			// if the ith component did not remove any vertex in last loop, it is not necessary to simplifiy it.
 			if (this->ComponentOperations[Component_ID] == this->GlobalCountOperation)
 			{
-				unsigned Initial_number_vertices = pMesh.size_of_vertices();
+				unsigned Initial_number_vertices = _pMesh.size_of_vertices();
 
-				this->Decimation_Conquest(pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Component_ID);				
-				this->Regulation(pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Component_ID);				
+				this->Decimation_Conquest(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Component_ID);				
+				this->Regulation(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Component_ID);				
 
-				int Diff_number_vertices = pMesh.size_of_vertices() - Initial_number_vertices;
+				int Diff_number_vertices = _pMesh.size_of_vertices() - Initial_number_vertices;
 				
 				this->ComponentOperations[Component_ID] += 1;
 				this->NumberDecimation[Component_ID] += 1;
@@ -4106,23 +4112,23 @@ void Compression_Valence_Component::Simplification(Polyhedron  & pMesh,
 		#ifdef MEASURE_COLOR_DEVIATION
 		if (this->IsColored)
 		{	
-			if (pMesh.size_of_vertices() > 30)
+			if (_pMesh.size_of_vertices() > 30)
 			{
-				this->Color_Metric_Roy(pMesh,Color_min, Color_max, Color_mean, Color_rms);
+				this->Color_Metric_Roy(_pMesh,Color_min, Color_max, Color_mean, Color_rms);
 				
 				temp = fopen("abc.txt","a");
-				//fprintf(this->LogColor,"%2d \t %d \t %lf \t %lf \t %lf \t %lf\n", this->CountOperation+1, pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);		
-				fprintf(temp,"%2d \t %d \t %lf \t %lf \t %lf \t %lf\n", this->GlobalCountOperation+1, pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);		
+				//fprintf(this->LogColor,"%2d \t %d \t %lf \t %lf \t %lf \t %lf\n", this->CountOperation+1, _pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);		
+				fprintf(temp,"%2d \t %d \t %lf \t %lf \t %lf \t %lf\n", this->GlobalCountOperation+1, _pMesh.size_of_vertices(), Color_min, Color_max, Color_mean, Color_rms);		
 				fclose(temp);
 
-				//Write_SMF(pMesh, "Inter.smf", true);			
+				//Write_SMF(_pMesh, "Inter.smf", true);			
 				//this->Calculate_Sqrt_Colors("Original.smf", "Inter.smf", Color_min, Color_max, Color_mean);
-				//fprintf(LogColor,"%2d \t %d \t %lf \t %lf \t %lf \n", this->CountOperation+1, pMesh.size_of_vertices(), Color_min, Color_max, Color_mean);
+				//fprintf(LogColor,"%2d \t %d \t %lf \t %lf \t %lf \n", this->CountOperation+1, _pMesh.size_of_vertices(), Color_min, Color_max, Color_mean);
 			}
 		}
 		#endif
 
-		Current_Number = pMesh.size_of_vertices();
+		Current_Number = _pMesh.size_of_vertices();
 		if (Current_Number != Last_Number)
 			this->GlobalCountOperation++;
 
@@ -4131,14 +4137,14 @@ void Compression_Valence_Component::Simplification(Polyhedron  & pMesh,
 		
 	}while((Current_Number != Last_Number));
 	
-	pMesh.compute_normals();	
+	_pMesh.compute_normals();	
 
 #ifdef MEASURE_COLOR_DEVIATION
 	fclose(this->LogColor);
 #endif
 }
 
-void Compression_Valence_Component::Compression(Polyhedron     & pMesh, 
+void Compression_Valence_Component::Compression(Polyhedron     & _pMesh, 
 												const char     * File_Name, 
 												const int      & _Qbit, 
 												unsigned       & Connectivity_size, 
@@ -4225,7 +4231,7 @@ void Compression_Valence_Component::Compression(Polyhedron     & pMesh,
 	{
 		#ifdef MAPPING_TABLE_METHOD
 		// Reorganize the color index to follow the order of appearance
-		Num_color_base_mesh = this->Mapping_Table_Index_Reordering(pMesh);		
+		Num_color_base_mesh = this->Mapping_Table_Index_Reordering(_pMesh);		
 		#endif				
 
 		fwrite(&this->Color_Quantization_Step, sizeof(float), 1, fp);
@@ -4303,11 +4309,11 @@ void Compression_Valence_Component::Compression(Polyhedron     & pMesh,
 
 	/*	Write information of base mesh.
 		geometry + connectivity + color information(if the mesh is colored). */
-	this->Write_Base_Mesh(pMesh, enc, Connectivity_size, Color_size, Num_color_base_mesh);
+	this->Write_Base_Mesh(_pMesh, enc, Connectivity_size, Color_size, Num_color_base_mesh);
 
 	#ifdef SPLIT_FILE_EACH_RESOLUTION	
 	unsigned int tx = 0, ty = 0, tz = 0;
-	this->Write_Base_Mesh(pMesh, Split_encoder, tx, ty, tz);
+	this->Write_Base_Mesh(_pMesh, Split_encoder, tx, ty, tz);
 	#endif
 
 	// To calculate color rate
@@ -4559,7 +4565,6 @@ void Compression_Valence_Component::Compression(Polyhedron     & pMesh,
 						Split_gamma.reset();
 						#endif						
 					}
-
 					
 					if(!this->m_N_Errors.empty())
 					{
@@ -4732,14 +4737,14 @@ void Compression_Valence_Component::Compression(Polyhedron     & pMesh,
 	Total_size = ftell(f_size);
 }
 
-void Compression_Valence_Component::Adaptive_Quantization_Preparation(Polyhedron &pMesh, double & mrms, double &mrmswrtBB,double &hausdorff, double &hausdorffwrtBB)
+void Compression_Valence_Component::Adaptive_Quantization_Preparation(Polyhedron &_pMesh, double & mrms, double &mrmswrtBB,double &hausdorff, double &hausdorffwrtBB)
 {
-	pMesh.write_off("quantized_temp.off",false,false);
+	_pMesh.write_off("quantized_temp.off",false,false);
 		
 	this->Calculate_Distances((char *)"original_temp.off",(char *)"quantized_temp.off",mrms,mrmswrtBB,hausdorff,hausdorffwrtBB);
 	this->OldDistortion = mrmswrtBB; // reference distorsion (induced by quantization)
 	
-	/*fprintf(this->LogFile,"Input mesh : %d vertices \n",pMesh.size_of_vertices());
+	/*fprintf(this->LogFile,"Input mesh : %d vertices \n",_pMesh.size_of_vertices());
 	fprintf(this->LogFile,"Quantization used : %d bits\n\n",Qbit);
 	fprintf(this->LogFile,"******* Initial Quantization ******* \n");
 	fprintf(this->LogFile,"MRMS : %f (%f wrt bounding box diagonal)\n",mrms,mrmswrtBB);
@@ -4749,7 +4754,7 @@ void Compression_Valence_Component::Adaptive_Quantization_Preparation(Polyhedron
 	fprintf(this->RD_HAUSDORFF,"%d\t%f\t%f\n", this->CountOperation, hausdorff, hausdorffwrtBB);*/
 }
 
-void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron & pMesh, 
+void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron & _pMesh, 
 																	const int & _Component_ID, 
 																	double & _Max_color, 
 																	double & _Mean_color,
@@ -4773,13 +4778,13 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 	}
 
 	// To find first points to start the conquest.	
-	Halfedge_iterator hi = pMesh.halfedges_begin();	
+	Halfedge_iterator hi = _pMesh.halfedges_begin();	
 	
 	while((hi->vertex()->Seed_Edge != 2*_Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*_Component_ID+1))
 		hi++;
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for (Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;
 		pVert->Vertex_Number = -1;
@@ -4910,7 +4915,7 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 }
 
 // Differentes histogrammes pour chaque couleur.
-void Compression_Valence_Component::Color_Under_Quantization(Polyhedron &pMesh, const int _Component_ID)
+void Compression_Valence_Component::Color_Under_Quantization(Polyhedron &_pMesh, const int _Component_ID)
 {
 
 	//int N = 16; // Number of neighboring colors to use;
@@ -4931,20 +4936,20 @@ void Compression_Valence_Component::Color_Under_Quantization(Polyhedron &pMesh, 
 	double Color_large_step = Color_small_step * 2;	
 	
 	// To find first points to start the conquest.	
-	Halfedge_iterator hi = pMesh.halfedges_begin();		
+	Halfedge_iterator hi = _pMesh.halfedges_begin();		
 	
 	while((hi->vertex()->Seed_Edge != 2*_Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*_Component_ID+1))
 		hi++;
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;
 		pVert->Vertex_Number = -1;
 	}	
 
 	//premiere passe pour sous quantifier et donne l'indice de symbol a chaque sommet
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		if (pVert->Component_Number == _Component_ID)
 		{
@@ -5105,11 +5110,11 @@ void Compression_Valence_Component::Color_Under_Quantization(Polyhedron &pMesh, 
 	}
 }
 
-void Compression_Valence_Component::Recalculate_Component_Area(Polyhedron & pMesh, const int & _Component_ID, int & Number_facets)
+void Compression_Valence_Component::Recalculate_Component_Area(Polyhedron & _pMesh, const int & _Component_ID, int & Number_facets)
 {
 	double Area = 0.0;	
 	Number_facets = 0;
-	for(Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
+	for(Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
 	{
 		if(pFacet->Component_Number == _Component_ID)
 		{
@@ -5122,10 +5127,10 @@ void Compression_Valence_Component::Recalculate_Component_Area(Polyhedron & pMes
 }
 
 
-double Compression_Valence_Component::Calculate_Area(Polyhedron & pMesh)
+double Compression_Valence_Component::Calculate_Area(Polyhedron & _pMesh)
 {	
 	double mesh_area = 0;
-	for(Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
+	for(Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
 	{
 		Halfedge_handle h = pFacet->halfedge();
 		mesh_area += Area_Facet_Triangle(h);
@@ -5134,7 +5139,7 @@ double Compression_Valence_Component::Calculate_Area(Polyhedron & pMesh)
 	return mesh_area;
 }
 
-void Compression_Valence_Component::Up_Quantization(Polyhedron &pMesh,Arithmetic_Codec & Decoder, const int & Component_ID)
+void Compression_Valence_Component::Up_Quantization(Polyhedron &_pMesh,Arithmetic_Codec & Decoder, const int & Component_ID)
 {
 	Adaptive_Data_Model Under_quantization_model(8);	
 
@@ -5150,18 +5155,18 @@ void Compression_Valence_Component::Up_Quantization(Polyhedron &pMesh,Arithmetic
 	//double Large_step = Small_step * 2;	
 	
 	// To find first points to start the conquest.	
-	Halfedge_iterator hi = pMesh.halfedges_begin();			
+	Halfedge_iterator hi = _pMesh.halfedges_begin();			
 	while((hi->vertex()->Seed_Edge != 2 * Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2 * Component_ID +1))
 		hi++;	
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for (Vertex_iterator pVert = pMesh.vertices_begin();pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin();pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;		
 		pVert->Vertex_Number = -1;
 		pVert->Component_Number = -1;
 	}	
-	//pMesh.compute_normals();	
+	//_pMesh.compute_normals();	
 	
 	std::queue<Vertex*> vertices;
 	std::list<int> Layer_symbols;	
@@ -5363,7 +5368,7 @@ void Compression_Valence_Component::Up_Quantization(Polyhedron &pMesh,Arithmetic
 		}
 	}
 	Vertex_iterator pVertex = NULL;
-	for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+	for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 	{
 		if (pVertex->Component_Number == Component_ID)
 		{
@@ -5385,7 +5390,7 @@ void Compression_Valence_Component::Up_Quantization(Polyhedron &pMesh,Arithmetic
 /*  Description : ADAPTIVE_QUANTIZATION
 Decreasing of quantization resolution based on the prediction of PENG.
 Opposite function is up_quantization. */
-void Compression_Valence_Component::Under_Quantization(Polyhedron &pMesh, const int & Component_ID)
+void Compression_Valence_Component::Under_Quantization(Polyhedron &_pMesh, const int & Component_ID)
 {		
 
 	// stock three mins for the reconstruction.
@@ -5406,13 +5411,13 @@ void Compression_Valence_Component::Under_Quantization(Polyhedron &pMesh, const 
 	double Large_step = Small_step * 2;	
 	
 	// To find first points to start the conquest.	
-	Halfedge_iterator hi = pMesh.halfedges_begin();	
+	Halfedge_iterator hi = _pMesh.halfedges_begin();	
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))
 		hi++;
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for (Vertex_iterator pVert = pMesh.vertices_begin();pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin();pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;
 		pVert->Vertex_Number = -1;
@@ -5420,7 +5425,7 @@ void Compression_Valence_Component::Under_Quantization(Polyhedron &pMesh, const 
 
 	
 	//premiere passe pour sous quantifie et donne l'indice de symbol a chaque sommet
-	for (Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		if (pVert->Component_Number == Component_ID)
 		{
@@ -5459,7 +5464,7 @@ void Compression_Valence_Component::Under_Quantization(Polyhedron &pMesh, const 
 	}
 	
 	/////// appliquer calcul des normales?? ou QuantizationPas???	
-	//pMesh.compute_normals();	
+	//_pMesh.compute_normals();	
 
 	std::queue<Vertex*> vertices;	
 
@@ -5666,7 +5671,7 @@ void Compression_Valence_Component::Under_Quantization(Polyhedron &pMesh, const 
 	}		
 }
 
-void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &pMesh, const char * Filename)
+void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &_pMesh, const char * Filename)
 {
 	this->Original = new Mesh_roy;
 	
@@ -5678,7 +5683,7 @@ void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &pMesh, c
 
 	Vector3d Pos, Color;
 	Vector3i Face;
-	for (Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		Point3d pt = pVert->point();
 
@@ -5694,9 +5699,9 @@ void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &pMesh, c
 		this->Original->AddColor(Color);
 	}
 	
-	pMesh.set_index_vertices();
+	_pMesh.set_index_vertices();
 
-	for (Facet_iterator pFacet = pMesh.facets_begin(); pFacet != pMesh.facets_end(); pFacet++)
+	for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
 	{
 		int count = 0;
 
@@ -5711,9 +5716,9 @@ void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &pMesh, c
 	}
 }
 
-int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned & Initial_file_size, const char* File_Name)
+int Compression_Valence_Component::Decompress_Init(Polyhedron &_pMesh, unsigned & Initial_file_size, const char* File_Name)
 {	
-	pMesh.clear();
+	_pMesh.clear();
 	this->IsClosed.clear();
 	this->Qbit.clear();
 	this->xmin.clear();
@@ -5877,9 +5882,9 @@ int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned &
 	
 	// Generation of base mesh using builder()
 	CModifyBasemeshBuilder<HalfedgeDS, Polyhedron, Enriched_kernel> builder(&vlist, &flist, &clist, &Color_index_list);
-	pMesh.delegate(builder);
+	_pMesh.delegate(builder);
 	
-	pMesh.compute_normals();
+	_pMesh.compute_normals();
 
 	// Seed Edges;
 	map<int, int> Seed_Edges;
@@ -5897,7 +5902,7 @@ int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned &
 	map<int,int>::iterator Seed_edge_iterator = Seed_Edges.begin();
 	
 	int Count_detected_vertices = 0;
-	for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); Basemesh_vertex_number++, pVertex++)
+	for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); Basemesh_vertex_number++, pVertex++)
 	{	
 		if (Count_detected_vertices < this->NumberComponents * 2)
 		{
@@ -5922,7 +5927,7 @@ int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned &
 
 	if ((this->IsColored) && (!this->IsOneColor))
 	{
-		for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+		for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 		{
 			/*float LAB[3];
 			LAB[0] = pVertex->color(0);
@@ -5943,7 +5948,7 @@ int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned &
 	}
 	if ((this->IsColored) && (this->IsOneColor))
 	{
-		for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+		for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 		{
 			pVertex->color(this->OnlyColor[0], this->OnlyColor[1], this->OnlyColor[2]);
 		}		
@@ -5952,12 +5957,12 @@ int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned &
 	// To get number of vertices of each component and restore the real position of vertices
 	//if (this->NumberComponents != 1)
 	{
-		pMesh.tag_facets(-1);
+		_pMesh.tag_facets(-1);
 		int Component_index = 0;
 		
 		for (int Component_number = 0; Component_number < this->NumberComponents; Component_number++)
 		{
-			Halfedge_iterator hi = pMesh.halfedges_begin();			
+			Halfedge_iterator hi = _pMesh.halfedges_begin();			
 	
 			while((hi->vertex()->Seed_Edge != 2 * Component_number) || (hi->opposite()->vertex()->Seed_Edge != 2 * Component_number + 1))
 				hi++;			
@@ -6037,7 +6042,7 @@ int Compression_Valence_Component::Decompress_Init(Polyhedron &pMesh, unsigned &
 
 
 // Description : To decode step by step - show intermediate meshes
-int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &pMesh, const char* File_Name)
+int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &_pMesh, const char* File_Name)
 {	
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	this->Decoder.stop_decoder();
@@ -6067,20 +6072,20 @@ int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &pMesh, const
 				int Operation = Decoder.get_bits(2);
 				if (Operation == 0)
 				{
-					this->Un_Regulation(pMesh, Decoder, Component_ID);					
-					this->Un_Decimation_Conquest(pMesh, Decoder, Component_ID);
+					this->Un_Regulation(_pMesh, Decoder, Component_ID);					
+					this->Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);
 				}
 				else if (Operation == 1)
-					this->Up_Quantization(pMesh, Decoder, Component_ID);		
+					this->Up_Quantization(_pMesh, Decoder, Component_ID);		
 				else if (Operation == 2)
-					this->Color_Up_Quantization(pMesh, Decoder, Component_ID);				
+					this->Color_Up_Quantization(_pMesh, Decoder, Component_ID);				
 			}
 		}			
 	}	
 		
 			
 	this->Decompress_count++;	
-	pMesh.compute_normals();
+	_pMesh.compute_normals();
 	
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	fclose(fp_split_iter);
@@ -6090,7 +6095,7 @@ int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &pMesh, const
 }
 
 
-void Compression_Valence_Component::Color_Up_Quantization(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & _Component_ID)
+void Compression_Valence_Component::Color_Up_Quantization(Polyhedron &_pMesh, Arithmetic_Codec & Decoder, const int & _Component_ID)
 {
 
 	Adaptive_Data_Model *Color_quantization_model = new Adaptive_Data_Model[COLOR_NUMBER];
@@ -6113,13 +6118,13 @@ void Compression_Valence_Component::Color_Up_Quantization(Polyhedron &pMesh, Ari
 	Color_small_step = Color_large_step / (float)2.0;	
 	
 	// To find first points to start the conquest.	
-	Halfedge_iterator hi = pMesh.halfedges_begin();		
+	Halfedge_iterator hi = _pMesh.halfedges_begin();		
 	
 	while((hi->vertex()->Seed_Edge != 2*_Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*_Component_ID+1))
 		hi++;
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;
 		pVert->Vertex_Number = -1;
@@ -6228,7 +6233,7 @@ void Compression_Valence_Component::Color_Up_Quantization(Polyhedron &pMesh, Ari
 	}
 
 	// Here, we increase a bit of quantization precision of corresponding component 
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		if (pVert->Component_Number == _Component_ID)
 		{
@@ -6271,7 +6276,7 @@ void Compression_Valence_Component::Color_Up_Quantization(Polyhedron &pMesh, Ari
 }
 
 
-int Compression_Valence_Component::Decompress_To_Level(Polyhedron &pMesh, const int Wanted_level)
+int Compression_Valence_Component::Decompress_To_Level(Polyhedron &_pMesh, const int Wanted_level)
 {
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	//this->Decoder.stop_decoder();
@@ -6302,17 +6307,17 @@ int Compression_Valence_Component::Decompress_To_Level(Polyhedron &pMesh, const 
 				
 				if (Decoder.get_bits(1) == 0)
 				{
-					this->Un_Regulation(pMesh, Decoder, Component_ID);
-					this->Un_Decimation_Conquest(pMesh, Decoder, Component_ID);		
+					this->Un_Regulation(_pMesh, Decoder, Component_ID);
+					this->Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);		
 				}
 				else
-					this->Up_Quantization(pMesh, Decoder);		
+					this->Up_Quantization(_pMesh, Decoder);		
 				
 			}
 		}			
 
 		this->Decompress_count++;	
-		pMesh.compute_normals();
+		_pMesh.compute_normals();
 	}
 	
 	return this->Decompress_count;*/
@@ -6322,7 +6327,7 @@ int Compression_Valence_Component::Decompress_To_Level(Polyhedron &pMesh, const 
 
 
 // Description :: Decompressing function. Just give the final mesh.
-double Compression_Valence_Component::Decompress_All(Polyhedron &pMesh)
+double Compression_Valence_Component::Decompress_All(Polyhedron &_pMesh)
 {	
 	/*
 	Timer timer;
@@ -6336,14 +6341,14 @@ double Compression_Valence_Component::Decompress_All(Polyhedron &pMesh)
 	{
 		if (Decoder.get_bits(1) == 0)
 		{			
-			this->Un_Regulation(pMesh, Decoder);
-			this->Un_Decimation_Conquest(pMesh, Decoder);							
+			this->Un_Regulation(_pMesh, Decoder);
+			this->Un_Decimation_Conquest(_pMesh, Decoder);							
 		}
 		else
-			this->Up_Quantization(pMesh, Decoder);	
+			this->Up_Quantization(_pMesh, Decoder);	
 		//temp
 		#ifdef MESURE_DECOMPRESSION_TIME
-		fprintf(time,"%d\t%f\n",pMesh.size_of_vertices(), timer.time());
+		fprintf(time,"%d\t%f\n",_pMesh.size_of_vertices(), timer.time());
 		#endif
 	}
 
@@ -6351,7 +6356,7 @@ double Compression_Valence_Component::Decompress_All(Polyhedron &pMesh)
 	fclose(time);
 	#endif
 
-	pMesh.compute_normals();
+	_pMesh.compute_normals();
 
 	timer.stop();
 	return timer.time();
@@ -6544,7 +6549,7 @@ void Compression_Valence_Component::Attibute_Seed_Gate_Flag(Polyhedron &Original
 
 
 // To reordering the color index for mapping table method.
-int Compression_Valence_Component::Mapping_Table_Index_Reordering(Polyhedron &pMesh)
+int Compression_Valence_Component::Mapping_Table_Index_Reordering(Polyhedron &_pMesh)
 {
 	int			     New_index = 0;
 	int				 Num_color_base_mesh;
@@ -6556,7 +6561,7 @@ int Compression_Valence_Component::Mapping_Table_Index_Reordering(Polyhedron &pM
 	for (int i = 0; i < NUMBER_SEEDS; i++)
 		this->ReorderingColorIndex.push_back(-1);
 	
-	for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end(); pVertex++)
+	for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
 	{
 		int Current_vertex_index = pVertex->Vertex_Color_Index;
 		
@@ -6587,11 +6592,11 @@ int Compression_Valence_Component::Mapping_Table_Index_Reordering(Polyhedron &pM
 
 
 
-void Compression_Valence_Component::Separate_Components(Polyhedron &pMesh)
+void Compression_Valence_Component::Separate_Components(Polyhedron &_pMesh)
 {
 	CCopyPoly<Polyhedron, Enriched_kernel> Copy_Polyhedron;
 
-	int Number_components = pMesh.nb_components();
+	int Number_components = _pMesh.nb_components();
 	
 	if (Number_components == 1)
 		return;
@@ -6599,7 +6604,7 @@ void Compression_Valence_Component::Separate_Components(Polyhedron &pMesh)
 	for (int i = 0; i < Number_components; i++)
 	{
 		Polyhedron * New_mesh = new Polyhedron;		
-		Copy_Polyhedron.copy(&(pMesh), New_mesh);
+		Copy_Polyhedron.copy(&(_pMesh), New_mesh);
 		New_mesh->tag_facets(-1);
 		int Component_index = 0;
 
@@ -6640,7 +6645,7 @@ void Compression_Valence_Component::Separate_Components(Polyhedron &pMesh)
 	}	
 }
 
-int Compression_Valence_Component::GetResolutionChange(Polyhedron *pMesh, float Prec)
+int Compression_Valence_Component::GetResolutionChange(Polyhedron *_pMesh, float Prec)
 {
 	int MinX,MinY,MaxX,MaxY;
 	MinX = MinY = 1000;
@@ -6657,7 +6662,7 @@ int Compression_Valence_Component::GetResolutionChange(Polyhedron *pMesh, float 
 	GLdouble wy ; 
 	GLdouble wz;
 
-	for (Vertex_iterator pVertex = pMesh->vertices_begin(); pVertex!= pMesh->vertices_end(); pVertex++)
+	for (Vertex_iterator pVertex = _pMesh->vertices_begin(); pVertex!= _pMesh->vertices_end(); pVertex++)
 	{
 		gluProject (pVertex->point().x(),pVertex->point().y(),pVertex->point().z(), model, proj, view, &wx, &wy, &wz);  // on simule la projection du sommet dans l'espace window
 		if (wz>0. && wz<1)
@@ -6854,26 +6859,25 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 
 		list<int> FP_Connectivity;
 		list<Point3d> FP_Geometry;
-		list<int> FP_Region_Number;
+		list<int> FP_Region_Number;		
 		
 		// These refine operations are used to get region information of each inserted vertex.
 		this->JCW_Un_Regulation_For_Region_Detection(*TM, 0, FP_Connectivity, FP_Geometry, FP_Region_Number);
 		this->JCW_Un_Decimation_For_Region_Detection(*TM, 0, FP_Connectivity, FP_Geometry, FP_Region_Number);
-		delete TM;		
+		delete TM;
 
-		
 		list<Point3d> SP_Moved_Position;
 		list<Point_Int> SP_Watermarked_Position;
 		list<Point3d> SP_Original_Position;
 
-                list<vector<int> > JCW_ERROR;
-		
+        list<vector<int> > JCW_ERROR;		
+
 		// Insert operation gives the watermarked position of each inserted vertex and its position when we extract the watermark.
 		this->JCW_Region_Mass_Center_Insert_Watermark(_pMesh, FP_Geometry, FP_Region_Number, SP_Watermarked_Position, SP_Moved_Position, SP_Original_Position, JCW_ERROR);
 		
 		// Real refinement operations.
 		this->JCW_Un_Regulation_For_Insertion(_pMesh, 0, FP_Connectivity, SP_Moved_Position, SP_Original_Position, SP_Watermarked_Position, JCW_ERROR);
-		this->JCW_Un_Decimation_For_Insertion(_pMesh, 0, FP_Connectivity, SP_Moved_Position, SP_Original_Position, SP_Watermarked_Position, JCW_ERROR);
+		this->JCW_Un_Decimation_For_Insertion(_pMesh, 0, FP_Connectivity, SP_Moved_Position, SP_Original_Position, SP_Watermarked_Position, JCW_ERROR);		
 
 		// We move inserted vertices to its position when extracting watermark.
 		// Synchronization with the decoding process.
@@ -6886,11 +6890,16 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 			}
 		}
 
+		#ifdef JCW_DIVIDE_BIG_REGIONS		
+		this->JCW_Divide_Big_Regions(_pMesh);
+		#endif
+
+
 #ifdef JCW_CORRECT
 		this->JCW_Code_Difference_Histogram_Shifting(_pMesh,0);
 #endif
 
-		this->Decompress_count++;
+	this->Decompress_count++;
 	}
 
 	_pMesh.compute_normals();
@@ -6909,34 +6918,11 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 
 		this->Geometry[0].push_back(Geo);
 	}
-
-	/*srand(time(NULL));
-	vector<vector<float>> Color;
-
-	for(int i = 0; i < this->m_NumberRegion; i++)
-	{				
-		int R = rand() % 255;
-		int G = rand() % 255;
-		int B = rand() % 255;
-		
-		vector<float> fff;
-		fff.push_back((float)R / 255.);
-		fff.push_back((float)G / 255.);
-		fff.push_back((float)G / 255.);
-
-		Color.push_back(fff);		
-	}
-	
-
-	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
-	{
-		int NB = pVert->Region_Number;		
-		pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
-	}
+	#ifdef JCW_COLORIFY_REGIONS
+	this->JCW_Colorify_Regions(_pMesh);
+	#endif
 
 	_pMesh.compute_normals();
-
-	_pMesh.write_off("Reconstructed.off",true,false);*/
 
 	this->Compression(*Base_Mesh, "Output.p3d", _Qbit, Connectivity_size, Color_size, Total_size, Initial_file_size);			
 
@@ -6945,20 +6931,20 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 	return 0;	
 }
 
-void Compression_Valence_Component::JCW_Calculate_Mesh_Center(Polyhedron &pMesh)
+void Compression_Valence_Component::JCW_Calculate_Mesh_Center(Polyhedron &_pMesh)
 {
 	FILE * f_Center = fopen("Keys.txt", "wb");
 	double xc = 0., yc = 0., zc = 0.;
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		xc += pVert->point().x();
 		yc += pVert->point().y();
 		zc += pVert->point().z();
 	}
 	
-	xc /= pMesh.size_of_vertices();
-	yc /= pMesh.size_of_vertices();
-	zc /= pMesh.size_of_vertices();
+	xc /= _pMesh.size_of_vertices();
+	yc /= _pMesh.size_of_vertices();
+	zc /= _pMesh.size_of_vertices();
 
 	this->m_VC[0] = xc;
 	this->m_VC[1] = yc;
@@ -7208,10 +7194,10 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 																			list<Point_Int> & SP_Watermarked_Position, 
 																			list<Point3d> & SP_Moved_Position,
 																			list<Point3d> & SP_Original_Position,
-                                                                                                                                                        list<vector<int> > & JCW_Error)
+                                                                            list<vector<int> > & JCW_Error)
 {		
-        vector<vector<int> > Hist_inserted_vertices;
-        vector<vector<int> > Hist_remained_vertices;
+    vector<vector<int> > Hist_inserted_vertices;
+    vector<vector<int> > Hist_remained_vertices;
 
 	vector<int> Temp(this->m_NumberBin + OVER_HISTOGRAM, 0);
 	
@@ -7289,6 +7275,7 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 	vector<int> Cases;
 	vector<int> Directions(this->m_NumberRegion, -1);	
 	
+	srand(time(NULL));
 
 	// Calculate center of mass to determine the case of each region
 	for(int i = 0; i < this->m_NumberRegion; i++)
@@ -7336,19 +7323,18 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 				Bit_to_insert = this->m_Watermarks.front();
 				this->m_Watermarks.pop_front();
 
-				this->N_Inserted_Watermarks++;
+				this->N_Inserted_Watermarks++;				
 			}
 			else
 			{
-				this->N_Inserted_Watermarks++;
-
-				srand(time(NULL));
-				Bit_to_insert = rand() % 2;
-
-				FILE * f_insert = fopen("Inserted_watermarks.txt", "a");				
-				fprintf(f_insert, "%d \n", Bit_to_insert);
-				fclose(f_insert);
+				this->N_Inserted_Watermarks++;				
+				Bit_to_insert = rand() % 2;				
 			}
+
+			FILE * f_insert = fopen("Inserted_watermarks.txt", "a");				
+			fprintf(f_insert, "%d\t%d\n", Bit_to_insert, this->Decompress_count);
+			fclose(f_insert);
+
 			Watermarks_to_insert[i] = Bit_to_insert;			
 		}
 		else
@@ -7366,7 +7352,7 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 	// To minimize deformation.
 	for(unsigned i = 0; i < I_Geo.size(); i++)
 	{	
-		int Region_index = I_RN[i];
+		int Region_index = I_RN[i];			
 
 		if((Cases[Region_index] == 0)  || (Cases[Region_index] == 1))
 		{
@@ -7475,8 +7461,8 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 			vector<int> Err;
 			Err.push_back(Qx2 - P_bar_I.x);
 			Err.push_back(Qy2 - P_bar_I.y);
-			Err.push_back(Qz2 - P_bar_I.z);
-
+			Err.push_back(Qz2 - P_bar_I.z);			
+			
 			JCW_Error.push_back(Err);
 		}
 		else
@@ -7498,8 +7484,7 @@ vector<int> Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Waterm
 	FILE * f_extract;
 	if(this->Decompress_count == 0)
 	{
-		f_extract = fopen("Extracted_watermark.txt", "w");
-		fprintf(f_extract, "Extracted bits \n");	
+		f_extract = fopen("Extracted_watermark.txt", "w");		
 	}
 	else
 	{
@@ -7522,17 +7507,14 @@ vector<int> Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Waterm
 		
 		double R = pVert->Spherical_Coordinates(0);
 
-		int Region_index = pVert->Region_Number;
-
-		if ((Region_index < 0) || ( Region_index > this->m_NumberRegion))
-			int asdfasdf=0;
+		int Region_index = pVert->Region_Number;		
 
 		int Hist_number = ceil(R / this->m_Dist) - 1;
 		if(Hist_number == -1)
 			Hist_number = 0;
 
-		if((Hist_number < 0) || (Hist_number > this->m_NumberBin))
-			int asdfasdf = 0;
+		if(Hist_number >= this->m_NumberBin + OVER_HISTOGRAM)
+			Hist_number =  this->m_NumberBin + OVER_HISTOGRAM - 1;
 		
 		int RO = this->GlobalCountOperation - this->Decompress_count;			
 		
@@ -7716,7 +7698,7 @@ void Compression_Valence_Component::JCW_Choose_Valid_Vertices(Polyhedron &_pMesh
 }
 
 // Description : This function select a set of independent vertices to be removed
-int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  & pMesh,
+int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  & _pMesh,
 																   const bool    Normal_flipping,
 																   const bool    Use_metric,
 													               const float & Metric_thread,
@@ -7746,21 +7728,21 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 	double Mean_area;
 	if(this->IsColored)
 	{
-		this->Calculate_Edge_Color_Difference(pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
-		this->Recalculate_Component_Area(pMesh, Component_ID, Number_facets);
+		this->Calculate_Edge_Color_Difference(_pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
+		this->Recalculate_Component_Area(_pMesh, Component_ID, Number_facets);
 		Mean_area= (double)this->ComponentArea[Component_ID] / (double)Number_facets;
 	}
 
 
 	// Initialize vertex and face flags.
-	Init(pMesh);
+	Init(_pMesh);
 		
 	// to count number of independent vertices and number of symbol of connectivity.
 	int Number_vertices = 0; 
 	int Number_symbol = 0;	
 
 	// To find first edge.
-	Halfedge_iterator hi = pMesh.halfedges_begin();			
+	Halfedge_iterator hi = _pMesh.halfedges_begin();			
 	
 	while((hi->vertex()->Seed_Edge != 2 * Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2 * Component_ID+1))
 		hi++;
@@ -7823,7 +7805,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 			{
 				if (Use_forget_metric)
 				{
-					if (pMesh.size_of_vertices() > (unsigned)Forget_value)
+					if (_pMesh.size_of_vertices() > (unsigned)Forget_value)
 						Geometric_metric_condition = false;
 					else
 						Geometric_metric_condition = Is_Geometric_Metric_Violated(h, type, valence, Metric_thread);
@@ -7835,7 +7817,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 			
 			#ifdef USE_COLOR_METRIC
 			if(this->IsColored)
-				Is_Color_Too_Important = this->Error_Projected_Surface(pMesh, h, Component_ID, Mean_color, Mean_area);
+				Is_Color_Too_Important = this->Error_Projected_Surface(_pMesh, h, Component_ID, Mean_color, Mean_area);
 			#endif
 
 			// remove the front vertex if its removal does not viloate the manifold property and some metrics			
@@ -7902,7 +7884,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 				this->InterConnectivity.push_front(valence - 3);				
 
 				// remove the front vertex
-				pMesh.erase_center_vertex(g->next()); 
+				_pMesh.erase_center_vertex(g->next()); 
 
 				g = h;
 				g->facet()->Facet_Flag = TEMP_FLAG;				
@@ -7920,7 +7902,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 				}
 				g = h;							
 												
-				Retriangulation(pMesh, g, valence, 0, Component_ID);				
+				Retriangulation(_pMesh, g, valence, 0, Component_ID);				
 				
 				this->InterGeometry.push_front(CRV);
 			}
@@ -7969,8 +7951,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 				  (valence <= 4) && 
 				  (Is_Border_Vertex(h->next())) )
 		{
-			/*****    conditions of vertex removal (based on area) will be added    *****/
-			/*****    conditions of vertex removal (based on area) will be added    *****/		
+			/*****    conditions of vertex removal (based on area) will be added    *****/			
 
 			type = Find_Type(h, valence);
 			
@@ -8093,7 +8074,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 					Temp = Temp->opposite();
 					
 					CGAL_assertion(!Temp->is_border());
-					pMesh.erase_facet(Temp);
+					_pMesh.erase_facet(Temp);
 				}
 								
 				if (valence == 3)
@@ -8101,7 +8082,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 					Halfedge_handle Retriangulation_edge = Border_edges[valence - 2]->opposite()->prev();
 					
 					// One triangle has to be created to smooth the mesh boundary					
-					pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());					
+					_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());					
 										
 					Halfedge_handle Input_gate = Border_edges[Number_jump]->opposite();					
 
@@ -8159,10 +8140,10 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 						   ( (Number_jump == 2) && ((type == 5) || (type == 8)) )  )
 
 					{						
-						pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[1]->opposite());
+						_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[1]->opposite());
 						Border_edges[1]->opposite()->facet()->Facet_Flag = CONQUERED;						
 
-						pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());
+						_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());
 						Border_edges[0]->opposite()->facet()->Facet_Flag = CONQUERED;						
 					}
 
@@ -8170,11 +8151,11 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 								( (Number_jump == 1) && ((type == 5) || (type == 8)) ) ||
 								( (Number_jump == 2) && ((type == 6) || (type == 7)) )  )
 					{												
-						pMesh.add_facet_to_border(Border_edges[2]->opposite(), Border_edges[0]->opposite());
+						_pMesh.add_facet_to_border(Border_edges[2]->opposite(), Border_edges[0]->opposite());
 						Border_edges[1]->opposite()->facet()->Facet_Flag = CONQUERED;						
 						Halfedge_handle Temp_border = Border_edges[2]->opposite()->next();
 						
-						pMesh.add_facet_to_border(Retriangulation_edge, Temp_border);
+						_pMesh.add_facet_to_border(Retriangulation_edge, Temp_border);
 						Border_edges[2]->opposite()->facet()->Facet_Flag = CONQUERED;						
 					}					
 
@@ -8364,7 +8345,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 
 
 // Description : Regulation conquest
-int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  & pMesh,
+int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  & _pMesh,
 																   const bool    Normal_flipping,
 								                                   const bool    Use_metric,
 											                       const float & Metric_thread,
@@ -8384,19 +8365,19 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 	double Mean_area;
 	if(this->IsColored)
 	{
-		this->Calculate_Edge_Color_Difference(pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
-		this->Recalculate_Component_Area(pMesh, Component_ID,Number_facets);
+		this->Calculate_Edge_Color_Difference(_pMesh, Component_ID, Max_color, Mean_color, Temp_NV);
+		this->Recalculate_Component_Area(_pMesh, Component_ID,Number_facets);
 		Mean_area = (double)this->ComponentArea[Component_ID] / (double)Number_facets;
 	}
 
 	// Initialization
-	Init(pMesh);	
+	Init(_pMesh);	
 	
 	// Number of removed vertices and number of connectivity symbols
 	int Number_vertices = 0;
 	int Number_symbol = 0;
 
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))
 		hi++;	
@@ -8432,7 +8413,7 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 			{
 				if (Use_forget_metric == true)
 				{
-					if (pMesh.size_of_vertices() > (unsigned)Forget_value)
+					if (_pMesh.size_of_vertices() > (unsigned)Forget_value)
 						Geometric_metric_condition = false;
 					else
 						Geometric_metric_condition = Is_Geometric_Metric_Violated(g, type, valence, Metric_thread);
@@ -8445,7 +8426,7 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 
 			#ifdef USE_COLOR_METRIC
 			if(this->IsColored)
-				Is_Color_Too_Important = this->Error_Projected_Surface(pMesh, g, Component_ID, Mean_color, Mean_area);
+				Is_Color_Too_Important = this->Error_Projected_Surface(_pMesh, g, Component_ID, Mean_color, Mean_area);
 			#endif
 
 			// remove the front vertex if its removal does not viloate the manifold property and some metrics			
@@ -8566,14 +8547,14 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 	
 	// Removal of all vertices with TO_BE_REMOVED flag
 	Vertex_iterator pVertex = NULL;
-	for (pVertex = pMesh.vertices_begin(); pVertex != pMesh.vertices_end();)
+	for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end();)
 	{
 		Vertex_handle vh = pVertex;
 		pVertex++;
 		if (vh->Vertex_Flag == TO_BE_REMOVED)
 		{
 			Halfedge_handle temp = vh->halfedge();
-			temp = pMesh.erase_center_vertex(temp);
+			temp = _pMesh.erase_center_vertex(temp);
 			temp->facet()->Component_Number = Component_ID;
 		}
 	}	
@@ -8711,11 +8692,11 @@ Point3d Compression_Valence_Component::JCW_Barycenter_Patch_Before_Removal(const
 }
 
 // Description : Decoding function of decimation conquest
-void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       & pMesh, 
+void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       & _pMesh, 
 															   Arithmetic_Codec & Decoder,
 														       const int        & Component_ID)
 {
-	Init(pMesh);	
+	Init(_pMesh);	
 
 	this->m_N_treated_vertices.clear();
 	this->m_Rad_decision.clear();
@@ -8734,7 +8715,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 
 	Adaptive_Data_Model Connectivity(Number_connectivity_symbols);	
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;	
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];
@@ -8828,7 +8809,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 			}		
 
 			// remove edges to re_find polygon and (check. and attribute sign flag.)
-			bool Check_Validity = Remove_Edges(pMesh, g, type);
+			bool Check_Validity = Remove_Edges(_pMesh, g, type);
 			Check_Validity = false;
 
 			//Check_Validity = false;// * * * * * * * * * * *////
@@ -8962,7 +8943,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 				}
 				this->m_N_treated_vertices[Region]++;				
 				
-				g = pMesh.create_center_vertex(g);
+				g = _pMesh.create_center_vertex(g);
 				g->vertex()->point() = Center_vertex;
 
 				g->vertex()->Region_Number = Selected_region;
@@ -9196,14 +9177,14 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 				g = g->prev();
 				Border_edges.push_back(g->opposite());
 
-				pMesh.erase_facet(g);
+				_pMesh.erase_facet(g);
 
 				Halfedge_handle Prev_edge = Border_edges[1]->opposite()->prev();
 					
 				// g points the new vertex
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());				
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());				
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
 
 				// Assign the region number to inserted vertex
 				Halfedge_handle reg = h;
@@ -9382,8 +9363,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 						Border_edges.push_back(g->prev()->opposite()->next()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					// jump == 1;
@@ -9395,8 +9376,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
 					}
 					
 					// jump == 2;
@@ -9408,8 +9389,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 						Border_edges.push_back(g->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 				}
 				else
@@ -9422,8 +9403,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 						Border_edges.push_back(g->next()->opposite()->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					else if (g->next()->opposite()->prev()->is_border_edge())
@@ -9434,8 +9415,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 					else
 					{
@@ -9445,8 +9426,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 						Border_edges.push_back(g->prev()->opposite());
 						Border_edges.push_back(g->next()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 				}
@@ -9455,11 +9436,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 				
 				// to create the new facets
 				Halfedge_handle Prev_edge = Border_edges[2]->opposite()->prev();
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
 
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
 					
 				#ifdef PREDICTION_METHOD
 				Color_Unit CV;
@@ -9723,9 +9704,9 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 }
 
 // Description : Decoding of the regulation conquest
-void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID)
+void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &_pMesh, Arithmetic_Codec & Decoder, const int & Component_ID)
 {	
-	Init(pMesh);
+	Init(_pMesh);
 
 	this->m_N_remained_vertices.clear();
 	this->m_N_treated_vertices.clear();
@@ -9739,7 +9720,7 @@ void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &pMesh, Arithme
 	}
 
 
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		int Reg = pVert->Region_Number;
 		this->m_N_remained_vertices[Reg]++;
@@ -9747,7 +9728,7 @@ void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &pMesh, Arithme
 
 	Adaptive_Data_Model Connectivity(2);
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];
@@ -9958,7 +9939,7 @@ void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &pMesh, Arithme
 			this->m_N_treated_vertices[Region]++;
 
 			// Vertex insertion
-			g = pMesh.create_center_vertex(g);
+			g = _pMesh.create_center_vertex(g);
 			
 			g->vertex()->point() = Center_vertex;
 			g->vertex()->Seed_Edge = -1;
@@ -10113,21 +10094,21 @@ void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &pMesh, Arithme
 	}	
 }
 
-void Compression_Valence_Component::JCW_Code_Difference_Histogram_Shifting(Polyhedron &pMesh, const int & Component_ID)
+void Compression_Valence_Component::JCW_Code_Difference_Histogram_Shifting(Polyhedron &_pMesh, const int & Component_ID)
 {
-	Halfedge_iterator hi = pMesh.halfedges_begin();	
+	Halfedge_iterator hi = _pMesh.halfedges_begin();	
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))
 		hi++;
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for (Vertex_iterator pVert = pMesh.vertices_begin();pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin();pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;
 		pVert->Vertex_Number = -1;
 	}
 	
-	int Count_treated_vertices = 0;
+	//int Count_treated_vertices = 0;
 	std::queue<Vertex*> vertices;	
 	
 	// push a input gate to begin loop 
@@ -10136,7 +10117,7 @@ void Compression_Valence_Component::JCW_Code_Difference_Histogram_Shifting(Polyh
 	vertices.push(&(*(hi->opposite()->vertex())));
 
 	int Vertex_index = 0;
-
+	int Count_treated_vertices = 0;
 	while(!vertices.empty())
 	{
 		Vertex * v = vertices.front();
@@ -10218,15 +10199,15 @@ void Compression_Valence_Component::JCW_Code_Difference_Histogram_Shifting(Polyh
 	this->m_N_Errors.push_back(Count_treated_vertices);	
 }
 
-void Compression_Valence_Component::JCW_Decode_Difference_Histogram_Shifting(Polyhedron &pMesh, const int & Component_ID)
+void Compression_Valence_Component::JCW_Decode_Difference_Histogram_Shifting(Polyhedron &_pMesh, const int & Component_ID)
 {
-	Halfedge_iterator hi = pMesh.halfedges_begin();	
+	Halfedge_iterator hi = _pMesh.halfedges_begin();	
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))
 		hi++;
 
 	// Vertex_Flag est donnee free a tous les sommets
-	for (Vertex_iterator pVert = pMesh.vertices_begin();pVert != pMesh.vertices_end(); pVert++)
+	for (Vertex_iterator pVert = _pMesh.vertices_begin();pVert != _pMesh.vertices_end(); pVert++)
 	{
 		pVert->Vertex_Flag = FREE;
 		pVert->Vertex_Number = -1;
@@ -10330,15 +10311,15 @@ void Compression_Valence_Component::JCW_Decode_Difference_Histogram_Shifting(Pol
 }
 
 // Description : Decoding of the regulation conquest
-void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &pMesh, 																	
+void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &_pMesh, 																	
 																	const int & Component_ID,
 																	list<int> & FP_Connectivity,
 																	list<Point3d> & SP_Moved_Position,
 																	list<Point3d> & SP_Original_Position,
 																	list<Point_Int> & SP_Watermarked_Position,
-                                                                                                                                        list<vector<int> > & JCW_ERROR)
+                                                                    list<vector<int> > & JCW_ERROR)
 {	
-	Init(pMesh);	
+	Init(_pMesh);	
 
 	this->m_N_remained_vertices.clear();
 	this->m_N_treated_vertices.clear();
@@ -10352,14 +10333,14 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 		this->m_N_remained_vertices.push_back(0);
 	}
 	
-	for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		int RN = pVert->Region_Number;
 		this->m_N_remained_vertices[RN]++;
 	}
 
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];	
@@ -10521,7 +10502,7 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 			SP_Moved_Position.pop_front();
 
 			// Vertex insertion
-			g = pMesh.create_center_vertex(g);			
+			g = _pMesh.create_center_vertex(g);			
 			
 			g->vertex()->point() = CRV_real;
 			
@@ -10593,7 +10574,7 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 
 
 // Description : Decoding function of decimation conquest
-void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron & pMesh, 
+void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron & _pMesh, 
 																	const int  & Component_ID,
 																	list<int> & FP_Connectivity,
 																	list<Point3d> & SP_Moved_Position, 
@@ -10601,7 +10582,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 																	list<Point_Int> & SP_Watermarked_Position,
                                                                                                                                         list<vector<int> > & JCW_ERROR)
 {
-	Init(pMesh);
+	Init(_pMesh);
 	
 	this->m_N_treated_vertices.clear();
 	this->m_Rad_decision.clear();
@@ -10613,7 +10594,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 	}	
 
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;	
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];
@@ -10680,7 +10661,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 			}			
 
 			// remove edges to re_find polygon and (check. and attribute sign flag.)
-			bool Check_Validity = Remove_Edges(pMesh, g, type);
+			bool Check_Validity = Remove_Edges(_pMesh, g, type);
 			Check_Validity = false;
 
 			//Check_Validity = false;// * * * * * * * * * * *////
@@ -10793,7 +10774,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				Point3d Original_pt = SP_Original_Position.front();
 				SP_Original_Position.pop_front();
 
-				g = pMesh.create_center_vertex(g);
+				g = _pMesh.create_center_vertex(g);
 				g->vertex()->point() = Original_pt;
 				
 				g->vertex()->Watermarked_Position[0] = WM_pt.x();
@@ -10876,14 +10857,14 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				g = g->prev();
 				Border_edges.push_back(g->opposite());
 
-				pMesh.erase_facet(g);
+				_pMesh.erase_facet(g);
 
 				Halfedge_handle Prev_edge = Border_edges[1]->opposite()->prev();
 					
 				// g points the new vertex
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());				
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());				
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());	
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());	
 
 				// Assign the region number to inserted vertex
 				Halfedge_handle reg = h;
@@ -11033,8 +11014,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 						Border_edges.push_back(g->prev()->opposite()->next()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					// jump == 1;
@@ -11046,8 +11027,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
 					}
 					
 					// jump == 2;
@@ -11059,8 +11040,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 						Border_edges.push_back(g->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 				}
 				else
@@ -11073,8 +11054,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 						Border_edges.push_back(g->next()->opposite()->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					else if (g->next()->opposite()->prev()->is_border_edge())
@@ -11085,8 +11066,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 					else
 					{
@@ -11096,8 +11077,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 						Border_edges.push_back(g->prev()->opposite());
 						Border_edges.push_back(g->next()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 				}				
@@ -11105,11 +11086,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				
 				// to create the new facets
 				Halfedge_handle Prev_edge = Border_edges[2]->opposite()->prev();
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());								
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());								
 				
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
 
 				// Assign the region number to inserted vertex
 				Halfedge_handle reg = g;
@@ -11322,15 +11303,15 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 
 
 // Description : To obtain region number of each inserted vertices
-void Compression_Valence_Component::JCW_Un_Regulation_For_Region_Detection(Polyhedron &pMesh, 																	
+void Compression_Valence_Component::JCW_Un_Regulation_For_Region_Detection(Polyhedron &_pMesh, 																	
 																	       const int & Component_ID,
 																		   list<int> & FP_Connectivity, 
 																		   list<Point3d> & FP_Geometry, 
 																		   list<int> & FP_Region_Number)
 {	
-	Init(pMesh);
+	Init(_pMesh);
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];	
@@ -11434,7 +11415,7 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Region_Detection(Polyh
 			FP_Geometry.push_back(CRV_real);
 
 			// Vertex insertion
-			g = pMesh.create_center_vertex(g);			
+			g = _pMesh.create_center_vertex(g);			
 			g->vertex()->point() = CRV_real;
 
 			g->vertex()->Seed_Edge = -1;
@@ -11489,15 +11470,15 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Region_Detection(Polyh
 
 
 // Description : Decoding function of decimation conquest
-void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyhedron & pMesh, 
+void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyhedron & _pMesh, 
 																	       const int  & Component_ID,
 																		   list<int> & FP_Connectivity, 
 																		   list<Point3d> & FP_Geometry, 
 																		   list<int> & FP_Region_Number)
 {
-	Init(pMesh);
+	Init(_pMesh);
 	
-	Halfedge_iterator hi = pMesh.halfedges_begin();
+	Halfedge_iterator hi = _pMesh.halfedges_begin();
 	std::queue<Halfedge_handle> Halfedges;	
 
 	unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];	
@@ -11551,7 +11532,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 			type = Find_Type(g, valence);
 						
 			// remove edges to re_find polygon and (check. and attribute sign flag.)
-			bool Check_Validity = Remove_Edges(pMesh, g, type);
+			bool Check_Validity = Remove_Edges(_pMesh, g, type);
 			Check_Validity = false;
 
 			//Check_Validity = false;// * * * * * * * * * * *////
@@ -11620,7 +11601,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 
 				FP_Geometry.push_back(Center_vertex);
 				
-				g = pMesh.create_center_vertex(g);
+				g = _pMesh.create_center_vertex(g);
 				g->vertex()->point() = Center_vertex;
 				g->vertex()->Region_Number = Selected_region;				
 
@@ -11673,14 +11654,14 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 				g = g->prev();
 				Border_edges.push_back(g->opposite());
 
-				pMesh.erase_facet(g);
+				_pMesh.erase_facet(g);
 
 				Halfedge_handle Prev_edge = Border_edges[1]->opposite()->prev();
 					
 				// g points the new vertex
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());	
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());	
 
 				Point_Int Center = this->Geometry[Component_ID].front();
 				this->Geometry[Component_ID].pop_front();			
@@ -11799,8 +11780,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 						Border_edges.push_back(g->prev()->opposite()->next()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					// jump == 1;
@@ -11812,8 +11793,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
 					}
 					
 					// jump == 2;
@@ -11825,8 +11806,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 						Border_edges.push_back(g->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 				}
 				else
@@ -11839,8 +11820,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 						Border_edges.push_back(g->next()->opposite()->next()->opposite());
 						Border_edges.push_back(g->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 					else if (g->next()->opposite()->prev()->is_border_edge())
@@ -11851,8 +11832,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 						Border_edges.push_back(g->opposite());
 						Border_edges.push_back(g->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[0]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[0]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 					else
 					{
@@ -11862,8 +11843,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 						Border_edges.push_back(g->prev()->opposite());
 						Border_edges.push_back(g->next()->opposite()->prev()->opposite());
 
-						pMesh.erase_facet(Border_edges[2]->opposite());
-						pMesh.erase_facet(Border_edges[1]->opposite());
+						_pMesh.erase_facet(Border_edges[2]->opposite());
+						_pMesh.erase_facet(Border_edges[1]->opposite());
 					}
 
 				}
@@ -11872,11 +11853,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 				
 				// to create the new facets
 				Halfedge_handle Prev_edge = Border_edges[2]->opposite()->prev();
-				g = pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
+				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
 
 				Prev_edge = Prev_edge->next();
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
-				pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
+				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
 
 				
 				Point_Int Center = this->Geometry[Component_ID].front();
@@ -12056,7 +12037,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 
 // Error metric which measures importance of color and geometry for each vertex.
 // Used to prevent removal of the visually important vertex.
-bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron            &  pMesh, 
+bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron            &  _pMesh, 
 														    const Halfedge_handle & _h, 
 														    const int             & _Component_ID, 
 														    const double          & Mean_color, 
@@ -12213,9 +12194,10 @@ bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron          
 		return false;
 }
 
-int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name)
+int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, const char* File_Name)
 {
-        int res;
+
+	int res = 1;
 
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	this->Decoder.stop_decoder();
@@ -12243,11 +12225,11 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, c
 		FILE * fp = fopen("Keys.txt", "rb");
 		if(fp!=NULL)
 		{		
-                        res = fread(&this->m_VC[0], sizeof(double), 1, fp);
-                        res = fread(&this->m_VC[1], sizeof(double), 1, fp);
-                        res = fread(&this->m_VC[2], sizeof(double), 1, fp);
-			
-                        res = fread(&this->m_Dist, sizeof(double), 1, fp);
+            res = fread(&this->m_VC[0], sizeof(double), 1, fp);
+            res = fread(&this->m_VC[1], sizeof(double), 1, fp);
+            res = fread(&this->m_VC[2], sizeof(double), 1, fp);
+
+            res = fread(&this->m_Dist, sizeof(double), 1, fp);
 			fclose(fp);
 		}
 
@@ -12255,8 +12237,9 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, c
 		this->m_NumberRegion = NUMBER_REGION;		
 		this->m_EmbeddingLevel = EMBEDDING_LEVEL;				
 
-		this->JCW_Generate_Regions_On_Base_Mesh(pMesh);		
+		this->JCW_Generate_Regions_On_Base_Mesh(_pMesh);		
 	}
+	
 	
 	if (this->Decompress_count < this->GlobalCountOperation)
 	{
@@ -12266,54 +12249,41 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, c
 			{	
 				int Operation = Decoder.get_bits(2);
 				if (Operation == 0)
-				{
-					this->JCW_Un_Regulation(pMesh, Decoder, Component_ID);					
-					this->JCW_Un_Decimation_Conquest(pMesh, Decoder, Component_ID);	
-
-					this->Initialize_Spherical_Coordinates(pMesh);
-					this->JCW_Region_Mass_Center_Extract_Watermark(pMesh);	
-
-					/*srand(time(NULL));
-					vector<vector<float>> Color;
-
-					for(int i = 0; i < this->m_NumberRegion; i++)
-					{				
-						int R = rand() % 255;
-						int G = rand() % 255;
-						int B = rand() % 255;
-						
-						vector<float> fff;
-						fff.push_back((float)R / 255.);
-						fff.push_back((float)G / 255.);
-						fff.push_back((float)G / 255.);
-
-
-						Color.push_back(fff);		
-					}
+				{					
+					Processing_Component Process;
+					//Process.NoiseAddition(&_pMesh, UNIFORM, 0.005, false);
+					Process.LaplacianSmoothing(&_pMesh, 0.03, 30, false);
+					//Process.CoordinateQuantization(&_pMesh, 7);
 					
+					this->JCW_Un_Regulation(_pMesh, Decoder, Component_ID);					
+					this->JCW_Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);	
 
-					for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
-					{
-						int NB = pVert->Region_Number;		
-						pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
-					}	*/			
+					this->Initialize_Spherical_Coordinates(_pMesh);										
+					this->JCW_Region_Mass_Center_Extract_Watermark(_pMesh);	
+
+					#ifdef JCW_DIVIDE_BIG_REGIONS
+					this->JCW_Divide_Big_Regions(_pMesh);					
+					#endif					
+					#ifdef JCW_COLORIFY_REGIONS
+					this->JCW_Colorify_Regions(_pMesh);
+					#endif
 					
 					#ifdef JCW_CORRECT
-					this->JCW_Decode_Difference_Histogram_Shifting(pMesh, Component_ID);
+					this->JCW_Decode_Difference_Histogram_Shifting(_pMesh, Component_ID);
 					#endif			
 
 				}
 				else if (Operation == 1)
-					this->Up_Quantization(pMesh, Decoder, Component_ID);		
+					this->Up_Quantization(_pMesh, Decoder, Component_ID);		
 				else if (Operation == 2)
-					this->Color_Up_Quantization(pMesh, Decoder, Component_ID);				
+					this->Color_Up_Quantization(_pMesh, Decoder, Component_ID);				
 			}
 		}			
 	}	
 		
 			
 	this->Decompress_count++;	
-	pMesh.compute_normals();
+	_pMesh.compute_normals();
 	
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	fclose(fp_split_iter);
@@ -12321,9 +12291,9 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &pMesh, c
 	return this->Decompress_count;
 }
 
-int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name)
+int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(Polyhedron &_pMesh, const char* File_Name)
 {
-        int res;
+    int res;
 
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	this->Decoder.stop_decoder();
@@ -12350,13 +12320,12 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 	{
 		FILE * fp = fopen("Keys.txt", "rb");
 		if(fp != NULL)
-		{
-		
-                        res = fread(&this->m_VC[0], sizeof(double), 1, fp);
-                        res = fread(&this->m_VC[1], sizeof(double), 1, fp);
-                        res = fread(&this->m_VC[2], sizeof(double), 1, fp);
-			
-                        res = fread(&this->m_Dist, sizeof(double), 1, fp);
+		{		
+			res = fread(&this->m_VC[0], sizeof(double), 1, fp);
+			res = fread(&this->m_VC[1], sizeof(double), 1, fp);
+			res = fread(&this->m_VC[2], sizeof(double), 1, fp);
+
+			res = fread(&this->m_Dist, sizeof(double), 1, fp);
 			fclose(fp);
 		}
 
@@ -12364,7 +12333,7 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 		this->m_NumberRegion = NUMBER_REGION;		
 		this->m_EmbeddingLevel = EMBEDDING_LEVEL;				
 
-		this->JCW_Generate_Regions_On_Base_Mesh(pMesh);		
+		this->JCW_Generate_Regions_On_Base_Mesh(_pMesh);		
 	}
 	
 	
@@ -12377,11 +12346,11 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 				int Operation = Decoder.get_bits(2);
 				if (Operation == 0)
 				{
-					this->JCW_Un_Regulation(pMesh, Decoder, Component_ID);					
-					this->JCW_Un_Decimation_Conquest(pMesh, Decoder, Component_ID);	
+					this->JCW_Un_Regulation(_pMesh, Decoder, Component_ID);					
+					this->JCW_Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);	
 
-					this->Initialize_Spherical_Coordinates(pMesh);
-					//this->JCW_Region_Mass_Center_Extract_Watermark(pMesh);	
+					this->Initialize_Spherical_Coordinates(_pMesh);
+					//this->JCW_Region_Mass_Center_Extract_Watermark(_pMesh);	
 
 					/*srand(time(NULL));
 					vector<vector<float>> Color;
@@ -12402,7 +12371,7 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 					}
 					
 
-					for(Vertex_iterator pVert = pMesh.vertices_begin(); pVert != pMesh.vertices_end(); pVert++)
+					for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 					{
 						int NB = pVert->Region_Number;		
 						pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
@@ -12411,20 +12380,20 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 					
 					
 #ifdef JCW_CORRECT
-					this->JCW_Decode_Difference_Histogram_Shifting(pMesh, Component_ID);
+					this->JCW_Decode_Difference_Histogram_Shifting(_pMesh, Component_ID);
 #endif
 				}
 				else if (Operation == 1)
-					this->Up_Quantization(pMesh, Decoder, Component_ID);		
+					this->Up_Quantization(_pMesh, Decoder, Component_ID);		
 				else if (Operation == 2)
-					this->Color_Up_Quantization(pMesh, Decoder, Component_ID);				
+					this->Color_Up_Quantization(_pMesh, Decoder, Component_ID);				
 			}
 		}			
 	}	
 		
 			
 	this->Decompress_count++;	
-	pMesh.compute_normals();
+	_pMesh.compute_normals();
 	
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
 	fclose(fp_split_iter);
@@ -12434,13 +12403,13 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 
 void Compression_Valence_Component::Read_Information_To_Hide()
 {
-        char *res;
+    char *res;
 
 	FILE * fp = fopen("Inserted_message.txt", "r");
 	char buffer[200];
 	if(fp != NULL)
 	{
-                res = fgets(buffer, 200, fp);
+		res = fgets(buffer, 200, fp);
 	}	
 
 	int i = 0;	
@@ -12458,15 +12427,9 @@ void Compression_Valence_Component::Read_Information_To_Hide()
 		i++;
 	}
 
-	FILE * f_insert = fopen("Inserted_watermarks.txt", "w");
-	fprintf(f_insert, "Inserted bits \n");
-	
-	for(list<int>::iterator it = this->m_Watermarks.begin(); it != this->m_Watermarks.end(); it++)
-	{
-		int Watermark = *it;
-		fprintf(f_insert, "%d \n", Watermark);
-	}
-	fclose(f_insert);
+	FILE * f_insert = fopen("Inserted_watermarks.txt", "w");	
+
+	fclose(f_insert);	
 }
 
 QString Compression_Valence_Component::Write_Information_To_Hide()
@@ -12503,5 +12466,212 @@ QString Compression_Valence_Component::Write_Information_To_Hide()
 	
 }
 
+int Compression_Valence_Component::JCW_Divide_Big_Regions(Polyhedron &_pMesh)
+{
+	// To count number of vertices of each region.
+	vector<int> Number_vertices_regions(this->m_NumberRegion, 0);
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
+	{
+		int Region_number = pVert->Region_Number;
+		Number_vertices_regions[Region_number]++;		
+	}	
+	
+	// Determine what region to divide.
+	int Number_region_to_divide = 0;
+	vector<int> Region_to_divide(this->m_NumberRegion, -1);
+	vector<int> Matching_index_new_region(this->m_NumberRegion, -1);
+	for(int i = 0; i < this->m_NumberRegion; i++)
+	{
+		if (Number_vertices_regions[i] >= THRES_NUMBER_VERTICES_FOR_REGION_DIVISION)
+		{			
+			Region_to_divide[i] = 1;
+			Matching_index_new_region[i] = this->m_NumberRegion + Number_region_to_divide;
+			Number_region_to_divide++;
+		}
+	}
+
+	if(Number_region_to_divide == 0)
+		return 0;
+	
+	// Initialize vertex flags
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
+	{
+		pVert->Vertex_Flag = FREE;
+		pVert->Vertex_Number = -1;		
+	}
+	
+	// Upgrade region number of mesh
+	this->m_NumberRegion += Number_region_to_divide;
+
+	std::queue<Vertex*> vertices;
+
+	std::queue<Vertex*> Vertices_region;
+
+	vector<int> Verify_processed_region(this->m_NumberRegion, -1);
+
+	// To find first points to start the conquest.	
+	Halfedge_iterator hi = _pMesh.halfedges_begin();	
+	
+	while((hi->vertex()->Seed_Edge != 0) || (hi->opposite()->vertex()->Seed_Edge != 1))
+		hi++;	
+
+	vertices.push(&(*(hi->vertex())));
+	vertices.push(&(*(hi->opposite()->vertex())));
+
+	int Vertex_index = 0;	
+
+	while(!vertices.empty())
+	{
+		Vertex * v = vertices.front();
+		vertices.pop();		
+		
+		if (v->Vertex_Flag == CONQUERED)
+			continue;	
+		
+		else
+		{
+			v->Vertex_Flag = CONQUERED;		
+			v->Vertex_Number = Vertex_index;
+
+			int RN = v->Region_Number;
+
+			if((Region_to_divide[RN] == 1) && (Verify_processed_region[RN] == -1))
+			{
+				Verify_processed_region[RN] = 1;
+				Vertices_region.push(v);
+			}
+
+			Halfedge_around_vertex_circulator h;
+
+			// First_vertex -> To find the seed edge
+			if (Vertex_index == 0)
+			{
+				h = v->vertex_begin();
+				do
+				{
+					h++;
+				}while(&(*(h)) != &(*(hi)));
+			}
+
+			else
+			{
+				int Comp_number = -2;
+				h = v->vertex_begin();
+				Halfedge_around_vertex_circulator h2 = h;
+				CGAL_For_all(h,h2)
+				{
+					if (h->opposite()->vertex()->Vertex_Number > Comp_number)
+						Comp_number = h->opposite()->vertex()->Vertex_Number;
+				}
+
+				h = h2;
+				CGAL_For_all(h,h2)
+				{
+					if (h->opposite()->vertex()->Vertex_Number == Comp_number)
+						break;
+				}
+			}	
+			
+			Halfedge_around_vertex_circulator h2 = h;
+			CGAL_For_all(h,h2)
+			{
+				if (h->opposite()->vertex()->Vertex_Flag == FREE)
+					vertices.push(&(*(h->opposite()->vertex())));
+			}
+			Vertex_index++;
+		}
+	}
+
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
+		pVert->Vertex_Flag = FREE;		
+
+	vector<int> Number_New_Region(this->m_NumberRegion, 0);
+
+	while(!Vertices_region.empty())
+	{
+		Vertex * v = Vertices_region.front();
+		Vertices_region.pop();		
+		
+		int RN = v->Region_Number;
+		
+		if (v->Vertex_Flag == CONQUERED)
+			continue;
+
+		if (Region_to_divide[RN] == -1)
+			continue;
+		
+		if (Number_New_Region[RN] > (Number_vertices_regions[RN] / 2))
+			continue;
+		
+		else
+		{
+			v->Vertex_Flag = CONQUERED;
+			Number_New_Region[RN]++;
+
+			v->Region_Number = Matching_index_new_region[RN];
+
+			Halfedge_around_vertex_circulator h;
+			
+			int Comp_number = -2;
+			h = v->vertex_begin();
+			Halfedge_around_vertex_circulator h2 = h;
+			CGAL_For_all(h,h2)
+			{
+				if (h->opposite()->vertex()->Vertex_Number > Comp_number)
+					Comp_number = h->opposite()->vertex()->Vertex_Number;
+			}
+
+			h = h2;
+			CGAL_For_all(h,h2)
+			{
+				if (h->opposite()->vertex()->Vertex_Number == Comp_number)
+					break;
+			}				
+			
+			h2 = h;
+			CGAL_For_all(h,h2)
+			{
+				if (h->opposite()->vertex()->Vertex_Flag == FREE)
+				{
+					if(h->opposite()->vertex()->Region_Number == RN)
+					{
+						Vertices_region.push(&(*(h->opposite()->vertex())));
+					}
+				}
+			}			
+		}
+	}
+
+
+
+	return Number_region_to_divide;
+}
+void Compression_Valence_Component::JCW_Colorify_Regions(Polyhedron &_pMesh)
+{
+	srand(time(NULL));
+	vector<vector<float>> Color;
+
+	for(int i = 0; i < this->m_NumberRegion; i++)
+	{				
+		int R = rand() % 255;
+		int G = rand() % 255;
+		int B = rand() % 255;
+		
+		vector<float> fff;
+		fff.push_back((float)R / 255.);
+		fff.push_back((float)G / 255.);
+		fff.push_back((float)G / 255.);
+
+
+		Color.push_back(fff);		
+	}
+	
+
+	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
+	{
+		int NB = pVert->Region_Number;		
+		pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
+	}		
+}
 
 #endif

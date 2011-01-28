@@ -205,6 +205,7 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				}				
 				mw->statusBar()->showMessage(tr("Encoding is done"));				
 
+				/*	
 				unsigned Init_size;
 				component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,File_Name);
 				
@@ -213,8 +214,11 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				{					
 					component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0), File_Name);
 					CL++;					
-					viewer->recreateListsAndUpdateGL();	
-				}				
+					
+				}	
+				*/			
+
+				viewer->recreateListsAndUpdateGL();	
 			}
 		}
 	}
@@ -1033,13 +1037,21 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
+		
 		Timer timer;
 		timer.start();
 
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
+		if (!viewer->getScenePtr()->get_polyhedron()->is_pure_triangle())
+		{				
+			QMessageBox::information(mw, APPLICATION, tr("JCW not possible: the mesh owns non-triangular facets."));
+			return;
+		}
 		
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		int NVertices = 300;
 		bool Normal_flipping = false;
 		bool Use_metric = false;
