@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010
+// Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -17,10 +17,16 @@ http://www.macports.org/install.php
 sudo port -v selfupdate
 
 4) installer les paquets suivants avec MacPorts: 
-sudo port install cgal						(assez long, <= 1 heure)
-sudo port install qt4-mac					(très long, environ 2-3 heures)
-sudo port install libQGLViewer				(très rapide, quelques minutes)
-sudo port install glew						(très très rapide, quelques secondes)
+sudo port install cgal												(assez long, <= 1 heure)
+sudo port install qt4-mac											(très long, environ 2-3 heures)
+sudo port install libQGLViewer								(très rapide, quelques minutes)
+sudo port install glew												(très très rapide, quelques secondes)
+sudo port install doxygen graphviz xercesc3
+
+puis
+
+sudo port install python_select
+sudo python_select python26
 
 5) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
@@ -31,6 +37,9 @@ se positionner dans trunk, puis,
  - pour une version Release: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' puis make
  - pour une version Debug: cmake .. -DCMAKE_C_FLAGS='-arch x86_64' -DCMAKE_BUILD_TYPE=Debug (2 fois pour la prise en compte du mode Debug) puis make
 note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
+
+ - la documentation de Mepp (à venir...) se génère avec: make mepp_DOC
+ - la documentation de votre composant au format Doxygen se génère avec: make component_nomducomposant_DOC (exemple: make component_CGAL_Example_DOC)
 
 ou
 

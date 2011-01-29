@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010
+// Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,8 @@ Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 :
 
 3) installer les paquets suivants:
 sudo apt-get update
-sudo apt-get install filezilla subversion unrar libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev mencoder ffmpeg
+sudo apt-get install filezilla subversion unrar libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev
+sudo apt-get install mencoder ffmpeg doxygen-gui graphviz libxerces-c-dev
 
 -------------------------------
 Suivant votre version d'Ubuntu:
@@ -44,6 +45,9 @@ se positionner dans trunk, puis,
  - pour une version Release: "cmake .." puis make
  - pour une version Debug: "cmake .. -DCMAKE_BUILD_TYPE=Debug" (2 fois pour la prise en compte du mode Debug) puis make
 note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
+
+ - la documentation de Mepp (à venir...) se génère avec: make mepp_DOC
+ - la documentation de votre composant au format Doxygen se génère avec: make component_nomducomposant_DOC (exemple: make component_CGAL_Example_DOC)
 
 ou
 
