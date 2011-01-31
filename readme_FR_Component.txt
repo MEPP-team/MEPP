@@ -1,16 +1,16 @@
-///////////////////////////////////////////////////////////////////////////
+ï»¿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
 // Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-A) Développer un nouveau composant:
+A) DÃ©velopper un nouveau composant:
 -----------------------------------
 
 
-1) le « noyau » de MEPP ne doit en principe pas être modifié
+1) le Â«Â noyauÂ Â» de MEPP ne doit en principe pas Ãªtre modifiÃ©
 
-2) votre composant doit avoir un nom en anglais (validé par Florent) et doit être rattaché à une catégorie ci-dessous:
+2) votre composant doit avoir un nom en anglais (validÃ© par Florent) et doit Ãªtre rattachÃ© Ã  une catÃ©gorie ci-dessous:
 
 	Analysis
 	Compression
@@ -20,29 +20,29 @@ A) Développer un nouveau composant:
 	Tools
 	Watermarking
 	
-	ou éventuellement
+	ou Ã©ventuellement
 	
 	Examples
 	
-	a) Ce nom doit être également le nom du sous-dossier (contenant le code source de votre composant) au sein de cette sous-catégorie sur le svn (cf. composant CGAL_Example).
-	b) Le nom de la classe C++ de ce composant doit être du type VotreComposant_Component (cf. composant CGAL_Example).
-	c) Le nom de la classe C++ du plugin (qui va de paire avec la classe ci-dessus) de votre composant doit être du type mepp_component_VotreComposant_plugin (cf. composant CGAL_Example).
-	Important: attention à la "case sensitive" pour ces 3 points.
+	a) Ce nom doit Ãªtre Ã©galement le nom du sous-dossier (contenant le code source de votre composant) au sein de cette sous-catÃ©gorie sur le svn (cf. composant CGAL_Example).
+	b) Le nom de la classe C++ de ce composant doit Ãªtre du type VotreComposant_Component (cf. composant CGAL_Example).
+	c) Le nom de la classe C++ du plugin (qui va de paire avec la classe ci-dessus) de votre composant doit Ãªtre du type mepp_component_VotreComposant_plugin (cf. composant CGAL_Example).
+	Important: attention Ã  la "case sensitive" pour ces 3 points.
 
-3) s’inspirer de CGAL_Example dans trunk\src\components\Examples\CGAL_Example:
+3) sâ€™inspirer de CGAL_Example dans trunk\src\components\Examples\CGAL_Example:
 
-Un renommage propre et précis tenant compte de la « case » dans les .h, .hxx et .cpp devrait vous permettre d’obtenir très facilement le squelette de votre composant.
+Un renommage propre et prÃ©cis tenant compte de la Â«Â caseÂ Â» dans les .h, .hxx et .cpp devrait vous permettre dâ€™obtenir trÃ¨s facilement le squelette de votre composant.
 
-Nous prendrons donc ci-dessous comme exemple la création du nouveau composant "Various_Tools" qui appartiendra à la catégorie "Tools".
+Nous prendrons donc ci-dessous comme exemple la crÃ©ation du nouveau composant "Various_Tools" qui appartiendra Ã  la catÃ©gorie "Tools".
 Pour ce faire, il faut:
 
 	a) copier le dossier "trunk\src\components\Examples\CGAL_Example" dans le dossier "trunk\src\components\Tools"
 	b) renommer ce "nouveau" dossier "CGAL_Example" en "Various_Tools"
-	c) supprimer récursivement tous les dossiers ".svn" du dossier "Various_Tools"
-	d) décommenter éventuellement la ligne 10 (suppression du #) du fichier "trunk\src\components\Tools\Various_Tools\cmake\use_components.txt"
-				si vous souhaitez utiliser un autre composant au sein de votre propre composant (ici on laisse commenté car on ne veut pas, par exemplpe, utiliser "Curvature" dans "Various_Tools")
-	e) dans "trunk\src\components\Tools\Various_Tools\src", renommer tous les fichiers en changeant "CGAL_Example" par "Various_Tools" (attention à la "case sensitive")
-	f) enfin, avec un éditeur de texte et une fonction "rechercher/remplacer", changer dans tous les fichiers présents (*.cpp;*.h;*.hxx) dans le dossier "trunk\src\components\Tools\Various_Tools\src" :
+	c) supprimer rÃ©cursivement tous les dossiers ".svn" du dossier "Various_Tools"
+	d) dÃ©commenter Ã©ventuellement la ligne 10 (suppression du #) du fichier "trunk\src\components\Tools\Various_Tools\cmake\use_components.txt"
+				si vous souhaitez utiliser un autre composant au sein de votre propre composant (ici on laisse commentÃ© car on ne veut pas, par exemplpe, utiliser "Curvature" dans "Various_Tools")
+	e) dans "trunk\src\components\Tools\Various_Tools\src", renommer tous les fichiers en changeant "CGAL_Example" par "Various_Tools" (attention Ã  la "case sensitive")
+	f) enfin, avec un Ã©diteur de texte et une fonction "rechercher/remplacer", changer dans tous les fichiers prÃ©sents (*.cpp;*.h;*.hxx) dans le dossier "trunk\src\components\Tools\Various_Tools\src" :
 	
 				- CGAL_Example_COMPONENT_H par Various_Tools_COMPONENT_H
 				- BUILD_component_CGAL_Example par BUILD_component_Various_Tools
@@ -66,7 +66,7 @@ Pour ce faire, il faut:
 				
 				- dialSettings_CGAL_Example.hxx par dialSettings_Various_Tools.hxx
 
-Votre menu se déclare ensuite dans le fichier mepp_component_Various_Tools_plugin.hxx en le rattachant à la catégorie évoquée ci-dessus et en déclarant les actions des menus comme ci-dessous (cf. composant CGAL_Example).
+Votre menu se dÃ©clare ensuite dans le fichier mepp_component_Various_Tools_plugin.hxx en le rattachant Ã  la catÃ©gorie Ã©voquÃ©e ci-dessus et en dÃ©clarant les actions des menus comme ci-dessous (cf. composant CGAL_Example).
 
 public:
         mepp_component_CGAL_Example_plugin() : mepp_component_plugin_interface() {}
@@ -86,7 +86,7 @@ public:
             // menuCompression, menuWatermaking, menuExamples
             mParentMenu = mainWindow->menuExamples;
 
-            // début --- actions ---
+            // dÃ©but --- actions ---
             actionStep_1 = new QAction(tr("Triangulate And Random Color Facets"), this);
             if (actionStep_1)
                 connect(actionStep_1, SIGNAL(triggered()), this, SLOT(step1()));
@@ -114,20 +114,20 @@ public:
                                         << actionStep_4;
         }
 
-A partir de là, le script CMake s'occupe de tout, il n'y a pas à toucher une seule ligne de code du noyau de Mepp (ni le mepp_config.h.in, ni le polyhedron_enriched_polyhedron.h, ni le mainwindow.ui pour le menu).
+A partir de lÃ , le script CMake s'occupe de tout, il n'y a pas Ã  toucher une seule ligne de code du noyau de Mepp (ni le mepp_config.h.in, ni le polyhedron_enriched_polyhedron.h, ni le mainwindow.ui pour le menu).
 
 
 -----
 
 
-B) Utiliser le code d'un composant X au sein de votre composant (sans la gestion des boîtes de dialogue du composant X pour le moment):
+B) Utiliser le code d'un composant X au sein de votre composant (sans la gestion des boÃ®tes de dialogue du composant X pour le moment):
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 
 Note: dans cette exemple, on utilise le composant Curvature dans le composant CGAL_Example
 
 
-1) dans trunk\src\components\Examples\CGAL_Example\cmake\use_components.txt, renseigner les fichiers *.c/*.cpp dont vous avez besoin avec la fonction set de CMake (cf. dernière ligne)
+1) dans trunk\src\components\Examples\CGAL_Example\cmake\use_components.txt, renseigner les fichiers *.c/*.cpp dont vous avez besoin avec la fonction set de CMake (cf. derniÃ¨re ligne)
 	set( use_components ../../Analysis/Curvature/src/Curvature_Component.cpp ../../Analysis/Curvature/src/extract_Vpropres.cpp )
 
 2) dans trunk\src\components\Examples\CGAL_Example\mepp_component_CGAL_Example_plugin.cpp, renseigner en haut du fichier les lignes suivantes:
