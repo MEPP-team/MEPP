@@ -39,7 +39,7 @@ C:\dev\CGAL-3.7 si vous avez décompressé le fichier ci-dessus dans C:\dev
 ;C:\dev\qt-4.7.1\bin (attention au ;)
 
 Note: il se peut que vous disposiez d'un autre logiciel utilisant une autre version de Qt (et donc des dll incompatibles) ce qui provoquera une erreur au lancement de Mepp.
-Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner C:\dev\qt-4.7.1\bin avant le logiciel en question.
+Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner C:\dev\qt-x.x.x\bin avant le logiciel en question.
 
 3b) installer Graphviz : http://download.gforge.liris.cnrs.fr/meppbin/windows/graphviz-2.26.3.msi
 
