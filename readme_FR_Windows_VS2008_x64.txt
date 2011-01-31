@@ -42,7 +42,14 @@ C:\dev64\CGAL-3.6.1_x64 si vous avez décompressé le fichier ci-dessus dans C:\
  - bouton « modifier » : rajouter au sein (à la fin par exemple) de la variable Path:
 ;C:\dev64\Qt_4.6.3_x64\bin (attention au ;)
 
+Note: il se peut que vous disposiez d'un autre logiciel utilisant une autre version de Qt (et donc des dll incompatibles) ce qui provoquera une erreur au lancement de Mepp.
+Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner C:\dev\qt-4.7.1\bin avant le logiciel en question.
+
 3b) installer Graphviz : http://download.gforge.liris.cnrs.fr/meppbin/windows/graphviz-2.26.3.msi
+
+Note: Graphviz est utilisé par Doxygen pour la génération des images des graphes de dépendances. C'est l'outil 'dot.exe' qui est appelé.
+Si vous avez préalablement installé MATLAB, celui-ci utilise lui aussi un outil 'dot.exe' ce qui posera problème et aura pour conséquence d'avoir des images 'vides'.
+Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner Graphviz avant MATLAB.
 
 3c) redémarrer la machine pour la prise en compte des variables d'environnement ci-dessus
 
@@ -59,5 +66,7 @@ avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris
  - cliquer sur Generate (en bas à gauche)
  - ouvrir avec Visual Studio la solution mepp.sln générée dans C:/mepp/SVN/trunk/build puis compiler Mepp
  - se positionner sur le "sous-projet" mepp, faire un "bouton droit" puis cliquer sur "Définir comme projet de démarrage"
+ 
+Note: attention, par défaut le projet se compile en Debug, à vous de basculer en Release si vous le souhaitez.
  
 6) la documentation de Mepp (à venir...) et de votre composant au format Doxygen se génère également via Visual Studio

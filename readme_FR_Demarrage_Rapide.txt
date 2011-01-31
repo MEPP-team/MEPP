@@ -4,6 +4,15 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
+(A) s'inscrire sur la forge du laboratoire: https://gforge.liris.cnrs.fr/account/register.php
+
+(B) demander à rejoindre le projet Mepp: https://gforge.liris.cnrs.fr/project/request.php?group_id=39
+
+(C) s'abonner aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
+
+(D) utiliser SVN:
+
+
 Sous Windows :
 --------------
 
@@ -25,8 +34,6 @@ en prenant bien soin de renseigner "votre_username_gforge" puis valider par "Ok"
 - une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors
 
-3) abonnement aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
-
 
 Sous Linux :
 ------------
@@ -42,8 +49,6 @@ Sous Linux :
 - à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "yes" pour stocker la clef dans le cache
 - une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors
-
-3) abonnement aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
 
 
 Sous Mac OS X :
@@ -63,5 +68,3 @@ Sous Mac OS X :
 - à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "yes" pour stocker la clef dans le cache
 - une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors
-
-3) abonnement aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
