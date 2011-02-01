@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.42d - 24/01/2011"
+#define MEPP_VERSION "v0.43.0 - 01/02/2011 - (tagged version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
