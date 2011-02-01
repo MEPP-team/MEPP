@@ -22,13 +22,13 @@ C:\dev32\CGAL-3.6.1_x86 si vous avez décompressé le fichier ci-dessus dans C:\
  - bouton « modifier » : rajouter au sein (à la fin par exemple) de la variable Path:
 ;C:\dev32\Qt_4.6.3_x86\bin (attention au ;)
 
-Note: il se peut que vous disposiez d'un autre logiciel utilisant une autre version de Qt (et donc des dll incompatibles) ce qui provoquera une erreur au lancement de Mepp.
+Note: il se peut que vous disposiez d'un autre logiciel (exemple: MiKTeX) utilisant une autre version de Qt (et donc des dll incompatibles) ce qui provoquera une erreur au lancement de Mepp.
 Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner C:\dev\qt-x.x.x\bin avant le logiciel en question.
 
 3b) installer Graphviz : http://download.gforge.liris.cnrs.fr/meppbin/windows/graphviz-2.26.3.msi
 
 Note: Graphviz est utilisé par Doxygen pour la génération des images des graphes de dépendances. C'est l'outil 'dot.exe' qui est appelé.
-Si vous avez préalablement installé MATLAB, celui-ci utilise lui aussi un outil 'dot.exe' ce qui posera problème et aura pour conséquence d'avoir des images 'vides'.
+Par exemple, si vous avez préalablement installé MATLAB, celui-ci utilise lui aussi un outil 'dot.exe' ce qui posera problème et aura pour conséquence d'avoir des images 'vides'.
 Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner Graphviz avant MATLAB.
 
 3c) redémarrer la machine pour la prise en compte des variables d'environnement ci-dessus
