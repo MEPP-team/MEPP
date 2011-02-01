@@ -90,7 +90,8 @@ IF (DOXYGEN_FOUND)
   # create a windows help .chm file using hhc.exe
   # HTMLHelp DLL must be in path!
   # fallback: use hhw.exe interactively
-  IF    (WIN32)
+  IF    (DO_CHM) # MT
+  #IF    (WIN32)
     FIND_PACKAGE(HTMLHelp)
     IF   (HTML_HELP_COMPILER)      
       SET (TMP "${CMAKE_CURRENT_BINARY_DIR}\\Doc\\html\\index.hhp")
@@ -133,5 +134,6 @@ IF (DOXYGEN_FOUND)
 
     ENDIF(HTML_HELP_COMPILER)
     # MESSAGE(SEND_ERROR "HTML_HELP_COMPILER=${HTML_HELP_COMPILER}")
-  ENDIF (WIN32) 
+  #ENDIF (WIN32)
+  ENDIF (DO_CHM) # MT
 ENDIF(DOXYGEN_FOUND)
