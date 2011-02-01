@@ -58,7 +58,7 @@ class Processing_Component
 		void SubdivisionMidpoint (Polyhedron *pMesh, int depth);
 
 		// Mesh simplification based on edge collasp. For more information, please refer to the CGAL user manual.
-		void Simplification (Polyhedron *pMesh, int targetEdgeNum);
+                //void Simplification (Polyhedron *pMesh, int targetEdgeNum);   // MT: code mort et pb sous Linux et Mac OS !!!
 
 	private:
 

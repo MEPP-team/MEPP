@@ -13,9 +13,14 @@
 #include "Processing_Kai.h"
 
 #include <CGAL/Subdivision_method_3.h>
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
-#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+
+#ifndef __linux__
+#ifndef __APPLE__
+    #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+    #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+    #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#endif
+#endif
 
 double PI = 3.1415926535;
 
@@ -392,8 +397,11 @@ void Processing_Component::SubdivisionMidpoint (Polyhedron *pMesh, int depth)
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel,Enriched_items> Surface;
 
+#if (0) // MT: code mort et pb sous Linux et Mac OS !!!
 void Processing_Component::Simplification (Polyhedron *pMesh, int targetEdgeNum)
 {
+#ifndef __linux__
+#ifndef __APPLE__
 	CGAL::Surface_mesh_simplification::Count_stop_predicate<Surface> stop(targetEdgeNum);
 
 	// upcast... it is indeed ugly... sorry for that. trying to find new solutions...
@@ -408,4 +416,7 @@ void Processing_Component::Simplification (Polyhedron *pMesh, int targetEdgeNum)
 
 	pMesh->compute_type();
 	pMesh->compute_normals();
+#endif
+#endif
 }
+#endif

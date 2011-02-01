@@ -12649,7 +12649,7 @@ int Compression_Valence_Component::JCW_Divide_Big_Regions(Polyhedron &_pMesh)
 void Compression_Valence_Component::JCW_Colorify_Regions(Polyhedron &_pMesh)
 {
 	srand(time(NULL));
-	vector<vector<float>> Color;
+        vector<vector<float> > Color;
 
 	for(int i = 0; i < this->m_NumberRegion; i++)
 	{				
