@@ -240,7 +240,7 @@ IF(APPLE)
 	# over.
 	INSTALL(CODE "
 	file(GLOB_RECURSE QTPLUGINS
-	\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/libmepp_*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+	\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/libcomponent_*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
 	include(BundleUtilities)
 	fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
 	" COMPONENT Runtime)
