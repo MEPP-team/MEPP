@@ -10,14 +10,16 @@ Marche à suivre pour Mepp (64 bits) sous Windows avec Visual Studio Express 200
 
 Note: vous devez disposer d'une machine 64 bits (Vista 64 bits ou Seven 64 bits)
 
+1a) récupérer et installer DAEMON Tools Lite afin de pouvoir installer les images 'iso' des logiciels ci-dessous:
+http://download.gforge.liris.cnrs.fr/meppbin/windows/DTLite4402-0131.exe
 
-1a) récupérer et installer Visual Studio Express 2008 SP1:
+1b) récupérer et installer Visual Studio Express 2008 SP1:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/VS2008ExpressWithSP1FRAx1504731.iso (869 Mo)
 
-1b) récupérer et installer MSDK for Windows 7 and .NET Framework 3.5 SP1:
+1c) récupérer et installer MSDK for Windows 7 and .NET Framework 3.5 SP1:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/GRMSDKX_EN_DVD_7_and_3.5_SP1_(7.0).iso (1.4 Go)
 
-1c) activer le nouveau SDK:
+1d) activer le nouveau SDK:
 menu "Démarrer" -> "Tous les programmes" -> "Microsoft Windows SDK v7.0" -> "CMD Shell",
 puis taper "WindowsSdkVer.exe -version:v7.0"
 
@@ -58,8 +60,8 @@ Par exemple, dans C:/mepp/SVN,
 avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
 
 5) utiliser CMake-gui (dans C:\dev64\_cmake-2.8.3.20110118_\bin)
- - renseigner le champ "Where is the source code" avec par exemple C:/mepp/SVN/trunk
- - renseigner le champ "Where to build the binaries" avec par exemple C:/mepp/SVN/trunk/build
+ - renseigner le champ "Where is the source code" avec C:/mepp/SVN/trunk (attention, pas C:/mepp/SVN/trunk/src !)
+ - renseigner le champ "Where to build the binaries" avec C:/mepp/SVN/trunk/build
  - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 9 2008 Win64" (attention, ne pas se tromper avec "Visual Studio 9 2008")
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau

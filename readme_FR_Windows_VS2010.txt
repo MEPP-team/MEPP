@@ -7,10 +7,14 @@
 Marche à suivre pour Mepp (32 bits) sous Windows avec Visual Studio Express 2010 :
 ----------------------------------------------------------------------------------
 
-1a) récupérer et installer Windows Installer 4.5 Redistributable:
+
+1a) récupérer et installer DAEMON Tools Lite afin de pouvoir installer les images 'iso' des logiciels ci-dessous:
+http://download.gforge.liris.cnrs.fr/meppbin/windows/DTLite4402-0131.exe
+
+1b) Seulement si vous êtes sous Windows XP, récupérer et installer Windows Installer 4.5 Redistributable:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/WindowsXP-KB942288-v3-x86.exe (3 Mo)
 
-1b) récupérer et installer Visual Studio Express 2010:
+1c) récupérer et installer Visual Studio Express 2010:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/VS2010ExpressFRA.iso (728 Mo)
 
 2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
@@ -41,8 +45,8 @@ Par exemple, dans C:/mepp/SVN,
 avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
 
 5) utiliser CMake-gui (dans C:\dev\_cmake-2.8.3.20110118_\bin)
- - renseigner le champ "Where is the source code" avec par exemple C:/mepp/SVN/trunk
- - renseigner le champ "Where to build the binaries" avec par exemple C:/mepp/SVN/trunk/build
+ - renseigner le champ "Where is the source code" avec C:/mepp/SVN/trunk (attention, pas C:/mepp/SVN/trunk/src !)
+ - renseigner le champ "Where to build the binaries" avec C:/mepp/SVN/trunk/build
  - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 10"
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau
@@ -58,3 +62,7 @@ Note: attention, par défaut le projet se compile en Debug, à vous de basculer 
 
 * Au premier lancement de Visual Studio 2010, il est conseillé d'activer cette option:
 Menu Outils -> Paramètres -> Paramètres avancés
+
+* Avec Visual Studio 2010 Ultimate, pour compiler Mepp en debug il peut être nécessaire de désactiver cette option:
+Projet « mepp » -> bouton droit -> Propriétés -> Propriétés de configuration -> Outil Manifeste -> Sortie des commentaires -> Non
+ 
