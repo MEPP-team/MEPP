@@ -7,7 +7,7 @@
 
 #include <polyhedron_enrichment_include.h>
 
-template <class Refs, class T, class P, class Norm>
+template <class Refs, class T, class P, class Norm, class Plane>
 class Enriched_facet :
 	/*************** HERITAGE FACETTE ***************/
 	#include <polyhedron_enrichment_facet.h>
@@ -75,10 +75,12 @@ struct Enriched_items : public CGAL::Polyhedron_items_3
     {
         typedef typename Traits::Point_3  Point;
         typedef typename Traits::Vector_3 Normal;
+		typedef typename Traits::Plane_3 Plane;
         typedef Enriched_facet<Refs,
                          CGAL::Tag_true,
                          Point,
-                         Normal> Face;
+                         Normal,
+						 Plane> Face;
     };
 
     // wrap halfedge

@@ -17,7 +17,7 @@
  * \class Boolean_Operations_Facet
  * \brief Enriches the Facets of a Polyhedra
  */
-template <class Refs, class T, class Norm>
+template <class Refs, class T, class P, class Norm, class Plane>
 class Boolean_Operations_Facet : virtual public MEPP_Common_Facet<Refs, T, Norm>
 {
 	public:

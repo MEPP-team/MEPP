@@ -11,7 +11,7 @@
 
 #include "../../../../mepp/Polyhedron/polyhedron_shared_items.h"
 
-template <class Refs, class T, class Norm>
+template <class Refs, class T, class P, class Norm, class Plane>
 class CGAL_Example_Facet : virtual public MEPP_Common_Facet<Refs, T, Norm>
 {
 	public:
