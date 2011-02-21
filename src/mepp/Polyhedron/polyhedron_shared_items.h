@@ -29,7 +29,11 @@
 // For PLY Loading
 #include "Polyhedron_PLY_CGALImporter.h"
 
-// For Polyhderon copy
+// For X3D Loading
+#include "Polyhedron_X3D_CGALImporter.h"
+#include "X3D_old.h"
+
+// For Polyhedron copy
 #include "Polyhedron_Copy.h"
 
 #ifdef _MSC_VER
@@ -1118,6 +1122,62 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return 0;
 		}
 
+		int load_mesh_x3d(string filename)
+		{
+			IFSData ifsdata;
+			X3DMeshExtractor parser;
+			parser.load(filename, ifsdata);
+
+			X3D_CGALImporter<HalfedgeDS, Point> poly_builder(&(ifsdata.vertex), &(ifsdata.face));
+			this->delegate(poly_builder);
+
+			if (ifsdata.colorMode == COLOR_PER_FACE)
+			{
+				Facet_iterator f = this->facets_begin();
+
+				for (unsigned int index=0; index<ifsdata.color.size(); index++)
+				{
+					Halfedge_around_facet_circulator pHalfedge = f->facet_begin();
+					do
+					{
+						pHalfedge->vertex()->color(ifsdata.color[index][0], ifsdata.color[index][1], ifsdata.color[index][2]);
+					}
+					while(++pHalfedge != f->facet_begin());
+					f++;
+				}
+
+				this->has_color(true);
+
+			}
+			else if (ifsdata.colorMode == COLOR_PER_VERTEX)
+			{
+				Vertex_iterator v = this->vertices_begin();
+				for (unsigned int index=0; index<ifsdata.color.size(); index++)
+				{
+					v->color(ifsdata.color[index][0], ifsdata.color[index][1], ifsdata.color[index][2]);
+					v++;
+				}
+
+				this->has_color(true);
+			}
+			else
+			{
+				if (ifsdata.color.size()) // color per vertex
+				{
+					Vertex_iterator v = this->vertices_begin();
+					for (unsigned int index=0; index<ifsdata.color.size(); index++)
+					{
+						v->color(ifsdata.color[index][0], ifsdata.color[index][1], ifsdata.color[index][2]);
+						v++;
+					}
+
+					this->has_color(true);
+				}
+			}
+
+			return 0;
+		}
+
         void triangulate()
         {
             Facet_iterator f = this->facets_begin();
@@ -1211,62 +1271,6 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return true;
 		}*/
 #endif
-
-		/*MEPP: bool load_mesh_x3d(string filename)
-		{
-			IFSData ifsdata;
-			X3DMeshExtractor parser;
-			parser.load(filename, ifsdata);
-
-			X3D_CGALImporter<HalfedgeDS, Point> poly_builder(&(ifsdata.vertex), &(ifsdata.face));
-			this->delegate(poly_builder);
-
-			if (ifsdata.colorMode == COLOR_PER_FACE)
-			{
-				Facet_iterator f = this->facets_begin();
-
-				for (unsigned int index=0; index<ifsdata.color.size(); index++)
-				{
-					Halfedge_around_facet_circulator pHalfedge = f->facet_begin();
-					do
-					{
-						pHalfedge->vertex()->color(ifsdata.color[index][0], ifsdata.color[index][1], ifsdata.color[index][2]);
-					}
-					while(++pHalfedge != f->facet_begin());
-					f++;
-				}
-
-				this->has_color(true);
-
-			}
-			else if (ifsdata.colorMode == COLOR_PER_VERTEX)
-			{
-				Vertex_iterator v = this->vertices_begin();
-				for (unsigned int index=0; index<ifsdata.color.size(); index++)
-				{
-					v->color(ifsdata.color[index][0], ifsdata.color[index][1], ifsdata.color[index][2]);
-					v++;
-				}
-
-				this->has_color(true);
-			}
-			else
-			{
-				if (ifsdata.color.size()) // color per vertex
-				{
-					Vertex_iterator v = this->vertices_begin();
-					for (unsigned int index=0; index<ifsdata.color.size(); index++)
-					{
-						v->color(ifsdata.color[index][0], ifsdata.color[index][1], ifsdata.color[index][2]);
-						v++;
-					}
-
-					this->has_color(true);
-				}
-			}
-
-			return true;
-		}*/
 
 #if (0)
 		// Ajout Céline :

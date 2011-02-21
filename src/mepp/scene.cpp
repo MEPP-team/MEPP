@@ -71,6 +71,8 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 				res = polyhedron_ptr->load_mesh_smf(filename.toStdString());
 			else if (ext == "ply")
 				res = polyhedron_ptr->load_mesh_ply(filename.toStdString());
+			else if (ext == "x3d")
+				res = polyhedron_ptr->load_mesh_x3d(filename.toStdString());
 			else
 				res = 1;
 		}

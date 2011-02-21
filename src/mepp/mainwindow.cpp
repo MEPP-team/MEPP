@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.43.1 - 21/02/2011 - (trunk version)"
+#define MEPP_VERSION "v0.43.2 - 21/02/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -62,7 +62,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 		model = new QFileSystemModel;
 		QStringList filters;
-		filters << "*.off" << "*.obj" << "*.smf" << "*.ply";  // extensions
+		filters << "*.off" << "*.obj" << "*.smf" << "*.ply" << "*.x3d";  // extensions
 		model->setNameFilters(filters);
 		model->setNameFilterDisables(false);
 
@@ -864,7 +864,7 @@ void mainwindow::actionOpen_slot(QString title, QString typeFiles, int loadType,
 }
 void mainwindow::on_actionOpen_triggered()
 {
-    actionOpen_slot(tr("Open Mesh File(s)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;ALL files (*.*)"), Normal, NULL);
+    actionOpen_slot(tr("Open Mesh File(s)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d);;ALL files (*.*)"), Normal, NULL);
 }
 
 void mainwindow::actionOpen_space_slot(QString title, QString typeFiles, typeFuncOpenSave f)
@@ -894,7 +894,7 @@ void mainwindow::actionOpen_space_slot(QString title, QString typeFiles, typeFun
 }
 void mainwindow::on_actionOpen_space_triggered()
 {
-	actionOpen_space_slot(tr("Open Mesh File(s) (space)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply)"), NULL);
+	actionOpen_space_slot(tr("Open Mesh File(s) (space)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d)"), NULL);
 }
 
 void mainwindow::actionOpen_time_slot(QString title, QString typeFiles, typeFuncOpenSave f)
@@ -924,7 +924,7 @@ void mainwindow::actionOpen_time_slot(QString title, QString typeFiles, typeFunc
 }
 void mainwindow::on_actionOpen_time_triggered()
 {
-	actionOpen_time_slot(tr("Open Mesh File(s) (time)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply)"), NULL);
+	actionOpen_time_slot(tr("Open Mesh File(s) (time)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d)"), NULL);
 }
 
 void mainwindow::actionOpen_and_Add_space_slot(QString title, QString typeFiles, typeFuncOpenSave f)
@@ -950,7 +950,7 @@ void mainwindow::actionOpen_and_Add_space_slot(QString title, QString typeFiles,
 }
 void mainwindow::on_actionOpen_and_Add_space_triggered()
 {
-	actionOpen_and_Add_space_slot(tr("Open and Add Mesh File(s) (space)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply)"), NULL);
+	actionOpen_and_Add_space_slot(tr("Open and Add Mesh File(s) (space)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d)"), NULL);
 }
 
 void mainwindow::actionOpen_and_Add_time_slot(QString title, QString typeFiles, typeFuncOpenSave f)
@@ -976,7 +976,7 @@ void mainwindow::actionOpen_and_Add_time_slot(QString title, QString typeFiles, 
 }
 void mainwindow::on_actionOpen_and_Add_time_triggered()
 {
-	actionOpen_and_Add_time_slot(tr("Open and Add Mesh File(s) (time)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply)"), NULL);
+	actionOpen_and_Add_time_slot(tr("Open and Add Mesh File(s) (time)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d)"), NULL);
 }
 
 void mainwindow::actionAddEmpty_slot()

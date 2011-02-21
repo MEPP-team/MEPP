@@ -55,11 +55,32 @@ if (QT4_FOUND)
   find_package(QGLViewer)
 endif (QT4_FOUND)
 
-if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if (WIN32)
+	set(QTDIR $ENV{QTDIR} )
+	set(DEV_DIRECTORY ${QTDIR}/.. )
+endif (WIN32)
+
+# Find XercesC
+if (WIN32)
+	# Hint to included XercesC resources
+	SET(XERCESC_ROOT ${DEV_DIRECTORY}/contrib/xerces-c)
+	SET(XML_PARSER_INSTALL_FILES ${XERCESC_ROOT}/bin/xerces-c_3_1.dll)
+	SET(XERCESC_INCLUDE_DIR ${XERCESC_ROOT}/include CACHE PATH "Include path of XercesC library")
+	SET(XERCESC_LIBRARY ${XERCESC_ROOT}/lib/xerces-c_3.lib CACHE FILEPATH  "XercesC library" )
+endif (WIN32)
+find_package(XercesC)
+if (XERCESC_FOUND)
+	set (XML_PARSER_INCLUDE_DIR ${XERCESC_INCLUDE_DIR})
+	set (XML_PARSER_LIBRARY ${XERCESC_LIBRARY})
+endif(XERCESC_FOUND)
+
+if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
 
   find_package(Boost)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+  
+  include_directories ( ${XML_PARSER_INCLUDE_DIR} )
 	
 	file(
 		GLOB_RECURSE
@@ -103,6 +124,9 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	# Link with libQGLViewer, OpenGL
 	target_link_libraries( ${COMPONENT_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 	
+	# Link with XercesC
+	target_link_libraries( ${COMPONENT_NAME} ${XML_PARSER_LIBRARY} ) 
+	
 	#Documentation
 	option(BUILD_${COMPONENT_NAME}_DOC "Build Doxygen documentation for ${COMPONENT_NAME}" ON)
 	if(BUILD_${COMPONENT_NAME}_DOC)
@@ -131,4 +155,4 @@ else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   message(STATUS "NOTICE: This software component requires ${MEPP_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
