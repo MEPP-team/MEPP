@@ -773,7 +773,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			file << "# MEPP output file" << endl;
 
-			file << this->size_of_vertices() << " " << this->size_of_facets() << " 0" << endl;
+			file << this->size_of_vertices() << " " << this->size_of_facets() << " " << (this->size_of_halfedges() >> 1) << endl; // MT
 
 			// output vertices
 			for (Vertex_iterator pVert = this->vertices_begin(); pVert != this->vertices_end(); pVert++)
