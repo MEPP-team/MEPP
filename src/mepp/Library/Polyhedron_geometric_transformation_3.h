@@ -144,6 +144,30 @@ namespace Polyhedron_geometric_transformation_3
 			std::transform(P.points_begin(), P.points_end(), P.points_begin(), translation.inverse());
 		}
 	}
+	/*******************************************************************************************************
+	*                                  Polyhedron_3 reflexion                                              *
+	*******************************************************************************************************/
+	template <typename Polyhedron_3>
+	inline void reflect(Polyhedron_3& P, typename const Polyhedron_3::Point_3& center = CGAL::ORIGIN)
+	{
+		CGAL_assertion(&P != NULL);
+
+		typedef typename Polyhedron_3::Traits::Aff_transformation_3									Aff_transf;
+		typedef typename Polyhedron_3::Traits::Vector_3												Vector_3;
+		Aff_transf reflection(-1, 0, 0, 0, -1, 0, 0, 0, -1, 1);
+		
+		if (center == CGAL::ORIGIN)
+		{
+			std::transform(P.points_begin(), P.points_end(), P.points_begin(), reflection);
+		}
+		else
+		{
+			Aff_transf translation(CGAL::TRANSLATION, Vector_3(center,CGAL::ORIGIN));
+			std::transform(P.points_begin(), P.points_end(), P.points_begin(), translation);
+			std::transform(P.points_begin(), P.points_end(), P.points_begin(), reflection);
+			std::transform(P.points_begin(), P.points_end(), P.points_begin(), translation.inverse());
+		}
+	}
 
 } // end of namespace Polyhedron_geometric_transformation_3
 #endif // end of _POLYHEDRON_GEOMETRIC_TRANSFORMATION_3_H
