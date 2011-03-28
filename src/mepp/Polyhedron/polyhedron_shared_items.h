@@ -56,13 +56,13 @@ struct Facet_normal // (functor)
 			typename Facet::Normal_3 normal = CGAL::cross_product(
 				h->next()->vertex()->point() - h->vertex()->point(),
 				h->next()->next()->vertex()->point() - h->next()->vertex()->point());
-			double sqnorm = normal * normal;
+			double sqnorm = to_double(normal * normal);
 			if (sqnorm != 0)
 				normal = normal / (float)std::sqrt(sqnorm);
 			sum = sum + normal;
 		}
 		while(++h != f.facet_begin());
-		double sqnorm = sum * sum;
+		double sqnorm = to_double(sum * sum);
 		if (sqnorm != 0.0)
 			f.normal() = sum / std::sqrt(sqnorm);
 		else
@@ -72,6 +72,33 @@ struct Facet_normal // (functor)
 		}
 	}
 };
+// from Hichem
+/*struct Facet_normal
+{
+	template <class Facet>
+	void operator()(Facet& f)
+	{
+		typedef typename Facet::Normal_3		Vector_3;
+		Vector_3								facet_normal;
+		typename Facet::Halfedge_around_facet_const_circulator h = f.facet_begin();
+		do
+		{
+			facet_normal = CGAL::cross_product(h->next()->vertex()->point() - h->vertex()->point(),
+				h->next()->next()->vertex()->point() - h->next()->vertex()->point());
+		}
+		while (facet_normal != CGAL::NULL_VECTOR && ++h	!= f.facet_begin());
+		if(facet_normal != CGAL::NULL_VECTOR)
+		{
+			f.normal() = facet_normal;
+		}
+		else // All consecutive facet edges are collinear --> degenerate (0 area) facet
+		{
+			std::cerr <<std::endl << "Degenerate polyhedron facet" << std::endl << std::flush;
+			f.normal() = CGAL::NULL_VECTOR;
+			assert(facet_normal != CGAL::NULL_VECTOR);			
+		}
+	}
+};*/
 
 // compute vertex normal
 struct Vertex_normal // (functor)
@@ -85,7 +112,7 @@ struct Vertex_normal // (functor)
         CGAL_For_all(pHalfedge,begin)
           if (!pHalfedge->is_border())
             normal = normal + pHalfedge->facet()->normal();
-        double sqnorm = normal * normal;
+        double sqnorm = to_double(normal * normal);
         if (sqnorm != 0.0f)
           v.normal() = normal / (float)std::sqrt(sqnorm);
         else
@@ -503,7 +530,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			{
 				Vector vec = pHalfEdge->vertex()->point()-
 							pHalfEdge->opposite()->vertex()->point();
-				sum += std::sqrt(vec*vec);
+				sum += std::sqrt(to_double(vec*vec));
 				degree++;
 			}
 			return sum / (FT) degree;
@@ -541,7 +568,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			{
 				//const Facet::Normal_3& normal = pFacet->normal();
 				const Normal& normal = pFacet->normal();
-				::glNormal3d(normal[0],normal[1],normal[2]);
+				::glNormal3d(to_double(normal[0]),to_double(normal[1]),to_double(normal[2]));
 			}
 
 			// revolve around current face to get vertices
@@ -552,7 +579,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				if (use_normals && smooth_shading)
 				{
 					const Normal& normal = pHalfedge->vertex()->normal();
-					::glNormal3d(normal[0],normal[1],normal[2]);
+					::glNormal3d(to_double(normal[0]),to_double(normal[1]),to_double(normal[2]));
 				}
 
 				// color
@@ -566,7 +593,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 				// polygon assembly is performed per vertex
 				const Point& point  = pHalfedge->vertex()->point();
-				::glVertex3d(point[0],point[1],point[2]);
+				::glVertex3d(to_double(point[0]),to_double(point[1]),to_double(point[2]));
 			}
 			while(++pHalfedge != pFacet->facet_begin());
 		}
@@ -590,21 +617,21 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 					kernel k;
 					Point d1 = k.construct_circumcenter_3_object()(p1,p2,p3);
-					::glVertex3d(d1[0],d1[1],d1[2]);
+					::glVertex3d(to_double(d1[0]),to_double(d1[1]),to_double(d1[2]));
 
 					const Point &pp1 = h->opposite()->vertex()->point();
 					const Point &pp2 = h->opposite()->next()->vertex()->point();
 					const Point &pp3 = h->opposite()->next()->next()->vertex()->point();
 					Point d2 = k.construct_circumcenter_3_object()(pp1,pp2,pp3);
-					::glVertex3d(d2[0],d2[1],d2[2]);
+					::glVertex3d(to_double(d2[0]),to_double(d2[1]),to_double(d2[2]));
 				}
 				else
 				{
 					// assembly and draw line segment
 					const Point& p1 = h->prev()->vertex()->point();
 					const Point& p2 = h->vertex()->point();
-					::glVertex3d(p1[0],p1[1],p1[2]);
-					::glVertex3d(p2[0],p2[1],p2[2]);
+					::glVertex3d(to_double(p1[0]),to_double(p1[1]),to_double(p1[2]));
+					::glVertex3d(to_double(p2[0]),to_double(p2[1]),to_double(p2[2]));
 				}
 			}
 			::glEnd();
@@ -615,7 +642,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		{
 			::glBegin(GL_POINTS);
 				for (Point_iterator pPoint = this->points_begin(); pPoint != this->points_end(); pPoint++)
-				::glVertex3d(pPoint->x(),pPoint->y(),pPoint->z());
+				::glVertex3d(to_double(pPoint->x()),to_double(pPoint->y()),to_double(pPoint->z()));
 			::glEnd(); // // end point assembly
 		}
 
@@ -671,8 +698,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			for (Vertex_iterator pVertex = this->vertices_begin(); pVertex !=  this->vertices_end(); pVertex++)
 			{
 				::glPushMatrix();
-					double radius = average_edge_length_around(pVertex)*scale;
-					::glTranslated(pVertex->point().x(), pVertex->point().y(), pVertex->point().z());
+					double radius = to_double(average_edge_length_around(pVertex)*scale);
+					::glTranslated(to_double(pVertex->point().x()), to_double(pVertex->point().y()), to_double(pVertex->point().z()));
 
 					if (glList)
 					{
@@ -701,9 +728,9 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			glBegin(GL_LINES);
 			for (Vertex_iterator pVertex = this->vertices_begin(); pVertex !=  this->vertices_end(); pVertex++)
 			{
-					glVertex3d(pVertex->point().x(), pVertex->point().y(), pVertex->point().z());
-					glVertex3d(pVertex->point().x() + pVertex->normal().x(), pVertex->point().y() + pVertex->normal().y(),
-								pVertex->point().z() + pVertex->normal().z());
+					glVertex3d(to_double(pVertex->point().x()), to_double(pVertex->point().y()), to_double(pVertex->point().z()));
+					glVertex3d(to_double(pVertex->point().x()) + to_double(pVertex->normal().x()), to_double(pVertex->point().y()) + to_double(pVertex->normal().y()),
+								to_double(pVertex->point().z()) + to_double(pVertex->normal().z()));
 			}
 			glEnd(); // // end point assembly
 		}
@@ -783,7 +810,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				if (write_normals)
 				{
 					file << "  ";
-					file << (float)(pVert->normal().x()) << " " << (float)(pVert->normal().y()) << " " << (float)(pVert->normal().z());
+					file << (float)(to_double(pVert->normal().x())) << " " << (float)(to_double(pVert->normal().y())) << " " << (float)(to_double(pVert->normal().z()));
 				}
 
 				if (write_color)
@@ -828,34 +855,34 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			::glBegin(GL_LINES);
 
 			// along x axis
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymin()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymin()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymin()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymin()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymax()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymax()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymax()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymax()),to_double(m_bbox.zmax()));
 
 			// along y axis
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymin()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymax()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymin()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymax()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymin()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymax()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymin()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymax()),to_double(m_bbox.zmax()));
 
 			// along z axis
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymin(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmin(),m_bbox.ymax(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymin(),m_bbox.zmax());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmin());
-			::glVertex3d(m_bbox.xmax(),m_bbox.ymax(),m_bbox.zmax());
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymin()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymin()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymax()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmin()),to_double(m_bbox.ymax()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymin()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymin()),to_double(m_bbox.zmax()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymax()),to_double(m_bbox.zmin()));
+			::glVertex3d(to_double(m_bbox.xmax()),to_double(m_bbox.ymax()),to_double(m_bbox.zmax()));
 
 			::glEnd();
 		}

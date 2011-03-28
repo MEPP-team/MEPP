@@ -131,7 +131,7 @@ class Viewer : public QGLViewer
 
 			if (!p->empty())
 			{
-				setSceneBoundingBox(qglviewer::Vec(p->xmin(),p->ymin(),p->zmin()), qglviewer::Vec(p->xmax(),p->ymax(),p->zmax()));		
+				setSceneBoundingBox(qglviewer::Vec(to_double(p->xmin()),to_double(p->ymin()),to_double(p->zmin())), qglviewer::Vec(to_double(p->xmax()),to_double(p->ymax()),to_double(p->zmax())));		
 				showEntireScene();
 			}
 

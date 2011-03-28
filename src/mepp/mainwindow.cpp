@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.43.3 - 03/03/2011 - (trunk version)"
+#define MEPP_VERSION "v0.44.0 - 28/03/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -93,7 +93,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 	
 	loadPlugins();
 
-	this->setWindowTitle(tr("%1 - %2 - %3").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE));
+	this->setWindowTitle(tr("%1 - %2 - %3 - %4").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE).arg(KERNEL));
 	aboutQGLViewer = new QGLViewer(); // for aboutQGLViewer
 
 	viewpointCopied = false;
@@ -510,7 +510,7 @@ void mainwindow::updateMenus()
 	actionChange_Viewer_Mode_Space_Time->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() != Normal);
 	actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (Normal)"));
 
-	this->setWindowTitle(tr("%1 - %2 - %3").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE));
+	this->setWindowTitle(tr("%1 - %2 - %3 - %4").arg(MAINWINDOW_TITLE).arg(MEPP_VERSION).arg(ARCHITECTURE).arg(KERNEL));
 
 	// rendering options
 	actionRender_Point->setEnabled(hasMdiChild);

@@ -18,8 +18,25 @@ class Viewer;
 
 #include "polyhedron_enriched_polyhedron.h"
 
-typedef double number_type;
-typedef CGAL::Simple_cartesian<number_type> Enriched_kernel;
+// kernel
+//#define _KERNEL_EXACT_
+
+#ifdef _KERNEL_EXACT_
+#include <CGAL/Gmpq.h>
+#include <CGAL/Lazy_exact_nt.h>
+
+typedef CGAL::Gmpq												CGAL_Gmpq;
+typedef CGAL::Lazy_exact_nt<CGAL_Gmpq>							EX_MM_Number_type;
+typedef CGAL::Simple_cartesian<EX_MM_Number_type>				Enriched_kernel;
+
+#define KERNEL QObject::tr("(kernel: Lazy_exact_nt)")
+#else
+typedef double													number_type;
+typedef CGAL::Simple_cartesian<number_type>						Enriched_kernel;
+
+#define KERNEL QObject::tr("(kernel: double)")
+#endif
+// kernel
 
 typedef Enriched_polyhedron<Enriched_kernel, Enriched_items>	Polyhedron;
 
