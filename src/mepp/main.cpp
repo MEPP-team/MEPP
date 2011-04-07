@@ -1,13 +1,18 @@
-///////////////////////////////////////////////////////////////////////////
-// Author: Martial TOLA
-// Year: 2010
-// CNRS-Lyon, LIRIS UMR 5205
-/////////////////////////////////////////////////////////////////////////// 
+/*!
+ * \file main.cpp
+ * \brief Main file.
+ * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
+ * \date 2010
+ */
 #include <QApplication>
 #include <QtGui>
 
 #include "mainwindow.hxx"
 
+/*!
+ * \fn void loadStyleSheet()
+ * \brief Load and apply StyleSheet (not used).
+ */
 void loadStyleSheet()
 {
     // Let's use QFile and point to a resource...
@@ -28,6 +33,14 @@ void loadStyleSheet()
     }
 }
 
+/*!
+ * \fn int main(int argc, char *argv[])
+ * \brief Main function.
+ *
+ * \param argc .
+ * \param argv .
+ * \return 0 if normal.
+ */
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

@@ -834,7 +834,11 @@ void Viewer::init()
 	// Make world axis visible
 	//setAxisIsDrawn(); // avoid bug under Mac OS X
 
-	camera()->setZClippingCoefficient(100.0);	// 50
+	//camera()->setZClippingCoefficient(100.0);	// 50
+		setSceneRadius(1.0);
+		setSceneCenter(Vec(0.0, 0.0, 0.0));
+		camera()->setZNearCoefficient(0.005f);
+		camera()->setZClippingCoefficient(sqrt(3.0));
 
 	showAllScene();
 

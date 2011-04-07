@@ -55,6 +55,7 @@ sudo yum install subversion CGAL-devel qt-creator libQGLViewer-devel cmake-gui g
 3a) ajouter le repository suivant à YaST2: http://download.opensuse.org/repositories/openSUSE:/11.4:/Contrib/standard/
 3b) installer les paquets suivants:
 sudo zypper install subversion CGAL-devel qt-creator cmake-gui glew-devel doxygen graphviz libxerces-c-devel
+
 3c) télécharger libQGLViewer: http://www.libqglviewer.com/src/libQGLViewer-2.3.9.tar.gz
 3d) compiler et installer libQGLViewer:
 tar -xzf libQGLViewer-2.3.9.tar.gz

@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.44.1 - 07/04/2011 - (trunk version)"
+#define MEPP_VERSION "v0.44.2 - 07/04/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -226,7 +226,7 @@ bool mainwindow::initPlugin(QObject* obj)
 	// menu
 	if (plugin->mParentMenu)
 	{
-		plugin->mMenu = new QMenu(plugin->getPluginName(), plugin->mParentMenu);
+		plugin->mMenu = new QMenu(plugin->getPluginName().remove("mepp_component_").remove("_plugin").replace(QRegExp("[_]"), " "), plugin->mParentMenu);
 		plugin->mParentMenu->menuAction()->setEnabled(true);
 		plugin->mParentMenu->addMenu(plugin->mMenu);
 	}
@@ -235,7 +235,7 @@ bool mainwindow::initPlugin(QObject* obj)
 	// dock
 	plugin->mToolBar = new QToolBar(inner);
 	plugin->mToolBar->setOrientation(Qt::Vertical);
-	plugin->mToolBar->setWindowTitle("Toolbar_" + plugin->getPluginName());
+	plugin->mToolBar->setWindowTitle(plugin->getPluginName().remove("mepp_component_").remove("_plugin").replace(QRegExp("[_]"), " "));
 	plugin->mToolBar->setVisible(false);
 	inner->addToolBar(Qt::LeftToolBarArea, plugin->mToolBar);
 	// dock
@@ -243,8 +243,9 @@ bool mainwindow::initPlugin(QObject* obj)
 	// put plugin into list
 	lplugin << plugin;
 
-	QLabel *pLabel = new QLabel(plugin->getPluginName().toUpper() + ": ");
+	QLabel *pLabel = new QLabel(plugin->getPluginName().remove("mepp_component_").remove("_plugin").replace(QRegExp("[_]"), " ").toUpper() + ": ");
 	pLabel->setStyleSheet("QLabel { color: black; font: bold 10px; }");
+	pLabel->setAlignment(Qt::AlignHCenter);
 	plugin->mToolBar->addWidget(pLabel);
 	QLabel *pLabelEmpty = new QLabel("");
 	plugin->mToolBar->addWidget(pLabelEmpty);
