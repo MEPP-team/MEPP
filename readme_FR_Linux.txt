@@ -4,22 +4,21 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 :
-------------------------------------------------------------
+----------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 :
+----------------------------------------------------------------
 
 1) installer Ubuntu 9.10, 10.04 ou 10.10
-
-2) faire la mise à jour de la distribution et des paquets déjà installés
-
-3) installer les paquets suivants:
+2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
-sudo apt-get install filezilla subversion unrar libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev
-sudo apt-get install mencoder ffmpeg doxygen-gui graphviz libxerces-c-dev
+3) installer les paquets suivants:
+sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen-gui graphviz libxerces-c-dev
+sudo apt-get install mencoder ffmpeg unrar filezilla
 
 -------------------------------
 Suivant votre version d'Ubuntu:
 -------------------------------
-4a) sous Ubuntu 9.10 créer 2 liens:
+Sous Ubuntu 9.10 créer 2 liens:
 cd /usr/lib
 sudo ln -s libqglviewer-qt4.so libQGLViewer.so
 cd /usr/include
@@ -27,19 +26,34 @@ sudo ln -s qglviewer-qt4 QGLViewer
 
 ou
 
-4b) sous Ubuntu 10.04 créer 1 lien:
+sous Ubuntu 10.04 créer 1 lien:
 cd /usr/lib
 sudo ln -s libqglviewer-qt4.so libQGLViewer.so
 
 ou
 
-4c) sous Ubuntu 10.10, rien à faire
------------------------------------------------
+sous Ubuntu 10.10, rien à faire
+-------------------------------
 
-5) télécharger les sources de Mepp:
+
+----------------------------------------------
+(B) Marche à suivre pour Mepp sous Fedora 14 : http://pkgs.org/
+----------------------------------------------
+
+1) installer Fedora 14
+2) faire la mise à jour de la distribution et des paquets déjà installés
+3) installer les paquets suivants:
+sudo yum install subversion CGAL-devel qt-creator libQGLViewer-devel gcc-c++ make cmake-gui glew-devel doxygen graphviz xerces-c-dev
+
+
+----------------------------------------------
+----------------------------------------------
+
+
+4) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
 
-6a) compiler Mepp avec CMake et Makefile:
+5a) compiler Mepp avec CMake et Makefile:
 se positionner dans trunk, puis,
  - mkdir build; cd build
  - pour une version Release: "cmake .." puis make
@@ -51,7 +65,7 @@ note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 
 ou
 
-6b) compiler Mepp avec CMake et Qt Creator:
+5b) compiler Mepp avec CMake et Qt Creator:
 CMake (ou CMake-gui) est capable de générer (pour le moment) des Makefiles Unix ainsi que des projets Code::Blocks ou encore KDevelop,
 mais malheureusement pas encore des projets Qt Creator (.pro).
 Qt Creator sait par contre interprêter directement le CMakeLists.txt de cmake

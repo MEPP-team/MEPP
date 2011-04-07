@@ -12,9 +12,6 @@
 
 // $Id: Polyhedron_decorator.h,v 1.4 2004/05/15 23:27:06 sle-jeng Exp $
 
-/** @file Polyhedron_decorator.h
-*/
-
 #ifndef _POLYHEDRON_DECORATOR_H_01282002
 #define _POLYHEDRON_DECORATOR_H_01282002
 

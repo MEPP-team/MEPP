@@ -12,9 +12,6 @@
 
 // $Id: Polyhedron_memory_builder.h,v 1.7 2004/05/19 19:59:07 sle-jeng Exp $
 
-/** @file Polyhedron_memory_builder.h
-*/
-
 #ifndef _POLYHEDRON_MEMORY_BUILDER_H_01312002
 #define _POLYHEDRON_MEMORY_BUILDER_H_01312002
 

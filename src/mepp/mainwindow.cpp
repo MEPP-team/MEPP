@@ -1,11 +1,12 @@
-///////////////////////////////////////////////////////////////////////////
-// Author: Martial TOLA
-// Year: 2010
-// CNRS-Lyon, LIRIS UMR 5205
-/////////////////////////////////////////////////////////////////////////// 
+/*!
+ * \file mainwindow.cpp
+ * \brief MainWindow file.
+ * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
+ * \date 2010
+ */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.44.0 - 28/03/2011 - (trunk version)"
+#define MEPP_VERSION "v0.44.1 - 07/04/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
