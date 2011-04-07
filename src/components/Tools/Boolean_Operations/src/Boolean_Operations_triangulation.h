@@ -293,7 +293,7 @@ public:
 		//where c1 and c2 are the two points related to the last constrained segment added, and X another point
 		//this triangle belongs to the result (thanks to the orientation of the segments)
 		Face_handle_tri f, f2 = c1->face();
-		int i;
+                int i=0; // MT
 		do {
 			f = f2;
 			f->has_vertex(c1,i);

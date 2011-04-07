@@ -26,8 +26,8 @@ double MSDM_Component::Processroughness_curve_Dual(PolyhedronPtr m_PolyOriginal,
 {
 	
 	
-	double somme_roughness=0;
-	int NbVert=0;
+        //double somme_roughness=0; // MT
+        //int NbVert=0; // MT
 
 	
 
@@ -42,11 +42,12 @@ double MSDM_Component::Processroughness_curve_Dual(PolyhedronPtr m_PolyOriginal,
 			std::vector<double> TabDistanceDeg;
 			std::vector<Point3d> TabPointDeg;
 
-			double moyenne,moyenneDeg;
+                        double moyenne=0.; // MT
+                        double moyenneDeg=0.; // MT
 
-			double var1=Processroughness_per_vertex_curve(m_PolyOriginal,(&(*pVertex)),radius,TabDistance,TabPoint,moyenne,maxdim,IsGauss);
+                        //double var1=Processroughness_per_vertex_curve(m_PolyOriginal,(&(*pVertex)),radius,TabDistance,TabPoint,moyenne,maxdim,IsGauss); // MT
 
-			double var2=Processroughness_per_vertex_curve(m_PolyDegrad,(&(*pVertexDeg)),radius,TabDistanceDeg,TabPointDeg,moyenneDeg,maxdim,IsGauss);
+                        //double var2=Processroughness_per_vertex_curve(m_PolyDegrad,(&(*pVertexDeg)),radius,TabDistanceDeg,TabPointDeg,moyenneDeg,maxdim,IsGauss); // MT
 
 			double cov=ProcessCovariance((&(*pVertexDeg)),moyenne,moyenneDeg,TabDistance,TabPoint,TabDistanceDeg,TabPointDeg,maxdim,IsGauss);
 

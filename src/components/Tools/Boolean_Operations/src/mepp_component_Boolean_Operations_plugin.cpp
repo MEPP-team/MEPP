@@ -83,7 +83,7 @@ void mepp_component_Boolean_Operations_plugin::Union()
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
-		Viewer* viewerU;
+                Viewer* viewerU = NULL;
 		
 		if (viewer->getScenePtr()->get_nb_polyhedrons() == 2)
 		{
@@ -131,7 +131,7 @@ void mepp_component_Boolean_Operations_plugin::Inter()
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
-		Viewer* viewerI;
+                Viewer* viewerI = NULL;
 		
 		if (viewer->getScenePtr()->get_nb_polyhedrons() == 2)
 		{
@@ -179,7 +179,7 @@ void mepp_component_Boolean_Operations_plugin::Minus()
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
-		Viewer* viewerM;
+                Viewer* viewerM = NULL;
 		
 		if (viewer->getScenePtr()->get_nb_polyhedrons() == 2)
 		{

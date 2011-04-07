@@ -248,7 +248,7 @@ class Viewer : public QGLViewer
 
 				scene_ptr->delete_polyhedron(i);
 				if (i!=0)
-					i=i--;
+                                        i=i-1;
 				scene_ptr->set_current_polyhedron(i);
 
 				setDynTitle();

@@ -88,7 +88,7 @@ class BoolPolyhedra {
 private:
 	/*! \struct Triangle_Cut
 	 * \brief A structure containing informations about an intersected facet*/
-	struct Triangle_Cut {
+        struct Triangle_Cut {
 		/*! \brief true if the facet belongs to the first polyhedron*/
 		bool								Facet_from_A;
 		/*! \brief An exact vector giving the direction of the normal*/
@@ -100,12 +100,12 @@ private:
 		/*! \brief The list of the intersections*/
 		std::map<HalfedgeId, InterId>		RefInter;
 
-		/*! \brief Default constructor*/
-		Triangle_Cut() {}
-		/*! \brief Constructor
-		 \param V : The normal direction
-		 \param ffA : Must be true if the facet belongs to the first polyhedron*/
-		Triangle_Cut(Vector_exact V, bool ffA) : norm_dir(V), Facet_from_A(ffA) {} 
+                /*! \brief Default constructor*/
+                Triangle_Cut() {}
+                /*! \brief Constructor
+                 \param V : The normal direction
+                 \param ffA : Must be true if the facet belongs to the first polyhedron*/
+                Triangle_Cut(Vector_exact V, bool ffA) { norm_dir=V; Facet_from_A=ffA; } // MT
 	};
 	
 	/*! \struct Info_Inter
@@ -375,7 +375,7 @@ private:
                                         T.add_new_pt(InterPts[*i], (unsigned long &)*i);    // MT: ajout cast
 				}
 				//add the intersection segments
-				for(int i = 0;i!=TriCut.CutList.size();++i)
+                                for(int i = 0;i!=(int)TriCut.CutList.size();++i)
 				{
 					T.add_segment(InterPts[TriCut.CutList[i][0]], InterPts[TriCut.CutList[i][1]], TriCut.CutList[i][0], TriCut.CutList[i][1]);
 				}
@@ -1112,7 +1112,7 @@ private:
 		bool point = false; //true if a point is founded
 		Point3d_exact pt; //the point founded
 		bool id = false; //true if an Id is founded
-		unsigned long Id; //the Id founded
+                unsigned long Id = 0; //the Id founded // MT
 
 		//each intersection is checked separately.
 		//first intersection

@@ -83,20 +83,21 @@ public:
 		Facet_iterator pFacet;
 		for (pFacet = m_pMesh->facets_begin() ; pFacet != m_pMesh->facets_end() ; pFacet++)
 		{
-				unsigned int degree = Polyhedron::degree(pFacet);  //facet degree
-				CGAL_assertion(degree >= 3);
+                    unsigned int degree = 0;
+                    degree = Polyhedron::degree(pFacet);  //facet degree
+                    CGAL_assertion(degree >= 3);
 
-                Halfedge_handle pHalfedge = pFacet->halfedge();
-//                int tag = 0;//MT
+                    Halfedge_handle pHalfedge = pFacet->halfedge();
+                    //int tag = 0; // MT
 
-                B.begin_facet();
-                do
-                {
-                    B.add_vertex_to_facet(pHalfedge->vertex()->tag());
-                    pHalfedge = pHalfedge->next();
-                } while (pHalfedge != pFacet->halfedge());
+                    B.begin_facet();
+                    do
+                    {
+                        B.add_vertex_to_facet(pHalfedge->vertex()->tag());
+                        pHalfedge = pHalfedge->next();
+                    } while (pHalfedge != pFacet->halfedge());
 
-                B.end_facet();
+                    B.end_facet();
 		}
 		CGAL_assertion(!B.check_unconnected_vertices());
 	}

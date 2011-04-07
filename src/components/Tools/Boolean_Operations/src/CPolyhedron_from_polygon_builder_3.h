@@ -186,7 +186,7 @@ private:
 	 */
 	void add_vertices(Builder& B)
 	{
-		for (int i = 0; i != this->m_Sorted_vertices.size(); i++)
+                for (int i = 0; i != (int)this->m_Sorted_vertices.size(); i++)
 		{
 			B.add_vertex(this->m_Sorted_vertices[i]);
 		}
@@ -198,10 +198,10 @@ private:
 	 */
 	void add_facets(Builder &B)
 	{
-		for (int i = 0; i != this->m_Facets_indices.size(); i++)
+                for (int i = 0; i != (int)this->m_Facets_indices.size(); i++)
 		{
 			B.begin_facet();
-			for (int j = 0; j != this->m_Facets_indices[i].size(); j++)
+                        for (int j = 0; j != (int)this->m_Facets_indices[i].size(); j++)
 			{
 				B.add_vertex_to_facet(this->m_Facets_indices[i][j]);
 			}
