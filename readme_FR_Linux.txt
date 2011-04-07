@@ -4,50 +4,69 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-----------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 :
-----------------------------------------------------------------
+--------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 / Debian 6:
+--------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04 ou 10.10
+1) installer Ubuntu 9.10, 10.04 ou 10.10 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
-sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen-gui graphviz libxerces-c-dev
+sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev
 sudo apt-get install mencoder ffmpeg unrar filezilla
 
--------------------------------
-Suivant votre version d'Ubuntu:
--------------------------------
+----------------------------------------
+Suivant votre version d'Ubuntu / Debian:
+----------------------------------------
 Sous Ubuntu 9.10 créer 2 liens:
-cd /usr/lib
-sudo ln -s libqglviewer-qt4.so libQGLViewer.so
-cd /usr/include
-sudo ln -s qglviewer-qt4 QGLViewer
+ cd /usr/lib
+ sudo ln -s libqglviewer-qt4.so libQGLViewer.so
+ cd /usr/include
+ sudo ln -s qglviewer-qt4 QGLViewer
 
 ou
 
 sous Ubuntu 10.04 créer 1 lien:
-cd /usr/lib
-sudo ln -s libqglviewer-qt4.so libQGLViewer.so
+ cd /usr/lib
+ sudo ln -s libqglviewer-qt4.so libQGLViewer.so
 
 ou
 
-sous Ubuntu 10.10, rien à faire
--------------------------------
+sous Ubuntu 10.10 / Debian 6, rien à faire
+------------------------------------------
 
 
 ----------------------------------------------
-(B) Marche à suivre pour Mepp sous Fedora 14 : http://pkgs.org/
+(B) Marche à suivre pour Mepp sous Fedora 14 :
 ----------------------------------------------
 
 1) installer Fedora 14
-2) faire la mise à jour de la distribution et des paquets déjà installés
+2) faire la mise à jour de la distribution et des paquets déjà installés (facultatif)
 3) installer les paquets suivants:
-sudo yum install subversion CGAL-devel qt-creator libQGLViewer-devel gcc-c++ make cmake-gui glew-devel doxygen graphviz xerces-c-dev
+sudo yum install subversion CGAL-devel qt-creator libQGLViewer-devel cmake-gui glew-devel doxygen graphviz xerces-c-devel
 
 
-----------------------------------------------
-----------------------------------------------
+--------------------------------------------------
+(C) Marche à suivre pour Mepp sous openSUSE 11.4 :
+--------------------------------------------------
+
+1) installer openSUSE 11.4
+2) faire la mise à jour de la distribution et des paquets déjà installés (facultatif)
+3a) ajouter le repository suivant à YaST2: http://download.opensuse.org/repositories/openSUSE:/11.4:/Contrib/standard/
+3b) installer les paquets suivants:
+sudo zypper install subversion CGAL-devel qt-creator cmake-gui glew-devel doxygen graphviz libxerces-c-devel
+3c) télécharger libQGLViewer: http://www.libqglviewer.com/src/libQGLViewer-2.3.9.tar.gz
+3d) compiler et installer libQGLViewer:
+tar -xzf libQGLViewer-2.3.9.tar.gz
+cd libQGLViewer-2.3.9/QGLViewer
+qmake
+make
+sudo make install
+
+
+--------------------------------------
+(D) Pour toutes les versions de Linux:
+--------------------------------------
 
 
 4) télécharger les sources de Mepp:
