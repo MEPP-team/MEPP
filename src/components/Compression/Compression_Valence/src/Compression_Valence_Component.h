@@ -140,9 +140,11 @@ class Compression_Valence_Component :
 			m_VC[2] = 0.;
 			m_Dist = 0.0005;
 
+			Number_non_reversible_vertices = 0;
+
 			// MEPP 2
 			componentName = "Compression_Valence_Component";
-			init = 1;		
+			init = 1;
 		}
 
 		~Compression_Valence_Component() 
@@ -263,6 +265,8 @@ class Compression_Valence_Component :
 		void JCW_Un_Regulation_For_Region_Detection(Polyhedron & pMesh, const int & Component_ID, list<int> & FP_connect, list<Point3d> & FP_Geo, list<int> & FP_RN);
 		void JCW_Un_Decimation_For_Region_Detection(Polyhedron & pMesh, const int & Component_ID, list<int> & FP_connect, list<Point3d> & FP_Geo, list<int> & FP_RN);
 		
+		vector<double> JCW_Evaluate_Robustness(void);
+
 		void Set_Number_Bin(const int & NB)
 		{
 			this->m_NumberBin = NB;
@@ -307,14 +311,16 @@ class Compression_Valence_Component :
 		void Convert_To_Spherical(const Point3d & Pt, double * Spheric);
 		void Convert_To_Cartesian(const double * Spheric, double * Cartesian);	
 
-		int  JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name);
+		int  JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name, const int & Noise_mode);
 		int  JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name);
-
+		
+		void JCW_Run(void);
 		int  JCW_Divide_Big_Regions(Polyhedron &pMesh);
 		void JCW_Colorify_Regions(Polyhedron & pMesh);
 		void    Read_Information_To_Hide();
 		QString Write_Information_To_Hide();
-
+		
+		void Clear_After_Compression();
 	private:
 		
 		Polyhedron * UnderquantizedMesh;
@@ -466,8 +472,9 @@ class Compression_Valence_Component :
 		list<int> JCW_Connectivity;
 		list<Point_Int> JCW_Geometry;
 
-		
-
+		//double LUT_CourbureClust[3*256];
+		vector<vector<float>> Region_Color;
+		int Number_non_reversible_vertices;
 	// from IHM
 	public:
 		bool IsDecompress;

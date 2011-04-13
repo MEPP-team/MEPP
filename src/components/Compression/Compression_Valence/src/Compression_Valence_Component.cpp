@@ -60,16 +60,16 @@
 #define MODE_JCW 1
 
 //#define JCW_CORRECT
-#define JCW_DIVIDE_BIG_REGIONS
-#define JCW_COLORIFY_REGIONS
+//#define JCW_DIVIDE_BIG_REGIONS
+//#define JCW_COLORIFY_REGIONS
 
 const int EMBEDDING_LEVEL = 3;
 const int OVER_HISTOGRAM = EMBEDDING_LEVEL * 2 + 3;
-const int MINIMUM_PREDICTION_NUMBER = 2;
+const int MINIMUM_PREDICTION_NUMBER = 3;
 const int NUMBER_BIN = 256;
 const int NUMBER_REGION = 20;
 const int LIMIT_NUMBER = 200;
-const int THRES_NUMBER_VERTICES_FOR_REGION_DIVISION = 1000;
+const int THRES_NUMBER_VERTICES_FOR_REGION_DIVISION = 500;
 
 
 double Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
@@ -98,6 +98,12 @@ double Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 	
 	// Initialization - Quantization, Color, Multiple components;
 	this->Global_Initialization(_pMesh, _Qbit, _File_Name);
+
+	#ifndef USE_ESTIMATION_ADAPTIVE_QUANTIZATION	
+	// To compare with the original mesh
+	if (_Adaptive_quantization)
+		_pMesh.write_off("original_temp.off",false,false);
+	#endif
 	
 	this->m_Mode = MODE_COMPRESSION;
 
@@ -129,11 +135,7 @@ void Compression_Valence_Component::Global_Initialization(Polyhedron & _pMesh,
 	this->Set_Original_Color_Mesh(_pMesh, File_Name);
 	#endif			
 	
-	#ifndef USE_ESTIMATION_ADAPTIVE_QUANTIZATION	
-	// To compare with the original mesh
-	if (Adaptive_quantization)
-		_pMesh.write_off("original_temp.off",false,false);
-	#endif
+	
 
 	
 	// (1) Determination if the mesh is colored.
@@ -1067,6 +1069,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh,
 		Last_Number = Current_Number;		
 		
 		Operation_choice = this->Test_Next_Operation(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit);
+		Operation_choice = this->Test_Next_Operation(_pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, _Qbit);
 		this->ListOperation.push_front(Operation_choice);		
 		
 		// If no vertex has been decimated, stop the loop.
@@ -6731,13 +6734,14 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 																     unsigned int & Total_size,
 																     unsigned int & Initial_file_size)
 {
-	this->m_Mode = MODE_COMPRESSION;
+	//this->m_Mode = MODE_COMPRESSION;
 	
 	// Current version deals only with the one-component mesh.
 	int NB_components = _pMesh.calc_nb_components();
 	if (NB_components != 1)
 		return 0;
 
+	// read bits to insert
 	this->Read_Information_To_Hide();
 	
 	// Set number of histogram bis.
@@ -6921,10 +6925,15 @@ double Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron 
 	#ifdef JCW_COLORIFY_REGIONS
 	this->JCW_Colorify_Regions(_pMesh);
 	#endif
-
+	FILE * test = fopen("test2.txt", "w");
+	fprintf(test, "%d",Number_non_reversible_vertices);
+	fclose(test);
+		
 	_pMesh.compute_normals();
 
 	this->Compression(*Base_Mesh, "Output.p3d", _Qbit, Connectivity_size, Color_size, Total_size, Initial_file_size);			
+
+	
 
 	Number_inserted_bits = this->N_Inserted_Watermarks;
 
@@ -6973,7 +6982,11 @@ void Compression_Valence_Component::JCW_Calculate_Radius(Polyhedron & _pMesh)
 			this->m_Rmax = Spheric[0];
 	}
 
-	this->m_Dist = this->m_Rmax / this->m_NumberBin;
+	this->m_Dist = (this->m_Rmax) / this->m_NumberBin;
+
+	FILE * dist = fopen("dist.txt","w");
+	fprintf(dist, "%lf", this->m_Rmax);
+	fclose(dist);
 }
 
 
@@ -7089,13 +7102,15 @@ void Compression_Valence_Component::JCW_Generate_Regions_On_Base_Mesh(Polyhedron
 						hvc->opposite()->vertex()->Region_Number = Seed_count;
 
 						Halfedges.push(hvc);
-						Halfedges.push(hvc->opposite());
+						Halfedges.push(hvc->opposite());						
 					}
 				}
 				Seed_count++;
 			}
 		}
 	}
+	_pMesh.write_off("base.off",true,false);
+
 	// vector to count number of vertices in each region
 	for(int i = 0; i < this->m_NumberRegion; i++)
 		this->m_Number_Vertices_Per_Regions.push_back(0);	
@@ -10523,6 +10538,7 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 			if((Err[0] != 0) || (Err[1] != 0) || (Err[2] != 0))
 			{
 				g->vertex()->color(1., 0., 0.);
+				Number_non_reversible_vertices++;
 			}
 
 			// Vertex flags
@@ -10797,6 +10813,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				if((Err[0] != 0) || (Err[1] != 0) || (Err[2] != 0))
 				{
 					g->vertex()->color(1., 0., 0.);
+					Number_non_reversible_vertices++;
 				}
 
 				g = h;
@@ -12194,7 +12211,7 @@ bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron          
 		return false;
 }
 
-int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, const char* File_Name)
+int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, const char* File_Name, const int &Noise_number)
 {
 
 	int res = 1;
@@ -12241,7 +12258,7 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, 
 	}
 	
 	
-	if (this->Decompress_count < this->GlobalCountOperation)
+	if(this->Decompress_count < this->GlobalCountOperation)
 	{
 		for (int Component_ID = 0; Component_ID < this->NumberComponents; Component_ID++)
 		{			
@@ -12251,15 +12268,76 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, 
 				if (Operation == 0)
 				{					
 					Processing_Component Process;
-					//Process.NoiseAddition(&_pMesh, UNIFORM, 0.005, false);
-					Process.LaplacianSmoothing(&_pMesh, 0.03, 30, false);
-					//Process.CoordinateQuantization(&_pMesh, 7);
+
+					//if (Noise_number == 0)
+						//Process.NoiseAddition(&_pMesh, UNIFORM, 0.005, false);
+					//if (Noise_number == 1)
+						//Process.LaplacianSmoothing(&_pMesh, 0.03, 30, false);
+					//if (Noise_number == 2)
+						//Process.CoordinateQuantization(&_pMesh, 7);					
 					
 					this->JCW_Un_Regulation(_pMesh, Decoder, Component_ID);					
-					this->JCW_Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);	
+					this->JCW_Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);
+
+					//int numVertex = _pMesh.size_of_vertices();;
+					//Vector centroid = Point3d(0,0,0) - CGAL::ORIGIN;
+					//double distancetoCentroid = 0.0;
+					//Vertex_iterator	pVertex;
+					//for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+					//{
+					//	Vector vectemp = pVertex->point() - CGAL::ORIGIN;
+					//	centroid = centroid + vectemp;
+					//}
+					//centroid = centroid/numVertex;
+
+					//// calculate the average distance from vertices to mesh centre
+					//for (pVertex = _pMesh.vertices_begin(); pVertex!= _pMesh.vertices_end(); pVertex++)
+					//{
+					//	Vector vectemp = pVertex->point() - CGAL::ORIGIN;
+					//	distancetoCentroid = distancetoCentroid + (double)std::sqrt((vectemp - centroid) * (vectemp - centroid));
+					//}
+					//distancetoCentroid = distancetoCentroid/numVertex;
+
+					//// add random uniform-distributed (between [-noiseLevel, +noiseLevel])
+					//srand((unsigned)time(NULL));
+					//double noisex, noisey, noisez;
+					//double noiseLevel = distancetoCentroid * 0.005;
+					//for (pVertex = _pMesh.vertices_begin(); pVertex!= _pMesh.vertices_end(); pVertex++)
+					//{						
+					//	if(pVertex->Removal_Order == this->GlobalCountOperation - Decompress_count)
+					//	{
+					//		// keep boundaries untouched if demanded by user
+					//		bool is_border_vertex = false;
+					//		bool stopFlag = false;
+					//		Halfedge_around_vertex_circulator hav = (*pVertex).vertex_begin();
+					//		do
+					//		{
+					//			if (hav->is_border()==true)
+					//			{
+					//				is_border_vertex = true;
+					//				stopFlag = true;
+					//			}
+					//			hav++;
+					//		} while ((hav!=(*pVertex).vertex_begin())&&(stopFlag==false));						
+
+					//		noisex = noiseLevel * (1.0*rand()/RAND_MAX-0.5)*2;
+					//		noisey = noiseLevel * (1.0*rand()/RAND_MAX-0.5)*2;
+					//		noisez = noiseLevel * (1.0*rand()/RAND_MAX-0.5)*2;
+					//		Vector temp = Point3d(noisex, noisey, noisez) - CGAL::ORIGIN;
+					//		pVertex->point() = pVertex->point() + temp;
+					//	}
+					//}
+					
+					/*QString Outputfile2 = QString("Dec_refined%1").arg(this->Decompress_count);
+					Outputfile2 += ".off";
+					_pMesh.write_off(Outputfile2.toStdString(), false, false);*/
 
 					this->Initialize_Spherical_Coordinates(_pMesh);										
 					this->JCW_Region_Mass_Center_Extract_Watermark(_pMesh);	
+
+					/*Outputfile2 = QString("Dec_corrected_vertices%1").arg(this->Decompress_count);
+					Outputfile2 += ".off";
+					_pMesh.write_off(Outputfile2.toStdString(), false, false);	*/
 
 					#ifdef JCW_DIVIDE_BIG_REGIONS
 					this->JCW_Divide_Big_Regions(_pMesh);					
@@ -12277,12 +12355,14 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, 
 					this->Up_Quantization(_pMesh, Decoder, Component_ID);		
 				else if (Operation == 2)
 					this->Color_Up_Quantization(_pMesh, Decoder, Component_ID);				
-			}
+			}		
 		}			
 	}	
+
+	JCW_Evaluate_Robustness();
 		
-			
-	this->Decompress_count++;	
+	this->Decompress_count++;			
+	//
 	_pMesh.compute_normals();
 	
 	#ifdef SPLIT_FILE_EACH_RESOLUTION
@@ -12649,9 +12729,29 @@ int Compression_Valence_Component::JCW_Divide_Big_Regions(Polyhedron &_pMesh)
 void Compression_Valence_Component::JCW_Colorify_Regions(Polyhedron &_pMesh)
 {
 	srand(time(NULL));
-        vector<vector<float> > Color;
+	//vector<vector<float>> Color;
+	
+	if ((unsigned)Region_Color.size() < (unsigned)this->m_NumberRegion)
+	{
+		int Number_Color_To_Insert = (unsigned)this->m_NumberRegion - (unsigned)Region_Color.size();
 
-	for(int i = 0; i < this->m_NumberRegion; i++)
+		for(int i = 0; i < Number_Color_To_Insert; i++)
+		{				
+			int R = rand() % 255;
+			int G = rand() % 255;
+			int B = rand() % 255;
+			
+			vector<float> fff;
+			fff.push_back((float)R / 255.);
+			fff.push_back((float)G / 255.);
+			fff.push_back((float)G / 255.);
+
+			this->Region_Color.push_back(fff);		
+		}
+
+	}
+
+	/*for(int i = 0; i < this->m_NumberRegion; i++)
 	{				
 		int R = rand() % 255;
 		int G = rand() % 255;
@@ -12665,13 +12765,306 @@ void Compression_Valence_Component::JCW_Colorify_Regions(Polyhedron &_pMesh)
 
 		Color.push_back(fff);		
 	}
+	}*/
 	
 
 	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		int NB = pVert->Region_Number;		
 		pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
+		pVert->color(this->Region_Color[NB][0], this->Region_Color[NB][1], this->Region_Color[NB][2]);
 	}		
 }
+vector<double> Compression_Valence_Component::JCW_Evaluate_Robustness(void)
+{
+	FILE * insert = fopen("Inserted_watermarks.txt", "r");
+	FILE * extract = fopen("Extracted_watermark.txt","r");
 
+	vector<int> Inserted_bits;
+	vector<int> Extracted_bits;
+	
+	char pLine[512];
+
+	while(fgets(pLine,512,insert))
+	{
+		int w = 0, level = 0;
+		if (sscanf(pLine,"%d %d",&w,&level) == 2)
+		{
+			Inserted_bits.push_back(w);			
+		}
+	}
+	fclose(insert);
+
+	while(fgets(pLine,512,extract))
+	{
+		int w = 0, level = 0;
+		if (sscanf(pLine,"%d %d",&w,&level) == 2)
+		{
+			Extracted_bits.push_back(w);			
+		}
+	}
+	fclose(extract);	
+	
+	FILE * f_res = fopen("Robustness_results.txt","a");
+
+	int Count_correct_watermark = 0;
+	int Count_incorrect_watermark = 0;
+	
+	double Average_insert = 0.;
+	double Average_extract = 0.;
+	unsigned int Number_watermarks = 0;
+	
+	
+	if(Inserted_bits.size() < Extracted_bits.size())
+		Number_watermarks = Inserted_bits.size();
+	else
+		Number_watermarks = Extracted_bits.size();
+
+
+
+	for(unsigned int i = 0; i < Number_watermarks; i++)
+	{
+		if(Inserted_bits[i] == Extracted_bits[i])
+			Count_correct_watermark++;
+		else
+			Count_incorrect_watermark++;
+	}
+
+	
+	for(unsigned int i = 0; i < Inserted_bits.size(); i++)
+	{
+		Average_insert += (double)Inserted_bits[i];
+	}
+
+	for(unsigned int i = 0; i < Extracted_bits.size(); i++)
+	{
+		Average_extract += (double)Extracted_bits[i];
+	}
+
+	Average_insert /= (double)Inserted_bits.size();
+	Average_extract /= (double)Extracted_bits.size();
+	
+		
+	double Numerator = 0.0;
+	for(unsigned int i = 0; i < Number_watermarks; i++)
+	{
+		Numerator += (Inserted_bits[i] - Average_insert) * (Extracted_bits[i] - Average_extract);
+	}
+
+	double denom1 = 0.0;
+	double denom2 = 0.0;
+	for(unsigned int i = 0; i < Inserted_bits.size(); i++)
+	{
+		denom1 += (Inserted_bits[i] - Average_insert) * (Inserted_bits[i] - Average_insert);
+	}
+
+	for(unsigned int i = 0; i < Extracted_bits.size(); i++)
+	{
+		denom2 += (Extracted_bits[i] - Average_extract) * (Extracted_bits[i] - Average_extract);
+	}
+
+	double denom = sqrt(denom1*denom2);
+
+	double corr = Numerator/denom;
+
+	
+
+	double ber = (double)Count_correct_watermark/((double)Count_correct_watermark + (double)Count_incorrect_watermark);
+
+	fprintf(f_res, "%lf \n", ber);
+	fprintf(f_res, "%lf \n", corr);
+	
+	fclose(f_res);
+
+	vector<double> res;
+	res.push_back(ber);
+	res.push_back(corr);
+
+	return res;
+}
+
+void Compression_Valence_Component::JCW_Run(void)
+{
+	vector<QString> Mesh_Names;
+	
+	QString Q1("bunny_kai.off");
+	QString Q2("dragon_kai.off");
+	QString Q3("horse.off");
+	QString Q4("venus_kai.off");
+
+	Mesh_Names.push_back(Q1);
+	Mesh_Names.push_back(Q2);
+	Mesh_Names.push_back(Q3);
+	Mesh_Names.push_back(Q4);
+}
+
+void Compression_Valence_Component::Clear_After_Compression(void)
+{
+		
+	for(unsigned i = 0; i < ListOperation.size(); i++)
+		ListOperation.clear();
+	for(unsigned i = 0; i < Connectivity.size(); i++)
+		Connectivity.clear();
+	for(unsigned i = 0; i < Geometry.size(); i++)
+		Geometry.clear();
+	for(unsigned i = 0; i < NumberSymbol.size(); i++)
+		NumberSymbol.clear();
+	for(unsigned i = 0; i < NumberVertices.size(); i++)
+		NumberVertices.clear();
+	for(unsigned i = 0; i < AlphaRange.size(); i++)
+		AlphaRange.clear();
+	for(unsigned i = 0; i < AlphaOffset.size(); i++)
+		AlphaOffset.clear();
+	for(unsigned i = 0; i < GammaRange.size(); i++)
+		GammaRange.clear();
+	for(unsigned i = 0; i < GammaOffset.size(); i++)
+		GammaOffset.clear();
+	for(unsigned i = 0; i < VertexColor.size(); i++)
+		VertexColor.clear();
+	for(unsigned i = 0; i < m_JCW_Move_Error.size(); i++)
+		m_JCW_Move_Error.clear();    	
+	 
+	
+
+// Colors
+	m_JCW_Move_Error.clear();
+
+	// Used for adatative quantization.				
+       QuantizationCorrectVector.clear();
+        NumberQuantizationLayer.clear();
+		
+		//for color
+        NumberProcessedVertices.clear();
+        ColorChildcellIndex.clear();
+      ColorEncoderIndex.clear();
+
+		ListOperation.clear();
+       Connectivity.clear();
+        Geometry.clear();
+      NumberSymbol.clear();
+     NumberVertices.clear();
+
+AlphaRange.clear();
+       AlphaOffset.clear();
+         GammaRange.clear();
+         GammaOffset.clear();
+
+		// Colors
+		VertexColor.clear(); // contain color error of all removed vertices
+		InterVertexColor.clear();	
+		IsClosed.clear();    // to know if the mesh is open or closed.				
+       
+			
+	InterGeometry.clear();
+	 InterConnectivity.clear();		
+
+      
+		
+		// Quantization
+		Qbit.clear(); 
+			xmin.clear();
+		ymin.clear();
+		zmin.clear();		
+		xmax.clear();
+			ymax.clear();
+		zmax.clear();		
+			QuantizationPas.clear();
+				
+		
+	 HighestLengthBB.clear();
+	 ComponentVolume.clear();
+		 ComponentArea.clear();
+	   ComponentNumberVertices.clear();		
+	 NumberColorQuantization.clear();			
+		
+		// mapping table
+	 ColorArray.clear(); // Color table
+ PredictedColorArray.clear(); // Predicted values of colors in color table using prediction based on neighbors.		
+	 DifferenceColor.clear(); // Difference between original and quantized vertex color. need to turn into lossless coding.
+			   ColorIndex.clear();
+	   ReorderingColorIndex.clear();
+		   InterColorIndex.clear();		
+		   Number_color_index.clear(); // contain occurence of each initial color
+	   IsKnownIndex.clear();
+		
+		
+	 NumberDecimation.clear(); // To stock number of Decimation.
+	 NumberChangeQuantization.clear(); // to stock number of under_quantization.						
+				
+		Decompress_count = 0;
+
+		 ComponentOperations.clear();
+
+		
+		 m_Number_Vertices_Per_Regions.clear();
+		m_Watermarks.clear();
+
+	
+
+		 m_N_remained_vertices.clear();
+		 m_N_treated_vertices.clear();
+		 m_Rad_decision.clear();
+
+        m_JCW_Move_Error.clear();
+		m_N_Errors.clear();		
+		JCW_Connectivity.clear();
+		JCW_Geometry.clear();
+}
+
+
+//int numVertex = _pMesh.size_of_vertices();;
+					//Vector centroid = Point3d(0,0,0) - CGAL::ORIGIN;
+					//double distancetoCentroid = 0.0;
+					//Vertex_iterator	pVertex;
+					//for (pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+					//{
+					//	Vector vectemp = pVertex->point() - CGAL::ORIGIN;
+					//	centroid = centroid + vectemp;
+					//}
+					//centroid = centroid/numVertex;
+
+					//// calculate the average distance from vertices to mesh centre
+					//for (pVertex = _pMesh.vertices_begin(); pVertex!= _pMesh.vertices_end(); pVertex++)
+					//{
+					//	Vector vectemp = pVertex->point() - CGAL::ORIGIN;
+					//	distancetoCentroid = distancetoCentroid + (double)std::sqrt((vectemp - centroid) * (vectemp - centroid));
+					//}
+					//distancetoCentroid = distancetoCentroid/numVertex;
+
+					//// add random uniform-distributed (between [-noiseLevel, +noiseLevel])
+					//srand((unsigned)time(NULL));
+					//double noisex, noisey, noisez;
+					//double noiseLevel = distancetoCentroid * 0.005;//noiseIntensity;
+					//for (pVertex = _pMesh.vertices_begin(); pVertex!= _pMesh.vertices_end(); pVertex++)
+					//{
+					//	// keep boundaries untouched if demanded by user
+					//	bool is_border_vertex = false;
+					//	bool stopFlag = false;
+					//	Halfedge_around_vertex_circulator hav = (*pVertex).vertex_begin();
+					//	do
+					//	{
+					//		if (hav->is_border()==true)
+					//		{
+					//			is_border_vertex = true;
+					//			stopFlag = true;
+					//		}
+					//		hav++;
+					//	} while ((hav!=(*pVertex).vertex_begin())&&(stopFlag==false));
+
+					//	/*if ((preserveBoundaries==true)&&(is_border_vertex==true))
+					//		continue;*/
+
+					//	noisex = noiseLevel * (1.0*rand()/RAND_MAX-0.5)*2;
+					//	noisey = noiseLevel * (1.0*rand()/RAND_MAX-0.5)*2;
+					//	noisez = noiseLevel * (1.0*rand()/RAND_MAX-0.5)*2;
+					//	
+					//	if(pVertex->Removal_Order == this->GlobalCountOperation - Decompress_count)
+					//	{
+					//		Vector temp = Point3d(noisex, noisey, noisez) - CGAL::ORIGIN;						
+					//		pVertex->point() = pVertex->point() + temp;
+					//	}
+					//}
+
+					//// for correct rendering, we need to update the mesh normals
+					//_pMesh.compute_normals();
 #endif

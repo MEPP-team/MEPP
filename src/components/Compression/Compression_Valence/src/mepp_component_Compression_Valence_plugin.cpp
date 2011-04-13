@@ -1036,8 +1036,7 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 {
 	// active viewer
 	if (mw->activeMdiChild() != 0)
-	{
-		
+	{		
 		Timer timer;
 		timer.start();
 
@@ -1094,16 +1093,121 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 		string7 += " b/v\n";
 
 		QString t = string1 + string2 + string3 + string4 + string5 + string6 + string7;
+
 		
+		/*		unsigned Init_size;
+				int Number_layers = component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,"output.p3d");
+				
+				int CL = 0;
+				while(CL != Number_layers)
+				{					
+					component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(0), "output.p3d",-1);
+					CL++;					
+					
+				}	
+				
+		component_ptr->JCW_Evaluate_Robustness();*/
 		QMessageBox::information(mw, APPLICATION, t);
 		QApplication::restoreOverrideCursor();
 		
 		viewer->recreateListsAndUpdateGL();
 	}
+
+	
 }
 
 void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 {
+
+	//vector<QString> Mesh_Names;
+	//
+	//QString Q1("bunny_kai.off");
+	//QString Q2("dragon_kai.off");
+	//QString Q3("horse.off");
+	//QString Q4("venus_kai.off");
+
+	//Mesh_Names.push_back(Q1);
+	//Mesh_Names.push_back(Q2);
+	//Mesh_Names.push_back(Q3);
+	//Mesh_Names.push_back(Q4);
+	//
+	//FILE * test = fopen("test.txt","w");
+	//fclose(test);
+
+	////if (mw->activeMdiChild() != 0)
+	//{
+
+	//	Viewer* viewer = (Viewer *)mw->activeMdiChild();
+
+	//	PolyhedronPtr polyhedron_ptr(new Polyhedron());
+	//	
+
+	//	for(unsigned int i = 0; i < Mesh_Names.size(); i++)
+	//	{
+	//		polyhedron_ptr->clear();
+	//		QString Q = Mesh_Names[i];
+
+	//		polyhedron_ptr->load_mesh_off(Q.toStdString());
+	//		
+
+	//		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
+	//		{
+	//			int NVertices = 300;
+	//			bool Normal_flipping = false;
+	//			bool Use_metric = false;
+	//			float Metric_thread = 0.25;
+	//			bool Use_forget_metric = false;
+	//			int Forget_value = 3000;
+	//			int Qbit = 12;
+	//			unsigned int Connectivity_size =0, Color_size =0, Total_size =0, Initial_file_size =0;
+	//			int Number_inserted_bits = 0;	
+	//			int Init_number_vertices = 10000;
+	//			
+	//			test = fopen("test.txt", "a");
+	//			fprintf(test, "1");
+	//			fclose(test);
+
+	//			component_ptr->Joint_Compression_Watermarking(*polyhedron_ptr, NVertices, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit,Number_inserted_bits, Connectivity_size, Color_size,Total_size, Initial_file_size);	
+
+	//			test = fopen("test.txt" ,"a");
+	//			fprintf(test, "2");
+	//			fclose(test);
+
+	//			component_ptr->Clear_After_Compression();
+
+	//			test = fopen("test.txt" ,"a");
+	//			fprintf(test, "3");
+	//			fclose(test);
+
+	//			unsigned Init_size;
+	//			int NL = component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,"output.p3d");
+	//			
+	//			test = fopen("test.txt", "a");
+	//			fprintf(test, "4");
+	//			fclose(test);
+
+	//			int CL = 0;
+	//			while(CL != NL)
+	//			{					
+	//				component_ptr->JCW_Decompress_One_Level(*polyhedron_ptr, "output.p3d", 1);
+	//				CL++;				
+	//			}
+
+	//			test = fopen("test.txt", "a");
+	//			fprintf(test, "5");
+	//			fclose(test);
+	//			vector<double> res = component_ptr->JCW_Evaluate_Robustness();
+
+	//			test = fopen("test.txt", "a");
+	//			fprintf(test, "6");
+	//			fclose(test);
+
+	//		}
+
+	//		
+	//	}
+	//}
+
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -1135,7 +1239,7 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 				if (component_ptr->Process_level == 0)
 					WriteInfo();
 
-				component_ptr->Current_level = component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(),component_ptr->File_name.c_str());
+				component_ptr->Current_level = component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(),component_ptr->File_name.c_str(), -1);
 				component_ptr->Message = component_ptr->Write_Information_To_Hide();
 
 
@@ -1183,7 +1287,7 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 					component_ptr->Process_level++;
 					component_ptr->Visu_level++;
 
-					component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str());
+					component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str(), -1);
 					component_ptr->Message = component_ptr->Write_Information_To_Hide();					
 
 					WriteInfo();
@@ -1203,7 +1307,6 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 			viewer->recreateListsAndUpdateGL();
 		}
 	}
-
 }
 
 void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extraction(void)
