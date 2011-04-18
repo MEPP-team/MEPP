@@ -20,12 +20,13 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #define _FFMPEG_H
 
 // MT
-#if _MSC_VER
 #define __STDC_CONSTANT_MACROS
 #include "stdint.h"
 
+#if _MSC_VER
 #define snprintf _snprintf
 #endif
+// MT
 
 namespace ffmpeg {
 extern "C" {
