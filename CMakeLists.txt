@@ -116,6 +116,9 @@ if (XERCESC_FOUND)
 	set (XML_PARSER_LIBRARY ${XERCESC_LIBRARY})
 endif(XERCESC_FOUND)
 
+# Find FFmpeg
+find_package(FFmpeg)
+
 if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
 
   find_package(Boost)
@@ -128,7 +131,11 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
     include_directories ( ${GLEW_INCLUDE_PATH} )
   else(GLEW_FOUND)
     message(STATUS "NOTICE: GLEW library is not found. VBO rendering will not be available.")
-  endif(GLEW_FOUND) 
+  endif(GLEW_FOUND)
+  
+  if (FFMPEG_FOUND)
+		include_directories ( ${FFMPEG_INCLUDE_DIRS} )
+	endif (FFMPEG_FOUND)
 
 	file(
 		GLOB_RECURSE
@@ -192,6 +199,10 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
 	if(GLEW_FOUND)
 		target_link_libraries(${PRJ_NAME} ${GLEW_LIBRARIES})
 	endif(GLEW_FOUND)
+	
+	if (FFMPEG_FOUND)
+		target_link_libraries(${PRJ_NAME} ${FFMPEG_LIBRARIES})
+	endif (FFMPEG_FOUND)
 	
 	#Documentation
 	option(BUILD_${PRJ_NAME}_DOC "Build Doxygen documentation for ${PRJ_NAME}" ON)

@@ -1380,6 +1380,81 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 	delete meshMapper;
 }
 
+#if(0)
+#include "QTFFmpegWrapper/QVideoEncoder.h"
+//#include "QTFFmpegWrapper/QVideoDecoder.h"
+
+void image2Pixmap(QImage &img,QPixmap &pixmap)
+{
+   // Convert the QImage to a QPixmap for display
+   pixmap = QPixmap(img.size());
+   QPainter painter;
+   painter.begin(&pixmap);
+   painter.drawImage(0,0,img);
+   painter.end();
+}
+
+void GenerateSyntheticVideo(QString filename)
+{
+   int width=640;
+   int height=480;
+   int bitrate=1000000;
+   int gop = 20;
+
+   // The image on which we draw the frames
+   QImage frame(width,height,QImage::Format_RGB32);     // Only RGB32 is supported
+
+   // A painter to help us draw
+   QPainter painter(&frame);
+   painter.setBrush(Qt::red);
+   painter.setPen(Qt::white);
+
+   // Create the encoder
+   QVideoEncoder encoder;
+   encoder.createFile(filename,width,height,bitrate,gop);
+
+
+   QEventLoop evt;      // we use an event loop to allow for paint events to show on-screen the generated video
+
+   // Generate a few hundred frames
+   int size=0;
+   for(unsigned i=0;i<500;i++)
+   {
+      // Clear the frame
+      painter.fillRect(frame.rect(),Qt::red);   
+
+      // Frame number
+      painter.drawText(frame.rect(),Qt::AlignCenter,QString("Frame %1\nLast frame was %2 bytes").arg(i).arg(size));
+
+      // Display the frame, and processes events to allow for screen redraw
+      QPixmap p;
+      image2Pixmap(frame,p);      
+      //ui->labelVideoFrame->setPixmap(p);
+      evt.processEvents();
+
+      size=encoder.encodeImage(frame);
+      printf("Encoded: %d\n",size);
+   }
+
+   encoder.close();
+}
+
+/**
+  Prompts the user for a file
+  Create the file
+  Pass the file to the video generation function (alternatively the file name could be passed)
+**/
+void Save_synthetic_video()
+{
+   QString title("Save a synthetic video");
+   QString fileName;// = QFileDialog::getSaveFileName(this, title,QString(),"Video (*.avi *.asf *.mpg)");
+   if(!fileName.isNull())
+   {
+      GenerateSyntheticVideo(fileName);
+   }
+}
+#endif
+
 QString Viewer::helpString() const
 {
 	QString text(tr("<h2>MEPP</h2>"));
