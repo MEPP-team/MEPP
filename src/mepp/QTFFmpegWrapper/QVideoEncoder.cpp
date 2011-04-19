@@ -71,10 +71,10 @@ bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,u
       return false;
    }
 
-   pOutputFormat = ffmpeg::guess_format(NULL, fileName.toStdString().c_str(), NULL);
+   pOutputFormat = ffmpeg::av_guess_format(NULL, fileName.toStdString().c_str(), NULL); // MT
    if (!pOutputFormat) {
-      printf("Could not deduce output format from file extension: using MPEG.\n");
-      pOutputFormat = ffmpeg::guess_format("mpeg", NULL, NULL);
+      printf("Could not deduce output format from file extension: using MPEG.\n"); // MT
+      pOutputFormat = ffmpeg::av_guess_format("mpeg", NULL, NULL);
    }
 
    pFormatCtx=ffmpeg::avformat_alloc_context();

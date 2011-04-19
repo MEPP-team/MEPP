@@ -23,6 +23,12 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #define __STDC_CONSTANT_MACROS
 #include "stdint.h"
 
+#ifdef __APPLE__
+	#ifndef UINT64_C
+	#define #define UINT64_C(v)  (v ## ULL)
+	#endif
+#endif
+
 #if _MSC_VER
 #define snprintf _snprintf
 #endif
