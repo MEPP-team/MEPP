@@ -8,6 +8,7 @@ typedef CGAL::MatrixC33<Enriched_kernel> Matrix;
 
 const int RGB_Range = pow((int)2, 4.0) - 1;
 /* Quantization bits used.*/
+
 const int RGB_QUANTIZATION = 8;
 const int C0_QUANTIZATION = 8;
 const int C1_QUANTIZATION = 8;
@@ -18,25 +19,32 @@ const int CONQUERED = 0;
 const int TO_BE_REMOVED = 1;
 const int TEMP_FLAG = 2;
 
-// tags for retriangulation 
-const int PLUS = 1;
-const int MINUS = -1;
-const int NOSIGN = 0;
+const int PLUS = 1;///< The plus tag for retriangulation 
+const int MINUS = -1;///< The minus tag for retriangulation 
+const int NOSIGN = 0;///< The nosign tag for retriangulation 
 
-// tag for seed gate 
-const int FIRST_COORDINATE = 1;
-const int SECOND_COORDINATE = 2;
-const int OTHER_COORDINATE = -1;
-
-const int DECIMATION_CONNECTIVITY_SYMBOL = 5;
-const int LIMIT_QBIT = 4;
-const double PI = 3.14159265358979323846264338327950288419716939937510582097494459;
+const int FIRST_COORDINATE = 1;///< The first coordinate tag for seed gate 
+const int SECOND_COORDINATE = 2;///< The second coordinate tag for seed gate
+const int OTHER_COORDINATE = -1;///< The other coordinate tag for seed gate
 
 
 
-/* 
-Description : Initialize all flags of verticeces and facets to FREE and give order to vertices (manifold property check).
-This function is called every conquest. */
+const int DECIMATION_CONNECTIVITY_SYMBOL = 5;///< The decimation connectivity symbol
+const int LIMIT_QBIT = 4;///< The limit qbit
+const double PI = 3.14159265358979323846264338327950288419716939937510582097494459;///< The pi
+
+
+
+ 
+/**
+ \fn	void Init(Polyhedron &pMesh)
+
+ \brief	Initialize all flags of verticeces and facets to FREE and give order to vertices (manifold property check).
+This function is called every conquest.
+
+ \param [in,out]	pMesh	The mesh.
+ */
+
 void Init(Polyhedron &pMesh)
 {		
 	int i = 0;	
@@ -56,7 +64,15 @@ void Init(Polyhedron &pMesh)
 		pFace->Facet_Flag = FREE;		
 }
 
+/**
+ \fn	void Write_SMF(Polyhedron &pMesh, const char *_Name, bool Is_colored)
 
+ \brief	Writes a smf.
+
+ \param [in,out]	pMesh	The mesh.
+ \param	_Name			 	The name.
+ \param	Is_colored		 	true if is colored.
+ */
 
 void Write_SMF(Polyhedron &pMesh, const char *_Name, bool Is_colored)
 {	
@@ -127,7 +143,16 @@ inline int Signe(const double & x)
 }
 
 
-//Description : Gives an area of the triangle which contain the halfedge_handle h
+/**
+ \fn	double Area_Facet_Triangle(const Halfedge_handle &h)
+
+ \brief	Gives an area of the triangle which contain the halfedge_handle h.
+
+ \param	h	The halfedge_handle.
+
+ \return	.
+ */
+
 double Area_Facet_Triangle(const Halfedge_handle &h)
 {
 
@@ -144,7 +169,19 @@ double Area_Facet_Triangle(const Halfedge_handle &h)
 	return area;
 }
 
-//Description :: To calculate the area of a triangle
+
+/**
+ \fn	double Area_Facet_Triangle(const Point3d &P,const Point3d &Q, const Point3d &R)
+
+ \brief	to calculate the area of a triangle.
+
+ \param	P	The.
+ \param	Q	The.
+ \param	R	The.
+
+ \return	.
+ */
+
 double Area_Facet_Triangle(const Point3d &P,const Point3d &Q, const Point3d &R)
 {
 	Vector PQ = Q - P;
@@ -157,7 +194,19 @@ double Area_Facet_Triangle(const Point3d &P,const Point3d &Q, const Point3d &R)
 	return area;
 }
 
+/**
+ \fn	int Estimate_Geometry_Quantization(Polyhedron & pMesh, const double & volume,
+ 		const double & area, const int & number_vertices)
 
+ \brief	Estimate geometry quantization.
+
+ \param [in,out]	pMesh	The mesh.
+ \param	volume			 	The volume.
+ \param	area			 	The area.
+ \param	number_vertices  	Number of vertices.
+
+ \return	.
+ */
 
 int Estimate_Geometry_Quantization(Polyhedron & pMesh, const double & volume, const double & area, const int & number_vertices)
 {
@@ -171,7 +220,18 @@ int Estimate_Geometry_Quantization(Polyhedron & pMesh, const double & volume, co
 	return Q;
 }
 
-//Description : Gives a normal vector of the triangle containing the halfedge_handle h
+
+/**
+ \fn	Vector Triangle_Normal(const Halfedge_handle &h)
+
+ \brief	Gives a normal vector of the triangle containing the halfedge_handle h.
+
+ 
+ \param	h	The.
+
+ \return	.
+ */
+
 Vector Triangle_Normal(const Halfedge_handle &h)
 {
 	Point3d P = h->vertex()->point();
@@ -190,7 +250,20 @@ Vector Triangle_Normal(const Halfedge_handle &h)
 	return normal;
 }
 
-//Description : Gives a normal vector of the triangle formed by three points P Q R in the counterclockwise way.
+ 
+/**
+ \fn	Vector Triangle_Normal(const Point3d & P,const Point3d & Q,const Point3d &R)
+
+ \brief	Gives a normal vector of the triangle formed by three points P Q R in the counterclockwise way..
+
+
+ \param	P	The.
+ \param	Q	The.
+ \param	R	The.
+
+ \return	.
+ */
+
 Vector Triangle_Normal(const Point3d & P,const Point3d & Q,const Point3d &R)
 {
 	Vector PQ = Q - P;
@@ -205,7 +278,18 @@ Vector Triangle_Normal(const Point3d & P,const Point3d & Q,const Point3d &R)
 	return normal;
 }
 
-// Description : To find a correspondent type to retriangulate.
+ 
+/**
+ \fn	int Find_Type(const Halfedge_handle &h, const int & valence)
+
+ \brief	To find a correspondent type to retriangulate.
+ 
+ \param	h	   	The.
+ \param	valence	The valence.
+
+ \return	The found type.
+ */
+
 int Find_Type(const Halfedge_handle &h, const int & valence)
 {
 	int type = 0;	
@@ -261,6 +345,17 @@ int Find_Type(const Halfedge_handle &h, const int & valence)
 }
 
 // ADPATIVE_QUANTIZATION 
+
+/**
+ \fn	void Get_Coefficient_Up_Quantization(const int & Correct_symbol, int coeff[3])
+
+ \brief	Gets a coefficient up quantization.
+
+ 
+ \param	Correct_symbol	The correct symbol.
+ \param	coeff		  	The coeff.
+ */
+
 void Get_Coefficient_Up_Quantization(const int & Correct_symbol, int coeff[3])
 {
 	if (Correct_symbol == 0)
@@ -312,8 +407,20 @@ void Get_Coefficient_Up_Quantization(const int & Correct_symbol, int coeff[3])
 		coeff[2] = 1;
 	}
 }
+ 
+/**
+ \fn	int Get_Correct_Vector(const int & i, const int & j, const int & k)
 
-// ADAPTIVE_QUANTIZATION : To get symbols to correct Vector of under_quantization
+ \brief	ADAPTIVE_QUANTIZATION : gets symbols to correct Vector of under_quantization.
+
+ 
+ \param	i	The.
+ \param	j	The.
+ \param	k	The.
+
+ \return	The correct vector.
+ */
+
 int Get_Correct_Vector(const int & i, const int & j, const int & k)
 {
 	int Correct_symbol = -1;
@@ -346,8 +453,6 @@ int Get_Correct_Vector(const int & i, const int & j, const int & k)
 
 
 
-/*	To check if the 2 colors are same of not. 
-	output : true if same colors, false if not. */
 /*
 bool Is_Same_Color(const Color_Unit & Color0, const Color_Unit & Color1)
 {
@@ -360,7 +465,19 @@ bool Is_Same_Color(const Color_Unit & Color0, const Color_Unit & Color1)
 */
 
 
-/* To check if all centroids are unchanged after one iteration */
+ 
+/**
+ \fn	bool Check_End_Clustering(vector<Color_Unit> v1, vector<Color_Unit> v2)
+
+ \brief	checks if all centroids are unchanged after one iteration.
+
+ 
+ \param	v1	The first vector<Color_Unit>
+ \param	v2	The second vector<Color_Unit>
+
+ \return	true if it succeeds, false if it fails.
+ */
+
 bool Check_End_Clustering(vector<Color_Unit> v1, vector<Color_Unit> v2)
 {
 	double Err = 0;
@@ -381,7 +498,19 @@ bool Check_End_Clustering(vector<Color_Unit> v1, vector<Color_Unit> v2)
 		return false;
 }
 
-/* To get color of front vertex of h.*/
+/* .*/
+
+/**
+ \fn	Color_Unit Get_Vertex_Color(const Halfedge_handle & h)
+
+ \brief	gets a color of front vertex of h.
+
+ 
+ \param	h	The.
+
+ \return	The vertex color.
+ */
+
 Color_Unit Get_Vertex_Color(const Halfedge_handle & h)
 {
 	Color_Unit Resulting_color;
@@ -394,7 +523,18 @@ Color_Unit Get_Vertex_Color(const Halfedge_handle & h)
 }
 
 
-/* To get color of vertex v.*/
+ 
+/**
+ \fn	Color_Unit Get_Vertex_Color(Vertex v)
+
+ \brief	Gets color of vertex v.
+
+ 
+ \param	v	The vertex v.
+
+ \return	The vertex color.
+ */
+
 Color_Unit Get_Vertex_Color(Vertex v)
 {	
 	Color_Unit Resulting_color;
@@ -405,7 +545,19 @@ Color_Unit Get_Vertex_Color(Vertex v)
 	return Resulting_color;	
 }
 
-// Description : To calculate the base vectors of new coordinates system which is frenet system.
+ 
+/**
+ \fn	Vector Calculate_T1_T2(const Halfedge_handle &h, const Vector & normal, Vector & T2)
+
+ \brief	Calculates the base vectors of new coordinates system which is frenet system.
+ 
+ \param	h			  	The.
+ \param	normal		  	The normal.
+ \param [in,out]	T2	The second Vector &.
+
+ \return	The calculated t 1 t 2.
+ */
+
 Vector Calculate_T1_T2(const Halfedge_handle &h, const Vector & normal, Vector & T2)
 {
 	Point3d P = h->vertex()->point();
@@ -450,8 +602,23 @@ Vector Calculate_T1_T2(const Halfedge_handle &h, const Vector & normal, Vector &
 	return T1;
 }
 
+ 
+/**
+ \fn	Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &T2,
+ 		const Vector &normal)
 
-// Description : To find a bijection through a rotation transformation in 3D with only integer coordinates.
+ \brief	 finds a bijection through a rotation transformation in 3D with only integer coordinates.
+
+
+
+ \param	Dist  	The distance.
+ \param	T1	  	The first const Vector &.
+ \param	T2	  	The second const Vector &.
+ \param	normal	The normal.
+
+ \return	.
+ */
+
 Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &T2,const Vector &normal)
 {
 	Matrix R(T1.x(),T2.x(),normal.x(),T1.y(),T2.y(),normal.y(),T1.z(),T2.z(),normal.z());
@@ -586,7 +753,20 @@ Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &
 }
 
 
-// Description : Inverse operation of rotation. This permit to refind the original coordinates.
+/**
+ \fn	Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,
+ 		const Vector &T2,const Vector &normal)
+
+ \brief	Inverse operation of frenet rotation. This permits to refind the original coordinates.
+
+ \param	Frenet	The frenet.
+ \param	T1	  	The first const Vector &.
+ \param	T2	  	The second const Vector &.
+ \param	normal	The normal.
+
+ \return	.
+ */
+
 Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,const Vector &T2,const Vector &normal)
 {
 	Matrix R(T1.x(),T2.x(),normal.x(),T1.y(),T2.y(),normal.y(),T1.z(),T2.z(),normal.z());
@@ -714,8 +894,22 @@ Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,cons
 	delete []S;
 	return Dist;
 }
+ 
+/**
+ \fn	bool Is_Geometric_Metric_Violated(const Halfedge_handle &h,const int &type,
+ 		const unsigned int &valence,const float & Threshold)
 
-// Description :: Here, we define a geometric_metric to preserve maximum the intermediate meshes.
+ \brief	Query if this object is geometric violated. Here, we define a geometric_metric to preserve maximum the intermediate meshes.
+
+
+ \param	h		 	The.
+ \param	type	 	The type.
+ \param	valence  	The valence.
+ \param	Threshold	The threshold.
+
+ \return	true if geometric violated, false if not.
+ */
+
 bool Is_Geometric_Metric_Violated(const Halfedge_handle &h,const int &type,const unsigned int &valence,const float & Threshold)
 {
 	bool check = false;
@@ -986,7 +1180,18 @@ bool Is_Geometric_Metric_Violated(const Halfedge_handle &h,const int &type,const
 }
 
 
-// Descrpition :: To check if removal of the front vertex can cause a normal flipping problem.
+ 
+/**
+ \fn	bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence)
+
+ \brief	Query if removal of the front vertex can cause a normal flipping problem.
+ 
+ \param	h	   	The.
+ \param	valence	The valence.
+
+ \return	true if normal flipping occured, false if not.
+ */
+
 bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence)
 {
 	int type = Find_Type(h, valence);
@@ -1100,7 +1305,17 @@ bool Is_Normal_Flipping_Occured(const Halfedge_handle &h,const unsigned &valence
 }
 
 
-// BORDER : To Check
+ 
+/**
+ \fn	bool Is_Border_Vertex(const Halfedge_handle & h)
+
+ \brief	Query if 'h' is border vertex.
+ 
+ \param	h	The.
+
+ \return	true if border vertex, false if not.
+ */
+
 bool Is_Border_Vertex(const Halfedge_handle & h)
 {
 	bool check = false;
@@ -1119,7 +1334,19 @@ bool Is_Border_Vertex(const Halfedge_handle & h)
 	return check;	
 }
 
-//Description :: To calculate a normal vector of a patch caused by a removal of a front vertex.
+ 
+/**
+ \fn	Vector Normal_Patch(const Halfedge_handle& const_h, const unsigned int &valence)
+
+ \brief	calculates a normal vector of a patch caused by a removal of a front vertex.
+
+ 
+ \param	const_h	The constant h.
+ \param	valence	The valence.
+
+ \return	.
+ */
+
 Vector Normal_Patch(const Halfedge_handle& const_h, const unsigned int &valence)
 {
 	Halfedge_handle h = const_h;
@@ -1272,8 +1499,19 @@ Vector Normal_Patch(const Halfedge_handle& const_h, const unsigned int &valence)
 	delete []normals;
 	return normal;
 }
+ 
+/**
+ \fn	Point3d Barycenter_Patch_After_Removal(const Halfedge_handle & h,const int &valence)
 
-//Descrpition :: To give the position of the barycenter of the patch for decimation conquest.
+ \brief	gives the position of the barycenter of the patch for decimation conquest.
+
+ 
+ \param	h	   	The.
+ \param	valence	The valence.
+
+ \return	.
+ */
+
 Point3d Barycenter_Patch_After_Removal(const Halfedge_handle & h,const int &valence)
 {
 	Halfedge_handle g = h;
@@ -1296,7 +1534,18 @@ Point3d Barycenter_Patch_After_Removal(const Halfedge_handle & h,const int &vale
 }
 
 
-//Descrpition :: To give the position of the barycenter of the patch for regulation conquest.
+ 
+/**
+ \fn	Point3d Barycenter_Patch_Before_Removal(const Halfedge_handle & h)
+
+ \brief	gives the position of the barycenter of the patch for regulation conquest.
+
+ 
+ \param	h	The.
+
+ \return	.
+ */
+
 Point3d Barycenter_Patch_Before_Removal(const Halfedge_handle & h)
 {
 	Halfedge_handle g = h;
@@ -1322,7 +1571,21 @@ Point3d Barycenter_Patch_Before_Removal(const Halfedge_handle & h)
 	return Point3d(x,y,z);
 }
 
-// Description :: To retriangulate the hole left by a removal of a vertex.
+
+/**
+ \fn	void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch,
+ 		const unsigned &valence, const unsigned & Vertex_number, const int & Component_ID)
+
+ \brief	Retriangulates the hole left by a removal of a vertex.
+
+ 
+ \param [in,out]	pMesh	The mesh.
+ \param	ch				 	The ch.
+ \param	valence			 	The valence.
+ \param	Vertex_number	 	The vertex number.
+ \param	Component_ID	 	Identifier for the component.
+ */
+
 void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsigned &valence, const unsigned & Vertex_number, const int & Component_ID)
 {
 	int type = Find_Type(ch, valence);
@@ -1610,6 +1873,21 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 	}
 }
 
+/**
+ \fn	bool Is_Border_Manifold_Property_Violated(const Halfedge_handle & g,
+ 		const Halfedge_handle & First_border_edge, const int & Type, const int & Valence)
+
+ \brief	Query if this object is border manifold property violated.
+
+ 
+ \param	g				 	The.
+ \param	First_border_edge	The first border edge.
+ \param	Type			 	The type.
+ \param	Valence			 	The valence.
+
+ \return	true if border manifold property violated, false if not.
+ */
+
 bool Is_Border_Manifold_Property_Violated(const Halfedge_handle & g, const Halfedge_handle & First_border_edge, const int & Type, const int & Valence)
 {	
 	bool res = false;
@@ -1684,7 +1962,21 @@ bool Is_Border_Manifold_Property_Violated(const Halfedge_handle & g, const Halfe
 	}*/
 	return res;
 }
-//Description :: Check if removal of this vertex would violate the manifold_property or not.
+ 
+/**
+ \fn	bool Is_Manifold_Property_Violated(const Halfedge_handle & h, const int &type,
+ 		const int &valence)
+
+ \brief	Query if removal of this vertex would violate the manifold_property or not.
+
+ 
+ \param	h	   	The.
+ \param	type   	The type.
+ \param	valence	The valence.
+
+ \return	true if manifold property violated, false if not.
+ */
+
 bool Is_Manifold_Property_Violated(const Halfedge_handle & h, const int &type,const int &valence)
 {
 	bool check = false;
@@ -1921,6 +2213,16 @@ bool Is_Same_Coordinate(Point_Int fv, Point_Int sv)
 //	}
 //}
 
+/**
+ \fn	void LAB_To_LCH(const float * LAB, float * LCH)
+
+ \brief	Lab to lch.
+
+
+ \param	LAB			   	The lab.
+ \param [in,out]	LCH	If non-null, the lch.
+ */
+
 void LAB_To_LCH(const float * LAB, float * LCH)
 {
 	// L
@@ -1939,6 +2241,16 @@ void LAB_To_LCH(const float * LAB, float * LCH)
 
 }
 
+/**
+ \fn	double Color_Distance_ICE94(const float * LCH1, const float * LCH2)
+
+ \brief	Color distance ice 94.
+
+ \param	LCH1	The first lch.
+ \param	LCH2	The second lch.
+
+ \return	.
+ */
 
 double Color_Distance_ICE94(const float * LCH1, const float * LCH2)
 {
@@ -1960,6 +2272,18 @@ double Color_Distance_ICE94(const float * LCH1, const float * LCH2)
 
 	return sqrt(dL*dL + dC*dC/sC/sC + dH*dH/sH/sH);
 }
+
+/**
+ \fn	double Color_Distance_CMC21(const float * LCH1, const float * LCH2)
+
+ \brief	Color distance cmc 21.
+
+
+ \param	LCH1	The first lch.
+ \param	LCH2	The second lch.
+
+ \return	.
+ */
 
 double Color_Distance_CMC21(const float * LCH1, const float * LCH2)
 {
@@ -2008,6 +2332,18 @@ double Color_Distance_CMC21(const float * LCH1, const float * LCH2)
 
 	return sqrt(vL*vL + vC*vC + vH*vH);
 }
+
+/**
+ \fn	double Color_Distance_CMC11(const float * LCH1, const float * LCH2)
+
+ \brief	Color distance cmc 11.
+
+
+ \param	LCH1	The first lch.
+ \param	LCH2	The second lch.
+
+ \return	.
+ */
 
 double Color_Distance_CMC11(const float * LCH1, const float * LCH2)
 {
@@ -2058,7 +2394,21 @@ double Color_Distance_CMC11(const float * LCH1, const float * LCH2)
 }
 
 
-//Average color of neighboring vertices ( before removal of front vertex of h)
+//
+
+/**
+ \fn	Color_Unit Get_Average_Vertex_Color_Before_Removal(const Halfedge_handle & h,
+ 		const int & valence)
+
+ \brief	Gets an average color of neighboring vertices ( before removal of front vertex of h)
+
+
+ \param	h	   	The.
+ \param	valence	The valence.
+
+ \return	The average vertex color before removal.
+ */
+
 Color_Unit Get_Average_Vertex_Color_Before_Removal(const Halfedge_handle & h, const int & valence)
 {
 	Halfedge_handle g = h;
@@ -2086,7 +2436,21 @@ Color_Unit Get_Average_Vertex_Color_Before_Removal(const Halfedge_handle & h, co
 }
 
 
-//Average color of neighboring vertices ( After removal of front vertex of h)
+//
+
+/**
+ \fn	Color_Unit Get_Average_Vertex_Color_After_Removal(const Halfedge_handle & h,
+ 		const int & valence)
+
+ \brief	Gets an average color of neighboring vertices ( After removal of front vertex of h)
+
+ 
+ \param	h	   	The.
+ \param	valence	The valence.
+
+ \return	The average vertex color after removal.
+ */
+
 Color_Unit Get_Average_Vertex_Color_After_Removal(const Halfedge_handle & h, const int & valence)
 {		
 	Halfedge_handle g = h;
@@ -2115,7 +2479,20 @@ Color_Unit Get_Average_Vertex_Color_After_Removal(const Halfedge_handle & h, con
 }
 
 
-//Calculate weight of h->vertex for Youn's method.
+ 
+
+/**
+ \fn	double Get_Angle_Weight_Youn(const Halfedge_handle & h)
+
+ \brief	Calculate weight of h->vertex for Youn's method.
+
+ 
+
+ \param	h	The.
+
+ \return	The angle weight youn.
+ */
+
 double Get_Angle_Weight_Youn(const Halfedge_handle & h)
 {
 	Point3d P = h->next()->vertex()->point();
@@ -2186,7 +2563,19 @@ Color_Unit Get_Average_Vertex_Color_Youn(const Halfedge_handle & h,const int & v
 }
 
 
-//My method for prediction front vertex's color.
+ 
+/**
+ \fn	Color_Unit Get_Average_Vertex_Color_Lee(const Halfedge_handle & h, const int & valence)
+
+ \brief	Gets an average vertex color prediction using Lee's method.
+
+ 
+ \param	h	   	The.
+ \param	valence	The valence.
+
+ \return	The average vertex color lee.
+ */
+
 Color_Unit Get_Average_Vertex_Color_Lee(const Halfedge_handle & h, const int & valence)
 {	
 	Halfedge_handle g = h;	
@@ -2348,7 +2737,20 @@ Color_Unit Get_Average_Vertex_Color_Lee(const Halfedge_handle & h, const int & v
 */
 
 
-// Description : Remove edges to create a hole.
+ 
+/**
+ \fn	bool Remove_Edges(Polyhedron & pMesh, const Halfedge_handle & h, const int & type)
+
+ \brief	 Remove edges to create a hole.
+
+ 
+ \param [in,out]	pMesh	The mesh.
+ \param	h				 	The.
+ \param	type			 	The type.
+
+ \return	true if it succeeds, false if it fails.
+ */
+
 bool Remove_Edges(Polyhedron & pMesh, const Halfedge_handle & h, const int & type)
 {
 	bool check = false;
@@ -2547,7 +2949,19 @@ bool Remove_Edges(Polyhedron & pMesh, const Halfedge_handle & h, const int & typ
 	return check;
 }
 
-/* To calculate distance between two colors */
+ 
+/**
+ \fn	double Sqrt_Color(const Color_Unit & col1, const Color_Unit &col2)
+
+ \brief	calculates square root distance between two colors.
+
+ 
+ \param	col1	The first col.
+ \param	col2	The second col.
+
+ \return	.
+ */
+
 double Sqrt_Color(const Color_Unit & col1, const Color_Unit &col2)
 {
 	int diff0 = col1.c0 - col2.c0;
@@ -2573,15 +2987,38 @@ double Sqrt_Color(const Color_Unit & col1, const Color_Unit &col2)
 
 
 
-/*
-	Conversion between RGB and YUV
-*/
+ 
+/**
+ \fn	void RGB_To_YUV(const float r, const float g, const float b, float* yuv)
+
+ \brief	Conversion from RGB to YUV.
+
+ 
+ \param	r			   	The.
+ \param	g			   	The.
+ \param	b			   	The.
+ \param [in,out]	yuv	If non-null, the yuv.
+ */
+
 void RGB_To_YUV(const float r, const float g, const float b, float* yuv)
 {
 	yuv[0] = 0.299    * r + 0.587   * g + 0.114   * b;
 	yuv[1] = -0.14713 * r - 0.28886 * g + 0.436   * b;
 	yuv[2] = 0.615    * r - 0.51499 * g - 0.10001 * b;
 }
+
+/**
+ \fn	void YUV_To_RGB(const float y, const float u, const float v, float* rgb)
+
+\brief	Conversion from YUV to RGB.
+
+ 
+ \param	y			   	The y coordinate.
+ \param	u			   	The u.
+ \param	v			   	The v.
+ \param [in,out]	rgb	If non-null, the rgb.
+ */
+
 void YUV_To_RGB(const float y, const float u, const float v, float* rgb)
 {
 	rgb[0] = y               + 1.13983 * v;
@@ -2589,9 +3026,20 @@ void YUV_To_RGB(const float y, const float u, const float v, float* rgb)
 	rgb[2] = y + 2.03211 * u;
 }
 
-/*
-	Reversible color transform based on integer-based computation
-*/
+ 
+
+/**
+ \fn	void RCT_RGB_To_YCbCr(const float r, const float g, const float b, int* YCbCr)
+
+ \brief	Reversible color transform based on integer-based computation RGB to YCbCr
+
+ 
+ \param	r				 	The.
+ \param	g				 	The.
+ \param	b				 	The.
+ \param [in,out]	YCbCr	If non-null, the y coordinate cb carriage return.
+ */
+
 void RCT_RGB_To_YCbCr(const float r, const float g, const float b, int* YCbCr)
 {
 	int R = (int)floor(r * RGB_Range + 0.5);
@@ -2613,6 +3061,17 @@ void RCT_RGB_To_YCbCr(const float r, const float g, const float b, int* YCbCr)
 	//int B2 = Cb + G;	
 }
 
+/**
+ \fn	void RCT_YCbCr_To_RGB(const int y, const int Cb, const int Cr, float * rgb)
+
+ \brief	Reversible color transform based on integer-based computation YCbCR to RGB.
+ 
+ \param	y			   	The y coordinate.
+ \param	Cb			   	The cb.
+ \param	Cr			   	The carriage return.
+ \param [in,out]	rgb	If non-null, the rgb.
+ */
+
 void RCT_YCbCr_To_RGB(const int y, const int Cb, const int Cr, float * rgb)
 {
 	
@@ -2628,14 +3087,38 @@ void RCT_YCbCr_To_RGB(const int y, const int Cb, const int Cr, float * rgb)
 
 
 /*
-	Irreversible Color Transform
+	
 */
+
+/**
+ \fn	void ICT_RGB_To_YCbCr(const float r, const float g, const float b, float* YCbCr)
+
+ \brief	Irreversible Color Transform RGB to YCbCr.
+
+
+ \param	r				 	The.
+ \param	g				 	The.
+ \param	b				 	The.
+ \param [in,out]	YCbCr	If non-null, the y coordinate cb carriage return.
+ */
+
 void ICT_RGB_To_YCbCr(const float r, const float g, const float b, float* YCbCr)
 {
 	YCbCr[0] =   0.299   * r + 0.587   * g + 0.114   * b;
 	YCbCr[1] = - 0.16875 * r - 0.33126 * g + 0.5     * b;
 	YCbCr[2] =   0.5     * r - 0.41869 * g - 0.08131 * b;
 }
+
+/**
+ \fn	void ICT_YCbCr_To_RGB(const float y, const float Cb, const float Cr, float * rgb)
+
+ \brief	Irreversible Color Transform yCbCr to RGB.
+
+ \param	y			   	The y coordinate.
+ \param	Cb			   	The cb.
+ \param	Cr			   	The carriage return.
+ \param [in,out]	rgb	If non-null, the rgb.
+ */
 
 void ICT_YCbCr_To_RGB(const float y, const float Cb, const float Cr, float * rgb)
 {
@@ -2646,6 +3129,18 @@ void ICT_YCbCr_To_RGB(const float y, const float Cb, const float Cr, float * rgb
 
 
 // l = [0, 100], a = [-0.86,0.86], b = [-1.07, 0.94];
+
+/**
+ \fn	void RGB_To_LAB(float r, float g, float b, float* lab)
+
+ \brief	Rgb to lab.
+
+ \param	r			   	The.
+ \param	g			   	The.
+ \param	b			   	The.
+ \param [in,out]	lab	If non-null, the lab.
+ */
+
 void RGB_To_LAB(float r, float g, float b, float* lab)
 {	
 	// R 0 -- 1, G 0 -- 1, B 0 -- 1
@@ -2710,6 +3205,18 @@ void RGB_To_LAB(float r, float g, float b, float* lab)
 	lab[1] = (float)(500.0 * (fx - fy)); // A
 	lab[2] = (float)(200.0 * (fy - fz)); // B
 }
+
+/**
+ \fn	void LAB_To_RGB(float L, float A, float B, float* rgb)
+
+ \brief	Lab to rgb.
+
+ \param	L			   	The.
+ \param	A			   	a.
+ \param	B			   	The.
+ \param [in,out]	rgb	If non-null, the rgb.
+ */
+
 void LAB_To_RGB(float L, float A, float B, float* rgb)
 {
 	// LAB TO XYZ
@@ -2790,6 +3297,19 @@ void LAB_To_RGB(float L, float A, float B, float* rgb)
 
 }
 // Gabriel
+
+/**
+ \fn	void RGB_To_LUV(float r, float g, float b, float* luv)
+
+ \brief	Rgb to luv.
+
+
+ \param	r			   	The.
+ \param	g			   	The.
+ \param	b			   	The.
+ \param [in,out]	luv	If non-null, the luv.
+ */
+
 void RGB_To_LUV(float r, float g, float b, float* luv)
 {
 	// R 0..1, G 0..1, B 0..1

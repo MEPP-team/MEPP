@@ -31,6 +31,13 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
+
+/**
+ \class	MatrixC33
+
+ \brief	Matrix c 33. 
+*/
+
 class MatrixC33 
 {
 public:
@@ -129,7 +136,17 @@ public:
 	  else
 		  return vec.z();
   }   
-	  
+
+  /**
+   \fn	MatrixC33& MatrixC33::operator-= ( MatrixC33 const& m )
+  
+   \brief	Subtraction assignment operator for MatrixC33.
+  
+   \param	m	The.
+  
+   \return	The result of the operation.
+   */
+
   MatrixC33& operator-= ( MatrixC33 const& m )
   {
     mR0 = mR0 - m.r0() ;
@@ -137,7 +154,18 @@ public:
     mR2 = mR2 - m.r2() ;
     return *this ;
   }
-    
+
+  /**
+   \fn	MatrixC33& MatrixC33::operator*= ( RT const& c )
+  
+   \brief	Multiplication assignment operator for MatrixC33.
+  
+
+   \param	c	The.
+  
+   \return	The result of the operation.
+   */
+
   MatrixC33& operator*= ( RT const& c )
   {
     mR0 = mR0 * c ;
@@ -145,7 +173,18 @@ public:
     mR2 = mR2 * c ;
     return *this ;
   }
+
+  /**
+   \fn	MatrixC33& MatrixC33::operator/= ( RT const& c )
   
+   \brief	Division assignment operator for MatrixC33.
+  
+
+   \param	c	The.
+  
+   \return	The result of the operation.
+   */
+
   MatrixC33& operator/= ( RT const& c )	
   {
     mR0 = mR0 / c ;
@@ -153,7 +192,19 @@ public:
     mR2 = mR2 / c ;
     return *this ;
   }
+
+  /**
+   \fn	friend MatrixC33 MatrixC33::operator+ ( MatrixC33 const& a, MatrixC33 const& b )
   
+   \brief	Addition operator for MatrixC33.
+
+  
+   \param	a	The first value.
+   \param	b	A value to add to it.
+  
+   \return	The result of the operation.
+   */
+
   friend MatrixC33 operator+ ( MatrixC33 const& a, MatrixC33 const& b )
   {
     return MatrixC33(a.r0()+b.r0()
@@ -161,7 +212,18 @@ public:
                     ,a.r2()+b.r2()
                     );
   }
+
+  /**
+   \fn	friend MatrixC33 MatrixC33::operator- ( MatrixC33 const& a, MatrixC33 const& b )
   
+   \brief	Subtraction operator for MatrixC33.
+
+   \param	a	The first value.
+   \param	b	A value to subtract from it.
+  
+   \return	The result of the operation.
+   */
+
   friend MatrixC33 operator- ( MatrixC33 const& a, MatrixC33 const& b )
   {
     return MatrixC33(a.r0()-b.r0()
@@ -169,7 +231,19 @@ public:
                     ,a.r2()-b.r2()
                     );
   }
+
+  /**
+   \fn	friend MatrixC33 MatrixC33::operator* ( MatrixC33 const& m, RT const& c )
   
+   \brief	Multiplication operator for MatrixC33.
+  
+  
+   \param	m	The first value to multiply.
+   \param	c	The second value to multiply.
+  
+   \return	The result of the operation.
+   */
+
   friend MatrixC33 operator* ( MatrixC33 const& m, RT const& c )
   {
     return MatrixC33(m.r0()*c,m.r1()*c,m.r2()*c);
@@ -193,7 +267,14 @@ public:
     return Vector_3(v*m.r0(),v*m.r1(),v*m.r2());
   }
 
- 
+  /**
+   \fn	RT MatrixC33::determinant() const
+  
+   \brief	Gets the determinant of the Matrix.
+  
+   \return	.
+   */
+
   RT determinant() const
   {
 	  return CGAL::determinant/*det3x3_by_formula*/(r0().x(),r0().y(),r0().z()	// MT: changement CGAL 3.5
@@ -201,7 +282,15 @@ public:
                             ,r2().x(),r2().y(),r2().z()
                             );
   }
+
+  /**
+   \fn	MatrixC33& MatrixC33::transpose()
   
+   \brief	Gets the transpose of Matrix.
+
+   \return	.
+   */
+
   MatrixC33& transpose()
   {
     mR0 = Vector_3(r0().x(),r1().x(),r2().x());

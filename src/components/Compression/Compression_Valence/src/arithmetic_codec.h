@@ -91,6 +91,13 @@ private:  //  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+/**
+ \class	Adaptive_Bit_Model
+
+ \brief	Adaptive bit model. 
+
+ */
+
 class Adaptive_Bit_Model                     // adaptive model for binary data
 {
 public:
@@ -107,6 +114,13 @@ private:  //  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+/**
+ \class	Adaptive_Data_Model
+
+ \brief	Adaptive data model. 
+
+ */
 
 class Adaptive_Data_Model                    // adaptive model for binary data
 {
@@ -135,6 +149,13 @@ private:  //  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 
 // Class with both the arithmetic encoder and decoder.  All compressed data is
 // saved to a memory buffer
+
+/**
+ \class	Arithmetic_Codec
+
+ \brief	Arithmetic codec. 
+
+ */
 
 class Arithmetic_Codec
 {

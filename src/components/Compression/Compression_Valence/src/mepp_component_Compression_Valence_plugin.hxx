@@ -11,15 +11,40 @@
 #include <QAction>
 #include <QtPlugin>
 
+/**
+ \class	mepp_component_Compression_Valence_plugin
+
+ \brief	Mepp component compression valence plugin. 
+
+ */
+
 class mepp_component_Compression_Valence_plugin : 
   public QObject,
   public mepp_component_plugin_interface
 {
+
 	Q_OBJECT
 	Q_INTERFACES(mepp_component_plugin_interface);
 
 	public:
+
+		/**
+		 \fn	mepp_component_Compression_Valence_plugin()
+		
+		 \brief	Default constructor.
+
+		 */
+
 		mepp_component_Compression_Valence_plugin() : mepp_component_plugin_interface() {}
+
+		/**
+		 \fn	~mepp_component_Compression_Valence_plugin()
+		
+		 \brief	Finaliser.
+		
+
+		 */
+
 		~mepp_component_Compression_Valence_plugin()
 		{
 			delete actionCompress; delete actionOpen_P3D_file; delete actionDecompress_all;
@@ -29,6 +54,16 @@ class mepp_component_Compression_Valence_plugin :
 			delete actionJCWdecompres;
 			delete actionJCWdecompress_without_extraction;
 		}
+
+		/**
+		 \fn	void init(mainwindow* mainWindow, QList<QMdiSubWindow *> lw)
+		
+		 \brief	Initialises this object.
+
+		
+		 \param [in,out]	mainWindow	If non-null, the main window.
+		 \param [in,out]	lw		  	If non-null, the lw.
+		 */
 
 		void init(mainwindow* mainWindow, QList<QMdiSubWindow *> lw)
 		{
@@ -84,6 +119,15 @@ class mepp_component_Compression_Valence_plugin :
 			// fin --- actions ---
 		}
 
+		/**
+		 \fn	QList<QAction*> actions() const
+		
+		 \brief	Gets the actions.
+		
+		
+		 \return	null if it fails, else a list of.
+		 */
+
 		QList<QAction*> actions() const
 		{
 			return QList<QAction*>()	<< actionCompress
@@ -101,35 +145,193 @@ class mepp_component_Compression_Valence_plugin :
 										<< actionJCWdecompres
 										<< actionJCWdecompress_without_extraction;
 		}
+
+		/**
+		 \fn	virtual void pre_draw()
 		
+		 \brief	Pre draw.
+
+		 */
+
 		virtual void pre_draw() {}
+
+		/**
+		 \fn	virtual void post_draw()
+		
+		 \brief	Posts the draw.
+
+		 */
+
 		virtual void post_draw() {}
+
+		/**
+		 \fn	virtual void pre_draw_all_scene()
+		
+		 \brief	Pre draw all scene.
+
+		 */
+
 		virtual void pre_draw_all_scene() {}
+
+		/**
+		 \fn	virtual void post_draw_all_scene()
+		
+		 \brief	Posts the draw all scene.
+		
+		 */
+
 		virtual void post_draw_all_scene() {}
+
+		/**
+		 \fn	virtual void OnMouseLeftDown(QMouseEvent *event)
+		
+		 \brief	Executes the mouse left down action.
+
+		
+		 \param [in,out]	event	If non-null, the event.
+		 */
 
 		virtual void OnMouseLeftDown(QMouseEvent *event) {}
 		virtual void OnMouseLeftUp(QMouseEvent *event);
+
+		/**
+		 \fn	virtual void OnMouseRightDown(QMouseEvent *event)
+		
+		 \brief	Executes the mouse right down action.
+
+		
+		 \param [in,out]	event	If non-null, the event.
+		 */
+
 		virtual void OnMouseRightDown(QMouseEvent *event) {}
 		virtual void OnMouseRightUp(QMouseEvent *event);
+
+		/**
+		 \fn	virtual void OnMouseMotion(QMouseEvent *event)
+		
+		 \brief	Executes the mouse motion action.
+		
+		
+		 \param [in,out]	event	If non-null, the event.
+		 */
+
 		virtual void OnMouseMotion(QMouseEvent *event) {}
 		virtual void OnMouseWheel(QWheelEvent *event);
+
+		/**
+		 \fn	virtual void OnKeyPress(QKeyEvent *event)
+		
+		 \brief	Executes the key press action.
+		
+		
+		 \param [in,out]	event	If non-null, the event.
+		 */
+
 		virtual void OnKeyPress(QKeyEvent *event) {}
+
+		/**
+		 \fn	virtual void OnKeyRelease(QKeyEvent *event)
+		
+		 \brief	Executes the key release action.
+		
+		
+		 \param [in,out]	event	If non-null, the event.
+		 */
+
 		virtual void OnKeyRelease(QKeyEvent *event) {}
 
-	public slots:
+		public slots:
+
+		/**
+		 \fn	void mepp_component_Compression_Valence_plugin::OnCompress();
+		
+		 \brief	Executes the compress action.
+		
+		 */
+
 		void OnCompress();
+
+		/**
+		 \fn	void load_P3D_file();
+		
+		 \brief	Loads the p3d file.
+		
+
+		 */
+
 		void load_P3D_file();
 
+		/**
+		 \fn	void OnDecompress_all();
+		
+		 \brief	Executes the decompress all action.
+		
+		 */
+
 		void OnDecompress_all();
+
+		/**
+		 \fn	void OnDecompress_one_level();
+		
+		 \brief	Executes the decompress one level action.
+
+		 */
+
 		void OnDecompress_one_level();
+
+		/**
+		 \fn	void OnDecompress_precedent_level();
+		
+		 \brief	Executes the decompress precedent level action.
+		
+
+		 */
+
 		void OnDecompress_precedent_level();
+
+		/**
+		 \fn	void OnDecompress_go_to_specific_level();
+		
+		 \brief	Executes the decompress go to specific level action.
+
+		 */
+
 		void OnDecompress_go_to_specific_level();
+
+		/**
+		 \fn	void OnDecompress_mesh_sequence_on_off();
+		
+		 \brief	Executes the decompress mesh sequence on off action.
+
+		 */
 
 		void OnDecompress_mesh_sequence_on_off();
 
+		/**
+		 \fn	void OnJCW();
+		
+		 \brief	Executes the Joint Compression and Watermark (JCW) action.
+
+		 */
+
 		void OnJCW();
 
+		/**
+		 \fn	void OnJCWdecompres();
+		
+		 \brief	Executes the JCW decompres action.
+
+		 */
+
 		void OnJCWdecompres();
+
+		/**
+		 \fn	void OnJCWdecompress_without_extraction();
+		
+		 \brief	Executes the JCW decompress without extraction action.
+		
+		 */
+
 		void OnJCWdecompress_without_extraction();
 
 	protected:

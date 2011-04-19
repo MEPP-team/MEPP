@@ -11,12 +11,75 @@
 #include <CGAL/basic.h>
 #include <iostream>
 
+/**
+ \property	template <class HDS,class Polyhedron,
+ 			class kernel> class CModifyBasemeshBuilder : public CGAL::Modifier_base<HDS>
+
+ \brief	Gets the modifier base.
+
+ \value	.
+ */
+
 template <class HDS,class Polyhedron,class kernel>
+
+/**
+ \class	CModifyBasemeshBuilder
+
+ \brief	Modify basemesh builder. 
+
+ */
+
 class CModifyBasemeshBuilder : public CGAL::Modifier_base<HDS>
 {
+	// Access the Color_index_list
+
+	/**
+	 \fn	vector<int>* :::GetColor_index_list(void) const
+	
+	 \brief	Gets the color index list.
+	
+	 \return	null if it fails, else the color index list.
+	 */
+
+	vector<int>* GetColor_index_list(void) const				{ return(color_index_list);				};
+
+	/**
+	 \fn	void :::SetColor_index_list(vector<int>* _color_index_list)
+	
+	 \brief	Sets a color index list.
+	
+	 \param [in,out]	_color_index_list	If non-null, list of color indexes.
+	 */
+
+	void SetColor_index_list(vector<int>* _color_index_list)	{ color_index_list = _color_index_list;	};
+
+
 private:
+
+	/**
+	 \typedef	typename HDS::Vertex Vertex
+	
+	 \brief	Defines an alias representing the vertex.
+	 		///////////////////////////////////////////////////////////////////////////////////////////
+	 		//////.
+	 */
+
 	typedef typename HDS::Vertex          Vertex;
+
+	/**
+	 \typedef	typename Vertex::Point Point
+	
+	 \brief	Defines an alias representing the point.
+	 */
+
 	typedef typename Vertex::Point        Point;
+
+	/**
+	 \typedef	typename CGAL::Enriched_polyhedron_incremental_builder_3<HDS> builder
+	
+	 \brief	Defines an alias representing the builder.
+	 */
+
 	typedef typename CGAL::Enriched_polyhedron_incremental_builder_3<HDS> builder;
 	
 	//private fileds :
@@ -29,6 +92,19 @@ private:
 public:
 
 	// life cycle
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// \fn	:::CModifyBasemeshBuilder(vector<Point> *_vertex_list, vector<int> *_facet_list,
+	/// 	vector<float> *_color_list, vector<int> *_color_index_list)
+	///
+	/// \brief	Constructor.
+	///
+	/// \param [in,out]	_vertex_list	 	If non-null, list of vertices.
+	/// \param [in,out]	_facet_list		 	If non-null, list of facets.
+	/// \param [in,out]	_color_list		 	If non-null, list of colors.
+	/// \param [in,out]	_color_index_list	If non-null, list of color indexes.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	CModifyBasemeshBuilder(vector<Point> *_vertex_list, vector<int> *_facet_list, vector<float> *_color_list, vector<int> *_color_index_list)
 	{
 		CGAL_assertion(_vertex_list->size() != 0);
@@ -39,9 +115,21 @@ public:
 		Color_index_list = _color_index_list;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// \fn	:::~CModifyBasemeshBuilder()
+	///
+	/// \brief	Finaliser.
+	///
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	~CModifyBasemeshBuilder() {}
 
- //////////////////////////////////////////////// BUILDER /////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// \fn	void :::operator()( HDS& hds)
+	///
+	/// \brief	Default constructor.
+	///
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void operator()( HDS& hds)
 	{
@@ -53,8 +141,18 @@ public:
 	}
 
 	// add vertices
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// \fn	void :::add_vertices(builder &B)
+	///
+	/// \brief	Adds a vertices. 
+	///
+	/// \param [in,out]	B	The.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	void add_vertices(builder &B)
 	{
+		///< Number of vertices
 		size_t Number_vertex = Vertex_List->size();
 		for (int i = 0; i < (int)Number_vertex ; i++)
 		{
@@ -79,6 +177,14 @@ public:
 		}		
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// \fn	void :::add_facets(builder &B)
+	///
+	/// \brief	Adds a facets. 
+	///
+	///
+	/// \param [in,out]	B	The.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	void add_facets(builder &B)
 	{

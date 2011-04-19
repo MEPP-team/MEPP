@@ -15,8 +15,6 @@
 #include <CGAL/Timer.h>
 #include "Processing_Kai.h"
 
-#include "Color_Distance/VectorT.h"
-#include "Color_Distance/Deviation.h"
 #include <map>
 #include <set>
 #include <bitset>
@@ -27,21 +25,25 @@
 
 // Choice of method for color compression.
 #define USE_LEE_METHOD
+
+
+
+
+//REMOVE for cleaning
 //#define USE_SIMPLE_PREDICTION
 //#define USE_YOON_METHOD
-
-
 ///!!! Do not use mapping table method for color !!!///
 //#define MAPPING_TABLE_METHOD
-#ifdef MAPPING_TABLE_METHOD
-	#define COLOR_QUANTIZATION
-#endif
+//#ifdef MAPPING_TABLE_METHOD
+//	#define COLOR_QUANTIZATION
+//#endif
+//#define USE_ESTIMATION_ADAPTIVE_QUANTIZATION //preserve USE_ESTIMATION_ADAPTIVE_QUANTIZATION, but remove ifndefined
 
 #define NUMBER_SEEDS 256
+
 #define COLOR_NUMBER 10000
 
 #define USE_COLOR_METRIC
-#define USE_ESTIMATION_ADAPTIVE_QUANTIZATION
 
 //#define SAVE_INTERMEDIATE_MESHES
 //#define MEASURE_COLOR_DEVIATION
@@ -98,12 +100,6 @@ double Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 	
 	// Initialization - Quantization, Color, Multiple components;
 	this->Global_Initialization(_pMesh, _Qbit, _File_Name);
-
-	#ifndef USE_ESTIMATION_ADAPTIVE_QUANTIZATION	
-	// To compare with the original mesh
-	if (_Adaptive_quantization)
-		_pMesh.write_off("original_temp.off",false,false);
-	#endif
 	
 	this->m_Mode = MODE_COMPRESSION;
 
@@ -533,34 +529,6 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &_pMesh)
 			pVertex->color(Reconstructed_color[0], Reconstructed_color[1], Reconstructed_color[2]);						
 			
 
-			#ifdef MAPPING_TABLE_METHOD
-			/*
-			 * To obtain color table. (chech if the color is already in the color table,
-			 * If new color -> insert in the color table. */
-
-			
-			bool Is_existing_color = false;
-			
-			for (int i = 0; i < Color_index; i++)
-			{
-				if (Resulting_color == this->ColorArray[i])
-				{
-					pVertex->Vertex_Color_Index = i; // Assign a color index to vertex
-					this->Number_color_index[i] += 1; // Increment number of this color.
-					Is_existing_color = true;
-					break;
-				}
-			}
-		
-			if (!Is_existing_color)	// new color
-			{
-				pVertex->Vertex_Color_Index = Color_index;
-
-				Color_index++;			
-				this->ColorArray.push_back(Resulting_color);
-				this->Number_color_index.push_back(1);
-			}
-			#endif
 		}
 
 		#ifdef COLOR_QUANTIZATION
@@ -589,18 +557,7 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &_pMesh)
 	}
 
 	
-	
-	#ifdef MAPPING_TABLE_METHOD
-	Color_Unit TC;
-			
-	for (int i = 0; i < NUMBER_SEEDS; i++)
-		this->PredictedColorArray.push_back(TC);
-	this->Number_color_index.clear();
-	this->ColorArray.clear();
 
-	#endif
-
-	
 }
 
 
@@ -738,63 +695,6 @@ void Compression_Valence_Component::Color_Quantization(Polyhedron &_pMesh)
 	float New_vertex_color[3];
 	float Reconstructed_color[3];
 	
-
-	#ifdef MAPPING_TABLE_METHOD
-
-	int Color_diff_max_c0 = -5000, Color_diff_max_c1 = -5000, Color_diff_max_c2 = -5000;
-	int Color_diff_min_c0 =  5000, Color_diff_min_c1 =  5000, Color_diff_min_c2 =  5000;	
-	
-	for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
-	{
-		int Vertex_color_index = pVertex->Vertex_Color_Index; // original color index
-		int New_index = Color_repartition[Vertex_color_index]; // corresponding quantized color index
-
-		pVertex->Vertex_Color_Index = New_index;	
-		
-		Color_Unit col = Seeds[New_index];		
-		Color_Unit Color_diff;
-		 
-		Color_diff.c0 = pVertex->color_int(0) - col.c0;
-		Color_diff.c1 = pVertex->color_int(1) - col.c1;
-		Color_diff.c2 = pVertex->color_int(2) - col.c2;
-		
-		if (Color_diff.c0 < Color_diff_min_c0)
-			Color_diff_min_c0 = Color_diff.c0;		
-		if (Color_diff.c1 < Color_diff_min_c1)
-			Color_diff_min_c1 = Color_diff.c1;
-		if (Color_diff.c2 < Color_diff_min_c2)
-			Color_diff_min_c2 = Color_diff.c2;
-
-		if (Color_diff.c0 > Color_diff_max_c0)
-			Color_diff_max_c0 = Color_diff.c0;
-		if (Color_diff.c1 > Color_diff_max_c1)
-			Color_diff_max_c1 = Color_diff.c1;
-		if (Color_diff.c2 > Color_diff_max_c2)
-			Color_diff_max_c2 = Color_diff.c2;
-
-		this->DifferenceColor.push_back(Color_diff); // difference between original and quantized color.
-
-		pVertex->color_int(col.c0, col.c1, col.c2);		
-		
-		New_vertex_color[0] = this->C0_Min + (col.c0 * this->Color_Quantization_Step);
-		New_vertex_color[1] = this->C1_Min + (col.c1 * this->Color_Quantization_Step);
-		New_vertex_color[2] = this->C2_Min + (col.c2 * this->Color_Quantization_Step);
-		
-		pVertex->color_float(New_vertex_color[0], New_vertex_color[1], New_vertex_color[2]);		
-		
-		LAB_To_RGB(New_vertex_color[0], New_vertex_color[1], New_vertex_color[2], Reconstructed_color);			
-		pVertex->color(Reconstructed_color[0], Reconstructed_color[1], Reconstructed_color[2]);		
-	}
-	
-	// For reconstruction of colors. (At the end of the decompression stage),
-	this->ColorDiffMinC0 = Color_diff_min_c0;
-	this->ColorDiffMinC1 = Color_diff_min_c1;
-	this->ColorDiffMinC2 = Color_diff_min_c2;
-
-	this->ColorDiffRangeC0 = Color_diff_max_c0 - Color_diff_min_c0 + 1;
-	this->ColorDiffRangeC1 = Color_diff_max_c1 - Color_diff_min_c1 + 1;
-	this->ColorDiffRangeC2 = Color_diff_max_c2 - Color_diff_min_c2 + 1;	
-	#endif
 }
 #endif
 
@@ -808,7 +708,6 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh,
 														  const int   & _Qbit)
 {
 
-#ifdef USE_ESTIMATION_ADAPTIVE_QUANTIZATION
 
 	if(!this->IsColored)
 	{
@@ -1048,52 +947,8 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh,
 
 		fclose(Operation_order);
 	}
-	
-#else
-	/////////////////////////////////////Original version///////////////////////////////////////////////////////////
 
-	// Variable for adaptative quantization
-	double mrms = 0, mrmswrtBB = 0;
-	double hausdorff = 0, hausdorffwrtBB = 0;	
 
-	// Calcul de distance avec quantization.
-	this->Adaptive_Quantization_Preparation(_pMesh, mrms, mrmswrtBB, hausdorff, hausdorffwrtBB);
-	bool Is_any_vertex_removed = true;
-	
-	unsigned Last_Number = 0;
-	unsigned Current_Number = 0;			
-	int Operation_choice = -1;
-	
-	do
-	{		
-		Last_Number = Current_Number;		
-		
-		Operation_choice = this->Test_Next_Operation(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit);
-		Operation_choice = this->Test_Next_Operation(_pMesh, _Normal_flipping, _Use_metric, _Metric_thread, _Use_forget_metric, _Forget_value, _Qbit);
-		this->ListOperation.push_front(Operation_choice);		
-		
-		// If no vertex has been decimated, stop the loop.
-		Current_Number = _pMesh.size_of_vertices();
-		
-		if (Current_Number <= (unsigned)NVertices)
-		{
-			Is_any_vertex_removed = false;
-			break;
-		}
-		
-	}while((Operation_choice == 1)||(Current_Number != Last_Number));
-	
-	_pMesh.compute_normals();	
-
-		// if last loop didn't remove any vertex, pop all element of the last loop.
-	if (Is_any_vertex_removed)	
-		this->Remove_Last_Phase_Elements();	
-
-	remove("original_temp.off");
-	remove("quantized_temp.off");
-	remove("UnderquantizedMesh.off");
-	remove("DecimatedMesh.off");
-#endif
 }
 
 // Description : This function select a set of independent vertices to be removed
@@ -1105,11 +960,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 													   const int   & Forget_value,
 													   const int   & Component_ID)
 {	
-	#ifdef MAPPING_TABLE_METHOD
-	vector<int> Verify_used_symbol;
-	for (int i = 0; i < NUMBER_SEEDS; i++)
-		Verify_used_symbol.push_back(-1);
-	#endif	
 	
 	// Calculate mean color and meah area for color metric
 	double Max_color, Mean_color;
@@ -1234,13 +1084,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 						Average_color = Get_Average_Vertex_Color_Lee(g, valence);
 					#endif
 
-					#ifdef USE_SIMPLE_PREDICTION
-						Average_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif
-
-					#ifdef USE_YOON_METHOD
-						Average_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif					
 
 					// Color difference from average color of neighbors					
 					Color_Unit Color_diff = Removed_vertex_color - Average_color;					
@@ -1250,18 +1093,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 					#endif
 					
 
-					#ifdef MAPPING_TABLE_METHOD
-
-					int Vertex_color_index = g->next()->vertex()->Vertex_Color_Index;					
-					// Color index is stored
-					this->InterColorIndex.push_front(Vertex_color_index);
-
-					if (Verify_used_symbol[Vertex_color_index] == -1)
-					{
-						Verify_used_symbol[Vertex_color_index] = 1;
-						this->PredictedColorArray[Vertex_color_index] = Color_diff;						
-					}
-					#endif	
 				}			
 								
 
@@ -1481,11 +1312,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 				if ((this->IsColored) && (!this->IsOneColor))
 				{	
 					Removed_vertex_color = Get_Vertex_Color(h->next());
-					
-					#ifdef MAPPING_TABLE_METHOD
-					Vertex_color_index = h->next()->vertex()->Vertex_Color_Index;
-					this->InterColorIndex.push_front(Vertex_color_index);					
-					#endif
 				}				
 				
 
@@ -1552,14 +1378,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 						#ifdef PREDICTION_METHOD
 						this->InterVertexColor.push_front(Color_diff);
 						#endif
-
-						#ifdef MAPPING_TABLE_METHOD						
-						if (Verify_used_symbol[Vertex_color_index] == -1)
-						{
-							this->PredictedColorArray[Vertex_color_index] = Color_diff;						
-							Verify_used_symbol[Vertex_color_index] = 1;
-						}						
-						#endif						
 					}
 
 					Halfedge_handle g = Input_gate;
@@ -1667,13 +1485,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 						this->InterVertexColor.push_front(Color_diff);
 						#endif
 
-						#ifdef MAPPING_TABLE_METHOD
-						if (Verify_used_symbol[Vertex_color_index] == -1)
-						{
-							Verify_used_symbol[Vertex_color_index] = 1;
-							this->PredictedColorArray[Vertex_color_index] = Color_diff;
-						}
-						#endif											
 					}				
 					
 
@@ -1800,14 +1611,6 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 			this->VertexColor[Component_ID].push_front(Col);
 		}
 		#endif
-		#ifdef MAPPING_TABLE_METHOD
-		while(!this->InterColorIndex.empty())
-		{
-			int Color_index = this->InterColorIndex.front();
-			this->InterColorIndex.pop_front();
-			this->ColorIndex.push_front(Color_index);
-		}
-		#endif
 	}
 	// InterConnectivity is the intermediate connectivity symbol container.
 	// We put all symbols in the main container which is this->Connectivity
@@ -1849,15 +1652,6 @@ int Compression_Valence_Component::Regulation(Polyhedron  & _pMesh,
 											  const int   & Forget_value,
 											  const int   & Component_ID)
 {    
-	#ifdef MAPPING_TABLE_METHOD
-	vector<int> Verify_used_symbol;
-	for (int i = 0; i < NUMBER_SEEDS; i++)
-		Verify_used_symbol.push_back(-1);
-	#endif
-
-
-	
-
 	double Max_color, Mean_color;
 	int Temp_NV = 0;
 	int Number_facets;
@@ -1964,30 +1758,12 @@ int Compression_Valence_Component::Regulation(Polyhedron  & _pMesh,
 					#ifdef USE_LEE_METHOD
 						Average_color = Get_Average_Vertex_Color_Lee(g, valence);
 					#endif
-					#ifdef USE_YOON_METHOD
-						Average_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif
-					#ifdef USE_SIMPLE_PREDICTION
-						Average_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif
 					
 					Color_Unit Color_diff = Removed_vertex_color - Average_color;					
 
 					#ifdef PREDICTION_METHOD
 					this->InterVertexColor.push_front(Color_diff);
 					#endif
-
-					#ifdef MAPPING_TABLE_METHOD
-
-					int Vertex_color_index = h->next()->vertex()->Vertex_Color_Index;					
-					this->InterColorIndex.push_front(Vertex_color_index);
-
-					if (Verify_used_symbol[Vertex_color_index] == -1)
-					{
-						Verify_used_symbol[Vertex_color_index] = 1;
-						this->PredictedColorArray[Vertex_color_index] = Color_diff;
-					}
-					#endif					
 				}
 
 				g = h;
@@ -2114,14 +1890,6 @@ int Compression_Valence_Component::Regulation(Polyhedron  & _pMesh,
 			this->VertexColor[Component_ID].push_front(Col);
 		}
 		#endif
-		#ifdef MAPPING_TABLE_METHOD
-		while(!this->InterColorIndex.empty())
-		{
-			int Color_index = this->InterColorIndex.front();
-			this->InterColorIndex.pop_front();
-			this->ColorIndex.push_front(Color_index);
-		}
-		#endif		
 	}
 	while(!InterConnectivity.empty())
 	{
@@ -2398,12 +2166,6 @@ void Compression_Valence_Component::Un_Regulation(Polyhedron &_pMesh, Arithmetic
 				#ifdef USE_LEE_METHOD
 					Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
 				#endif
-				#ifdef USE_YOON_METHOD
-					Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-				#endif
-				#ifdef USE_SIMPLE_PREDICTION
-					Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-				#endif												
 				
 				Color_Unit Color_difference;
 				Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
@@ -2425,60 +2187,6 @@ void Compression_Valence_Component::Un_Regulation(Polyhedron &_pMesh, Arithmetic
 				g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);			
 				#endif
 
-
-				#ifdef MAPPING_TABLE_METHOD
-			
-				g = h;
-				Color_Unit CV;						
-
-				int Color_index = this->Decoder.decode(this->Index_Model);
-				g->next()->vertex()->Vertex_Color_Index = Color_index;
-
-				if (this->IsKnownIndex[Color_index] == 1)
-				{
-					CV = this->ColorArray[Color_index];
-				}
-
-				// if this is a new color
-				if (this->IsKnownIndex[Color_index] == -1)
-				{
-					this->IsKnownIndex[Color_index] = 1;
-
-					Color_Unit Predicted_color;
-
-					#ifdef USE_LEE_METHOD
-						Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
-					#endif
-					#ifdef USE_YOON_METHOD
-						Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif
-					#ifdef USE_SIMPLE_PREDICTION
-						Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif
-
-					Color_Unit Color_difference;
-					Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
-					Color_difference.c1 = this->Decoder.decode(this->Color_1_Model) + this->Smallest_C1;
-					Color_difference.c2 = this->Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
-					
-					CV = Predicted_color + Color_difference;
-					//CV = Color_difference;					
-					this->ColorArray[Color_index] = CV;
-				}				
-				
-				g->next()->vertex()->color_int(CV.c0, CV.c1, CV.c2);				
-
-				float LAB[3];
-				LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-				LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-				LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-				float RGB[3];
-				LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-				g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);		
-
-				#endif
 			}
 			
 			if ((this->IsColored) && (this->IsOneColor))
@@ -2758,12 +2466,6 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 					#ifdef USE_LEE_METHOD
 						Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
 					#endif
-					#ifdef USE_YOON_METHOD
-						Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif
-					#ifdef USE_SIMPLE_PREDICTION
-						Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif												
 					
 					Color_Unit Color_difference;
 					Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
@@ -2784,57 +2486,6 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 
 					g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);
 				
-					#endif
-
-					#ifdef MAPPING_TABLE_METHOD
-					g = h;
-					Color_Unit CV;						
-
-					int Color_index = this->Decoder.decode(this->Index_Model);
-					g->next()->vertex()->Vertex_Color_Index = Color_index;
-					
-					if (this->IsKnownIndex[Color_index] == 1)
-					{
-						CV = this->ColorArray[Color_index];
-					}
-
-					// if this is a new color
-					if (this->IsKnownIndex[Color_index] == -1)
-					{
-						this->IsKnownIndex[Color_index] = 1;
-
-						Color_Unit Predicted_color;
-
-						#ifdef USE_LEE_METHOD
-							Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
-						#endif
-						#ifdef USE_YOON_METHOD
-							Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-						#endif
-						#ifdef USE_SIMPLE_PREDICTION
-							Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-						#endif
-
-						Color_Unit Color_difference;
-						Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
-						Color_difference.c1 = this->Decoder.decode(this->Color_1_Model) + this->Smallest_C1;
-						Color_difference.c2 = this->Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
-						
-						CV = Predicted_color + Color_difference;						
-						this->ColorArray[Color_index] = CV;
-					}					
-
-					g->next()->vertex()->color_int(CV.c0, CV.c1, CV.c2);				
-
-					float LAB[3];
-					LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-					LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-					LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-					float RGB[3];
-					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-					g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);
 					#endif
 				}
 				if ((this->IsColored) && (this->IsOneColor))
@@ -2899,26 +2550,6 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 				Predicted_color.c2 = Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
 			}
 			#endif			
-			
-			#ifdef MAPPING_TABLE_METHOD
-			if ((this->IsColored) && (!this->IsOneColor))
-			{
-				bool Is_new_color = false;
-				Color_Unit Predicted_color;
-				int Color_index;
-
-				Color_index = Decoder.decode(this->Index_Model);
-				if (this->IsKnownIndex[Color_index] == -1)
-				{
-					this->IsKnownIndex[Color_index] = 1;
-					Is_new_color = true;
-
-					Predicted_color.c0 = Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
-					Predicted_color.c1 = Decoder.decode(this->Color_1_Model) + this->Smallest_C1;
-					Predicted_color.c2 = Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
-				}
-			}
-			#endif
 
 			// border edge with valence == 3
 			if (valence == 8)
@@ -2933,15 +2564,6 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 				Color_Unit Average_color;
 				if ((this->IsColored) && (!this->IsOneColor))
 				{
-					Average_color = Get_Average_Vertex_Color_After_Removal(g, 3);
-				}
-				#endif
-
-				#ifdef MAPPING_TABLE_METHOD
-				Color_Unit Average_color;
-
-				if ((this->IsColored) && (!this->IsOneColor))
-				{					
 					Average_color = Get_Average_Vertex_Color_After_Removal(g, 3);
 				}
 				#endif
@@ -2988,39 +2610,6 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->vertex()->color(RGB[0], RGB[1], RGB[2]);
-				}
-				#endif
-
-				#ifdef MAPPING_TABLE_METHOD
-				Color_Unit CV;
-				if ((this->IsColored) && (!this->IsOneColor))
-				{
-					if (Is_new_color)
-					{
-						CV = Average_color + Predicted_color;						
-						this->ColorArray[Color_index] = CV;
-					}
-					else
-					{
-						CV = this->ColorArray[Color_index];
-					}
-
-					if (( CV.c0 > 255) || (CV.c1 > 255) || ( CV.c2 > 255))
-						int temp = 0;
-
-					g->vertex()->color_int(CV.c0, CV.c1, CV.c2);
-
-					g->vertex()->Vertex_Color_Index = Color_index;
-					
-					float LAB[3];
-					LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-					LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-					LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-					float RGB[3];
-					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-					g->vertex()->color(RGB[0], RGB[1], RGB[2]);					
 				}
 				#endif
 				
@@ -3196,46 +2785,6 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->vertex()->color(RGB[0], RGB[1], RGB[2]);
-				}
-				#endif
-
-				#ifdef MAPPING_TABLE_METHOD
-				Color_Unit CV;
-				if ((this->IsColored) && (!this->IsOneColor))
-				{
-					Color_Unit Average_color;
-
-					Color_Unit Color_0 = Get_Vertex_Color(Border_edges[0]->opposite());
-					Color_Unit Color_1 = Get_Vertex_Color(Border_edges[0]);
-					Color_Unit Color_2 = Get_Vertex_Color(Border_edges[1]);
-					Color_Unit Color_3 = Get_Vertex_Color(Border_edges[2]);
-
-					Average_color.c0 = (int)(Color_0.c0 + Color_1.c0 + Color_2.c0 + Color_3.c0)/4.0;
-					Average_color.c1 = (int)(Color_0.c1 + Color_1.c1 + Color_2.c1 + Color_3.c1)/4.0;
-					Average_color.c2 = (int)(Color_0.c2 + Color_1.c2 + Color_2.c2 + Color_3.c2)/4.0;
-
-					if (Is_new_color)
-					{
-						CV = Average_color + Predicted_color;
-						this->ColorArray[Color_index] = CV;
-					}
-					else
-					{
-						CV = this->ColorArray[Color_index];
-					}
-
-					g->vertex()->color_int(CV.c0, CV.c1, CV.c2);
-					g->vertex()->Vertex_Color_Index = Color_index;
-					
-					float LAB[3];
-					LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-					LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-					LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-					float RGB[3];
-					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-					g->vertex()->color(RGB[0], RGB[1], RGB[2]);					
 				}
 				#endif
 				if ((this->IsColored) && (this->IsOneColor))
@@ -3738,16 +3287,6 @@ void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & _pMesh, Arithme
 
 	int Base_color_index_bit = 0;
 
-	#ifdef MAPPING_TABLE_METHOD
-	Base_color_index_bit = (int)ceil(log((double)(Num_color_base_mesh+1))/log((double)2));	
-	enc.put_bits(Base_color_index_bit, 12);	
-	
-	this->IsKnownIndex.clear();
-	for (int i = 0; i < this->PredictedColorArray.size(); i++)
-		this->IsKnownIndex.push_back(-1);
-	
-	#endif
-
 	int Basemesh_vertex_number = 0;
 	vector<int> Seed_edges(2 * this->NumberComponents, -1);
 
@@ -3783,33 +3322,6 @@ void Compression_Valence_Component::Write_Base_Mesh(Polyhedron & _pMesh, Arithme
 			enc.put_bits(C2, C2_QUANTIZATION);
 					
 			Color_size += 3 * C0_QUANTIZATION;
-			#endif
-
-			#ifdef MAPPING_TABLE_METHOD
-
-			// encode color index of vertex
-			int Old_color_index = pVertex->Vertex_Color_Index;
-			int New_color_index = this->ReorderingColorIndex[Old_color_index];
-			enc.put_bits(New_color_index, Base_color_index_bit);				
-			
-			Color_size += Base_color_index_bit;
-			
-			// To know if it is a new color 
-			if (this->IsKnownIndex[New_color_index] == -1)
-			{
-				this->IsKnownIndex[New_color_index] = 1;
-				
-				// If it's a new color, encode 3 color coordinates;
-				int C0 = pVertex->color_int(0);
-				int C1 = pVertex->color_int(1);
-				int C2 = pVertex->color_int(2);
-				
-				enc.put_bits(C0, C0_QUANTIZATION);
-				enc.put_bits(C1, C1_QUANTIZATION);
-				enc.put_bits(C2, C2_QUANTIZATION);					
-				
-				Color_size += C0_QUANTIZATION + C1_QUANTIZATION + C2_QUANTIZATION;
-			}			
 			#endif
 		}		
 	}
@@ -3939,10 +3451,6 @@ void Compression_Valence_Component::Calculate_Geometry_Color_Offset_Range()
 			list<Color_Unit>::iterator Vertex_color_iterator;
 			for (Vertex_color_iterator = this->VertexColor[Component_ID].begin(); Vertex_color_iterator != this->VertexColor[Component_ID].end(); Vertex_color_iterator++)
 			#endif
-			#ifdef MAPPING_TABLE_METHOD
-			vector<Color_Unit>::iterator Vertex_color_iterator;
-			for (Vertex_color_iterator = this->PredictedColorArray[Component_ID].begin(); Vertex_color_iterator != this->PredictedColorArray[Component_ID].end(); Vertex_color_iterator++)
-			#endif			
 			{
 				if (Vertex_color_iterator->c0 < C0_min)
 					C0_min = Vertex_color_iterator->c0;
@@ -3978,77 +3486,77 @@ void Compression_Valence_Component::Calculate_Geometry_Color_Offset_Range()
 }
 
 
-void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &_pMesh, double &min, double &max,double &mean, double &rms)
-{
-	Mesh_roy * Simplified = new Mesh_roy;
-	Mesh_roy * Temp = new Mesh_roy;	
-	
-	Vector3d Pos, Color;
-	Vector3i Face;
-
-	for (int i = 0; i < this->Original->VertexNumber(); i++)
-	{
-		Pos = this->Original->Vertex(i);
-		Temp->AddVertex(Pos);
-		Color = this->Original->Color(i);
-		Temp->AddColor(Color);
-	}
-	for (int i = 0; i < this->Original->FaceNumber(); i++)
-	{
-		Face = this->Original->Face(i);
-		Temp->AddFace(Face);
-	}
-
-
-	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
-	{
-		Point3d pt = pVert->point();
-
-		Pos[0] = pt.x();
-		Pos[1] = pt.y();
-		Pos[2] = pt.z();
-
-		Color[0] = pVert->color(0);
-		Color[1] = pVert->color(1);
-		Color[2] = pVert->color(2);
-
-		Simplified->AddVertex(Pos);
-		Simplified->AddColor(Color);
-	}
-	
-	_pMesh.set_index_vertices();
-
-	for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
-	{
-		int count = 0;
-
-		Halfedge_around_facet_circulator pH = pFacet->facet_begin();
-		do
-		{
-			Face[count] = pH->vertex()->tag();
-			count++;
-		}while(++pH != pFacet->facet_begin());
-		
-		Simplified->AddFace(Face);
-	}
-
-	
-	Deviation * dev = new Deviation;
-
-	dev->Initialization(Temp, Simplified, 0, 0.5);
-	dev->SetDeviationColorBound(0);
-
-	bool IsOK = dev->Compute(COLOR_DEVIATION);
-
-	min = dev->Min();
-	max = dev->Max();
-	mean = dev->Mean();
-	rms = dev->Rms();	
-	
-	delete dev;
-	delete Simplified;
-	delete Temp;
-}
+//void Compression_Valence_Component::Color_Metric_Roy(Polyhedron &_pMesh, double &min, double &max,double &mean, double &rms)
+//{
+//	Mesh_roy * Simplified = new Mesh_roy;
+//	Mesh_roy * Temp = new Mesh_roy;	
+//	
+//	Vector3d Pos, Color;
+//	Vector3i Face;
+//
+//	for (int i = 0; i < this->Original->VertexNumber(); i++)
+//	{
+//		Pos = this->Original->Vertex(i);
+//		Temp->AddVertex(Pos);
+//		Color = this->Original->Color(i);
+//		Temp->AddColor(Color);
+//	}
+//	for (int i = 0; i < this->Original->FaceNumber(); i++)
+//	{
+//		Face = this->Original->Face(i);
+//		Temp->AddFace(Face);
+//	}
+//
+//
+//	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
+//	{
+//		Point3d pt = pVert->point();
+//
+//		Pos[0] = pt.x();
+//		Pos[1] = pt.y();
+//		Pos[2] = pt.z();
+//
+//		Color[0] = pVert->color(0);
+//		Color[1] = pVert->color(1);
+//		Color[2] = pVert->color(2);
+//
+//		Simplified->AddVertex(Pos);
+//		Simplified->AddColor(Color);
+//	}
+//	
+//	_pMesh.set_index_vertices();
+//
+//	for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
+//	{
+//		int count = 0;
+//
+//		Halfedge_around_facet_circulator pH = pFacet->facet_begin();
+//		do
+//		{
+//			Face[count] = pH->vertex()->tag();
+//			count++;
+//		}while(++pH != pFacet->facet_begin());
+//		
+//		Simplified->AddFace(Face);
+//	}
+//
+//	
+//	Deviation * dev = new Deviation;
+//
+//	dev->Initialization(Temp, Simplified, 0, 0.5);
+//	dev->SetDeviationColorBound(0);
+//
+//	bool IsOK = dev->Compute(COLOR_DEVIATION);
+//
+//	min = dev->Min();
+//	max = dev->Max();
+//	mean = dev->Mean();
+//	rms = dev->Rms();	
+//	
+//	delete dev;
+//	delete Simplified;
+//	delete Temp;
+//}
 
 
 void Compression_Valence_Component::Simplification(Polyhedron  & _pMesh,
@@ -4232,10 +3740,6 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 	int Num_color_base_mesh = 0;
 	if ((this->IsColored) && (!this->IsOneColor))
 	{
-		#ifdef MAPPING_TABLE_METHOD
-		// Reorganize the color index to follow the order of appearance
-		Num_color_base_mesh = this->Mapping_Table_Index_Reordering(_pMesh);		
-		#endif				
 
 		fwrite(&this->Color_Quantization_Step, sizeof(float), 1, fp);
 
@@ -4679,56 +4183,6 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 
 	}			
 
-	#ifdef MAPPING_TABLE_METHOD		
-	
-	Adaptive_Data_Model Restorer_C0_model;
-	Adaptive_Data_Model Restorer_C1_model;
-	Adaptive_Data_Model Restorer_C2_model;
-
-	Restorer_C0_model.set_alphabet(this->ColorDiffRangeC0);
-	Restorer_C1_model.set_alphabet(this->ColorDiffRangeC1);
-	Restorer_C2_model.set_alphabet(this->ColorDiffRangeC2);
-
-	enc.put_bits(this->ColorDiffRangeC0, C0_QUANTIZATION + 1);
-	enc.put_bits(this->ColorDiffRangeC1, C1_QUANTIZATION + 1);
-	enc.put_bits(this->ColorDiffRangeC2, C2_QUANTIZATION + 1);
-
-
-	
-
-	// To calculate color rate
-	Adaptive_Data_Model Temp_restorer_C0_model;
-	Adaptive_Data_Model Temp_restorer_C1_model;
-	Adaptive_Data_Model Temp_restorer_C2_model;	
-
-	Temp_restorer_C0_model.set_alphabet(this->ColorDiffRangeC0);
-	Temp_restorer_C1_model.set_alphabet(this->ColorDiffRangeC1);
-	Temp_restorer_C2_model.set_alphabet(this->ColorDiffRangeC2);
-
-	Color_enc.put_bits(this->ColorDiffRangeC0, C0_QUANTIZATION + 1);
-	Color_enc.put_bits(this->ColorDiffRangeC1, C1_QUANTIZATION + 1);
-	Color_enc.put_bits(this->ColorDiffRangeC2, C2_QUANTIZATION + 1);
-	
-	Color_size += (C0_QUANTIZATION + 1)*3;
-	
-	for (int i = 0; i < this->DifferenceColor.size(); i++)
-	{
-		Color_Unit Temp = this->DifferenceColor[i];
-
-		enc.encode(Temp.c0 - this->ColorDiffMinC0, Restorer_C0_model);
-		enc.encode(Temp.c1 - this->ColorDiffMinC1, Restorer_C1_model);
-		enc.encode(Temp.c2 - this->ColorDiffMinC2, Restorer_C2_model);
-		
-
-		// To calculate color rate
-		Color_enc.encode(Temp.c0 - this->ColorDiffMinC0, Temp_restorer_C0_model);
-		Color_enc.encode(Temp.c1 - this->ColorDiffMinC1, Temp_restorer_C1_model);
-		Color_enc.encode(Temp.c2 - this->ColorDiffMinC2, Temp_restorer_C2_model);
-	}	
-	#endif
-	
-	
-
 	Connectivity_size += Connectivity_encoder.stop_encoder() * 8;
 	Color_size += Color_enc.stop_encoder() * 8;
 
@@ -4740,22 +4194,7 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 	Total_size = ftell(f_size);
 }
 
-void Compression_Valence_Component::Adaptive_Quantization_Preparation(Polyhedron &_pMesh, double & mrms, double &mrmswrtBB,double &hausdorff, double &hausdorffwrtBB)
-{
-	_pMesh.write_off("quantized_temp.off",false,false);
-		
-	this->Calculate_Distances((char *)"original_temp.off",(char *)"quantized_temp.off",mrms,mrmswrtBB,hausdorff,hausdorffwrtBB);
-	this->OldDistortion = mrmswrtBB; // reference distorsion (induced by quantization)
-	
-	/*fprintf(this->LogFile,"Input mesh : %d vertices \n",_pMesh.size_of_vertices());
-	fprintf(this->LogFile,"Quantization used : %d bits\n\n",Qbit);
-	fprintf(this->LogFile,"******* Initial Quantization ******* \n");
-	fprintf(this->LogFile,"MRMS : %f (%f wrt bounding box diagonal)\n",mrms,mrmswrtBB);
-	fprintf(this->LogFile,"Hausdorff : %f (%f wrt bounding box diagonal)\n\n\n",hausdorff,hausdorffwrtBB);
-		
-	fprintf(this->RD_MRMS,"%d\t%f\t%f\n", this->CountOperation, mrms, mrmswrtBB);
-	fprintf(this->RD_HAUSDORFF,"%d\t%f\t%f\n", this->CountOperation, hausdorff, hausdorffwrtBB);*/
-}
+
 
 void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron & _pMesh, 
 																	const int & _Component_ID, 
@@ -5674,50 +5113,50 @@ void Compression_Valence_Component::Under_Quantization(Polyhedron &_pMesh, const
 	}		
 }
 
-void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &_pMesh, const char * Filename)
-{
-	this->Original = new Mesh_roy;
-	
-	string File = Filename;
-	size_t dot = File.find_last_of('.');
-	File.erase(dot,4);
-	File += "_color_distortion.txt";
-	this->LogColor = fopen(File.c_str(), "w");
-
-	Vector3d Pos, Color;
-	Vector3i Face;
-	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
-	{
-		Point3d pt = pVert->point();
-
-		Pos[0] = pt.x();
-		Pos[1] = pt.y();
-		Pos[2] = pt.z();
-
-		Color[0] = pVert->color(0);
-		Color[1] = pVert->color(1);
-		Color[2] = pVert->color(2);
-
-		this->Original->AddVertex(Pos);
-		this->Original->AddColor(Color);
-	}
-	
-	_pMesh.set_index_vertices();
-
-	for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
-	{
-		int count = 0;
-
-		Halfedge_around_facet_circulator pH = pFacet->facet_begin();
-		do
-		{
-			Face[count] = pH->vertex()->tag();
-			count++;
-		}while(++pH != pFacet->facet_begin());
-		
-		this->Original->AddFace(Face);
-	}
-}
+//void Compression_Valence_Component::Set_Original_Color_Mesh(Polyhedron &_pMesh, const char * Filename)
+//{
+//	this->Original = new Mesh_roy;
+//	
+//	string File = Filename;
+//	size_t dot = File.find_last_of('.');
+//	File.erase(dot,4);
+//	File += "_color_distortion.txt";
+//	this->LogColor = fopen(File.c_str(), "w");
+//
+//	Vector3d Pos, Color;
+//	Vector3i Face;
+//	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
+//	{
+//		Point3d pt = pVert->point();
+//
+//		Pos[0] = pt.x();
+//		Pos[1] = pt.y();
+//		Pos[2] = pt.z();
+//
+//		Color[0] = pVert->color(0);
+//		Color[1] = pVert->color(1);
+//		Color[2] = pVert->color(2);
+//
+//		this->Original->AddVertex(Pos);
+//		this->Original->AddColor(Color);
+//	}
+//	
+//	_pMesh.set_index_vertices();
+//
+//	for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
+//	{
+//		int count = 0;
+//
+//		Halfedge_around_facet_circulator pH = pFacet->facet_begin();
+//		do
+//		{
+//			Face[count] = pH->vertex()->tag();
+//			count++;
+//		}while(++pH != pFacet->facet_begin());
+//		
+//		this->Original->AddFace(Face);
+//	}
+//}
 
 int Compression_Valence_Component::Decompress_Init(Polyhedron &_pMesh, unsigned & Initial_file_size, const char* File_Name)
 {	
@@ -6435,94 +5874,6 @@ Point3d Compression_Valence_Component::Change_Int_Real(const Point_Int &Point, c
 }
 
 
-	/*
-	Description : calculate the geometric distance(error) between two meshes for adaptative quantization.
-	Result : Maximum of RMS and Hausdorff distance. */
-void Compression_Valence_Component::Calculate_Distances(char * originalMesh,char * attackedMesh,double & mrms,double & mrmswrtBB,double & hausdorff,double & hausdorffwrtBB)
-{
-#if (0)	// MT
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-
-	SECURITY_ATTRIBUTES sa = {0};
-	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-	sa.bInheritHandle = TRUE;
-
-	HANDLE fp = CreateFile(_T("tempfileformetro.txt"),GENERIC_WRITE,0,&sa,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
-
-	ZeroMemory(&si,sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi,sizeof(pi));
-
-	si.dwFlags = STARTF_USESHOWWINDOW|STARTF_USESTDHANDLES;
-	si.wShowWindow = SW_HIDE;
-	si.hStdOutput = fp;
-	si.hStdError = fp;
-
-	wxString inFilename = originalMesh;
-	wxString outFilename = attackedMesh;
-	wxString commandLine = " " + inFilename + " " + outFilename;
-	LPTSTR buff = new TCHAR[512];
-	_tcscpy(buff,commandLine);
-	LPTSTR process_metro = "metro.exe";
-	if (!CreateProcess(process_metro,buff,NULL,NULL,TRUE,0,NULL,NULL,&si,&pi))
-	{
-		fprintf(LogFile,"CreateProcess failed for metro.exe (%d)\n",GetLastError());
-	}
-
-	WaitForSingleObject(pi.hProcess,INFINITE);
-
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
-	CloseHandle(fp);
-
-	delete [] buff;
-	buff = 0;
-
-	mrms = -1.0;
-	FILE * tempMetroFile = fopen("tempfileformetro.txt","r");
-	char * pLine = new char[512];
-	while(fgets(pLine,512,tempMetroFile))
-	{
-		wxString currentLine = pLine;
-		currentLine.Trim();
-
-		if (currentLine.Left(5)=="  RMS")
-		{
-			int stringLength = currentLine.Length();
-			int commaPosition = currentLine.Find(':');
-			wxString stringTemp = currentLine.Mid(commaPosition+2,stringLength-commaPosition-2);
-			double rmsTemp;
-			stringTemp.ToDouble(&rmsTemp);
-			if (rmsTemp>mrms)
-				mrms = rmsTemp;
-		}
-
-		if (currentLine.Left(9)=="Hausdorff")
-		{
-			int spacePosition1 = currentLine.Find(':') + 1;
-			int spacePosition2 = currentLine.Find(' ',spacePosition1+1);
-			int leftParenPosition = currentLine.Find('(');
-			int spacePosition3 = currentLine.Find(' ',leftParenPosition+1);
-			wxString stringTemp1 = currentLine.Mid(spacePosition1+1,spacePosition2-spacePosition1-1);
-			stringTemp1.ToDouble(&hausdorff);
-			wxString stringTemp2 = currentLine.Mid(leftParenPosition+1,spacePosition3-leftParenPosition-1);
-			stringTemp2.ToDouble(&hausdorffwrtBB);
-		}
-	}
-
-	fclose(tempMetroFile);
-
-	delete [] pLine;
-	pLine = 0;
-
-	remove("tempfileformetro.txt");
-
-	mrmswrtBB = hausdorffwrtBB / hausdorff * mrms;
-	if (mrms<=0.00000000001)
-		mrmswrtBB = 0.0;
-#endif
-}
 
 
 // To match first vertices flags between two meshes. Must be used when copying a mesh.
@@ -7721,20 +7072,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 													               const int   & Forget_value,
 													               const int   & Component_ID)
 {	
-	#ifdef MAPPING_TABLE_METHOD
-	vector<int> Verify_used_symbol;
-	for (int i = 0; i < NUMBER_SEEDS; i++)
-		Verify_used_symbol.push_back(-1);
-	#endif		
-
-	/*this->m_N_treated_vertices.clear();
-	this->m_Rad_decision.clear();
-
-	for(int i = 0; i < this->m_NumberRegion; i++)
-	{		
-		this->m_N_treated_vertices.push_back(0);
-		this->m_Rad_decision.push_back(0.);
-	}*/
 	
 	// Calculate mean color and meah area for color metric
 	double Max_color, Mean_color;
@@ -7865,14 +7202,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 						Average_color = Get_Average_Vertex_Color_Lee(g, valence);
 					#endif
 
-					#ifdef USE_SIMPLE_PREDICTION
-						Average_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif
-
-					#ifdef USE_YOON_METHOD
-						Average_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif					
-
 					// Color difference from average color of neighbors					
 					Color_Unit Color_diff = Removed_vertex_color - Average_color;					
 					
@@ -7880,19 +7209,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 					this->InterVertexColor.push_front(Color_diff);
 					#endif
 					
-
-					#ifdef MAPPING_TABLE_METHOD
-
-					int Vertex_color_index = g->next()->vertex()->Vertex_Color_Index;					
-					// Color index is stored
-					this->InterColorIndex.push_front(Vertex_color_index);
-
-					if (Verify_used_symbol[Vertex_color_index] == -1)
-					{
-						Verify_used_symbol[Vertex_color_index] = 1;
-						this->PredictedColorArray[Vertex_color_index] = Color_diff;						
-					}
-					#endif	
 				}								
 
 				// Enter symbol 'VALENCE CODE' into the list of symbols
@@ -8059,11 +7375,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 				if ((this->IsColored) && (!this->IsOneColor))
 				{	
 					Removed_vertex_color = Get_Vertex_Color(h->next());
-					
-					#ifdef MAPPING_TABLE_METHOD
-					Vertex_color_index = h->next()->vertex()->Vertex_Color_Index;
-					this->InterColorIndex.push_front(Vertex_color_index);					
-					#endif
 				}				
 				
 
@@ -8126,14 +7437,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 						#ifdef PREDICTION_METHOD
 						this->InterVertexColor.push_front(Color_diff);
 						#endif
-
-						#ifdef MAPPING_TABLE_METHOD						
-						if (Verify_used_symbol[Vertex_color_index] == -1)
-						{
-							this->PredictedColorArray[Vertex_color_index] = Color_diff;						
-							Verify_used_symbol[Vertex_color_index] = 1;
-						}						
-						#endif						
 					}
 
 					Halfedge_handle g = Input_gate;
@@ -8224,14 +7527,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 						#ifdef PREDICTION_METHOD
 						this->InterVertexColor.push_front(Color_diff);
 						#endif
-
-						#ifdef MAPPING_TABLE_METHOD
-						if (Verify_used_symbol[Vertex_color_index] == -1)
-						{
-							Verify_used_symbol[Vertex_color_index] = 1;
-							this->PredictedColorArray[Vertex_color_index] = Color_diff;
-						}
-						#endif											
 					}					
 					this->InterGeometry.push_front(Vertex_position);					
 				}					
@@ -8324,14 +7619,6 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 			this->VertexColor[Component_ID].push_front(Col);
 		}
 		#endif
-		#ifdef MAPPING_TABLE_METHOD
-		while(!this->InterColorIndex.empty())
-		{
-			int Color_index = this->InterColorIndex.front();
-			this->InterColorIndex.pop_front();
-			this->ColorIndex.push_front(Color_index);
-		}
-		#endif
 	}
 	// InterConnectivity is the intermediate connectivity symbol container.
 	// We put all symbols in the main container which is this->Connectivity
@@ -8368,12 +7655,6 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 											                       const int   & Forget_value,
 											                       const int   & Component_ID)
 {    
-	#ifdef MAPPING_TABLE_METHOD
-	vector<int> Verify_used_symbol;
-	for (int i = 0; i < NUMBER_SEEDS; i++)
-		Verify_used_symbol.push_back(-1);
-	#endif
-
 	double Max_color, Mean_color;
 	int Temp_NV = 0;
 	int Number_facets;
@@ -8472,30 +7753,12 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 					#ifdef USE_LEE_METHOD
 						Average_color = Get_Average_Vertex_Color_Lee(g, valence);
 					#endif
-					#ifdef USE_YOON_METHOD
-						Average_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif
-					#ifdef USE_SIMPLE_PREDICTION
-						Average_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif
 					
 					Color_Unit Color_diff = Removed_vertex_color - Average_color;					
 
 					#ifdef PREDICTION_METHOD
 					this->InterVertexColor.push_front(Color_diff);
 					#endif
-
-					#ifdef MAPPING_TABLE_METHOD
-
-					int Vertex_color_index = h->next()->vertex()->Vertex_Color_Index;					
-					this->InterColorIndex.push_front(Vertex_color_index);
-
-					if (Verify_used_symbol[Vertex_color_index] == -1)
-					{
-						Verify_used_symbol[Vertex_color_index] = 1;
-						this->PredictedColorArray[Vertex_color_index] = Color_diff;
-					}
-					#endif					
 				}
 				
 				
@@ -8584,14 +7847,6 @@ int Compression_Valence_Component::JCW_Regulation_For_Segmentation(Polyhedron  &
 			this->VertexColor[Component_ID].push_front(Col);
 		}
 		#endif
-		#ifdef MAPPING_TABLE_METHOD
-		while(!this->InterColorIndex.empty())
-		{
-			int Color_index = this->InterColorIndex.front();
-			this->InterColorIndex.pop_front();
-			this->ColorIndex.push_front(Color_index);
-		}
-		#endif		
 	}
 	while(!InterConnectivity.empty())
 	{
@@ -8998,12 +8253,6 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 					#ifdef USE_LEE_METHOD
 						Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
 					#endif
-					#ifdef USE_YOON_METHOD
-						Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif
-					#ifdef USE_SIMPLE_PREDICTION
-						Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif												
 					
 					Color_Unit Color_difference;
 					Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
@@ -9024,57 +8273,6 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 
 					g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);
 				
-					#endif
-
-					#ifdef MAPPING_TABLE_METHOD
-					g = h;
-					Color_Unit CV;						
-
-					int Color_index = this->Decoder.decode(this->Index_Model);
-					g->next()->vertex()->Vertex_Color_Index = Color_index;
-					
-					if (this->IsKnownIndex[Color_index] == 1)
-					{
-						CV = this->ColorArray[Color_index];
-					}
-
-					// if this is a new color
-					if (this->IsKnownIndex[Color_index] == -1)
-					{
-						this->IsKnownIndex[Color_index] = 1;
-
-						Color_Unit Predicted_color;
-
-						#ifdef USE_LEE_METHOD
-							Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
-						#endif
-						#ifdef USE_YOON_METHOD
-							Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-						#endif
-						#ifdef USE_SIMPLE_PREDICTION
-							Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-						#endif
-
-						Color_Unit Color_difference;
-						Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
-						Color_difference.c1 = this->Decoder.decode(this->Color_1_Model) + this->Smallest_C1;
-						Color_difference.c2 = this->Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
-						
-						CV = Predicted_color + Color_difference;						
-						this->ColorArray[Color_index] = CV;
-					}					
-
-					g->next()->vertex()->color_int(CV.c0, CV.c1, CV.c2);				
-
-					float LAB[3];
-					LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-					LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-					LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-					float RGB[3];
-					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-					g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);
 					#endif
 				}
 				if ((this->IsColored) && (this->IsOneColor))
@@ -9135,27 +8333,6 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 				Predicted_color.c2 = Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
 			}
 			#endif			
-			
-			#ifdef MAPPING_TABLE_METHOD
-			if ((this->IsColored) && (!this->IsOneColor))
-			{
-				bool Is_new_color = false;
-				Color_Unit Predicted_color;
-				int Color_index;
-
-				Color_index = Decoder.decode(this->Index_Model);
-				if (this->IsKnownIndex[Color_index] == -1)
-				{
-					this->IsKnownIndex[Color_index] = 1;
-					Is_new_color = true;
-
-					Predicted_color.c0 = Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
-					Predicted_color.c1 = Decoder.decode(this->Color_1_Model) + this->Smallest_C1;
-					Predicted_color.c2 = Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
-				}
-			}
-			#endif
-
 			// border edge with valence == 3
 			if (valence == 8)
 			{
@@ -9163,15 +8340,6 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 				Color_Unit Average_color;
 				if ((this->IsColored) && (!this->IsOneColor))
 				{
-					Average_color = Get_Average_Vertex_Color_After_Removal(g, 3);
-				}
-				#endif
-
-				#ifdef MAPPING_TABLE_METHOD
-				Color_Unit Average_color;
-
-				if ((this->IsColored) && (!this->IsOneColor))
-				{					
 					Average_color = Get_Average_Vertex_Color_After_Removal(g, 3);
 				}
 				#endif
@@ -9292,39 +8460,6 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->vertex()->color(RGB[0], RGB[1], RGB[2]);
-				}
-				#endif
-
-				#ifdef MAPPING_TABLE_METHOD
-				Color_Unit CV;
-				if ((this->IsColored) && (!this->IsOneColor))
-				{
-					if (Is_new_color)
-					{
-						CV = Average_color + Predicted_color;						
-						this->ColorArray[Color_index] = CV;
-					}
-					else
-					{
-						CV = this->ColorArray[Color_index];
-					}
-
-					if (( CV.c0 > 255) || (CV.c1 > 255) || ( CV.c2 > 255))
-						int temp = 0;
-
-					g->vertex()->color_int(CV.c0, CV.c1, CV.c2);
-
-					g->vertex()->Vertex_Color_Index = Color_index;
-					
-					float LAB[3];
-					LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-					LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-					LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-					float RGB[3];
-					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-					g->vertex()->color(RGB[0], RGB[1], RGB[2]);					
 				}
 				#endif
 				
@@ -9485,46 +8620,6 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->vertex()->color(RGB[0], RGB[1], RGB[2]);
-				}
-				#endif
-
-				#ifdef MAPPING_TABLE_METHOD
-				Color_Unit CV;
-				if ((this->IsColored) && (!this->IsOneColor))
-				{
-					Color_Unit Average_color;
-
-					Color_Unit Color_0 = Get_Vertex_Color(Border_edges[0]->opposite());
-					Color_Unit Color_1 = Get_Vertex_Color(Border_edges[0]);
-					Color_Unit Color_2 = Get_Vertex_Color(Border_edges[1]);
-					Color_Unit Color_3 = Get_Vertex_Color(Border_edges[2]);
-
-					Average_color.c0 = (int)(Color_0.c0 + Color_1.c0 + Color_2.c0 + Color_3.c0)/4.0;
-					Average_color.c1 = (int)(Color_0.c1 + Color_1.c1 + Color_2.c1 + Color_3.c1)/4.0;
-					Average_color.c2 = (int)(Color_0.c2 + Color_1.c2 + Color_2.c2 + Color_3.c2)/4.0;
-
-					if (Is_new_color)
-					{
-						CV = Average_color + Predicted_color;
-						this->ColorArray[Color_index] = CV;
-					}
-					else
-					{
-						CV = this->ColorArray[Color_index];
-					}
-
-					g->vertex()->color_int(CV.c0, CV.c1, CV.c2);
-					g->vertex()->Vertex_Color_Index = Color_index;
-					
-					float LAB[3];
-					LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-					LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-					LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-					float RGB[3];
-					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-					g->vertex()->color(RGB[0], RGB[1], RGB[2]);					
 				}
 				#endif
 				if ((this->IsColored) && (this->IsOneColor))
@@ -10007,12 +9102,6 @@ void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &_pMesh, Arithm
 				#ifdef USE_LEE_METHOD
 					Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
 				#endif
-				#ifdef USE_YOON_METHOD
-					Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-				#endif
-				#ifdef USE_SIMPLE_PREDICTION
-					Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-				#endif												
 				
 				Color_Unit Color_difference;
 				Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
@@ -10034,60 +9123,6 @@ void Compression_Valence_Component::JCW_Un_Regulation(Polyhedron &_pMesh, Arithm
 				g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);			
 				#endif
 
-
-				#ifdef MAPPING_TABLE_METHOD
-			
-				g = h;
-				Color_Unit CV;						
-
-				int Color_index = this->Decoder.decode(this->Index_Model);
-				g->next()->vertex()->Vertex_Color_Index = Color_index;
-
-				if (this->IsKnownIndex[Color_index] == 1)
-				{
-					CV = this->ColorArray[Color_index];
-				}
-
-				// if this is a new color
-				if (this->IsKnownIndex[Color_index] == -1)
-				{
-					this->IsKnownIndex[Color_index] = 1;
-
-					Color_Unit Predicted_color;
-
-					#ifdef USE_LEE_METHOD
-						Predicted_color = Get_Average_Vertex_Color_Lee(g, valence);
-					#endif
-					#ifdef USE_YOON_METHOD
-						Predicted_color = Get_Average_Vertex_Color_Youn(g, valence);
-					#endif
-					#ifdef USE_SIMPLE_PREDICTION
-						Predicted_color = Get_Average_Vertex_Color_Before_Removal(g, valence);
-					#endif
-
-					Color_Unit Color_difference;
-					Color_difference.c0 = this->Decoder.decode(this->Color_0_Model) + this->Smallest_C0;
-					Color_difference.c1 = this->Decoder.decode(this->Color_1_Model) + this->Smallest_C1;
-					Color_difference.c2 = this->Decoder.decode(this->Color_2_Model) + this->Smallest_C2;
-					
-					CV = Predicted_color + Color_difference;
-					//CV = Color_difference;					
-					this->ColorArray[Color_index] = CV;
-				}				
-				
-				g->next()->vertex()->color_int(CV.c0, CV.c1, CV.c2);				
-
-				float LAB[3];
-				LAB[0] = this->C0_Min + CV.c0 * this->Color_Quantization_Step;
-				LAB[1] = this->C1_Min + CV.c1 * this->Color_Quantization_Step;
-				LAB[2] = this->C2_Min + CV.c2 * this->Color_Quantization_Step;
-
-				float RGB[3];
-				LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
-
-				g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);		
-
-				#endif
 			}
 			
 			if ((this->IsColored) && (this->IsOneColor))
@@ -12771,7 +11806,7 @@ void Compression_Valence_Component::JCW_Colorify_Regions(Polyhedron &_pMesh)
 	for(Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
 	{
 		int NB = pVert->Region_Number;		
-		pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
+//		pVert->color(Color[NB][0], Color[NB][1], Color[NB][2]);
 		pVert->color(this->Region_Color[NB][0], this->Region_Color[NB][1], this->Region_Color[NB][2]);
 	}		
 }
