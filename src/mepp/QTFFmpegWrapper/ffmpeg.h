@@ -25,7 +25,7 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 
 #ifdef __APPLE__
 	#ifndef UINT64_C
-	#define #define UINT64_C(v)  (v ## ULL)
+	#define UINT64_C(v)  (v ## ULL)
 	#endif
 #endif
 
