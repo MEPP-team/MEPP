@@ -41,7 +41,7 @@ class CModifyBasemeshBuilder : public CGAL::Modifier_base<HDS>
 	 \return	null if it fails, else the color index list.
 	 */
 
-	vector<int>* GetColor_index_list(void) const				{ return(color_index_list);				};
+	vector<int> * GetColor_index_list(void) const				{ return(Color_index_list);				};
 
 	/**
 	 \fn	void :::SetColor_index_list(vector<int>* _color_index_list)
@@ -51,7 +51,7 @@ class CModifyBasemeshBuilder : public CGAL::Modifier_base<HDS>
 	 \param [in,out]	_color_index_list	If non-null, list of color indexes.
 	 */
 
-	void SetColor_index_list(vector<int>* _color_index_list)	{ color_index_list = _color_index_list;	};
+	void SetColor_index_list(vector<int>* _color_index_list)	{ Color_index_list = _color_index_list;	};
 
 
 private:

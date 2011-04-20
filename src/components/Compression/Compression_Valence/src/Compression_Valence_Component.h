@@ -1005,6 +1005,7 @@ Opposite function is up_quantization
 		/**
 		 \fn	void JCW_Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & dec, const int & id);
 		
+
 		 \brief	JCW un decimation conquest.
 		 	
 		 \param [in,out]	pMesh	The mesh.
@@ -1578,7 +1579,7 @@ Opposite function is up_quantization
 		list<Point_Int> JCW_Geometry;
 
 		//double LUT_CourbureClust[3*256];
-		vector<vector<float>> Region_Color;
+		vector< vector<float> > Region_Color;
 		int Number_non_reversible_vertices;
 	// from IHM
 	public:
