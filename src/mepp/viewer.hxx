@@ -132,7 +132,7 @@ class Viewer : public QGLViewer
 			if (!p->empty())
 			{
 				setSceneBoundingBox(qglviewer::Vec(to_double(p->xmin()),to_double(p->ymin()),to_double(p->zmin())), qglviewer::Vec(to_double(p->xmax()),to_double(p->ymax()),to_double(p->zmax())));
-				camera()->setFOVToFitScene(); // MT
+				//camera()->setFOVToFitScene(); // MT
 				showEntireScene();
 			}
 
