@@ -245,6 +245,9 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
       pVertex != pMesh->vertices_end();
       pVertex++)
   {
+
+	  bool NoValPro=false;
+
     double ppMatrix_sum[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 	double eigenvalues[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 	double eigenvectors[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
@@ -300,62 +303,74 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				//recherche des vecteurs et valeurs propres
 				if (ValPro(3,CovMat,1e-15,10000.,VectPro,Valpro)==-1)
 				{
+					NoValPro=true;
+					
+				}
+			}
+			
+			if(!NoValPro)
+			{
+				//  Call the Jacovi subroutine
+				for (int u=0;u<4;u++)
+					for (int v=0;v<4;v++)
+					{
+						Valpro[u][v]=fabs(Valpro[u][v]);
+
+					}
+				EigSrt(Valpro,VectPro,3);
+				Vector VKmaxCurv(VectPro[1][2],VectPro[2][2],VectPro[3][2]);
+				Vector VKminCurv(VectPro[1][1],VectPro[2][1],VectPro[3][1]);
+
+
+				eigenvalues[0][0]=Valpro[1][1];
+				eigenvalues[0][1]=Valpro[1][2];
+				eigenvalues[0][2]=Valpro[1][3];
+				eigenvalues[1][0]=Valpro[2][1];
+				eigenvalues[1][1]=Valpro[2][2];
+				eigenvalues[1][2]=Valpro[2][3];
+				eigenvalues[2][0]=Valpro[3][1];
+				eigenvalues[2][1]=Valpro[3][2];
+				eigenvalues[2][2]=Valpro[3][3];
+
+				eigenvectors[0][0]=VectPro[1][1];
+				eigenvectors[0][1]=VectPro[1][2];
+				eigenvectors[0][2]=VectPro[1][3];
+				eigenvectors[1][0]=VectPro[2][1];
+				eigenvectors[1][1]=VectPro[2][2];
+				eigenvectors[1][2]=VectPro[2][3];
+				eigenvectors[2][0]=VectPro[3][1];
+				eigenvectors[2][1]=VectPro[3][2];
+				eigenvectors[2][2]=VectPro[3][3];
+
+
+
+
+				pVertex->VKmaxCurv=VKmaxCurv;
+				pVertex->VKminCurv=VKminCurv;
+
+				pVertex->KmaxCurv=Valpro[1][1];
+				pVertex->KminCurv=Valpro[2][2];
+
+
+				
+			}
+			else
+			{
 					pVertex->VKmaxCurv=CGAL::NULL_VECTOR;
 					pVertex->VKminCurv=CGAL::NULL_VECTOR;
-					return;
-				}
+					pVertex->KmaxCurv=0;
+					pVertex->KminCurv=0;
 			}
-				//  Call the Jacovi subroutine
-			for (int u=0;u<4;u++)
-				for (int v=0;v<4;v++)
-				{
-					Valpro[u][v]=fabs(Valpro[u][v]);
-
-				}
-			EigSrt(Valpro,VectPro,3);
-			Vector VKmaxCurv(VectPro[1][2],VectPro[2][2],VectPro[3][2]);
-			Vector VKminCurv(VectPro[1][1],VectPro[2][1],VectPro[3][1]);
-
-
-			eigenvalues[0][0]=Valpro[1][1];
-			eigenvalues[0][1]=Valpro[1][2];
-			eigenvalues[0][2]=Valpro[1][3];
-			eigenvalues[1][0]=Valpro[2][1];
-			eigenvalues[1][1]=Valpro[2][2];
-			eigenvalues[1][2]=Valpro[2][3];
-			eigenvalues[2][0]=Valpro[3][1];
-			eigenvalues[2][1]=Valpro[3][2];
-			eigenvalues[2][2]=Valpro[3][3];
-
-			eigenvectors[0][0]=VectPro[1][1];
-			eigenvectors[0][1]=VectPro[1][2];
-			eigenvectors[0][2]=VectPro[1][3];
-			eigenvectors[1][0]=VectPro[2][1];
-			eigenvectors[1][1]=VectPro[2][2];
-			eigenvectors[1][2]=VectPro[2][3];
-			eigenvectors[2][0]=VectPro[3][1];
-			eigenvectors[2][1]=VectPro[3][2];
-			eigenvectors[2][2]=VectPro[3][3];
-
-
-
-
-			pVertex->VKmaxCurv=VKmaxCurv;
-			pVertex->VKminCurv=VKminCurv;
-
-			pVertex->KmaxCurv=Valpro[1][1];
-			pVertex->KminCurv=Valpro[2][2];
-
 
 			for (int i=0;i<(3);i++)
-			{
-				free(CovMat[i]);
-				free(VectPro[i]);
-				free(Valpro[i]);
-			}
-			free(CovMat);
-			free(VectPro);
-			free(Valpro);
+				{
+					free(CovMat[i]);
+					free(VectPro[i]);
+					free(Valpro[i]);
+				}
+				free(CovMat);
+				free(VectPro);
+				free(Valpro);
 
 
 #ifdef _MSC_VER
@@ -385,7 +400,8 @@ void Curvature_Component::ConstructColorMap(PolyhedronPtr pMesh,int ColorField)/
 
 		double R;
 		int indiceLut;
-		Vertex_iterator pVertex = NULL;
+		Vertex_iterator pVertex = NULL;		
+
 	  for (pVertex = pMesh->vertices_begin();
 		  pVertex != pMesh->vertices_end();
 		  pVertex++)
@@ -397,13 +413,15 @@ void Curvature_Component::ConstructColorMap(PolyhedronPtr pMesh,int ColorField)/
 				R=(pVertex->KmaxCurv-MinNrmMaxCurvature)/(MaxNrmMaxCurvature-MinNrmMaxCurvature)*255;
 			else R=1;
 
+			if(R>255)
+				R=255;
 			indiceLut=floor(R);
 			pVertex->color(LUT_CourbureClust[3*indiceLut],LUT_CourbureClust[3*indiceLut+1],LUT_CourbureClust[3*indiceLut+2]);
-
-
-
-
+				
+			
+			
 	  }
+	
 }
 
 Curvature_Component::Curvature_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p)
