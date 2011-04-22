@@ -24,12 +24,10 @@
 
 struct Point_Int
 {
-	///< The x coordinate
-	int x;
-	///< The y coordinate
-	int y;
-	///< The z coordinate
-	int z;
+	
+	int x;///< The x coordinate
+	int y;///< The y coordinate
+	int z;///< The z coordinate
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// \fn	Point_Int()
@@ -1413,30 +1411,22 @@ Opposite function is up_quantization
 		//CCopyPoly<Polyhedron, Enriched_kernel> Copy_Polyhedron;	//MT
 		
 		// To encode each type of operation between decimation and increase of quantization resolution
-        ///< The list operation
-        vector<list<int> >		 ListOperation;
-        ///< The connectivity
-        vector<list<int> >		 Connectivity;
-        ///< The geometry
-        vector<list<Point_Int> > Geometry;
-        ///< Number of symbols
-        vector<list<int> >		 NumberSymbol;
-        ///< Number of vertices
-        vector<list<int> >		 NumberVertices;
+        vector<list<int> >		 ListOperation;///< The list operation
+        vector<list<int> >		 Connectivity;///< The connectivity
+        vector<list<Point_Int> > Geometry;///< The geometry
+        vector<list<int> >		 NumberSymbol;///< Number of symbols
+        vector<list<int> >		 NumberVertices;///< Number of vertices
+        
 			
-		///< The inter geometry
-		list<Point_Int>          InterGeometry;
-		///< The inter connectivity
-		list<int>		         InterConnectivity;		
+		list<Point_Int>          InterGeometry;///< The inter geometry
+		list<int>		         InterConnectivity;		///< The inter connectivity
+		
 
-        ///< The alpha range
-        vector<list<int> > AlphaRange;
-        ///< The alpha offset
-        vector<list<int> > AlphaOffset;
-        ///< The gamma range
-        vector<list<int> > GammaRange;
-        ///< The gamma offset
-        vector<list<int> > GammaOffset;
+        vector<list<int> > AlphaRange;///< The alpha range
+        vector<list<int> > AlphaOffset;///< The alpha offset
+        vector<list<int> > GammaRange;///< The gamma range
+        vector<list<int> > GammaOffset;///< The gamma offset
+        
 		
 		// Quantization
 		
