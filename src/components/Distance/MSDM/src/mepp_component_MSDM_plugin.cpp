@@ -84,10 +84,10 @@ void mepp_component_MSDM_plugin::MSDM_computation()
 				component_ptr->KmaxKmean(polyhedron_ptr_in1,maxdim);
 				component_ptr->KmaxKmean(polyhedron_ptr_in2,maxdim);
 		
-				component_ptr->Processroughness_curve_Dual(polyhedron_ptr_in1,polyhedron_ptr_in2,0.015*maxdim,maxdim);
+				component_ptr->ComputeLocalCurvatureStatistics(polyhedron_ptr_in1,polyhedron_ptr_in2,0.015*maxdim,maxdim);
 
 				double L;
-				component_ptr->ComputeDistanceEcartNormalRoughnessPonderate(polyhedron_ptr_in1,polyhedron_ptr_in2,0.5,L);
+				component_ptr->ComputeMSDM_FromStatistics(polyhedron_ptr_in1,polyhedron_ptr_in2,L);
 
 
 				timer.stop();

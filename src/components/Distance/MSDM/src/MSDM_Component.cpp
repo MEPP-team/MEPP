@@ -22,15 +22,10 @@
 #include<vector>
 #include<stack>
 
-double MSDM_Component::Processroughness_curve_Dual(PolyhedronPtr m_PolyOriginal, PolyhedronPtr m_PolyDegrad,double radius, double maxdim,bool IsGauss)
+void MSDM_Component::ComputeLocalCurvatureStatistics(PolyhedronPtr m_PolyOriginal, PolyhedronPtr m_PolyDegrad,double radius, double maxdim)
 {
 	
 	
-        //double somme_roughness=0; // MT
-        //int NbVert=0; // MT
-
-	
-
 	Vertex_iterator	pVertexDeg=m_PolyDegrad->vertices_begin();
 	for(Vertex_iterator	pVertex	=	m_PolyOriginal->vertices_begin();
 				pVertex	!= m_PolyOriginal->vertices_end();
@@ -45,11 +40,11 @@ double MSDM_Component::Processroughness_curve_Dual(PolyhedronPtr m_PolyOriginal,
                         double moyenne=0.; // MT
                         double moyenneDeg=0.; // MT
 
-                        /*double var1=*/Processroughness_per_vertex_curve(m_PolyOriginal,(&(*pVertex)),radius,TabDistance,TabPoint,moyenne,maxdim,IsGauss); // MT
+                        /*double var1=*/ComputeLocalCurvatureStatistics_PerVertex(m_PolyOriginal,(&(*pVertex)),radius,TabDistance,TabPoint,moyenne,maxdim); // MT
 
-                        /*double var2=*/Processroughness_per_vertex_curve(m_PolyDegrad,(&(*pVertexDeg)),radius,TabDistanceDeg,TabPointDeg,moyenneDeg,maxdim,IsGauss); // MT
+                        /*double var2=*/ComputeLocalCurvatureStatistics_PerVertex(m_PolyDegrad,(&(*pVertexDeg)),radius,TabDistanceDeg,TabPointDeg,moyenneDeg,maxdim); // MT
 
-			double cov=ProcessCovariance((&(*pVertexDeg)),moyenne,moyenneDeg,TabDistance,TabPoint,TabDistanceDeg,TabPointDeg,maxdim,IsGauss);
+			double cov=ProcessCovariance_PerVertex((&(*pVertexDeg)),moyenne,moyenneDeg,TabDistance,TabPoint,TabDistanceDeg,TabPointDeg,maxdim);
 
 			pVertexDeg->CourbureCoVariance=pVertex->CourbureCoVariance=cov;
 
@@ -59,10 +54,10 @@ double MSDM_Component::Processroughness_curve_Dual(PolyhedronPtr m_PolyOriginal,
 			
 
 	}
-	return 0;
+	
 }
 
-double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double moyenneDeg,std::vector<double> TabDistance,std::vector<Point3d> &TabPoint,std::vector<double> &TabDistanceDeg,std::vector<Point3d> &TabPointDeg, double dim,bool IsGauss)
+double MSDM_Component::ProcessCovariance_PerVertex(Vertex* pVertex,double moyenne,double moyenneDeg,std::vector<double> &TabDistance,std::vector<Point3d> &TabPoint,std::vector<double> &TabDistanceDeg,std::vector<Point3d> &TabPointDeg, double dim)
 	{
 		double Cov1,Cov2;
 		double somme1=0;
@@ -110,20 +105,15 @@ double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double m
 
 			}
 
-			if(IsGauss==false)
-			{
-				somme1+=(x1-moyenne)*(x2-moyenneDeg);
-				sommewi+=1;
-			}
-			else
-			{
-				Vector DistancePt=TabPoint[i]-pVertex->point();
-				double distPt=sqrt(DistancePt*DistancePt);
-				double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);
+		
+			
+			Vector DistancePt=TabPoint[i]-pVertex->point();
+			double distPt=sqrt(DistancePt*DistancePt);
+			double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);
 
-				sommewi+=wi;
-				somme1+=wi*(x1-moyenne)*(x2-moyenneDeg);
-			}
+			sommewi+=wi;
+			somme1+=wi*(x1-moyenne)*(x2-moyenneDeg);
+			
 		}
 		Cov1=somme1/sommewi;
 
@@ -158,20 +148,14 @@ double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double m
 				}
 
 			}
-			if(IsGauss==false)
-			{
-				somme2+=(x1-moyenneDeg)*(x2-moyenne);
-				sommewi+=1;
-			}
-			else
-			{
-				Vector DistancePt=TabPointDeg[i]-pVertex->point();
-				double distPt=sqrt(DistancePt*DistancePt);
-				double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);
+			
+			Vector DistancePt=TabPointDeg[i]-pVertex->point();
+			double distPt=sqrt(DistancePt*DistancePt);
+			double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);
 
-				sommewi+=wi;
-				somme2+=wi*(x1-moyenneDeg)*(x2-moyenne);
-			}
+			sommewi+=wi;
+			somme2+=wi*(x1-moyenneDeg)*(x2-moyenne);
+			
 		}
 		Cov2=somme2/sommewi;
 
@@ -272,7 +256,7 @@ double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double m
     }
 
 	
-	double MSDM_Component::Processroughness_per_vertex_curve(PolyhedronPtr PolyUsed,Vertex* pVertex,double radius,std::vector<double> &TabDistance,std::vector<Point3d> &TabPoint,double &moyenneRet,double dim,bool IsGauss)
+	void MSDM_Component::ComputeLocalCurvatureStatistics_PerVertex(PolyhedronPtr PolyUsed,Vertex* pVertex,double radius,std::vector<double> &TabDistance,std::vector<Point3d> &TabPoint,double &moyenneRet,double dim)
 	{
 		std::set<Vertex*> vertices ;
         Point3d O = pVertex->point() ;
@@ -344,59 +328,42 @@ double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double m
 		double moyenne=0;
 		double variance=0;
 
-		if(IsGauss==false)
+		
+		//variance = 0.008
+		float *tab_wi=new float[NbSommetInSphere];
+		SommeDistance=0;
+		double SommeWi=0;
+		for(int i=0;i<NbSommetInSphere;i++)
 		{
-			moyenne=SommeDistance/(double)NbSommetInSphere;
+			Vector DistancePt=TabPoint[i]-pVertex->point();
+			double distPt=sqrt(DistancePt*DistancePt);
+			double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);
+			tab_wi[i]=wi;
+			SommeWi+=wi;
+			SommeDistance+=TabDistance[i]*wi;
+		}
+		moyenne=SommeDistance/(double)SommeWi;
+
+			
+		for(int i=0;i<NbSommetInSphere;i++)
+		{
+			/*Vector DistancePt=TabPoint[i]-pVertex->point();
+			double distPt=sqrt(DistancePt*DistancePt);
+			double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);*/
+
+			variance+=tab_wi[i]*pow(TabDistance[i]-moyenne,2);
+		}
+
+			variance=variance/SommeWi;
+			variance=sqrt(variance);
 
 		
-			
-
-			variance=0;
-			if(NbSommetInSphere!=0)
-			{
-				for(int i=0;i<NbSommetInSphere;i++)
-					variance+=pow(TabDistance[i]-moyenne,2);
-
-				variance=variance/(double)NbSommetInSphere;
-				variance=sqrt(variance);
-			}
-		}
-		else
-		{//variance = 0.008
-			float *tab_wi=new float[NbSommetInSphere];
-			SommeDistance=0;
-			double SommeWi=0;
-			for(int i=0;i<NbSommetInSphere;i++)
-			{
-				Vector DistancePt=TabPoint[i]-pVertex->point();
-				double distPt=sqrt(DistancePt*DistancePt);
-				double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);
-				tab_wi[i]=wi;
-				SommeWi+=wi;
-				SommeDistance+=TabDistance[i]*wi;
-			}
-			moyenne=SommeDistance/(double)SommeWi;
-
-			
-			for(int i=0;i<NbSommetInSphere;i++)
-			{
-				/*Vector DistancePt=TabPoint[i]-pVertex->point();
-				double distPt=sqrt(DistancePt*DistancePt);
-				double wi=1/0.008/dim/sqrt(2*3.141592)*exp(-(distPt*distPt)/2/0.008/0.008/dim/dim);*/
-
-				variance+=tab_wi[i]*pow(TabDistance[i]-moyenne,2);
-			}
-
-				variance=variance/SommeWi;
-				variance=sqrt(variance);
-
-		}
 			pVertex->CourbureMoyenne=moyenne;
 			pVertex->CourbureVariance=variance;
 
             moyenneRet=moyenne;
 
-			return variance;
+			
 
 	}
 
@@ -436,11 +403,11 @@ double MSDM_Component::ProcessCovariance(Vertex* pVertex,double moyenne,double m
 
 	
 
-	void MSDM_Component::ComputeDistanceEcartNormalRoughnessPonderate(PolyhedronPtr m_PolyOriginal, PolyhedronPtr m_PolyDegrad, double Param,double &L)
+	void MSDM_Component::ComputeMSDM_FromStatistics(PolyhedronPtr m_PolyOriginal, PolyhedronPtr m_PolyDegrad,double &L)
 	{
 		
 		double SommeDist3=0;
-		
+		double Param=0.5;
 		
 
 		int NbVertex=0;

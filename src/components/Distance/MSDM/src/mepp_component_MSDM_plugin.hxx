@@ -11,6 +11,7 @@
 #ifndef HEADER_MEPP_COMPONENT_MSDM_PLUGIN_INTERFACE_H
 #define HEADER_MEPP_COMPONENT_MSDM_PLUGIN_INTERFACE_H
 
+
 #include <QObject>
 
 #include <mepp_config.h>
@@ -20,6 +21,14 @@
 
 #include <QAction>
 #include <QtPlugin>
+
+/**
+ \class	mepp_component_MSDM_plugin
+
+ \brief	Mepp component msdm plugin. 
+
+ 
+ */
 
 class mepp_component_MSDM_plugin : 
   public QObject,
@@ -89,7 +98,22 @@ class mepp_component_MSDM_plugin :
 		void draw_connections(Viewer* viewer, int frame_i, int frame_j);
 
 	public slots:
+
+		/**
+		 \fn	void mepp_component_MSDM_plugin::MSDM_computation();
+		
+		 \brief MSDM Calculation.	
+		
+		 */
 		void MSDM_computation();
+
+		/**
+		 \fn	void DistanceToColorMap();
+		
+		 \brief	 Display the MSDM color map.
+		
+		
+		 */
 		void DistanceToColorMap();
 
 	private:
