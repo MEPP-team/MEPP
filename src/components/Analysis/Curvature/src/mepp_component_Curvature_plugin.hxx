@@ -11,6 +11,12 @@
 #include <QAction>
 #include <QtPlugin>
 
+/**
+ \class	mepp_component_Curvature_plugin
+
+ \brief	Mepp component curvature plugin. 
+
+ */
 class mepp_component_Curvature_plugin : 
   public QObject,
   public mepp_component_plugin_interface
@@ -85,10 +91,47 @@ class mepp_component_Curvature_plugin :
 		virtual void OnKeyRelease(QKeyEvent *event) {}
 
 	public slots:
+
+		/**
+		 \fn	void mepp_component_Curvature_plugin::OnCurvature();
+		
+		 \brief	Launch the curvature computation
+			
+		 */
 		void OnCurvature();
+
+		/**
+		 \fn	void OnDisplayMin();
+		
+		 \brief	Display minimum curvature.
+		
+		
+		 */
+
 		void OnDisplayMin();
+
+		/**
+		 \fn	void OnDisplayMax();
+		
+		 \brief	Display maximum curvature
+		
+		
+		 */
+
 		void OnDisplayMax();
+
+		/**
+		 \fn	void OnDisplayMinDir();
+		
+		  \brief	Display minimum curvature direction
+		 */
+
 		void OnDisplayMinDir();
+		/**
+		 \fn	void OnDisplayMaxDir();
+		
+		  \brief	Display maximum curvature direction
+		 */
 		void OnDisplayMaxDir();
 
 	private:

@@ -252,12 +252,12 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 	double eigenvalues[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 	double eigenvectors[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 
-    if (IsGeod==true)//voisinage geodesique
+    if (IsGeod==true)//geodesic neighborhood
 		geodes_principal_curvature_per_vert((&(*pVertex)),ppMatrix_sum,radius);
-	else//voisinage topologique 1-ring
+	else//1-ring neighborhood
 		principal_curvature_per_vert(*pVertex,ppMatrix_sum);
 
-	//valeurs propres
+	//Eigen values/vectors
 			double **CovMat=(double**)malloc((4)*sizeof(double*));
 			double **VectPro=(double**)malloc((4)*sizeof(double*));
 			double **Valpro=(double**)malloc((4)*sizeof(double*));
@@ -278,7 +278,7 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 			CovMat[3][2]=ppMatrix_sum[2][1];
 			CovMat[3][3]=ppMatrix_sum[2][2];
 
-			//la matrice n'est elle pas déja diagonale?
+			
 			if (ppMatrix_sum[0][1]==0 && ppMatrix_sum[0][2]==0 &&
 				ppMatrix_sum[1][0]==0 && ppMatrix_sum[1][2]==0 &&
 				ppMatrix_sum[2][1]==0 && ppMatrix_sum[2][0]==0)
@@ -300,7 +300,7 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 			}
 			else
 			{
-				//recherche des vecteurs et valeurs propres
+				
 				if (ValPro(3,CovMat,1e-15,10000.,VectPro,Valpro)==-1)
 				{
 					NoValPro=true;
