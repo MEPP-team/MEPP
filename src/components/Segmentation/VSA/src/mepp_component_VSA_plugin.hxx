@@ -11,6 +11,12 @@
 #include <QAction>
 #include <QtPlugin>
 
+/**
+ \class	mepp_component_VSA_plugin
+
+ \brief	Mepp component curvature plugin. 
+
+ */
 class mepp_component_VSA_plugin : 
   public QObject,
   public mepp_component_plugin_interface
@@ -67,7 +73,21 @@ class mepp_component_VSA_plugin :
 		virtual void OnKeyRelease(QKeyEvent *event) {}
 
 	public slots:
+
+		/**
+		 \fn	void mepp_component_VSA_plugin::VariationalSegmentation();
+		
+		 \brief	Launch the Variational segmentation.
+		
+		
+		 */
 		void VariationalSegmentation();
+
+		/**
+		 \fn	void FaceLabelsToColorMap();
+		
+		 \brief	Display the segmentation.
+		 */
 		void FaceLabelsToColorMap();
 
 	private:

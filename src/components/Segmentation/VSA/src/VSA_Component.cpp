@@ -24,10 +24,10 @@
  typedef struct
   {
 	Facet_iterator Facet;
-	//distance pour l'algo de LLoyd
-	double DistanceLLoyd;
-	//cluster visé pour l'algo de LLoyd
-	double PossibleCluster;
+	
+	double DistanceLLoyd;//distance for the LLoyd algorithm
+	
+	double PossibleCluster;//cluster for the LLoyd algorithm
 
   }
   FacetToIntegrate;
@@ -62,26 +62,26 @@
 
   void VSA_Component::Init(int NbProxy)
 	{
-		////creation des proxy initiaux par tirage aléatoire de NbProxy triangles
+		////Creation of the initial proxies by random seed triangle picking 
 		m_Table_Proxy.clear();
 
 		m_NbProxy=NbProxy;
 		int NbFacet=m_Poly->size_of_facets();
 		int offset=NbFacet/NbProxy;
-		int i=0; //int NumProx=1;
+		int i=0; 
 		for(Facet_iterator	pface	=	m_Poly->facets_begin();
 				pface	!= m_Poly->facets_end();
 				pface++)
 		{
 
-			if(i%offset==0)///on choisi le triangle
+			if(i%offset==0)///this triangle is chosen
 			{
-				//on crée un proxy
+				//a proxy is created
 				Proxy NewProxy;
 				NewProxy.Normal=pface->normal();
 
 				NewProxy.Seed=pface;
-				///on ajoute le proxy à la liste
+				///the proxy is added
 				m_Table_Proxy.push_back(NewProxy);
 
 
@@ -144,7 +144,7 @@ VSA_Component::VSA_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p)
 	init = 1;
 }
 
-void VSA_Component::Flooding()///repartition des triangles dans leur proxy respectif
+void VSA_Component::Flooding()
 	{
 		m_Poly->NbFaceLabel=m_NbProxy;
 		typedef std::multiset<FacetToIntegrate,CompFacet> ListFacet_model;
@@ -159,14 +159,14 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 
 
 		ListFacet_model ListFacet;
-		for(int i=0;i<m_NbProxy;i++)//pour chaque proxy on initialise les triangle qui pourrait s'étendre
+		for(int i=0;i<m_NbProxy;i++)//For each proxy we select triangles that could grow
 		{
 			m_Table_Proxy[i].TabAdj.clear();
 			Facet_iterator f=m_Table_Proxy[i].Seed;
 			f->LabelVSA=i;
 
 
-			//on extrait les trois triangle
+			//we extract the three triangles
 			Facet_iterator ff1, ff2, ff3;
 			FacetToIntegrate f1, f2, f3;
 
@@ -207,10 +207,10 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 			if(it->Facet->LabelVSA==-1)
 			{
 				it->Facet->LabelVSA=it->PossibleCluster;
-				//ensuite on met ses triangles adjacents dans la queue
+				//we add adjacent triangles to the queue
 
 
-				//on extrait les trois triangle
+				//we extract the three triangles
 				Facet_iterator ff1, ff2, ff3;
 
 				Halfedge_around_facet_circulator pHalfedge = it->Facet->facet_begin();
@@ -257,7 +257,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 
 		}
 
-		///on intégre les ionformation de connectivité des proxy
+		//integration of the adjacency information between proxies
 	/*	for(Halfedge_iterator pHalfedge	=	m_Poly->halfedges_begin();
 				pHalfedge	!= m_Poly->halfedges_end();
 				pHalfedge++)
@@ -325,12 +325,12 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 			m_Table_Proxy[i].Normal=TabNormal[i]/TabArea[i];
 			m_Table_Proxy[i].Area=TabArea[i];
 			m_Table_Proxy[i].TotalDistorsion=0;
-			//on se fout du center pour le moment
+			
 		}
 
 
 
-		// ensuite on assigne une nouvelle seed, à chaque proxy
+		// a new seed is assigned to each proxy
 		for(Facet_iterator	pface	=	m_Poly->facets_begin();
 				pface	!= m_Poly->facets_end();
 				pface++)
@@ -344,7 +344,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 				m_Table_Proxy[pface->LabelVSA].Seed=pface;
 			}
 
-			//on repère la MostDistordedFacet
+			//we pick the facet corresponding to the max distorsion
 			if(distance>DistanceMax[pface->LabelVSA])
 			{
 
@@ -371,7 +371,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 		double DistorsionMax=0;
 
 		EvalInsertion(NumProxMax,DistorsionMax);
-		CreateNewProxy( NumProxMax, DistorsionMax);
+		CreateNewProxy( NumProxMax);
 
 	}
 
@@ -379,8 +379,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 	{
 		for (int i=0;i<m_NbProxy;i++)
 		{
-			//int a=	m_Table_Proxy[i].TotalDistorsion;
-			//int areass=m_Table_Proxy[i].Area;
+			
 			if(	m_Table_Proxy[i].TotalDistorsion>DistorsionMax)
 			{
 				NumProxMax=i;
@@ -391,7 +390,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 
 	}
 
-	void VSA_Component::CreateNewProxy(int NumProxMax,double DistorsionMax)
+	void VSA_Component::CreateNewProxy(int NumProxMax)
 	{
 		Proxy NewProxy;
 		if(m_Table_Proxy[NumProxMax].MostDistordedFacet!=m_Table_Proxy[NumProxMax].Seed)
@@ -453,8 +452,7 @@ void VSA_Component::Flooding()///repartition des triangles dans leur proxy respe
 
 	void VSA_Component::ConstructFaceColorMap(PolyhedronPtr pMesh)
 {
-		//double R;
-		//int indiceLut;
+		
 		Vertex_iterator pVertex = NULL;
 
 		Facet_iterator pFacet	=	pMesh->facets_begin();
