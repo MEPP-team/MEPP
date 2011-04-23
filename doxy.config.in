@@ -30,7 +30,7 @@ PROJECT_NUMBER         = @PROJECT_VERSION@
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = @DOC_DIR@
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -433,7 +433,7 @@ WARN_FORMAT            = @DOXY_WARN_FORMAT@
 # and error messages should be written. If left blank the output is written 
 # to stderr.
 
-WARN_LOGFILE           = doc/doxy.log
+WARN_LOGFILE           =
 
 #---------------------------------------------------------------------------
 # configuration options related to the input files
@@ -484,7 +484,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories 
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =  */components/*
+EXCLUDE_PATTERNS       =  */components/* ffmpeg.h
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or 
 # directories that contain example code fragments that are included (see 
@@ -627,7 +627,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = html_@PROJECT_NAME@
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for 
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank 
@@ -1044,7 +1044,7 @@ TAGFILES               =
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       = doc/html/@PROJECT_NAME@.TAGFILE
+GENERATE_TAGFILE       = @DOC_DIR@/html_@PROJECT_NAME@/@PROJECT_NAME@.TAGFILE
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed 
 # in the class index. If set to NO only the inherited external classes 
