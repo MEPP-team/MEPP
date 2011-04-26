@@ -1,9 +1,9 @@
-///////////////////////////////////////////////////////////////////////////
-// Author: Martial TOLA
-// Year: 2010
-// CNRS-Lyon, LIRIS UMR 5205
-/////////////////////////////////////////////////////////////////////////// 
-
+/*!
+ * \file mdiarea.cpp
+ * \brief MdiArea file.
+ * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
+ * \date 2010
+ */
 #include "mdiarea.hxx"
 #include "mainwindow.hxx"
 

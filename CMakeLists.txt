@@ -120,6 +120,9 @@ endif(XERCESC_FOUND)
 
 # Find FFmpeg
 find_package(FFmpeg)
+if (FFMPEG_FOUND)
+	ADD_DEFINITIONS("-DWITH_FFMPEG ")
+endif (FFMPEG_FOUND)
 
 if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
 
@@ -135,7 +138,7 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
     message(STATUS "NOTICE: GLEW library is not found. VBO rendering will not be available.")
   endif(GLEW_FOUND)
   
-  if (FFMPEG_FOUND)
+	if (FFMPEG_FOUND)
 		include_directories ( ${FFMPEG_INCLUDE_DIRS} )
 	endif (FFMPEG_FOUND)
 
@@ -199,11 +202,11 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
 	target_link_libraries( ${PRJ_NAME} ${XML_PARSER_LIBRARY} ) 
 	
 	if(GLEW_FOUND)
-		target_link_libraries(${PRJ_NAME} ${GLEW_LIBRARIES})
+		target_link_libraries( ${PRJ_NAME} ${GLEW_LIBRARIES} )
 	endif(GLEW_FOUND)
 	
 	if (FFMPEG_FOUND)
-		target_link_libraries(${PRJ_NAME} ${FFMPEG_LIBRARIES})
+		target_link_libraries( ${PRJ_NAME} ${FFMPEG_LIBRARIES} )
 	endif (FFMPEG_FOUND)
 	
 	#Documentation

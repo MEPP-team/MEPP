@@ -16,6 +16,7 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #ifndef __QVIDEODECODER_H
 #define __QVIDEODECODER_H
 
+#ifdef WITH_FFMPEG
 
 #include <QIODevice>
 #include <QFile>
@@ -74,5 +75,7 @@ class QVideoDecoder
 
       virtual bool isOk();
 };
+
+#endif
 
 #endif // __QVIDEODECODER_H

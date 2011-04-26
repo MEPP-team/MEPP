@@ -14,6 +14,7 @@ sudo apt-get update
 3) installer les paquets suivants:
 sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev
 sudo apt-get install mencoder ffmpeg unrar filezilla
+sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-dev
 
 ----------------------------------------
 Suivant votre version d'Ubuntu / Debian:

@@ -14,6 +14,10 @@
 
 #include "scene.h"
 
+#ifdef WITH_FFMPEG
+#include "QTFFmpegWrapper/QVideoEncoder.h"
+#endif
+
 class MeppManipulatedFrame : public qglviewer::ManipulatedFrame
 {
 	public:
@@ -209,6 +213,44 @@ class Viewer : public QGLViewer
 				setSave_animation(false);
 			}
 		}
+
+#ifdef WITH_FFMPEG
+		void saveFFmpegAnimation(bool b, int bitrate=1500, bool resize=false, int gop=12)
+		{
+			if (b)
+			{
+				QString fileName = QFileDialog::getSaveFileName(this, QObject::tr("Save MPEG-4 Video"),
+										 QDir::currentPath(),
+										 QObject::tr("AVI Files (*.avi)"));
+				if (!fileName.isEmpty())
+				{
+					QFileInfo fileInfo(fileName);
+					fileName = fileInfo.absolutePath()+ '/' + fileInfo.baseName() + ".avi";
+
+					/*if (resize)
+						this->resize(720, 576); // PAL DV format*/
+
+					int width=this->width();
+					int height=this->height();
+					//int bitrate=1000;
+					//int gop=20;
+					encoder.createFile(fileName,width,height,bitrate*1000,gop);
+
+					connect(this, SIGNAL(drawFinished(bool)), SLOT(shotCapture(bool)));
+					setSave_animation(true);
+				}
+				else
+					setSave_animation(false);
+			}
+			else
+			{
+				disconnect(SIGNAL(drawFinished(bool)));
+				setSave_animation(false);
+
+				encoder.close();
+			}
+		}
+#endif
 		// capture options
 
 		// dynamic options
@@ -333,7 +375,15 @@ class Viewer : public QGLViewer
 			recreateListsAndUpdateGL();
 		}
 
-		void shotCapture() {}
+
+		void shotCapture(bool param = true)
+		{
+#ifdef WITH_FFMPEG
+			this->makeCurrent();
+			this->raise();
+			encoder.encodeImage(this->grabFrameBuffer(true));
+#endif
+		}
 
 		void setActivePolyhedron(int p);
 
@@ -416,6 +466,10 @@ class Viewer : public QGLViewer
 		//
 
 		qglviewer::Vec orig, dir, selectedPoint;
+
+#ifdef WITH_FFMPEG
+		QVideoEncoder encoder;
+#endif
 };
 
 #endif

@@ -1,12 +1,12 @@
 /*!
  * \file mainwindow.cpp
- * \brief MainWindow file.
+ * \brief mainwindow file.
  * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
  * \date 2010
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.44.3 - 20/04/2011 - (trunk version)"
+#define MEPP_VERSION "v0.45.0 - 26/04/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1452,9 +1452,24 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 	{
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
+#ifdef WITH_FFMPEG
+		bool ok=true;
+		int bitrate=10000;	//1280x720 b=19700k
+
+		if (actionScreenshot_sequence->isChecked())
+			bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);
+
+		if (ok)
+			viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), bitrate);
+		else
+			viewer->setSave_animation(false);
+
+		actionScreenshot_sequence->setChecked(viewer->getSave_animation());
+#else
 		viewer->saveAnimation(actionScreenshot_sequence->isChecked());
 		actionScreenshot_sequence->setChecked(viewer->getSave_animation());
-
+#endif
+		
 		//mencoder "mf://*.png" -mf fps=25 -o video.avi -ovc x264 -x264encopts qp=26:subq=5:8x8dct:frameref=2:bframes=3:weight_b:pass=1
 		//org --> mencoder video.avi -forceidx -of lavf -ovc lavc -oac mp3lame -lavcopts vcodec=flv:vbitrate=320:autoaspect:abitrate=32 -vf scale=320:-3 -af resample=22050 -o video.flv
 		//mencoder video.avi -forceidx -of lavf -ovc lavc -oac mp3lame -lavcopts vcodec=flv:vbitrate=4096:autoaspect:abitrate=32 -vf scale=800:-3 -af resample=22050 -o video.flv

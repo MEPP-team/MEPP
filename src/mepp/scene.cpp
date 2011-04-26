@@ -1,8 +1,9 @@
-///////////////////////////////////////////////////////////////////////////
-// Author: Martial TOLA
-// Year: 2010
-// CNRS-Lyon, LIRIS UMR 5205
-/////////////////////////////////////////////////////////////////////////// 
+/*!
+ * \file scene.cpp
+ * \brief Scene file.
+ * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
+ * \date 2010
+ */ 
 #include "scene.h"
 
 #ifdef _MSC_VER
@@ -129,7 +130,7 @@ void Scene::todoIfModeSpace(Viewer* viewer)
 	}
 }
 
-int Scene::load_file(PolyhedronPtr polyhedron_ptr, QString filename)
+/*int Scene::load_file(PolyhedronPtr polyhedron_ptr, QString filename)
 {
 	QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
 
@@ -154,7 +155,7 @@ int Scene::load_file(PolyhedronPtr polyhedron_ptr, QString filename)
 	QApplication::restoreOverrideCursor();
 
 	return 0;
-}
+}*/
 
 int Scene::save_file(QString filename, typeFuncOpenSave f, Viewer* viewer)
 {

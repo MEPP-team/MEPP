@@ -74,6 +74,12 @@ if (XERCESC_FOUND)
 	set (XML_PARSER_LIBRARY ${XERCESC_LIBRARY})
 endif(XERCESC_FOUND)
 
+# Find FFmpeg
+find_package(FFmpeg)
+if (FFMPEG_FOUND)
+	ADD_DEFINITIONS("-DWITH_FFMPEG ")
+endif (FFMPEG_FOUND)
+
 if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
 
   find_package(Boost)
@@ -81,6 +87,10 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
   
   include_directories ( ${XML_PARSER_INCLUDE_DIR} )
+  
+	if (FFMPEG_FOUND)
+		include_directories ( ${FFMPEG_INCLUDE_DIRS} )
+	endif (FFMPEG_FOUND)
 	
 	file(
 		GLOB_RECURSE
@@ -125,7 +135,11 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
 	target_link_libraries( ${COMPONENT_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 	
 	# Link with XercesC
-	target_link_libraries( ${COMPONENT_NAME} ${XML_PARSER_LIBRARY} ) 
+	target_link_libraries( ${COMPONENT_NAME} ${XML_PARSER_LIBRARY} )
+	
+	if (FFMPEG_FOUND)
+		target_link_libraries( ${COMPONENT_NAME} ${FFMPEG_LIBRARIES} )
+	endif (FFMPEG_FOUND) 
 	
 	#Documentation
 	option(BUILD_${COMPONENT_NAME}_DOC "Build Doxygen documentation for ${COMPONENT_NAME}" ON)
