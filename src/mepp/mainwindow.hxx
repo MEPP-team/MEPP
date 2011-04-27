@@ -40,14 +40,14 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \fn QAction *get_actionNewEmpty()
 		 * \brief Get a QAction for emit a request to create a viewer with an empty mesh.
 		 *
-		 * \return QAction.
+		 * \return QAction*.
 		 */
 		QAction *get_actionNewEmpty() { return actionNewEmpty; }
 		/*!
 		 * \fn QAction *get_actionAddEmpty()
 		 * \brief Get a QAction for emit a request to add an empty mesh in the current active viewer.
 		 *
-		 * \return QAction.
+		 * \return QAction*.
 		 */
 		QAction *get_actionAddEmpty() { return actionAddEmpty; }
 
@@ -55,7 +55,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \fn QAction *get_mainwindowActionOpen()
 		 * \brief Get a QAction for emit a request to open mesh file(s) in a new viewer in normal mode.
 		 *
-		 * \return QAction.
+		 * \return mepp_action*.
 		 */
 		mepp_action *get_mainwindowActionOpen() { return mainwindowActionOpen; }
 
@@ -63,14 +63,14 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \fn QAction *get_mainwindowActionOpen_space()
 		 * \brief Get a QAction for emit a request to open mesh file(s) in a new viewer in space mode.
 		 *
-		 * \return QAction.
+		 * \return mepp_action*.
 		 */
 		mepp_action *get_mainwindowActionOpen_space() { return mainwindowActionOpen_space; }
 		/*!
 		 * \fn QAction *get_mainwindowActionOpen_time()
 		 * \brief Get a QAction for emit a request to open mesh file(s) in a new viewer in time mode.
 		 *
-		 * \return QAction.
+		 * \return mepp_action*.
 		 */
 		mepp_action *get_mainwindowActionOpen_time() { return mainwindowActionOpen_time; }
 
@@ -78,14 +78,14 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \fn QAction *get_mainwindowActionOpen_and_Add_space()
 		 * \brief Get a QAction for emit a request to open and add mesh file(s) in the current active viewer in space mode.
 		 *
-		 * \return QAction.
+		 * \return mepp_action*.
 		 */
 		mepp_action *get_mainwindowActionOpen_and_Add_space() { return mainwindowActionOpen_and_Add_space; }
 		/*!
 		 * \fn QAction *get_mainwindowActionOpen_and_Add_time()
 		 * \brief Get a QAction for emit a request to open and add mesh file(s) in the current active viewer in time mode.
 		 *
-		 * \return QAction.
+		 * \return mepp_action*.
 		 */
 		mepp_action *get_mainwindowActionOpen_and_Add_time() { return mainwindowActionOpen_and_Add_time; }
 
@@ -93,7 +93,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \fn QAction *get_mainwindowActionSave_As()
 		 * \brief Get a QAction for emit a request to save polyhedron(s) in file(s).
 		 *
-		 * \return QAction.
+		 * \return mepp_action*.
 		 */
 		mepp_action *get_mainwindowActionSave_As() { return mainwindowActionSave_As; }
 
@@ -532,7 +532,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		/*!
 		 * \fn on_actionVBO_triggered()
-		 * \brief Toggle display lists Mode (on/off) (from menu).
+		 * \brief Toggle display lists mode (on/off) (from menu).
 		 */
 		void on_actionVBO_triggered();
 		// view options
@@ -559,7 +559,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		// dynamic options
 		/*!
 		 * \fn on_actionParams_triggered()
-		 * \brief Set params for dynamic time meshes (from menu).
+		 * \brief Set params for dynamic time sequence (from menu).
 		 */
 		void on_actionParams_triggered();
 

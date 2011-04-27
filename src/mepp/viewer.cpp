@@ -1,8 +1,9 @@
-///////////////////////////////////////////////////////////////////////////
-// Author: Martial TOLA
-// Year: 2010
-// CNRS-Lyon, LIRIS UMR 5205
-/////////////////////////////////////////////////////////////////////////// 
+/*!
+ * \file viewer.cpp
+ * \brief Viewer file.
+ * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
+ * \date 2010
+ */ 
 //#include <GL/glew.h>
 
 #include "viewer.hxx"

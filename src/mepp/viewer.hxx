@@ -1,8 +1,9 @@
-///////////////////////////////////////////////////////////////////////////
-// Author: Martial TOLA
-// Year: 2010
-// CNRS-Lyon, LIRIS UMR 5205
-/////////////////////////////////////////////////////////////////////////// 
+/*!
+ * \file viewer.hxx
+ * \brief Viewer file.
+ * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
+ * \date 2010
+ */  
 #ifndef HEADER_VIEWER
 #define HEADER_VIEWER
 
@@ -18,6 +19,10 @@
 #include "QTFFmpegWrapper/QVideoEncoder.h"
 #endif
 
+/*! 
+ * \class MeppManipulatedFrame
+ * \brief MeppManipulatedFrame class.
+ */
 class MeppManipulatedFrame : public qglviewer::ManipulatedFrame
 {
 	public:
@@ -44,91 +49,396 @@ class MeppManipulatedFrame : public qglviewer::ManipulatedFrame
 	public:
 		bool moved;
 };
-typedef boost::shared_ptr<MeppManipulatedFrame> MeppManipulatedFramePtr;
+typedef boost::shared_ptr<MeppManipulatedFrame> MeppManipulatedFramePtr;	//!< boost MeppManipulatedFrame shared pointeur
 
 class mepp_component_plugin_interface;
 
+/*! 
+ * \class Viewer
+ * \brief Viewer class.
+ */
 class Viewer : public QGLViewer
 {
 	Q_OBJECT
 
 	public:
+		/*!
+		 * \brief Constructor.
+		 *
+		 * \param parent : parent window.
+		 * \param lp : list of plugins/components.
+		 */
 		Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp);
+		/*!
+		 * \brief Destructor.
+		 */
 		~Viewer();
 
+		/*!
+		 * \fn QString userFriendlyCurrentFile()
+		 * \brief Return filename (without path) of the current active polyhedron.
+		 *
+		 * \return QString.
+		 */
 		QString userFriendlyCurrentFile() { return scene_ptr->userFriendlyCurrentFile(); }
 
+		/*!
+		 * \fn void setScenePtr(ScenePtr scene_ptr)
+		 * \brief Set the Scene pointer to the viewer.
+		 *
+		 * \param scene_ptr the Scene pointer.
+		 */
 		void setScenePtr(ScenePtr scene_ptr);
+		/*!
+		 * \fn ScenePtr getScenePtr()
+		 * \brief Get the Scene pointer of the viewer.
+		 *
+		 * \return the Scene pointer.
+		 */
 		ScenePtr getScenePtr() { return scene_ptr; }
 
+		/*!
+		 * \fn QWidget *getParent()
+		 * \brief Get the parent widget of the viewer.
+		 *
+		 * \return QWidget*.
+		 */
 		QWidget *getParent() { return m_parent; }
 
+		/*!
+		 * \fn int get_nb_frames()
+		 * \brief Get the number of frames (in Space mode).
+		 *
+		 * \return the number of frames.
+		 */
 		int get_nb_frames() { return (int)frame_.size(); }
+		/*!
+		 * \fn MeppManipulatedFrame* frame(unsigned short i)
+		 * \brief Get the pointeur of the frame i (in Space mode).
+		 *
+		 * \param i the frame number.
+		 * \return the pointeur of the frame.
+		 */
 		MeppManipulatedFrame* frame(unsigned short i) { return frame_[i].get(); }
+		/*!
+		 * \fn setSelectedFrameNumber(unsigned short nb)
+		 * \brief Select a frame.
+		 *
+		 * \param nb the number of the frame to select.
+		 */
 		void setSelectedFrameNumber(unsigned short nb) { selected = nb; }
+		/*!
+		 * \fn addFrame()
+		 * \brief Add an empty frame.
+		 */
 		void addFrame() { frame_.push_back(MeppManipulatedFramePtr(new MeppManipulatedFrame())); glList_.push_back(glGenLists(1)); }
+		/*!
+		 * \fn GLuint glList(unsigned short i)
+		 * \brief Get the GL indice of the list i.
+		 *
+		 * \param i the number of the list.
+		 * \return the GL indice of the list.
+		 */
 		GLuint glList(unsigned short i) { return glList_[i]; }
 
+		/*!
+		 * \fn qglviewer::Vec getInitialCameraPosition()
+		 * \brief Get the camera position.
+		 *
+		 * \return the camera position.
+		 */
 		qglviewer::Vec getInitialCameraPosition() { return initialCameraPosition; }
+		/*!
+		 * \fn qglviewer::Quaternion getInitialCameraOrientation()
+		 * \brief Get the camera orientation.
+		 *
+		 * \return the camera orientation.
+		 */
 		qglviewer::Quaternion getInitialCameraOrientation() { return initialCameraOrientation; }
 
+		/*!
+		 * \fn change_material(string mat_name)
+		 * \brief Change the current material.
+		 *
+		 * \param mat_name the name of the current material (Silver, Gold, Jade, Light blue, Emerald, Polished silver, Chrome, Copper, Polished gold, Pewter, Obsidian, Black plastic, Polished bronze, Polished copper, Pearl, Ruby, Turquoise, Brass, None).
+		 */
 		void change_material(string mat_name);
+		/*!
+		 * \fn string get_material()
+		 * \brief Get the current material.
+		 *
+		 * \return the name of the current material (Silver, Gold, Jade, Light blue, Emerald, Polished silver, Chrome, Copper, Polished gold, Pewter, Obsidian, Black plastic, Polished bronze, Polished copper, Pearl, Ruby, Turquoise, Brass, None).
+		 */
 		string get_material() { return m_last_material; }
 
 		// rendering options
+		/*!
+		 * \fn setRender_Point()
+		 * \brief Render mesh in point mode.
+		 */
 		void setRender_Point() { m_PolygonMode = GL_POINT; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn setRender_Line()
+		 * \brief Render mesh in line mode.
+		 */
 		void setRender_Line() { m_PolygonMode = GL_LINE; recreateListsAndUpdateGL(); }
-		void setRender_Fill() { m_PolygonMode = GL_FILL; recreateListsAndUpdateGL(); }	
+		/*!
+		 * \fn setRender_Fill()
+		 * \brief Render mesh in fill mode.
+		 */
+		void setRender_Fill() { m_PolygonMode = GL_FILL; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn int getRender_Mode()
+		 * \brief Get the current render mode.
+		 *
+		 * \return the current render mode (GL_POINT, GL_LINE or GL_FILL).
+		 */
 		int getRender_Mode() { return m_PolygonMode; }
 
+		/*!
+		 * \fn setSuperimpose_Edges(bool b)
+		 * \brief Superimpose (or not) edges of mesh(es).
+		 *
+		 * \param b true or false.
+		 */
 		void setSuperimpose_Edges(bool b) { m_SuperimposeEdges = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getSuperimpose_Edges
+		 * \brief return true if superimpose edges of mesh(es) is active.
+		 *
+		 * \return true or false.
+		 */
 		bool getSuperimpose_Edges() { return m_SuperimposeEdges; }
+		/*!
+		 * \fn setSuperimpose_Vertices(bool b)
+		 * \brief Superimpose (or not) vertices of mesh(es).
+		 *
+		 * \param b true or false.
+		 */
 		void setSuperimpose_Vertices(bool b) { m_SuperimposeVertices = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getSuperimpose_Vertices
+		 * \brief return true if superimpose vertices of mesh(es) is active.
+		 *
+		 * \return true or false.
+		 */
 		bool getSuperimpose_Vertices() { return m_SuperimposeVertices; }
+		/*!
+		 * \fn setSuperimpose_Vertices_big(bool b)
+		 * \brief Superimpose (or not) vertices (bigger mode) of mesh(es).
+		 *
+		 * \param b true or false.
+		 */
 		void setSuperimpose_Vertices_big(bool b) { m_SuperimposeVerticesBig = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getSuperimpose_Vertices_big
+		 * \brief return true if superimpose vertices (bigger mode) of mesh(es) is active.
+		 *
+		 * \return true or false.
+		 */
 		bool getSuperimpose_Vertices_big() { return m_SuperimposeVerticesBig; }
 
+		/*!
+		 * \fn setVertex_Color(bool b)
+		 * \brief View mesh(es) in vertex color mode (or not).
+		 *
+		 * \param b true or false.
+		 */
 		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) m_UseFaceColor = !b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getVertex_Color
+		 * \brief return true if viewing mesh(es) in vertex color mode is active.
+		 *
+		 * \return b true or false.
+		 */
 		bool getVertex_Color() { return m_UseVertexColor; }
+		/*!
+		 * \fn setFace_Color(bool b)
+		 * \brief View mesh(es) in face color mode (or not).
+		 *
+		 * \param b true or false.
+		 */
 		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) m_UseVertexColor = !b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getFace_Color
+		 * \brief return true if viewing mesh(es) in face color mode is active.
+		 *
+		 * \return b true or false.
+		 */
 		bool getFace_Color() { return m_UseFaceColor; }
 
+		/*!
+		 * \fn setLighting(bool b)
+		 * \brief Toggle lighting (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setLighting(bool b) { m_Lighting = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getLighting
+		 * \brief return true if lighting is on.
+		 *
+		 * \return b true or false.
+		 */
 		bool getLighting() { return m_Lighting; }
+		/*!
+		 * \fn setSmooth_Shading(bool b)
+		 * \brief Toggle smooth shading (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setSmooth_Shading(bool b) { m_SmoothShading = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getSmooth_Shading
+		 * \brief return true if smooth shading is on.
+		 *
+		 * \return b true or false.
+		 */
 		bool getSmooth_Shading() { return m_SmoothShading; }
 
+		/*!
+		 * \fn setAntialiasing(bool b)
+		 * \brief Toggle antialiasing (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setAntialiasing(bool b) { m_Antialiasing = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getAntialiasing
+		 * \brief return true if antialiasing is on.
+		 *
+		 * \return b true or false.
+		 */
 		bool getAntialiasing() { return m_Antialiasing; }
+		/*!
+		 * \fn setCulling(bool b)
+		 * \brief Toggle culling (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setCulling(bool b) { m_Culling = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getCulling
+		 * \brief return true if culling is on.
+		 *
+		 * \return b true or false.
+		 */
 		bool getCulling() { return m_Culling; }
 		// rendering options
 
 		// color options
+		/*!
+		 * \fn setViewerBackgroundColor(QColor c)
+		 * \brief Set background color.
+		 *
+		 * \param c a QColor.
+		 */
 		void setViewerBackgroundColor(QColor c) { m_BackColor[0] = float(c.red())/255.; m_BackColor[1] = float(c.green())/255.; m_BackColor[2] = float(c.blue())/255.; updateGL(); }
+		/*!
+		 * \fn QColor getViewerBackgroundColor()
+		 * \brief Get background color.
+		 *
+		 * \return a QColor.
+		 */
 		QColor getViewerBackgroundColor() { return QColor(int(m_BackColor[0]*255.), int(m_BackColor[1]*255.), int(m_BackColor[2]*255.)); }
 
+		/*!
+		 * \fn setViewerVertexColor(QColor c)
+		 * \brief Set vertex color.
+		 *
+		 * \param c a QColor.
+		 */
 		void setViewerVertexColor(QColor c) { m_VertexColor[0] = float(c.red())/255.; m_VertexColor[1] = float(c.green())/255.; m_VertexColor[2] = float(c.blue())/255.; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn QColor getViewerVertexColor()
+		 * \brief Get vertex color.
+		 *
+		 * \return a QColor.
+		 */
 		QColor getViewerVertexColor() { return QColor(int(m_VertexColor[0]*255.), int(m_VertexColor[1]*255.), int(m_VertexColor[2]*255.)); }
 
+		/*!
+		 * \fn setViewerEdgeColor(QColor c)
+		 * \brief Set edge color.
+		 *
+		 * \param c a QColor.
+		 */
 		void setViewerEdgeColor(QColor c) { m_EdgeColor[0] = float(c.red())/255.; m_EdgeColor[1] = float(c.green())/255.; m_EdgeColor[2] = float(c.blue())/255.; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn QColor getViewerEdgeColor()
+		 * \brief Get edge color.
+		 *
+		 * \return a QColor.
+		 */
 		QColor getViewerEdgeColor() { return QColor(int(m_EdgeColor[0]*255.), int(m_EdgeColor[1]*255.), int(m_EdgeColor[2]*255.)); }
 
+		/*!
+		 * \fn setViewerFaceColor(QColor c)
+		 * \brief Set face color.
+		 *
+		 * \param c a QColor.
+		 */
 		void setViewerFaceColor(QColor c) { m_MeshColor[0] = float(c.red())/255.; m_MeshColor[1] = float(c.green())/255.; m_MeshColor[2] = float(c.blue())/255.; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn QColor getViewerFaceColor()
+		 * \brief Get face color.
+		 *
+		 * \return a QColor.
+		 */
 		QColor getViewerFaceColor() { return QColor(int(m_MeshColor[0]*255.), int(m_MeshColor[1]*255.), int(m_MeshColor[2]*255.)); }
 		// color options
 
 		// show options
+		/*!
+		 * \fn setShowNormals(bool b)
+		 * \brief Toggle showing normals (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setShowNormals(bool b) { show_normals = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn bool getShowNormals()
+		 * \brief return true if normals are shown.
+		 *
+		 * \return b true or false.
+		 */
 		bool getShowNormals() { return show_normals; }
 
+		/*!
+		 * \fn setBounding_box(bool b)
+		 * \brief Toggle showing bounding box (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setBounding_box(bool b) { m_DrawBoundingBox = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn bool getBounding_box()
+		 * \brief return true if bounding box is shown.
+		 *
+		 * \return b true or false.
+		 */
 		bool getBounding_box() { return m_DrawBoundingBox; }
+		/*!
+		 * \fn setBounding_box_when_moving(bool b)
+		 * \brief Toggle showing bounding box when moving (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setBounding_box_when_moving(bool b) { m_DrawBoundingBoxWhenMoving = b; recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn bool getBounding_box_when_moving()
+		 * \brief return true if bounding box when moving is shown.
+		 *
+		 * \return b true or false.
+		 */
 		bool getBounding_box_when_moving() { return m_DrawBoundingBoxWhenMoving; }
 		// show options
 
 		// view options
+		/*!
+		 * \fn showAllScene()
+		 * \brief Set camera position and orientation to see the whole scene.
+		 */
 		void showAllScene()
 		{
 			PolyhedronPtr p = scene_ptr->get_polyhedron();
@@ -144,6 +454,10 @@ class Viewer : public QGLViewer
 			initialCameraOrientation = camera()->orientation();
 		}
 
+		/*!
+		 * \fn centerAllObjects()
+		 * \brief Center all objects in Space mode.
+		 */
 		void centerAllObjects()
 		{
 			int nbMesh = qMin(scene_ptr->get_nb_polyhedrons(), get_nb_frames());
@@ -159,6 +473,10 @@ class Viewer : public QGLViewer
 			updateGL();
 		}
 
+		/*!
+		 * \fn resetView()
+		 * \brief Reset the camera position and orientation to see the initial view.
+		 */
 		void resetView()
 		{
 			camera()->setPosition(getInitialCameraPosition());
@@ -167,23 +485,89 @@ class Viewer : public QGLViewer
 			updateGL();
 		}
 
+		/*!
+		 * \fn setCouplingTranslations(bool b)
+		 * \brief Coupling translations of meshes (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setCouplingTranslations(bool b) { mCouplingTranslations = b; updateGL(); }
-		bool getCouplingTranslations(bool b) { return mCouplingTranslations; }
+		/*!
+		 * \fn bool getCouplingTranslations()
+		 * \brief return true if coupling translations of meshes is on.
+		 *
+		 * \return b true or false.
+		 */
+		bool getCouplingTranslations() { return mCouplingTranslations; }
 
+		/*!
+		 * \fn setCouplingRotations(bool b)
+		 * \brief Coupling rotations of meshes (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setCouplingRotations(bool b) { mCouplingRotations = b; updateGL(); }
+		/*!
+		 * \fn bool getCouplingRotations()
+		 * \brief return true if coupling rotations of meshes is on.
+		 *
+		 * \return b true or false.
+		 */
 		bool getCouplingRotations() { return mCouplingRotations; }
 
+		/*!
+		 * \fn setCouplingZooms(bool b)
+		 * \brief Coupling zooms of meshes (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setCouplingZooms(bool b) { mCouplingZooms = b; updateGL(); }
-		bool getCouplingZooms(bool b) { return mCouplingZooms; }
+		/*!
+		 * \fn bool getCouplingZooms()
+		 * \brief return true if coupling zooms of meshes is on.
+		 *
+		 * \return b true or false.
+		 */
+		bool getCouplingZooms() { return mCouplingZooms; }
 
+		/*!
+		 * \fn setVBO_mode(bool b)
+		 * \brief Toggle display lists mode (on/off).
+		 *
+		 * \param b true or false.
+		 */
         void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); setMouseTracking(!b); recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn bool getVBO_mode()
+		 * \brief return true if display lists mode is on.
+		 *
+		 * \return b true or false.
+		 */
 		bool getVBO_mode() { return VBO_mode; }
 		// view options
 
 		// capture options
+		/*!
+		 * \fn setSave_animation(bool b)
+		 * \brief Toggle the fact that we are currently saving an animation or not (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void setSave_animation(bool b) { save_animation = b; }
+		/*!
+		 * \fn bool getSave_animation()
+		 * \brief return true if we are currently saving an animation.
+		 *
+		 * \return b true or false.
+		 */
 		bool getSave_animation() { return save_animation; }
 
+		/*!
+		 * \fn saveAnimation(bool b)
+		 * \brief Start or stop saving an animation (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void saveAnimation(bool b)
 		{
 			if (b)
@@ -215,6 +599,12 @@ class Viewer : public QGLViewer
 		}
 
 #ifdef WITH_FFMPEG
+		/*!
+		 * \fn saveFFmpegAnimation(bool b)
+		 * \brief Start or stop saving an FFmpeg animation (on/off).
+		 *
+		 * \param b true or false.
+		 */
 		void saveFFmpegAnimation(bool b, int bitrate=1500, bool resize=false, int gop=12)
 		{
 			if (b)
@@ -254,6 +644,10 @@ class Viewer : public QGLViewer
 		// capture options
 
 		// dynamic options
+		/*!
+		 * \fn setDynTitle()
+		 * \brief set and update the title of the viewer window.
+		 */
 		void setDynTitle()
 		{
 			if (getScenePtr()->get_loadType() == Normal)
@@ -269,20 +663,72 @@ class Viewer : public QGLViewer
 										.arg(getScenePtr()->get_nb_polyhedrons()));
 		}
 
+		/*!
+		 * \fn setFps(int fps)
+		 * \brief set fps before playing dynamic time sequence.
+		 *
+		 * \param fps the fps.
+		 */
 		void setFps(int fps) { m_fps = fps; }
+		/*!
+		 * \fn int getFps()
+		 * \brief get the fps used by dynamic time sequence.
+		 *
+		 * \return the fps.
+		 */
 		int getFps() { return m_fps; }
 
+		/*!
+		 * \fn setDynReverseStart()
+		 * \brief Start playing dynamic time sequence in reverse order.
+		 */
 		void setDynReverseStart() { m_reverse = true; m_loop = false; timerDynamic->start(1000/m_fps); }
+		/*!
+		 * \fn setDynReverseStartLoop()
+		 * \brief Start playing dynamic time sequence in reverse order with loop.
+		 */
 		void setDynReverseStartLoop() { m_reverse = true; m_loop = true; timerDynamic->start(1000/m_fps); }
+		/*!
+		 * \fn setDynStart()
+		 * \brief Start playing dynamic time sequence.
+		 */
 		void setDynStart() { m_reverse = false; m_loop = false; timerDynamic->start(1000/m_fps); }
+		/*!
+		 * \fn setDynStartLoop()
+		 * \brief Start playing dynamic time sequence with loop.
+		 */
 		void setDynStartLoop() { m_reverse = false; m_loop = true; timerDynamic->start(1000/m_fps); }
+		/*!
+		 * \fn setDynStop()
+		 * \brief Stop playing dynamic time sequence.
+		 */
 		void setDynStop() { timerDynamic->stop(); }
 
+		/*!
+		 * \fn setDynFirst()
+		 * \brief Go to first position of dynamic time sequence.
+		 */
 		void setDynFirst() { scene_ptr->set_current_polyhedron(0); setDynTitle(); recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn setDynPrevious()
+		 * \brief Go to previous position of dynamic time sequence.
+		 */
 		void setDynPrevious() { if (scene_ptr->get_current_polyhedron() >= 1) scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()-1); setDynTitle(); recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn setDynNext()
+		 * \brief Go to next position of dynamic time sequence.
+		 */
 		void setDynNext() { if (scene_ptr->get_current_polyhedron() < (scene_ptr->get_nb_polyhedrons()-1)) scene_ptr->set_current_polyhedron(scene_ptr->get_current_polyhedron()+1); setDynTitle(); recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn setDynLast()
+		 * \brief Go to last position of dynamic time sequence.
+		 */
 		void setDynLast() { scene_ptr->set_current_polyhedron(scene_ptr->get_nb_polyhedrons()-1); setDynTitle(); recreateListsAndUpdateGL(); }
 
+		/*!
+		 * \fn setDynDelete()
+		 * \brief Delete current position of dynamic time sequence.
+		 */
 		void setDynDelete()
 		{
 			if (scene_ptr->get_nb_polyhedrons() > 1)
@@ -302,6 +748,10 @@ class Viewer : public QGLViewer
 		}
 		// dynamic options
 
+		/*!
+		 * \fn recreateListsAndUpdateGL()
+		 * \brief Recreate all GL lists (if display lists are active) and update GL.
+		 */
 		void recreateListsAndUpdateGL()
 		{
 			if (VBO_mode)
@@ -314,30 +764,114 @@ class Viewer : public QGLViewer
 		}
 
 	protected:
+		/*!
+		 * \fn init()
+		 * \brief Init of the viewer.
+		 */
 		virtual void init();
+		/*!
+		 * \fn postSelection(const QPoint& point)
+		 * \brief Function to select a specific frame with mouse (Space mode).
+		 *
+		 * \param point the point in screen coordinates.
+		 */
 		virtual void postSelection(const QPoint& point);
+		/*!
+		 * \fn drawWithNames()
+		 * \brief Drawing (with names) of the viewer, used for selecting in Space mode.
+		 */
 		virtual void drawWithNames();
+		/*!
+		 * \fn draw()
+		 * \brief Drawing of the viewer.
+		 */
 		virtual void draw();
+		/*!
+		 * \fn helpString()
+		 * \brief Function to show an help for QGLViewer.
+		 */
 		virtual QString helpString() const;
 
+		/*!
+		 * \fn render(bool sel, bool grab)
+		 * \brief Main render function.
+		 *
+		 * \param sel true if the current frame is selected. Always false if Normal or Time mode.
+		 * \param grab true if the mouse is over the current frame. Always false if Normal or Time mode.
+		 */
 		void render(bool sel, bool grab);
 
+		/*!
+		 * \brief Close the viewer (event).
+		 *
+		 * \param event the event.
+		 */
 		void closeEvent(QCloseEvent *event);
-		void contextMenuEvent(QContextMenuEvent *event);
 
+		/*!
+		 * \brief Show the context menu (event). Not used.
+		 *
+		 * \param event the event.
+		 */
+		void contextMenuEvent(QContextMenuEvent *event);
+		/*!
+		 * \brief Show the context menu (event).
+		 *
+		 * \param event the event.
+		 */
 		void MEPPcontextMenuEvent(QMouseEvent *event);
 
+		/*!
+		 * \fn setVBO_modeUncheck(bool b)
+		 * \brief Used to disable or not the bounding box moving if display lists are on or not.
+		 *
+		 * \param b true or false.
+		 */
 		void setVBO_modeUncheck(bool b);
 
 		// events
+		/*!
+		 * \brief Event when a bouton button is pressed (event).
+		 *
+		 * \param event the event.
+		 */
 		virtual void mousePressEvent(QMouseEvent *event);
+		/*!
+		 * \brief Event when mouse is moved (event).
+		 *
+		 * \param event the event.
+		 */
 		virtual void mouseMoveEvent(QMouseEvent *event);
+		/*!
+		 * \brief Event when a bouton button is released (event).
+		 *
+		 * \param event the event.
+		 */
 		virtual void mouseReleaseEvent(QMouseEvent *event);
+		/*!
+		 * \brief Event when mouse wheel is moved (event).
+		 *
+		 * \param event the event.
+		 */
 		virtual void wheelEvent(QWheelEvent *event);
+		/*!
+		 * \brief Event when a key is pressed (event).
+		 *
+		 * \param event the event.
+		 */
 		virtual void keyPressEvent(QKeyEvent *event);
+		/*!
+		 * \brief Event when a key is released (event).
+		 *
+		 * \param event the event.
+		 */
 		virtual void keyReleaseEvent(QKeyEvent *event);
 
 	private slots:
+		/*!
+		 * \fn shotDynamic
+		 * \brief Used to update dynamic time sequence.
+		 */
 		void shotDynamic()
 		{
 			if (!m_reverse)
@@ -376,6 +910,12 @@ class Viewer : public QGLViewer
 		}
 
 
+		/*!
+		 * \fn shotCapture
+		 * \brief Used to encode FFmpeg animation.
+		 *
+		 * \param param not used, always true.
+		 */
 		void shotCapture(bool param = true)
 		{
 #ifdef WITH_FFMPEG
@@ -385,14 +925,20 @@ class Viewer : public QGLViewer
 #endif
 		}
 
+		/*!
+		 * \fn setActivePolyhedron(int p)
+		 * \brief Set the current active polyhedron.
+		 *
+		 * \param p the polyhedron.
+		 */
 		void setActivePolyhedron(int p);
 
 	public:
-		QList<mepp_component_plugin_interface *> lplugin;
+		QList<mepp_component_plugin_interface *> lplugin;	//!< list of plugins/components
 
 	private:
-		QWidget *m_parent;
-		ScenePtr scene_ptr;
+		QWidget *m_parent;			//!< parent widget of the viewer
+		ScenePtr scene_ptr;			//!< Scene pointer associated to the viewer
 
 		// OpenGL
 		bool m_Lighting;
@@ -438,8 +984,20 @@ class Viewer : public QGLViewer
 		vector<GLuint> glList_;
 		unsigned short selected;
 
+		/*!
+		 * \fn dessine_space(bool names=false)
+		 * \brief Used to draw the scene in Space mode.
+		 *
+		 * \param names if true we are drawing with names which is used for selecting in Space mode.
+		 */
 		void dessine_space(bool names=false);
 
+		/*!
+		 * \fn dessine(bool names=false)
+		 * \brief Used to draw the scene in Normal and Time mode.
+		 *
+		 * \param names always false.
+		 */
 		void dessine(bool names=false);
 
 		//
