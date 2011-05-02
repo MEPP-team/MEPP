@@ -4,11 +4,11 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
---------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04 ou 10.10 / Debian 6:
---------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10 ou 11.04 / Debian 6:
+---------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04 ou 10.10 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10 ou 11.04 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
@@ -19,7 +19,7 @@ sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-d
 ----------------------------------------
 Suivant votre version d'Ubuntu / Debian:
 ----------------------------------------
-Sous Ubuntu 9.10 créer 2 liens:
+Sous Ubuntu 9.10 (The Karmic Koala - le koala karmique), créer 2 liens:
  cd /usr/lib
  sudo ln -s libqglviewer-qt4.so libQGLViewer.so
  cd /usr/include
@@ -27,13 +27,24 @@ Sous Ubuntu 9.10 créer 2 liens:
 
 ou
 
-sous Ubuntu 10.04 créer 1 lien:
+sous Ubuntu 10.04 (The Lucid Lynx - le lynx lucide), créer 1 lien:
  cd /usr/lib
  sudo ln -s libqglviewer-qt4.so libQGLViewer.so
 
 ou
 
-sous Ubuntu 10.10 / Debian 6, rien à faire
+sous Ubuntu 10.10 (The Maverick Meerkat - le suricate rebelle) / Debian 6, rien à faire
+
+ou
+
+sous Ubuntu 11.04 (The Natty Narwhal - le narval chic), créer 2 liens:
+ cd /usr/lib
+si Linux 32 bit
+ sudo ln -s i386-linux-gnu/libX11.so libX11.so
+ sudo ln -s i386-linux-gnu/libXext.so libXext.so
+si Linux 64 bit
+ sudo ln -s x86_64-linux-gnu/libX11.so libX11.so
+ sudo ln -s x86_64-linux-gnu/libXext.so libXext.so
 ------------------------------------------
 
 
