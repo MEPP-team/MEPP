@@ -17,9 +17,13 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/WindowsXP-KB942288-v
 1c) récupérer et installer Visual Studio Express 2010:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/VS2010ExpressFRA.iso (728 Mo)
 
-2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
+2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x86_v01.rar (584 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev)
+
+2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x86_ffmpeg_addon.rar (9 Mo)
+et décompresser l'archive dans le même répertoire que ci-dessus (si besoin, répondre oui pour écraser des fichiers)
 
 3a) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):
  - bouton « nouveau » : rajouter la variable QTDIR avec comme valeur :

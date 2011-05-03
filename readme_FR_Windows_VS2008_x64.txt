@@ -29,7 +29,11 @@ puis taper "WindowsSdkVer.exe -version:v7.0"
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/MEPP/mepp_prebuilt_binaries_vs2008_x64_v02.rar (582 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev64)
 
-2b) patcher la base de registre car par défaut Visual Studio Express 2008 n'autorise pas la compilation 64 bits:
+2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/MEPP/mepp_prebuilt_binaries_vs2008_x64_ffmpeg_addon.rar (8 Mo)
+et décompresser l'archive dans le même répertoire que ci-dessus (si besoin, répondre oui pour écraser des fichiers)
+
+2c) patcher la base de registre car par défaut Visual Studio Express 2008 n'autorise pas la compilation 64 bits:
 menu "Démarrer" -> "Tous les programmes" -> "Accessoires" -> bouton droit sur "Invite de commandes" puis "Exécuter en tant qu'administrateur" (important, sinon le script suivant échoue),
 puis taper "cd C:\dev64\VCE64BIT_WIN7SDK" (si vous avez décompressé le fichier ci-dessus dans C:\dev64),
 puis taper "setup_x64.bat"

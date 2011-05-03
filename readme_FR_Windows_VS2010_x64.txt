@@ -26,9 +26,13 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/VS10-KB2280741-x86.e
 Note: si vous n'installez pas ce patch en dernier, tous les .exe 64 bits compilés en Release déclencheront une erreur à l'exécution, c'est un bug de Visual Studio 2010 (x64 recode optimization issue. application crashes when otim).
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-2) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
+2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_v01.rar (646 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev)
+
+2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_ffmpeg_addon.rar (8 Mo)
+et décompresser l'archive dans le même répertoire que ci-dessus (si besoin, répondre oui pour écraser des fichiers)
 
 3a) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):
  - bouton « nouveau » : rajouter la variable QTDIR avec comme valeur :
