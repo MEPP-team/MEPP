@@ -1454,7 +1454,7 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 
 #ifdef WITH_FFMPEG
 		bool ok=true;
-		int bitrate=10000;	//1280x720 b=19700k
+		int bitrate=6000;	//1280x720 b=19700k
 
 		if (actionScreenshot_sequence->isChecked())
 			bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);
