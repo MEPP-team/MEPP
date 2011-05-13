@@ -683,6 +683,22 @@ void Viewer::render(bool sel, bool grab)
 		glDisable(GL_LIGHTING);
 		scene_ptr->get_polyhedron()->gl_draw_bounding_box();
 		glColor3f(m_MeshColor[0],m_MeshColor[1],m_MeshColor[2]); // new
+
+// temp MT
+		/*double xmin, ymin, zmin, xmax, ymax, zmax;
+		xmin = scene_ptr->get_polyhedron()->xmin();
+		xmax = scene_ptr->get_polyhedron()->xmax();
+		ymin = scene_ptr->get_polyhedron()->ymin();
+		ymax = scene_ptr->get_polyhedron()->ymax();
+		zmin = scene_ptr->get_polyhedron()->zmin();
+		zmax = scene_ptr->get_polyhedron()->zmax();
+
+		glColor3f(0.f, 1.f, 0.f); // green
+		glBegin(GL_LINES);
+				glVertex3d(-0.01f, -0.01f, -0.01f);
+				glVertex3d(1.01f, 1.01f, 1.01f);
+		glEnd();*/
+// temp MT
 	}
 
 	// lighting option

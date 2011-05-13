@@ -568,15 +568,17 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-		void saveAnimation(bool b)
+		void saveAnimation(bool b, QString &savePNGLocation)
 		{
 			if (b)
 			{
 				QString fileName = QFileDialog::getSaveFileName(this, QObject::tr("Save Screenshot Sequence"),
-										 QDir::currentPath(),
+										 /*QDir::currentPath()*/savePNGLocation,
 										 QObject::tr("PNG Files (*.png)"));
 				if (!fileName.isEmpty())
 				{
+					savePNGLocation = QFileInfo(fileName).absolutePath();
+
 					QFileInfo fileInfo(fileName);
 					fileName = fileInfo.absolutePath()+ '/' + fileInfo.baseName() + ".png";
 
@@ -605,15 +607,17 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-		void saveFFmpegAnimation(bool b, int bitrate=1500, bool resize=false, int gop=12)
+		void saveFFmpegAnimation(bool b, QString &saveAVILocation, int bitrate=1500, bool resize=false, int gop=12)
 		{
 			if (b)
 			{
 				QString fileName = QFileDialog::getSaveFileName(this, QObject::tr("Save MPEG-4 Video"),
-										 QDir::currentPath(),
+										 /*QDir::currentPath()*/saveAVILocation,
 										 QObject::tr("AVI Files (*.avi)"));
 				if (!fileName.isEmpty())
 				{
+					saveAVILocation = QFileInfo(fileName).absolutePath();
+
 					QFileInfo fileInfo(fileName);
 					fileName = fileInfo.absolutePath()+ '/' + fileInfo.baseName() + ".avi";
 

@@ -147,6 +147,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		qglviewer::Vec copyCameraPosition;				//!< the copied camera position
 		qglviewer::Quaternion copyCameraOrientation;	//!< the copied camera orientation
 
+		QString savePNGLocation, saveAVILocation;		//!< default paths to save PNG snapshots or AVI video
+
 	protected:
 		/*!
 		 * \brief Close all viewers (event).
@@ -700,6 +702,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		QTreeView *tree;
 
 		QString treeLocation;
+		QString openLocation, saveLocation;
 };
 
 #endif

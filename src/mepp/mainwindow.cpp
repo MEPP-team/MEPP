@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.45.0 - 26/04/2011 - (trunk version)"
+#define MEPP_VERSION "v0.45.1 - 13/05/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -450,6 +450,11 @@ void mainwindow::writeSettings()
 		path = fileInfo.absoluteFilePath();
 	settings.setValue("treeLocation", path);
 
+	settings.setValue("openLocation", openLocation);
+	settings.setValue("saveLocation", saveLocation);
+	settings.setValue("savePNGLocation", savePNGLocation);
+	settings.setValue("saveAVILocation", saveAVILocation);
+
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
@@ -461,6 +466,11 @@ void mainwindow::readSettings()
 	QSettings settings(ORGANIZATION, APPLICATION);
 
 	treeLocation = settings.value("treeLocation", QDir::currentPath()).toString();
+
+	openLocation = settings.value("openLocation", QDir::currentPath()).toString();
+	saveLocation = settings.value("saveLocation", QDir::currentPath()).toString();
+	savePNGLocation = settings.value("savePNGLocation", QDir::currentPath()).toString();
+	saveAVILocation = settings.value("saveAVILocation", QDir::currentPath()).toString();
 
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(1024, 768)).toSize());
@@ -849,7 +859,7 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 void mainwindow::actionOpen_slot(QString title, QString typeFiles, int loadType, typeFuncOpenSave f)
 {
     QStringList files = QFileDialog::getOpenFileNames(this, title,
-                                         QDir::currentPath(),
+                                         /*QDir::currentPath()*/openLocation,
                                          typeFiles);
 
 	QStringList::Iterator it = files.begin();
@@ -860,6 +870,9 @@ void mainwindow::actionOpen_slot(QString title, QString typeFiles, int loadType,
 
         ++it;
     }
+
+	if (files.size()>=1)
+		openLocation = QFileInfo(files[0]).absolutePath();
 
 	if (files.size()>1)
 		mdiArea->tileSubWindows();
@@ -872,7 +885,7 @@ void mainwindow::on_actionOpen_triggered()
 void mainwindow::actionOpen_space_slot(QString title, QString typeFiles, typeFuncOpenSave f)
 {
     QStringList files = QFileDialog::getOpenFileNames(this, title,
-                                         QDir::currentPath(),
+                                         /*QDir::currentPath()*/openLocation,
                                          typeFiles);
 
 	QStringList::Iterator it = files.begin();
@@ -893,6 +906,9 @@ void mainwindow::actionOpen_space_slot(QString title, QString typeFiles, typeFun
 
         ++it;
     }
+
+	if (files.size()>=1)
+		openLocation = QFileInfo(files[0]).absolutePath();
 }
 void mainwindow::on_actionOpen_space_triggered()
 {
@@ -902,7 +918,7 @@ void mainwindow::on_actionOpen_space_triggered()
 void mainwindow::actionOpen_time_slot(QString title, QString typeFiles, typeFuncOpenSave f)
 {
     QStringList files = QFileDialog::getOpenFileNames(this, title,
-                                         QDir::currentPath(),
+                                         /*QDir::currentPath()*/openLocation,
                                          typeFiles);
 
 	QStringList::Iterator it = files.begin();
@@ -923,6 +939,9 @@ void mainwindow::actionOpen_time_slot(QString title, QString typeFiles, typeFunc
 
         ++it;
     }
+
+	if (files.size()>=1)
+		openLocation = QFileInfo(files[0]).absolutePath();
 }
 void mainwindow::on_actionOpen_time_triggered()
 {
@@ -936,7 +955,7 @@ void mainwindow::actionOpen_and_Add_space_slot(QString title, QString typeFiles,
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
 		QStringList files = QFileDialog::getOpenFileNames(this, title,
-                                         QDir::currentPath(),
+                                         /*QDir::currentPath()*/openLocation,
                                          typeFiles);
 
 		QStringList::Iterator it = files.begin();
@@ -948,6 +967,9 @@ void mainwindow::actionOpen_and_Add_space_slot(QString title, QString typeFiles,
 			++it;
 		}
 		viewer->recreateListsAndUpdateGL();
+
+		if (files.size()>=1)
+			openLocation = QFileInfo(files[0]).absolutePath();
 	}
 }
 void mainwindow::on_actionOpen_and_Add_space_triggered()
@@ -962,7 +984,7 @@ void mainwindow::actionOpen_and_Add_time_slot(QString title, QString typeFiles, 
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
 		QStringList files = QFileDialog::getOpenFileNames(this, title,
-                                         QDir::currentPath(),
+                                         /*QDir::currentPath()*/openLocation,
                                          typeFiles);
 
 		QStringList::Iterator it = files.begin();
@@ -974,6 +996,9 @@ void mainwindow::actionOpen_and_Add_time_slot(QString title, QString typeFiles, 
 			++it;
 		}
 		viewer->recreateListsAndUpdateGL();
+
+		if (files.size()>=1)
+			openLocation = QFileInfo(files[0]).absolutePath();
 	}
 }
 void mainwindow::on_actionOpen_and_Add_time_triggered()
@@ -1020,7 +1045,7 @@ void mainwindow::actionSave_As_slot(QString title, QString typeFiles, typeFuncOp
 
 		QString suffix;
 		QString fileName = QFileDialog::getSaveFileName(this, title,
-											 QDir::currentPath(),
+											 /*QDir::currentPath()*/saveLocation,
 											 typeFiles, &suffix);
 
 		if (!fileName.isEmpty())
@@ -1033,6 +1058,7 @@ void mainwindow::actionSave_As_slot(QString title, QString typeFiles, typeFuncOp
 			else if (suffix.indexOf(".wrl") >= 0)
 				fileName += ".wrl";
 #endif
+			saveLocation = QFileInfo(fileName).absolutePath();
 
 			int res = viewer->getScenePtr()->save_file(fileName, f, viewer);
 
@@ -1460,13 +1486,13 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 			bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);
 
 		if (ok)
-			viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), bitrate);
+			viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), saveAVILocation, bitrate);
 		else
 			viewer->setSave_animation(false);
 
 		actionScreenshot_sequence->setChecked(viewer->getSave_animation());
 #else
-		viewer->saveAnimation(actionScreenshot_sequence->isChecked());
+		viewer->saveAnimation(actionScreenshot_sequence->isChecked(), savePNGLocation);
 		actionScreenshot_sequence->setChecked(viewer->getSave_animation());
 #endif
 		
