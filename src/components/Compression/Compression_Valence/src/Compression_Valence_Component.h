@@ -53,12 +53,12 @@ struct Point_Int
 
 	const Point_Int operator+(const Point_Int &Pt) const
 	{
-		Point_Int Temp;
-		Temp.x = x + Pt.x;
-		Temp.y = y + Pt.y;
-		Temp.z = z + Pt.z;
+		Point_Int Res;
+		Res.x = x + Pt.x;
+		Res.y = y + Pt.y;
+		Res.z = z + Pt.z;
 
-		return Temp;
+		return Res;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -73,18 +73,18 @@ struct Point_Int
 
 	const Point_Int operator-(const Point_Int &Pt) const
 	{
-		Point_Int Temp;
-		Temp.x = x - Pt.x;
-		Temp.y = y - Pt.y;
-		Temp.z = z - Pt.z;
+		Point_Int Res;
+		Res.x = x - Pt.x;
+		Res.y = y - Pt.y;
+		Res.z = z - Pt.z;
 
-		return Temp;
+		return Res;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// \fn	bool operator==(const Point_Int &Pt) const
 	///
-	/// \brief	Equality operator.
+	/// \brief	Comparison operatior ==.
 	///
 	/// \param	Pt	The point.
 	///
@@ -99,10 +99,11 @@ struct Point_Int
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// \fn	bool operator!=(const Point_Int &Pt) const
 	///
-	/// \brief	Finaliser.
+	/// \brief	Comparison operatior !=.
 	///
 	///
 	/// \param	Pt	The point.
+	/// \return true if the parameters are not identical.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool operator !=(const Point_Int &Pt) const
@@ -131,73 +132,71 @@ struct Color_Unit
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// \fn	const Color_Unit operator+(const Color_Unit &Col) const
+	/// \fn	const Color_Unit operator+(const Color_Unit & m_color) const
 	///
-	/// \brief	Addition operator.
+	/// \brief	Addition operator.	
 	///
-	///
-	/// \param	Col	The col.
+	/// \param	m_color	The color.
 	///
 	/// \return	The result of the operation.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	const Color_Unit operator+(const Color_Unit &Col) const
+	const Color_Unit operator+(const Color_Unit & m_color) const
 	{
-		Color_Unit Temp;
-		Temp.c0 = c0 + Col.c0;
-		Temp.c1 = c1 + Col.c1;
-		Temp.c2 = c2 + Col.c2;
+		Color_Unit Res;
+		Res.c0 = c0 + m_color.c0;
+		Res.c1 = c1 + m_color.c1;
+		Res.c2 = c2 + m_color.c2;
 		
-		return Temp;
+		return Res;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// \fn	const Color_Unit operator-(const Color_Unit &Col) const
+	/// \fn	const Color_Unit operator-(const Color_Unit &m_color) const
 	///
 	/// \brief	Negation operator.
 	///
-	/// \param	Col	The col.
+	/// \param	m_color	The color.
 	///
 	/// \return	The result of the operation.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	const Color_Unit operator-(const Color_Unit &Col) const
+	const Color_Unit operator-(const Color_Unit & m_color) const
 	{
-		Color_Unit Temp;
-		Temp.c0 = c0 - Col.c0;
-		Temp.c1 = c1 - Col.c1;
-		Temp.c2 = c2 - Col.c2;
+		Color_Unit Res;
+		Res.c0 = c0 - m_color.c0;
+		Res.c1 = c1 - m_color.c1;
+		Res.c2 = c2 - m_color.c2;
 		
-		return Temp;
+		return Res;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// \fn	bool operator==(const Color_Unit &Col) const
+	/// \fn	bool operator==(const Color_Unit & m_color) const
 	///
-	/// \brief	Equality operator.
-	///
-	///
+	/// \brief	Comparison operatior ==.
+	///	
 	/// \param	Col	The col.
 	///
 	/// \return	true if the parameters are considered equivalent.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	bool operator ==(const Color_Unit &Col) const
+	bool operator ==(const Color_Unit &m_color) const
 	{
-		return( c0 == Col.c0 && c1 == Col.c1 && c2 == Col.c2);
+		return( c0 == m_color.c0 && c1 == m_color.c1 && c2 == m_color.c2);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// \fn	bool operator!=(const Color_Unit &Col) const
+	/// \fn	bool operator!=(const Color_Unit & m_color) const
 	///
-	/// \brief	Finaliser.
+	/// \brief	Comparison operatior !=.
 	///
 	/// \param	Col	The col.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	bool operator !=(const Color_Unit &Col) const
+	bool operator !=(const Color_Unit & m_color) const
 	{
-		return!(*this == Col);
+		return!(*this == m_color);
 	}
 };
 
@@ -232,9 +231,7 @@ class Compression_Valence_Component :
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		Compression_Valence_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p)
-		{					
-			
-			
+		{			
 			IsOneColor = false;  
 			Decompress_count = 0; 			
 
@@ -245,30 +242,24 @@ class Compression_Valence_Component :
 			Smallest_C1 = 5000;
 			Smallest_C2 = 5000;
 
-			ColorDiffMinC0 = 5000;
+			/*ColorDiffMinC0 = 5000;
 			ColorDiffMinC1 = 5000;
-			ColorDiffMinC2 = 5000;
+			ColorDiffMinC2 = 5000;*/
 			
-			//IsClosed = false;
 			IsColored = false;			
-			
 			GlobalCountOperation = 0;
-
-			TotalBits = 0;		
 
 			// from IHM
 			IsCompressed = false;
 			IsDecompress = false;
-			Afficher = false;
+			//Afficher = false;
 
 			Possible_change_sequence = true;
 			Sequence = true;
 			Visu_level = 0;
 			Process_level = 0;
-			Writing_level = -1;
-
-			m_Mode = 0;
-
+			//Writing_level = -1;
+			
 			N_Inserted_Watermarks = 0;
 
 			m_VC[0] = 0.;
@@ -284,10 +275,8 @@ class Compression_Valence_Component :
 		}
 
 		/**
-		 \fn	~Compression_Valence_Component()
-		
-		 \brief	Finaliser.
-		
+		 \fn	~Compression_Valence_Component()		
+		 \brief	Destructor.		
 		 */
 
 		~Compression_Valence_Component() 
@@ -297,156 +286,190 @@ class Compression_Valence_Component :
 		// Main Function
 
 		/**
-		 \fn	double Main_Function(Polyhedron &pMesh, const char* File_Name,const int &Qbit,
-		 		const int &NVertices, const bool Normal_flipping, const bool Use_metric,
-		 		const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value,
-		 		const bool Compression_selected, const bool Adaptive_quantization,unsigned &Number_layers,
-		 		unsigned &Init_number_vertices,unsigned &Final_number_vertices, unsigned &Connectivity_size,
-		 		unsigned & Color_size, unsigned & Total_size, const unsigned & Initial_file_size);
+		 \fn	double Main_Function(Polyhedron &pMesh, 
+							 const char * Input_File_Name, 
+							 const char* File_Name,
+							 const int &Qbit,
+							 const int &NVertices, 
+							 const bool Is_normal_flipping_selected,
+			                 const bool Is_use_metric_selected, 
+							 const float &Metric_thread, 
+							 const bool Is_use_forget_metric_selected,
+							 const int &Forget_value, 
+							 const bool Is_compression_selected,
+							 const bool Is_adaptive_quantization_selected, 
+							 const bool Is_bijection_selected);
 		
-		 \brief	Main function.
-		
+		 \brief	Main function of compression.		
 		
 		 \param [in,out]	pMesh				 	The mesh.
-		 \param	File_Name						 	Filename of the file.
+		 \param	Input_File_Name						Filename of the input file.
+		 \param	File_Name						 	Filename of the compressed(output) file.
 		 \param	Qbit							 	The qbit.
 		 \param	NVertices						 	The vertices.
-		 \param	Normal_flipping					 	The normal flipping.
-		 \param	Use_metric						 	The use metric.
+		 \param	Is_normal_flipping_selected					 	The normal flipping.
+		 \param	Is_use_metric_selected						 	The use metric.
 		 \param	Metric_thread					 	The metric thread.
-		 \param	Use_forget_metric				 	The use forget metric.
+		 \param	Is_use_forget_metric_selected				 	The use forget metric.
 		 \param	Forget_value					 	The forget value.
-		 \param	Compression_selected			 	The compression selected.
-		 \param	Adaptive_quantization			 	The adaptive quantization.
-		 \param [in,out]	Number_layers		 	Number of layers.
-		 \param [in,out]	Init_number_vertices 	The initialise number vertices.
-		 \param [in,out]	Final_number_vertices	The final number vertices.
-		 \param [in,out]	Connectivity_size	 	Size of the connectivity.
-		 \param [in,out]	Color_size			 	Size of the color.
-		 \param [in,out]	Total_size			 	Size of the total.
-		 \param	Initial_file_size				 	Size of the initial file.
-		
-		 \return	.
+		 \param	Is_compression_selected			 	The compression selected.
+		 \param	Is_adaptive_quantization_selected			 	The adaptive quantization.
+		 \param	Is_bijection_selected			 	The bijection of the geometry coding.
+		 \return	Information of compression results.
 		 */
 
-		double Main_Function(Polyhedron &pMesh, const char* File_Name,const int &Qbit,const int &NVertices, const bool Normal_flipping,
-			                 const bool Use_metric, const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value, const bool Compression_selected,
-						     const bool Adaptive_quantization,unsigned &Number_layers, unsigned &Init_number_vertices,unsigned &Final_number_vertices, 
-						     unsigned &Connectivity_size, unsigned & Color_size, unsigned & Total_size, const unsigned & Initial_file_size);
+		QString Main_Function(Polyhedron &pMesh, 
+							 const char * Input_File_Name, 
+							 const char* File_Name,
+							 const int &Qbit,
+							 const int &NVertices, 
+							 const bool Is_normal_flipping_selected,
+			                 const bool Is_use_metric_selected, 
+							 const float &Metric_thread, 
+							 const bool Is_use_forget_metric_selected,
+							 const int &Forget_value, 
+							 const bool Is_compression_selected,
+							 const bool Is_adaptive_quantization_selected, 
+							 const bool Is_bijection_selected); 
 
 
 		//Initialization
 
 		/**
-		 \fn	void Global_Initialization(Polyhedron &pMesh, const int & qbit, const char * File_name);
+		 \fn	void Global_Initialization(Polyhedron &pMesh, const int & Quantization_bit, const char * File_name);
 		
 		 \brief	Global initialization to select the input gate.
 		
-		\param [in,out]	pMesh	The mesh.
-		 \param	qbit			 	The qbit.
+		\param [in,out]	pMesh		The mesh.
+		 \param	Quantization_bit	Number of bits used for geometry quantization.
 		 \param	File_name		 	Filename of the file.
 		 */
 
-		void Global_Initialization(Polyhedron &pMesh, const int & qbit, const char * File_name);
+		void Global_Initialization(Polyhedron & pMesh, 
+								   const int  & Quantization_bit, 
+								   const char * File_name);
 
-			/**
-			 \fn	void Quantization(Polyhedron &pMesh);
+		/**
+			\fn	void Quantization(Polyhedron &pMesh);
 			
-			 \brief	Quantize all vertices so that the new positions are reguliraly spaced in the 3D space..
+			\brief	Quantize all vertices so that the new positions are reguliraly spaced in the 3D space.
 			
-			 \param [in,out]	pMesh	The mesh.
-			 */
+			\param [in,out]	pMesh	The mesh.			 
+			*/
 
-			void Quantization(Polyhedron &pMesh);
+		void Quantization(Polyhedron &pMesh);
 
-			/**
-			 \fn	void Color_Initialization(Polyhedron &pMesh);
+		/**
+			\fn	void Color_Initialization(Polyhedron &pMesh);
 			
-			 \brief	Color initialization.
+			\brief	Color initialization.
 			
-			 \param [in,out]	pMesh	The mesh.
-			 */
+			\param [in,out]	pMesh	The mesh.
+			*/
 
-			void Color_Initialization(Polyhedron &pMesh);
+		void Color_Initialization(Polyhedron &pMesh);
 
-			/**
-			 \fn	void Color_Quantization(Polyhedron &pMesh);
+		/**
+			\fn	void Color_Quantization(Polyhedron &pMesh);
 			
-			 \brief	Color quantization.
+			\brief	Color quantization.
 			
-			 \param [in,out]	pMesh	The mesh.
-			 */
+			\param [in,out]	pMesh	The mesh.
+			*/
 
-			void Color_Quantization(Polyhedron &pMesh);		
+		void Color_Quantization(Polyhedron &pMesh);		
 
-			/**
-			 \fn	void Multiple_Components_Initialization(Polyhedron & pMesh, const int & Qbit);
+		/**
+			\fn	void Multiple_Components_Initialization(Polyhedron & pMesh, const int & Qbit);
 			
-			 \brief	Multiple components initialization.
+			\brief	Initialization to deal with a mesh composed of multiple separated components.
 			
-			 \param [in,out]	pMesh	The mesh.
-			 \param	Qbit			 	The qbit.
-			 */
+			\param [in,out]	pMesh	The mesh.
+			\param	Quantization_bit		The number of quantization for geometry.
+			*/
 
-			void Multiple_Components_Initialization(Polyhedron & pMesh, const int & Qbit);
+		void Multiple_Components_Initialization(Polyhedron & pMesh,
+												const int & Quantization_bit);
 		
 		
 		/**
-		 \fn	void Simplification(Polyhedron &pMesh, const int & NVertices, const bool Normal_flipping,
-		 		const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,
-		 		const int &Forget_value);
+		 \fn	void Simplification(Polyhedron &pMesh, 
+									const int & NVertices, 
+									const bool Is_normal_flipping_selected,
+		 							const bool Is_use_metric_selected,
+									const float &Metric_thread, 
+									const bool Is_use_forget_metric_selected,
+		 							const int &Forget_value);
 		
-		 \brief	Mesh Simplifications.
+		 \brief	Mesh Simplification which applies iteratively decimation and regulation in pair.
 		
-		 \param [in,out]	pMesh	The mesh.
-		 \param	NVertices		 	The vertices.
-		 \param	Normal_flipping  	The normal flipping.
-		 \param	Use_metric		 	The use metric.
-		 \param	Metric_thread	 	The metric thread.
-		 \param	Use_forget_metric	The use forget metric.
-		 \param	Forget_value	 	The forget value.
+		 \param [in,out]	pMesh				The mesh.
+		 \param	NVertices		 				The vertices.
+		 \param	Is_normal_flipping_selected  	The normal flipping.
+		 \param	Is_use_metric_selected		 	The use metric.
+		 \param	Metric_thread	 				The metric thread.
+		 \param	Is_use_forget_metric_selected	The use forget metric.
+		 \param	Forget_value	 				The forget value.
 		 */
 
-		void Simplification(Polyhedron &pMesh, const int & NVertices, const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value);		
+		void Simplification(Polyhedron &pMesh,
+							const int & NVertices,
+							const bool Is_normal_flipping_selected,
+							const bool Is_use_metric_selected,
+							const float &Metric_thread, 
+							const bool Is_use_forget_metric_selected,
+							const int &Forget_value);		
 
-			/**
-			 \fn	int Decimation_Conquest(Polyhedron &pMesh,const bool Normal_flipping,
-			 		const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,
-			 		const int &Forget_value, const int & Component_ID);
+		/**
+			\fn	int Decimation_Conquest(Polyhedron &pMesh,const bool Normal_flipping,
+			 	const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,
+			 	const int &Forget_value, const int & Component_ID);
 			
-			 \brief	selects a set of independent vertices to be removed using decimation conquest.
+			\brief	Removal of a set of independent vertices.
 					
-			 \param [in,out]	pMesh	The mesh.
-			 \param	Normal_flipping  	The normal flipping.
-			 \param	Use_metric		 	The use metric.
-			 \param	Metric_thread	 	The metric thread.
-			 \param	Use_forget_metric	The use forget metric.
-			 \param	Forget_value	 	The forget value.
-			 \param	Component_ID	 	Identifier for the component.
+			\param [in,out]	pMesh	The mesh.
+			\param	Is_normal_flipping_selected  	The normal flipping.
+			\param	Is_use_metric_selected		 	The use metric.
+			\param	Metric_thread	 	The metric thread.
+			\param	Is_use_forget_metric_selected	The use forget metric.
+			\param	Forget_value	 	The forget value.
+			\param	Component_ID	 	Identifier for the component.
 			
-			 \return	.
-			 */
+			\return	Number of decimated vertices.
+			*/
 
-			int Decimation_Conquest(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value, const int & Component_ID);													
+		int Decimation_Conquest(Polyhedron &pMesh,
+								const bool Is_normal_flipping_selected,
+								const bool Is_use_metric_selected,
+								const float &Metric_thread, 
+								const bool Is_use_forget_metric_selected,
+								const int &Forget_value, 
+								const int & Component_ID);													
 
-			/**
-			 \fn	int Regulation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,
-			 		const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value,
-			 		const int & Component_ID);
+		/**
+			\fn	int Regulation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,
+			 	const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value,
+			 	const int & Component_ID);
 			
-			 \brief	regulation conquest.
+			\brief	Removal of a set of independent vertices.
 						
-			 \param [in,out]	pMesh	The mesh.
-			 \param	Normal_flipping  	The normal flipping.
-			 \param	Use_metric		 	The use metric.
-			 \param	Metric_thread	 	The metric thread.
-			 \param	Use_forget_metric	The use forget metric.
-			 \param	Forget_value	 	The forget value.
-			 \param	Component_ID	 	Identifier for the component.
+			\param [in,out]	pMesh	The mesh.
+			\param	Is_normal_flipping_selected  	The normal flipping.
+			\param	Is_use_metric_selected		 	The use metric.
+			\param	Metric_thread	 	The metric thread.
+			\param	Is_use_forget_metric_selected	The use forget metric.
+			\param	Forget_value	 	The forget value.
+			\param	Component_ID	 	Identifier for the component.
 			
-			 \return	.
-			 */
-			int Regulation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value, const int & Component_ID);			
+			\return	Number of decimated vertices.
+			*/
+		int Regulation(Polyhedron &pMesh,
+						const bool Is_normal_flipping_selected,
+						const bool Is_use_metric_selected,
+						const float &Metric_thread, 
+						const bool Is_use_forget_metric_selected,
+						const int &Forget_value, 
+						const int & Component_ID);			
 		
 
 		// Adaptive Quantization		
@@ -456,64 +479,52 @@ class Compression_Valence_Component :
 		 		const bool Normal_flipping,const bool Use_metric,const float &Metric_thread,
 		 		const bool Use_forget_metric,const int &Forget_value,const int &Qbit);
 		
-		 \brief	Adaptive quantization. 
+		 \brief	Adaptive quantization which not only decimates a input mesh but also adapts quantization precision for all intermediate meshes.
 		
-		 \param [in,out]	pMesh	The mesh.
-		 \param	NVertices		 	The vertices.
-		 \param	Normal_flipping  	The normal flipping.
-		 \param	Use_metric		 	The use metric.
-		 \param	Metric_thread	 	The metric thread.
-		 \param	Use_forget_metric	The use forget metric.
-		 \param	Forget_value	 	The forget value.
-		 \param	Qbit			 	The qbit.
+		 \param [in,out]	pMesh				The mesh.
+		 \param	NVertices		 				The vertices.
+		 \param	Is_normal_flipping_selected  	The normal flipping.
+		 \param	Is_use_metric_selected		 	The use metric.
+		 \param	Metric_thread	 				The metric thread.
+		 \param	Is_use_forget_metric_selected	The use forget metric.
+		 \param	Forget_value	 				The forget value.
+		 \param	Qbit			 				The qbit.
 		 */
 
-		void Adaptive_Quantization(Polyhedron &pMesh, const int & NVertices, const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value,const int &Qbit);
+		void Adaptive_Quantization(Polyhedron &pMesh, 
+								   const int & NVertices, 
+								   const bool Is_normal_flipping_selected,
+								   const bool Is_use_metric_selected,
+								   const float &Metric_thread, 
+								   const bool Is_use_forget_metric_selected,
+								   const int &Forget_value,
+								   const int &Qbit);
+
 
 		/**
-		 \fn	int Test_Next_Operation(Polyhedron &pMesh,const bool Normal_flipping,
-		 		const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,
-		 		const int &Forget_value,const int &Qbit);
+		 \fn	void Augment_Geometry_Quantization_Precision(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
 		
-		 \brief	Tests next operation.
-				
-		 \param [in,out]	pMesh	The mesh.
-		 \param	Normal_flipping  	The normal flipping.
-		 \param	Use_metric		 	The use metric.
-		 \param	Metric_thread	 	The metric thread.
-		 \param	Use_forget_metric	The use forget metric.
-		 \param	Forget_value	 	The forget value.
-		 \param	Qbit			 	The qbit.
+		 \brief	Refines quantization precision of mesh geometry.
 		
-		 \return	.
+		 \param [in,out]						pMesh  	The mesh.
+		 \param [in,out]						Decoder	The decoder.
+		 \param	Component_ID				   	Component ID.
 		 */
 
-		int  Test_Next_Operation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value,const int &Qbit);	
-
-		/**
-		 \fn	void Up_Quantization(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & a);
-		
-		 \brief	Up quantization.
-		
-		 \param [in,out]	pMesh  	The mesh.
-		 \param [in,out]	Decoder	The decoder.
-		 \param	a				   	a.
-		 */
-
-		void Up_Quantization(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & a);
+		void Augment_Geometry_Quantization_Precision(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
 
 			/**
-			 \fn	void Under_Quantization(Polyhedron &pMesh, const int & a);
+			 \fn	void Diminush_Geometry_Quantization_Precision(Polyhedron &pMesh, const int & Component_ID);
 			
-			 \brief	Under quantization. Decreasing of quantization resolution based on the prediction of PENG.
-Opposite function is up_quantization
+			 \brief	Decreasing of quantization resolution based on the prediction of PENG.
+					Opposite function is Augment_Geometry_Quantization_Precision.
 					
-			 \param [in,out]	pMesh	The mesh.
-			 \param	a				 	a.
+			 \param [in,out]						pMesh	The mesh.
+			 \param	Component_ID				 	Component ID.
 			 */
 
 
-		void Under_Quantization(Polyhedron &pMesh, const int & a);
+		void Diminush_Geometry_Quantization_Precision(Polyhedron &pMesh, const int & Component_ID);
 
 		/**
 		 \fn	void Calculate_Edge_Color_Difference(Polyhedron & pMesh, const int & Component_ID,
@@ -523,56 +534,60 @@ Opposite function is up_quantization
 		
 		 \param [in,out]	pMesh			  	The mesh.
 		 \param	Component_ID				  	Identifier for the component.
-		 \param [in,out]	Max_color		  	The maximum color.
-		 \param [in,out]	Mean_color		  	The mean color.
+		 \param [in,out]	Max_color		  	The maximum of color difference.
+		 \param [in,out]	Mean_color		  	The mean of color difference.
 		 \param [in,out]	Number_of_vertices	Number of vertices.
 		 */
 
 		void Calculate_Edge_Color_Difference(Polyhedron & pMesh, const int & Component_ID, double & Max_color, double & Mean_color, int & Number_of_vertices);
 
 		/**
-		 \fn	void Color_Under_Quantization(Polyhedron &pMesh, const int Component_ID);
+		 \fn	void Diminush_Color_Quantization_Precision(Polyhedron &pMesh, const int Component_ID);
 		
-		 \brief	Color under quantization.
+		 \brief Reduces quantization precision of color coordinates.
 				
 		 \param [in,out]	pMesh	The mesh.
 		 \param	Component_ID	 	Identifier for the component.
 		 */
 
-		void Color_Under_Quantization(Polyhedron &pMesh, const int Component_ID);
+		void Diminush_Color_Quantization_Precision(Polyhedron &pMesh, const int Component_ID);
 
 		/**
-		 \fn	void Color_Up_Quantization(Polyhedron &pMesh, Arithmetic_Codec & Decoder,
+		 \fn	void Augment_Color_Quantization_Precision(Polyhedron &pMesh, Arithmetic_Codec & Decoder,
 		 		const int & Component_ID);
 		
-		 \brief	Color up quantization.
+		 \brief	Refine quantization precision of mesh color coordinates.
 		
 		 \param [in,out]	pMesh  	The mesh.
 		 \param [in,out]	Decoder	The decoder.
 		 \param	Component_ID	   	Identifier for the component.
 		 */
 
-		void Color_Up_Quantization(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
+		void Augment_Color_Quantization_Precision(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
 		
 			// Compression 
 
 		/**
-		 \fn	void Compression(Polyhedron &pMesh,const char* File_Name, const int &Qbit,
-		 		unsigned &Connectivity_size, unsigned & Color_size, unsigned & Total_size,
-		 		const unsigned & Initial_file_size);
+		 \fn	void Compression(Polyhedron &pMesh,
+								 const char* File_Name, 
+								 const int &Qbit,
+		 						 unsigned &Connectivity_size, 
+								 unsigned & Color_size, 
+								 unsigned & Total_size,
+		 						 const unsigned & Initial_file_size);
 		
 		 \brief	Compressions.
 			
 		 \param [in,out]	pMesh			 	The mesh.
-		 \param	File_Name					 	Filename of the file.
-		 \param	Qbit						 	The qbit.
+		 \param	File_Name					 	Filename of the output file.
+		 \param	Qbit						 	The quantization of geometry.
 		 \param [in,out]	Connectivity_size	Size of the connectivity.
 		 \param [in,out]	Color_size		 	Size of the color.
 		 \param [in,out]	Total_size		 	Size of the total.
 		 \param	Initial_file_size			 	Size of the initial file.
 		 */
 
-		void Compression(Polyhedron &pMesh,const char* File_Name, const int &Qbit, unsigned &Connectivity_size, unsigned & Color_size, unsigned & Total_size, const unsigned & Initial_file_size);				
+		void Compression(Polyhedron &pMesh,const char* File_Name, const int &Qbit, unsigned &Connectivity_size, unsigned & Color_size, unsigned & Total_size);
 
 		/**
 		 \fn	int Calculate_Connectivity_Rate(void);
@@ -589,6 +604,7 @@ Opposite function is up_quantization
 		 \fn	void Calculate_Geometry_Color_Offset_Range();
 		
 		 \brief	Calculates the geometry color offset range.
+		        This function is needed since the coder/decoder deals only with the positive symbol numbers.
 		
 		 */
 		void Calculate_Geometry_Color_Offset_Range();				
@@ -596,7 +612,8 @@ Opposite function is up_quantization
 		/**
 		 \fn	void Remove_Last_Phase_Elements(const int & Component_ID);
 		
-		 \brief	Removes the last phase elements described by Component_ID.
+		 \brief	When the last simplification operation has to be cancelled,
+		        we need to remove its elements in order not to compress these elements. 
 			
 		 \param	Component_ID	Identifier for the component.
 		 */
@@ -610,10 +627,10 @@ Opposite function is up_quantization
 		 \brief	Writes a base mesh.
 			
 		 \param [in,out]	pMesh			 	The mesh.
-		 \param [in,out]	Enc				 	The encode.
+		 \param [in,out]	Enc				 	The encoder.
 		 \param [in,out]	Connectivity_size	Size of the connectivity.
 		 \param [in,out]	Color_size		 	Size of the color.
-		 \param	Num_color_base_mesh			 	Number of color base meshs.
+		 \param	Num_color_base_mesh			 	Number of color in the base mesh.
 		 */
 
 		void Write_Base_Mesh(Polyhedron &pMesh, Arithmetic_Codec & Enc, unsigned &Connectivity_size, unsigned &Color_size, const int &Num_color_base_mesh);
@@ -629,24 +646,122 @@ Opposite function is up_quantization
 				
 		 \param [in,out]	pMesh			 	The mesh.
 		 \param [in,out]	Initial_file_size	Size of the initial file.
-		 \param	File_Name					 	Filename of the file.
+		 \param	File_Name					 	Filename of the compressed file.
 		
-		 \return	.
+		 \return	Information related to the decompression (number of LoDs, size of the input file, etc).
 		 */
 
-		int    Decompress_Init(Polyhedron &pMesh,unsigned & Initial_file_size, const char* File_Name);
+		QString    Decompress_Init(Polyhedron &pMesh);//,unsigned & Initial_file_size, const char* File_Name);		
+		
+		/**
+		 \fn	void Decompression_From_File(Polyhedron &pMesh);
+		
+		 \brief	Decompression from file (No creation of mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+
+		void Decompression_From_File(Polyhedron &pMesh);
 
 		/**
-		 \fn	double Decompress_All(Polyhedron &pMesh);
+		 \fn	void Write_Info(Polyhedron &pMesh);
 		
-		 \brief	Decompresses all the progressive levels described by pMesh. Just gives the final mesh.
+		 \brief	Write information of each LoD at decompression in a file.
+		 \param [in,out]	pMesh	The mesh.		 
+		 		 
+		 */
+		void Write_Info(Polyhedron &pMesh);
+
+		/**
+		 \fn	void Decompression_From_Sequence(Polyhedron &pMesh);
 		
-		 \param [in,out]	pMesh	The mesh.
+		 \brief	Decompression from sequence (Creation of mesh sequence).
 		
-		 \return	.
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void Decompression_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
+
+
+		/**
+		 \fn	void Decompression_Coarser_From_File(Polyhedron &pMesh);
+		
+		 \brief	Obtain the previous LoD in the "from file" mode (no mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void Decompression_Coarser_From_File(Polyhedron &pMesh);
+
+
+		/**
+		 \fn	void Decompression_All_From_File(Polyhedron &pMesh);
+		
+		 \brief	Decompression of all LoDs from file.
+		 The finest LoD is visualized without creating mesh sequence.
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void Decompression_All_From_File(Polyhedron &pMesh);
+
+
+		/**
+		 \fn	void Decompression_Specific_Level_From_File(Polyhedron &pMesh);
+		
+		 \brief	To obtain a user-desired LoD from file (No creation of mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void Decompression_Specific_Level_From_File(Polyhedron &pMesh, const int & WL);
+
+		/**
+		 \fn	void JCW_Decompression_From_File(Polyhedron &pMesh);
+		
+		 \brief	Decompression from file for JCW (No creation of mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void JCW_Decompression_From_File(Polyhedron &pMesh);
+
+
+		/**
+		 \fn	void JCW_Decompression_Without_Extraction_From_File(Polyhedron &pMesh);
+		
+		 \brief	Decompression from file without watermark extraction and geometry correction (No creation of mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void JCW_Decompression_Without_Extraction_From_File(Polyhedron &pMesh);
+
+
+		/**
+		 \fn	void JCW_Decompression_From_Sequence(Polyhedron &pMesh);
+		
+		 \brief	Decompression from sequence for JCW (Creation of mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
+		 */
+		void JCW_Decompression_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
+
+
+		/**
+		 \fn	void JCW_Decompression_Without_Extraction_From_Sequence(Polyhedron &pMesh);
+		
+		 \brief	Decompression from sequence without watermark extraction (Creation of mesh sequence).
+		
+		 \param [in,out]	pMesh	The mesh.		 
 		 */
 
-		double Decompress_All(Polyhedron &pMesh);				
+		void JCW_Decompression_Without_Extraction_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
+
+		/**
+		 \fn	void Show_Text(void);
+		
+		 \brief	Obtain information to the main window.
+
+		 \return Information of each LoD at decompression.
+		 		 
+		 */
+		QString Show_Text(void);
+
 
 		/**
 		 \fn	int Decompress_Each_Step(Polyhedron &pMesh, const char* File_Name);
@@ -654,9 +769,9 @@ Opposite function is up_quantization
 		 \brief	Decompress the each step to visualize intermediate meshes
 		
 		 \param [in,out]	pMesh	The mesh.
-		 \param	File_Name		 	Filename of the file.
+		 \param	File_Name	Filename of the file.
 		
-		 \return	.
+		 \return Index of the current LoD.
 		 */
 
 		int    Decompress_Each_Step(Polyhedron &pMesh, const char* File_Name);
@@ -670,22 +785,22 @@ Opposite function is up_quantization
 		 \param [in,out]	pMesh	The mesh.
 		 \param	Wanted_level	 	The wanted level.
 		
-		 \return	.
+		 \return Index of the current LoD.
 		 */
 
-		int    Decompress_To_Level(Polyhedron &pMesh,const int Wanted_level);
+		//int    Decompress_To_Level(Polyhedron &pMesh,const int Wanted_level);
 
 		/**
-		 \fn	void Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & dec, const int & id);
+		 \fn	void Un_Decimation_Conquest(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
 		
 		 \brief	Decoding of the decimation conquest.
 			
 		 \param [in,out]	pMesh	The mesh.
-		 \param [in,out]	dec  	The decrement.
-		 \param	id				 	The identifier.
+		 \param [in,out]	Decoder  	The decoder.
+		 \param	Component_ID			Component ID.
 		 */
 
-		void   Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & dec, const int & id);		
+		void   Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & Decoder, const int & Component_ID);		
 
 		/**
 		 \fn	void Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & dec, const int & id);
@@ -693,14 +808,14 @@ Opposite function is up_quantization
 		 \brief	Decoding of the regulation conquest.
 				
 		 \param [in,out]	pMesh	The mesh.
-		 \param [in,out]	dec  	The decrement.
-		 \param	id				 	The identifier.
+		 \param [in,out]	Decoder  	The decoder.
+		 \param	Component_ID				 	Component ID.
 		 */
 
-		void   Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & dec, const int & id);		
+		void   Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);		
 
 		// Other functions
-		void   Separate_Components(Polyhedron &pMesh);		
+		//void   Separate_Components(Polyhedron &pMesh);		
 
 		/**
 		 \fn	double Calculate_Area(Polyhedron & pMesh);
@@ -713,37 +828,60 @@ Opposite function is up_quantization
 		 */
 
 		double Calculate_Area(Polyhedron & pMesh);
-		bool   Error_Projected_Surface(Polyhedron & pMesh, const Halfedge_handle & _h, const int & _Component_ID, const double & Mean_color, const double & Mean_area);
-		void   Recalculate_Component_Area(Polyhedron & pMesh, const int & Component_ID, int & Number_facets);
 
-		// 
+		/**
+		 \fn	bool Error_Projected_Surface(Polyhedron & pMesh, const Halfedge_handle & _h, const int & _Component_ID, const double & Mean_color, const double & Mean_area);
+		
+		 \brief	Calculate an error cause by a vertex removal and decide in order not to remove an important vertex.
+				
+		 \param [in,out]	pMesh	The mesh.
+		 \param h				Input gate.
+		 \param Component_ID    Component ID.
+		 \param Mean_color      Mean color value.
+		 \param Mean_area       Average of facets areas.
+		 \return	Decision of vertex removal.
+		 */
+
+		bool   Error_Projected_Surface(Polyhedron & pMesh, const Halfedge_handle & h, const int & Component_ID, const double & Mean_color, const double & Mean_area);
+
+		/**
+		 \fn	void Recalculate_Component_Area(Polyhedron & pMesh, const int & Component_ID, int & Number_facets);
+		
+		 \brief	Update the area of each component.
+				
+		 \param [in,out]	pMesh	The mesh.
+		 \param Component_ID  Component ID.
+		 \param Number_facets Number of facets
+		
+		 \return	Decision of vertex removal.
+		 */
+		void   Recalculate_Component_Area(Polyhedron & pMesh, const int & Component_ID, int & Number_facets);		
 
 		/**
 		 \fn	Point_Int Change_Real_Int(const Point3d &pt, const int & Component_ID);
 		
-		 \brief	Change from real to int point(related to quantization bit)
-		
+		 \brief	Change from real to int point(related to quantization bit)		
 		 
 		 \param	pt				The point.
-		 \param	Component_ID	Identifier for the component.
+		 \param	Component_ID	Component ID.
 		
-		 \return	.
+		 \return Integer coordinates.
 		 */
 
-		Point_Int Change_Real_Int(const Point3d &pt, const int & Component_ID);		
+		inline Point_Int Change_Real_Int(const Point3d &pt, const int & Component_ID);		
 
 		/**
 		 \fn	Point3d Change_Int_Real(const Point_Int &vec, const int & Component_ID);
 		
 		 \brief	Change from int to real point(related to quantization bit)
 		
-		 \param	vec				The vector.
-		 \param	Component_ID	Identifier for the component.
+		 \param	pt				The point(integers).
+		 \param	Component_ID	Component ID.
 		
 		 \return	.
 		 */
 
-		Point3d   Change_Int_Real(const Point_Int &vec, const int & Component_ID);
+		inline Point3d   Change_Int_Real(const Point_Int & pt, const int & Component_ID);
 		
 		
 		/**
@@ -756,35 +894,7 @@ Opposite function is up_quantization
 		 \param [in,out]	New_mesh	 	The new mesh.
 		 */
 
-		void Attibute_Seed_Gate_Flag(Polyhedron &Original_mesh, Polyhedron &New_mesh);
-		
-
-
-		//REMOVE THESE Functions and variables
-//REMOVE for cleaning
-//		void Color_Metric_Roy(Polyhedron &pMesh, double &min, double &max, double &mean, double &rms);
-//		Mesh_roy *Original;
-//		void Set_Original_Color_Mesh(Polyhedron &pMesh, const char * Filename);
-//		#ifdef MEASURE_COLOR_DEVIATION		
-		// Distance calculation
-//		void Calculate_Distances(char * originalMesh, char * attackedMesh, double & mrms, double & mrmswrtBB, double & hausdorff, double & hausdorffwrtBB);		
-//		void Calculate_Color_Distances(char * originalMesh, char * attackedMesh, double & min, double & max, double & mean);		
-
-		int Mapping_Table_Index_Reordering(Polyhedron &pMesh);
-
-
-
-		/**
-		 \fn	int Coding_Cost_Color_Simple_Prediction();
-		
-		 \brief	Color coding cost - prediction method.
-		
-		
-		 \return	.
-		 */
-
-		int Coding_Cost_Color_Simple_Prediction();	
-		
+		void Attibute_Seed_Gate_Flag(Polyhedron &Original_mesh, Polyhedron &New_mesh);			
 		
 		/**
 		 \fn	int Coding_Cost_Each_Layer_Color_Clustering(Polyhedron &pMesh);
@@ -795,14 +905,13 @@ Opposite function is up_quantization
 		
 		 \return	.
 		 */
-		int Coding_Cost_Each_Layer_Color_Clustering(Polyhedron &pMesh);	
+		//int Coding_Cost_Each_Layer_Color_Clustering(Polyhedron &pMesh);	
 		
 	 
 		/**
 		 \fn	unsigned Calculate_Current_File_Size(void)
 		
-		 \brief	Calculates the current file size. Measure bits used for decompression.
-		
+		 \brief	Calculates the current file size. Measure bits used for decompression.		
 	 	
 		 \return	The calculated current file size.
 		 */
@@ -846,33 +955,65 @@ Opposite function is up_quantization
 		//////////////////////////////////////////
 
 		/**
-		 \fn	double Joint_Compression_Watermarking(Polyhedron &pMesh, const int &NVertices,
-		 		const bool Normal_flipping, const bool Use_metric, const float & Metric_thread,
-		 		const bool Use_forget_metric, const int &Forget_value, const int &Qbit, int & Number_bits,
-		 		unsigned int & Connectivity_size,unsigned int & Color_size, unsigned int & Total_size,
-		 		unsigned int & Initial_file_size);
+		 \fn	double QString Joint_Compression_Watermarking(Polyhedron &pMesh, 
+											  const char * Input_File_Name, 
+											  const char * Output_File_Name, 
+											  const int & Number_bins, 
+											  const int & Number_regions,
+											  const int & Embedding_strength, 
+											  const char * Embedding_message, 
+											  const bool Is_complete_reversibility_selected, 
+											  const bool Is_divide_regions_selected,
+											  const int & Thres_divide_regions, 
+											  const int &Qbit, 
+											  const int  & NVertices, 
+											  const bool Normal_flipping, 
+											  const bool Use_metric, 
+											  const float & Metric_thread, 
+											  const bool Use_forget_metric, 
+											  const int &Forget_value);
 		
 		 \brief	Joint Compression Watermarking (JCW) 
 		
-		 \param [in,out]	pMesh			 	The mesh.
-		 \param	NVertices					 	The vertices.
-		 \param	Normal_flipping				 	The normal flipping.
-		 \param	Use_metric					 	The use metric.
-		 \param	Metric_thread				 	The metric thread.
-		 \param	Use_forget_metric			 	The use forget metric.
-		 \param	Forget_value				 	The forget value.
-		 \param	Qbit						 	The qbit.
-		 \param [in,out]	Number_bits		 	Number of bits.
-		 \param [in,out]	Connectivity_size	Size of the connectivity.
-		 \param [in,out]	Color_size		 	Size of the color.
-		 \param [in,out]	Total_size		 	Size of the total.
-		 \param [in,out]	Initial_file_size	Size of the initial file.
+		 \param [in,out]	pMesh			 		The mesh.
+		 \param Input_File_Name						The name of the input file.
+		 \param Output_File_Name					The name of the output file.
+		 \param Number_bins							The number of bins.
+		 \param Number_regions						The number of regions.
+		 \param Embedding_strength				    The strengh of embedding (number of shifted bins).
+		 \param Embedding_message                   The message of watermarking
+		 \param Is_complete_reversibility_selected  The selection of complete reversibility. 
+		 \param Is_divide_regions_selected          The selection of division of regions.
+		 \param Thres_divide_regions                The threshold to divide big regions.
+		 \param Qbit                                The geometry quantization.
+		 \param NVertices                           The wanted number of base mesh.
+		 \param Normal_flipping                     The selection of normal flipping.
+		 \param Use_metric                          The selection of geometric metric use
+		 \param Metric_thread                       The threshold of metric.
+		 \param Use_forget_metric                   The selection of use of "forget metric"
+		 \param Forget_value                        The threshold of "Use_forget_metric"
 		
-		 \return	.
+		 \return	Information of JCW.
 		 */
 
-		double Joint_Compression_Watermarking(Polyhedron &pMesh, const int &NVertices, const bool Normal_flipping, const bool Use_metric, const float & Metric_thread, const bool Use_forget_metric, const int &Forget_value, const int &Qbit, int & Number_bits,
-											  unsigned int & Connectivity_size,unsigned int & Color_size, unsigned int & Total_size,unsigned int & Initial_file_size);
+		QString Joint_Compression_Watermarking(Polyhedron &pMesh, 
+											  const char * Input_File_Name, 
+											  const char * Output_File_Name, 
+											  const int & Number_bins, 
+											  const int & Number_regions,
+											  const int & Embedding_strength, 
+											  const char * Embedding_message, 
+											  const bool Is_complete_reversibility_selected, 
+											  const bool Is_divide_regions_selected,
+											  const int & Thres_divide_regions, 
+											  const int &Qbit, 
+											  const int  & NVertices, 
+											  const bool Normal_flipping, 
+											  const bool Use_metric, 
+											  const float & Metric_thread, 
+											  const bool Use_forget_metric, 
+											  const int &Forget_value);
+
 
 		/**
 		 \fn	int JCW_Decimation_For_Segmentation(Polyhedron &pMesh,const bool Normal_flipping,
@@ -924,7 +1065,7 @@ Opposite function is up_quantization
          \brief	JCW un regulation for insertion.
         
          \param [in,out]	pMesh				   	The mesh.
-         \param	Component_ID					   	Identifier for the component.
+         \param	Component_ID					   	Component ID.
          \param [in,out]	FP_Connectivity		   	The fp connectivity.
          \param [in,out]	SP_Moved_Position	   	The sp moved position.
          \param [in,out]	SP_Original_Position   	The sp original position.
@@ -944,7 +1085,7 @@ Opposite function is up_quantization
 		
 		 	
 		 \param [in,out]	pMesh				   	The mesh.
-		 \param	Component_ID					   	Identifier for the component.
+		 \param	Component_ID					   	Component ID
 		 \param [in,out]	FP_Connectivity		   	The fp connectivity.
 		 \param [in,out]	SP_Moved_Position	   	The sp moved position.
 		 \param [in,out]	SP_Original_Position   	The sp original position.
@@ -960,10 +1101,10 @@ Opposite function is up_quantization
 		
 		 \brief	JCW barycenter patch before removal.
 			
-		 \param	h		 	The.
+		 \param	h		 	The input gate.
 		 \param	Direction	The direction.
 		
-		 \return	.
+		 \return Predicted position.
 		 */
 
 		Point3d JCW_Barycenter_Patch_Before_Removal(const Halfedge_handle & h, const int & Direction);
@@ -972,14 +1113,14 @@ Opposite function is up_quantization
 		 \fn	Point3d JCW_Barycenter_Patch_After_Removal(const Halfedge_handle & h, const int & valence,
 		 		const int & Direction);
 		
-		 \brief	JCW barycenter patch after removal.
+		 \brief	Caclulates the barycentric position for JCW after removal.
 		
 		
-		 \param	h		 	The.
+		 \param	h		 	The input gate.
 		 \param	valence  	The valence.
 		 \param	Direction	The direction.
 		
-		 \return	.
+		 \return Predicted position.
 		 */
 
 		Point3d JCW_Barycenter_Patch_After_Removal(const Halfedge_handle & h, const int & valence, const int & Direction);
@@ -991,7 +1132,7 @@ Opposite function is up_quantization
 		 \brief	JCW barycenter patch before removal.
 		 
 		
-		 \param	h		 	The.
+		 \param	h		 	The input gate.
 		 \param	valence  	The valence.
 		 \param	Direction	The direction.
 		
@@ -1001,36 +1142,36 @@ Opposite function is up_quantization
 		Point3d JCW_Barycenter_Patch_Before_Removal(const Halfedge_handle & h, const int & valence, const int & Direction);
 
 		/**
-		 \fn	void JCW_Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & dec, const int & id);
+		 \fn	void JCW_Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & Decoder, const int & Component_ID);
 		
 
-		 \brief	JCW un decimation conquest.
+		 \brief	Undecimation conquest for JCW.
 		 	
 		 \param [in,out]	pMesh	The mesh.
-		 \param [in,out]	dec  	The decrement.
-		 \param	id				 	The identifier.
+		 \param [in,out]	Decoder  	The decrement.
+		 \param	Component_ID				 	Component ID.
 		 */
 
-		void JCW_Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & dec, const int & id);		
+		void JCW_Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & Decoder, const int & Component_ID);		
 
 		/**
 		 \fn	void JCW_Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & dec, const int & id);
 		
-		 \brief	JCW un regulation.
+		 \brief	JCW unregulation.
 		
 	 	
 		 \param [in,out]	pMesh	The mesh.
-		 \param [in,out]	dec  	The decrement.
-		 \param	id				 	The identifier.
+		 \param [in,out]	Decoder  	The decrement.
+		 \param	Component_ID				 	Component ID.
 		 */
 
-		void JCW_Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & dec, const int & id);		
+		void JCW_Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);		
 
 		/**
 		 \fn	void JCW_Un_Regulation_For_Region_Detection(Polyhedron & pMesh, const int & Component_ID,
 		 		list<int> & FP_connect, list<Point3d> & FP_Geo, list<int> & FP_RN);
 		
-		 \brief	JCW un regulation for region detection, in order to obtain region number of each inserted vertices
+		 \brief	JCW unregulation for region detection, in order to obtain region number of each inserted vertices
 		
  		 \param [in,out]	pMesh	  	The mesh.
 		 \param	Component_ID		  	Identifier for the component.
@@ -1045,7 +1186,7 @@ Opposite function is up_quantization
 		 \fn	void JCW_Un_Decimation_For_Region_Detection(Polyhedron & pMesh, const int & Component_ID,
 		 		list<int> & FP_connect, list<Point3d> & FP_Geo, list<int> & FP_RN);
 		
-		 \brief	JCW un decimation for region detection.
+		 \brief	JCW undecimation for region detection.
 		
 	 	
 		 \param [in,out]	pMesh	  	The mesh.
@@ -1063,7 +1204,7 @@ Opposite function is up_quantization
 		 \brief	Evaluates the JCW robustness.
 		
 		
-		 \return	.
+		 \return Results of robustness evaluation.
 		 */
 
 		vector<double> JCW_Evaluate_Robustness(void);
@@ -1105,7 +1246,7 @@ Opposite function is up_quantization
 
 		void Set_Embedding_Level(const int &EL)
 		{
-			this->m_EmbeddingLevel = EL;
+			this->m_EmbeddingStrength = EL;
 		}
 
 		/**
@@ -1119,7 +1260,7 @@ Opposite function is up_quantization
 
 		int Get_Embedding_Level(void)
 		{
-			return this->m_EmbeddingLevel;
+			return this->m_EmbeddingStrength;
 		}
 
 		/**
@@ -1227,19 +1368,18 @@ Opposite function is up_quantization
 		 \param [in,out]	pMesh	The mesh.
 		 */
 
-		void JCW_Choose_Valid_Vertices(Polyhedron & pMesh);
+		//void JCW_Choose_Valid_Vertices(Polyhedron & pMesh);
 
 		/**
 		 \fn	vector<int> JCW_Region_Mass_Center_Extract_Watermark(Polyhedron & pMesh);
 		
 		 \brief	JCW region mass center extract watermark.
 		
-		 \param [in,out]	pMesh	The mesh.
-		
-		 \return	.
+		 \param [in,out]	pMesh	The mesh.		
+		 
 		 */
 
-		vector<int> JCW_Region_Mass_Center_Extract_Watermark(Polyhedron & pMesh);
+		void JCW_Region_Mass_Center_Extract_Watermark(Polyhedron & pMesh);
 
 		/**
 		 \fn	void JCW_Code_Difference_Histogram_Shifting(Polyhedron &pMesh,const int & Component_ID);
@@ -1247,7 +1387,7 @@ Opposite function is up_quantization
 		 \brief	JCW code difference histogram shifting.
 				
 		 \param [in,out]	pMesh	The mesh.
-		 \param	Component_ID	 	Identifier for the component.
+		 \param	Component_ID	 	Component ID.
 		 */
 
 		void JCW_Code_Difference_Histogram_Shifting(Polyhedron &pMesh,const int & Component_ID);
@@ -1260,7 +1400,7 @@ Opposite function is up_quantization
 		
 		
 		 \param [in,out]	pMesh	The mesh.
-		 \param	Component_ID	 	Identifier for the component.
+		 \param	Component_ID	 	Component ID.
 		 */
 
 		void JCW_Decode_Difference_Histogram_Shifting(Polyhedron &pMesh, const int & Component_ID);
@@ -1278,7 +1418,7 @@ Opposite function is up_quantization
 		/**
 		 \fn	void Convert_To_Spherical(const Point3d & Pt, double * Spheric);
 		
-		 \brief	Converts this object to a spherical.
+		 \brief	Converts a cartesian coordinates into spherical coordinates.
 			
 		 \param	Pt				   	The point.
 		 \param [in,out]	Spheric	If non-null, the spheric.
@@ -1289,7 +1429,7 @@ Opposite function is up_quantization
 		/**
 		 \fn	void Convert_To_Cartesian(const double * Spheric, double * Cartesian);
 		
-		 \brief	Converts this object to a cartesian.
+		 \brief	Converts spherical coordinates into cartesian coordinates.
 		
 		
 		 \param	Spheric				 	The spheric.
@@ -1302,7 +1442,7 @@ Opposite function is up_quantization
 		 \fn	int JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name,
 		 		const int & Noise_mode);
 		
-		 \brief	Jcw decompress one level.
+		 \brief	JCW decompress one level.
 		
 		 \param [in,out]	pMesh	The mesh.
 		 \param	File_Name		 	Filename of the file.
@@ -1325,15 +1465,7 @@ Opposite function is up_quantization
 		 */
 
 		int  JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name);
-
-		/**
-		 \fn	void JCW_Run(void);
 		
-		 \brief	Jcw run.
-		
-		 */
-
-		void JCW_Run(void);
 
 		/**
 		 \fn	int JCW_Divide_Big_Regions(Polyhedron &pMesh);
@@ -1343,15 +1475,15 @@ Opposite function is up_quantization
 		
 		 \param [in,out]	pMesh	The mesh.
 		
-		 \return	.
+		 \return Number of divided regions.
 		 */
 
-		int  JCW_Divide_Big_Regions(Polyhedron &pMesh);
+		int  JCW_Divide_Big_Regions(Polyhedron &pMesh, const int & _Thres_divide_regions);
 
 		/**
 		 \fn	void JCW_Colorify_Regions(Polyhedron & pMesh);
 		
-		 \brief	Jcw colorify regions.
+		 \brief	Colorify regions for JCW.
 		
 		 \param [in,out]	pMesh	The mesh.
 		 */
@@ -1361,17 +1493,17 @@ Opposite function is up_quantization
 		/**
 		 \fn	void Read_Information_To_Hide();
 		
-		 \brief	Reads the information to hide.
+		 \brief	Reads the watermarked information.
 		*/
 
-		void    Read_Information_To_Hide();
+		void    Read_Information_To_Hide(const char * Embedding_message);
 
 		/**
 		 \fn	QString Write_Information_To_Hide();
 		
 		 \brief	Writes the information to hide.
 				
-		 \return	.
+		 \return Inserted to watermarking message.
 		 */
 
 		QString Write_Information_To_Hide();
@@ -1384,131 +1516,97 @@ Opposite function is up_quantization
 		 */
 
 		void Clear_After_Compression();
-	private:
+	private:		
 		
-	
-		Polyhedron * UnderquantizedMesh;	///< The underquantized mesh
-
-
+		vector<bool> IsClosed;    ///< The is closed. To know if the mesh is open or closed.		
 		
-		Polyhedron * DecimatedMesh;		///< The decimated mesh
-
-		
-		FILE * LogColor;///< The log color
-		
-		vector<bool> IsClosed;    ///< The is closed. To know if the mesh is open or closed.
-		
-		
-		
-		bool IsColored;///< true if is colored
-		
+		bool IsColored;///< true if is colored		
 		bool IsOneColor;///< true if is one color
-		
-		float OnlyColor[3];///< The only color
-		// Number of connectivity symbol types. Without boundary = 5, with boundary = 7;
-		//int NummberConnectivitySymbols;
 
-		//CCopyPoly<Polyhedron, Enriched_kernel> Copy_Polyhedron;	//MT
+		float OnlyColor[3];///< The coordinates of color when there is only one color
+		// Number of connectivity symbol types. Without boundary = 5, with boundary = 7;
+		//int NummberConnectivitySymbols;		
 		
 		// To encode each type of operation between decimation and increase of quantization resolution
-        vector<list<int> >		 ListOperation;///< The list operation
-        vector<list<int> >		 Connectivity;///< The connectivity
-        vector<list<Point_Int> > Geometry;///< The geometry
-        vector<list<int> >		 NumberSymbol;///< Number of symbols
-        vector<list<int> >		 NumberVertices;///< Number of vertices
-        
-			
-		list<Point_Int>          InterGeometry;///< The inter geometry
-		list<int>		         InterConnectivity;		///< The inter connectivity
-		
+        vector<list<int> >		 ListOperation;///< The list of operation
+        vector<list<int> >		 Connectivity;///< The information of connectivity to compress
+        vector<list<Point_Int> > Geometry;///< The geometry information to compress
+        vector<list<int> >		 NumberSymbol;///< Number of symbols of each simplification step
+        vector<list<int> >		 NumberVertices;///< Number of vertices of each simplification step
+        			
+		list<Point_Int>          InterGeometry;///< The intermediate information of geometry
+		list<int>		         InterConnectivity;		///< The intermediate information of connectivity		
 
-        vector<list<int> > AlphaRange;///< The alpha range
-        vector<list<int> > AlphaOffset;///< The alpha offset
-        vector<list<int> > GammaRange;///< The gamma range
-        vector<list<int> > GammaOffset;///< The gamma offset
+        vector<list<int> > AlphaRange;///< The range of alpha (Frenet coordinates) of each LoD
+        vector<list<int> > AlphaOffset;///< The offset of alpha
+        vector<list<int> > GammaRange;///< The range of gamma (Frenet coordinates) of each LoD
+        vector<list<int> > GammaOffset;///< The offset of gamma
         
 		
-		// Quantization
+		// Quantization		
+		vector<unsigned>	Qbit; ///< The Quantization bits
+		vector<float>		xmin; ///< The xmin
+		vector<float>		ymin; ///< The ymin
+		vector<float>		zmin; ///< The zmin
+		vector<float>		xmax; ///< The xmax
+		vector<float>		ymax; ///< The ymax
+		vector<float>		zmax; ///< The zmax
+		vector<float>		Quantization_Step; ///< The quantization step				
 		
-		vector<unsigned>	Qbit; ///< The qbit
-		vector<float>		xmin;///< The xmin
-		vector<float>		ymin;///< The ymin
-		vector<float>		zmin;		///< The zmin
-		vector<float>		xmax;///< The xmax
-		vector<float>		ymax;///< The ymax
-		vector<float>		zmax;		///< The zmax
-		vector<float>		QuantizationPas;///< The quantization pas
-		
-		
-		int			  TotalBits;		///< The total bits
-		double		  OldDistortion;	///< The old distortion
-		int			  Smallest_Alpha;		///< The smallest alpha
+		int			  Smallest_Alpha;		    ///< The smallest alpha
 		int			  Smallest_Gamma;			///< The smallest gamma
-			
-		
-		vector<double> HighestLengthBB;///< The highest length bb
-		vector<double> ComponentVolume;///< The component volume
-		vector<double> ComponentArea;///< The component area
-		vector<int>    ComponentNumberVertices;///< The component number vertices
-		
-		
+					
+		vector<double> HighestLengthBB; ///< The highest length bb
+		vector<double> ComponentVolume; ///< The volume of each component
+		vector<double> ComponentArea; ///< The area of each component
+		vector<int>    ComponentNumberVertices;///< The number of vertices of each components
+				
 		// Used for adatative quantization.				
         vector<list<int> > QuantizationCorrectVector; ///< The quantization correct vector
         vector<list<int> > NumberQuantizationLayer; ///< Number of quantization layers
-       
-		
+       		
 		//for color
         vector<list<int> > NumberProcessedVertices;///< Number of processed vertices
         vector<list<int> > ColorChildcellIndex;///< the color childcell index
-        vector<list<int> > ColorEncoderIndex;///< the color encoder index
-        
+        vector<list<int> > ColorEncoderIndex;///< the color encoder index        
 
 		// Colors
 		vector<list<Color_Unit> > VertexColor; ///< Contain color error of all removed vertices
-		list<Color_Unit> InterVertexColor;		///< The inter vertex color
-		
-		
+		list<Color_Unit> InterVertexColor;		///< The intermediate information vertex color
 		
 		float C0_Min;///< The C0 minimum
 		float C1_Min;///< The C1 minimum
 		float C2_Min;///< The C2 minimum
-		
-
 
 		float Color_Quantization_Step;		///< The color quantization step
 		vector<int> NumberColorQuantization;///< Number of color quantizations
 		
-
 		int Smallest_C0; ///< The smallest value of C0 used for preventing from negative sylbols
 		int Smallest_C1; ///< The smallest value of C1 used for preventing from negative sylbols
-		int Smallest_C2; ///< The smallest value of C2 used for preventing from negative sylbols
-		
+		int Smallest_C2; ///< The smallest value of C2 used for preventing from negative sylbols		
 		
 		int C0_Range;///< The C0 range
 		int C1_Range;///< The C1 range
 		int C2_Range;///< The C2 range
 		
-		int ColorDiffMinC0;///< The color difference minimum c0 for restoration of colors in Mapping table
+		/*int ColorDiffMinC0;///< The color difference minimum c0 for restoration of colors in Mapping table
 		int ColorDiffMinC1;///< The first color difference minimum c1 for restoration of colors in Mapping table
 		int ColorDiffMinC2;///< The second color difference minimum c2 for restoration of colors in Mapping table
-		
-		
-		
+				
 		int ColorDiffRangeC0;///< The color difference range c 0 for restoration of colors in Mapping table
 		int ColorDiffRangeC1;///< The first color difference range c1 for restoration of colors in Mapping table
-		int ColorDiffRangeC2;///< The second color difference range c2 for restoration of colors in Mapping table
-		
-		
-		// mapping table
-		vector<Color_Unit> ColorArray; ///< Color table
-		vector<Color_Unit> PredictedColorArray; ///< Predicted values of colors in color table using prediction based on neighbors.		
-		vector<Color_Unit> DifferenceColor; ///< Difference between original and quantized vertex color. need to turn into lossless coding.
-		
-		list<int>		   ColorIndex;///< List of color index
-		vector<int>		   ReorderingColorIndex;///< Vector of reordering color index
-		list<int>		   InterColorIndex;		///< Vector of inter color index
-		vector<int>		   Number_color_index; ///< contain occurence of each initial color
-		vector<int>		   IsKnownIndex;///< is known index
+		int ColorDiffRangeC2;///< The second color difference range c2 for restoration of colors in Mapping table*/
+				
+		//// mapping table
+		//vector<Color_Unit> ColorArray; ///< Color table
+		//vector<Color_Unit> PredictedColorArray; ///< Predicted values of colors in color table using prediction based on neighbors.		
+		//vector<Color_Unit> DifferenceColor; ///< Difference between original and quantized vertex color. need to turn into lossless coding.
+		//
+		//list<int>		   ColorIndex;///< List of color index
+		//vector<int>		   ReorderingColorIndex;///< Vector of reordering color index
+		//list<int>		   InterColorIndex;		///< Vector of inter color index
+		//vector<int>		   Number_color_index; ///< contain occurence of each initial color
+		//vector<int>		   IsKnownIndex;///< is known index
 		
 
 		
@@ -1516,61 +1614,59 @@ Opposite function is up_quantization
 		
 		Arithmetic_Codec Decoder;		///< The arithmetic decoder
 		
-		Adaptive_Data_Model Color_0_Model;///< The color 0 model
-		Adaptive_Data_Model Color_1_Model;///< The color 1 model
-		Adaptive_Data_Model Color_2_Model;	///< The color 2 model
-		
+		Adaptive_Data_Model Color_0_Model;///< The statistical model used for color_0
+		Adaptive_Data_Model Color_1_Model;///< The statistical model used for color_1
+		Adaptive_Data_Model Color_2_Model;///< The statistical model used for color_2
 
 		Adaptive_Data_Model Index_Model;///< The index model
-		
 
-
-		vector<int> NumberDecimation; ///< To stock number of Decimation.
-		vector<int> NumberChangeQuantization; ///< to stock number of under_quantization.						
+		vector<int> NumberDecimation; ///< To stock number of Decimation operation.
+		vector<int> NumberChangeQuantization; ///< to stock number of diminution of quantization.
 				
 		int DumpSymbolDecimation;///< The dump symbol decimation in order to eliminate symbols of the last conquest if it is useless.
 		int DumpSymbolRegulation;///< The dump symbol regulation in order to eliminate symbols of the last conquest if it is useless.
 		
-
 		int Decompress_count;///< Number of decompress in order to know how many steps to go for the decompression step by step.
 		int NumberComponents;///< Number of components in order to know how many steps to go for the decompression step by step.
 		
-
 		int GlobalCountOperation;///< The global count operation
 	
-		vector<int> ComponentOperations;///< The component operations
+		vector<int> ComponentOperations;///< The operations of each component
 		
-
 		// JCW
-		int   m_Mode;
-		int   m_NumberBin;
-		int   m_EmbeddingLevel;
-		int   m_NumberRegion;
-		double m_VC[3];
-		double m_Rmin;
-		double m_Rmax;
-		double m_Dist;
-		vector<int> m_Number_Vertices_Per_Regions;
-		list<int> m_Watermarks;
+		int   m_NumberBin;///< Number of bins for JCW
+		int   m_EmbeddingStrength; ///< Embedding strength for JCW
+		int   m_NumberRegion; ///< Number of regions for JCW
+		double m_VC[3]; ///< Mesh center position for JCW
+		double m_Rmin; ///< Distance of farthest vertex from mesh center for JCW
+		double m_Rmax; ///< Distance of nearst vertex from mesh center for JCW
+		double m_Dist; ///< Distance of each bin
+		vector<int> m_Number_Vertices_Per_Regions; ///< Number of vertices in each region
+		list<int> m_Watermarks; ///< watermark
 
-		int N_Inserted_Watermarks;
+		int N_Inserted_Watermarks; ///< Number of inserted watermarks
 
+		vector<int> m_N_remained_vertices; ///< Number of remained vertices in each region
+		vector<int> m_N_treated_vertices; ///< Number of treated vertices in each region
+		vector<double> m_Rad_decision; 
 
-		vector<int> m_N_remained_vertices;
-		vector<int> m_N_treated_vertices;
-		vector<double> m_Rad_decision;
-
-        list<vector<int> > m_JCW_Move_Error;
-		list<int> m_N_Errors;
+        list<vector<int> > m_JCW_Move_Error; ///< Stock difference related to complete reversibility
+		list<int> m_N_Errors; ///< Index of error related to complete reversibility.
 
 		Adaptive_Data_Model DM_JCW_MOVE_ERROR;
 		
-		list<int> JCW_Connectivity;
-		list<Point_Int> JCW_Geometry;
+		list<int> JCW_Connectivity; ///< Stock connectivity information for JCW
+		list<Point_Int> JCW_Geometry; ///< Stock geometry information for JCW
 
 		//double LUT_CourbureClust[3*256];
-		vector< vector<float> > Region_Color;
-		int Number_non_reversible_vertices;
+		vector< vector<float> > Region_Color; ///< Color of each region
+		int Number_non_reversible_vertices; ///< Number of vertices which violate complte reversibility
+		int Number_Save_Over_bins; ///< Number of empty bins to shift the current bins
+		bool Is_Division_Big_Regions_Enabled; ///< true if "division_big_regions" option is seleted
+		bool Is_Complete_Reversibility_Enabled; ///< true if "complete reversibility" option is seleted
+		bool Is_Bijection_Enabled; ///< true if "bijection" option is seleted
+		int Division_Threshold; ///< Threshold of region division
+		
 	// from IHM
 	public:
 		bool IsDecompress;///< true if is decompress
@@ -1581,22 +1677,23 @@ Opposite function is up_quantization
 		unsigned Compressed_file_size;///< Size of the compressed file
 		string File_name;///< Filename of the file
 		
-		vector<float> Prog;
-		vector<float> Ratio;
-		QString Message;
+		vector<float> Prog; ///< Stock information of progression of decompression in pourcentage (100 = total decompression)
+		vector<float> Ratio;  ///< Stock information of ration regarding size of the input file
+		QString Message; ///< Message to be shown in the main window
 
 	public://private:
 		CCopyPoly<Polyhedron, Enriched_kernel> Copy_Polyhedron;
-		bool Afficher;
-		bool Sequence;
-		bool Possible_change_sequence;
 		
-		int Visu_level;
-		int Process_level;		
+		//bool Afficher; ///<
+		bool Sequence; ///< Decompression mode (sequence mode or file mode) for IHM
+		bool Possible_change_sequence; ///< To disable the mode change during decompression for IHM
+		
+		int Visu_level; ///< Level of visualized LoD for IHM
+		int Process_level; ///< Level of processed LoD for IHM
 
-		FILE *Dec_Info;
-		int Writing_level;
-		string Dec_File_Info;
+		FILE *Dec_Info; ///< File to write information of decompression for IHM
+		//int Writing_level; ///< Level of 
+		string Dec_File_Info; ///< File name to write decompression information for IHM
 };
 
 #endif

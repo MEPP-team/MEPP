@@ -619,7 +619,7 @@ Vector Calculate_T1_T2(const Halfedge_handle &h, const Vector & normal, Vector &
  \return	.
  */
 
-Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &T2,const Vector &normal)
+inline Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &T2,const Vector &normal)
 {
 	Matrix R(T1.x(),T2.x(),normal.x(),T1.y(),T2.y(),normal.y(),T1.z(),T2.z(),normal.z());
 	Matrix M = R;
@@ -767,7 +767,7 @@ Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const Vector &
  \return	.
  */
 
-Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,const Vector &T2,const Vector &normal)
+inline Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,const Vector &T2,const Vector &normal)
 {
 	Matrix R(T1.x(),T2.x(),normal.x(),T1.y(),T2.y(),normal.y(),T1.z(),T2.z(),normal.z());
 	Matrix M = R;

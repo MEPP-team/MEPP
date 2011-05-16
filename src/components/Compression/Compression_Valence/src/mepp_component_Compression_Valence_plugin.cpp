@@ -5,6 +5,7 @@
 
 #include "dialSettingsComp.hxx"
 #include "dialSettingsDecomp.hxx"
+#include "dialSettingsJCW.hxx"
 
 #include <QObject>
 #include <QAction>
@@ -37,58 +38,9 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 			{				
 				QMessageBox::information(mw, APPLICATION, tr("Compression not possible: the mesh owns non-triangular facets."));
 				return;
-			}
-
-			// todo IMPORTANT: taille du mesh d'origine a determiner et stocker ici pour le calcul du ratio !!!
-			component_ptr->Initial_file_size = 1;
-			if (FILE *file = fopen(viewer->getScenePtr()->currentFile().toStdString().c_str(), "r"))
-			{
-				fseek(file,0,SEEK_END);
-				component_ptr->Initial_file_size = ftell(file);
-				fclose(file);
-			}
-
-			////////////////////////////////////////////////////
-			unsigned Number_vertices = 0;
-			unsigned Qbit = 0;		
-			unsigned Forget_metric_value = -1;	
-			unsigned Connectivity_size = 0;
-			unsigned Color_size = 0;
-			unsigned Total_size = 0;
-			unsigned Init_number_vertices = 0;
-			unsigned Final_number_vertices = 0;
-			unsigned Number_layers = 0;
+			}			
 			
-			float Metric_threshold = -1.0;
-			double Processing_time;	
-			double Connectivity_rate = 0;
-			double Color_rate = 0;
-			double Geometry_rate = 0;
-			double Total_rate = 0;	
-			
-			bool Is_normal_flipping_selected = false;	
-			bool Is_use_metric_selected = false;
-			bool Is_use_forget_metric_selected = false;
-			bool Is_adaptive_quantization_selected;
-			bool Is_compression_selected;
-
-			/*char String_number_vertices[256];
-			char String_MValue[256];
-			char String_FValue[256];*/
-
-			/*wxFileName Temp_fileName;
-
-			wxString Path;
-			Path = Temp_fileName.GetCwd();	
-
-			MyDialog3 dial(m_frame);
-			dial.m_directory->SetPath( Path );
-			size_t slash = this->File_name.find_last_of("/\\");
-			this->File_name = this->File_name.substr(slash+1);
-			dial.m_file_name->SetValue( wxString::FromAscii( this->File_name.c_str()));
-
-
-			if (dial.ShowModal() == wxID_OK)*/
+			// read parameters
 			SettingsDialogComp dial;
 			if (dial.exec() == QDialog::Accepted)
 			{	
@@ -97,22 +49,17 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 					return;
 
 				QApplication::setOverrideCursor(Qt::WaitCursor);
+				unsigned Qbit = dial.quanti->value();
 
-				/*wxString N_Path = dial.m_directory->GetPath();
-				wxString N_File_Name = dial.m_file_name->GetValue();
-
-
-				wxString File = N_Path + _T("\\") + N_File_Name; // File name is chosenS*/
-				//wxString File = N_File_Name; // File name is chosenS
-				Qbit = dial.quanti->value();
-
-				Is_normal_flipping_selected = dial.normal_flipping->isChecked();
+				bool Is_normal_flipping_selected = dial.normal_flipping->isChecked();
+				bool Is_adaptive_quantization_selected;
 
 				if (dial.radioWithout->isChecked())
 					Is_adaptive_quantization_selected = false;
 				else
 					Is_adaptive_quantization_selected = true;
 				
+				bool Is_compression_selected = false;
 				if (dial.radioCompression->isChecked())
 				{
 					component_ptr->IsCompressed = true;
@@ -121,29 +68,30 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				else
 					Is_compression_selected = false;
 
-				Is_use_metric_selected = dial.useMetric->isChecked();
-				//strcpy(String_number_vertices, dial.m_number_vertices->GetValue().ToAscii());
-				Number_vertices = dial.number_vertices->value();
+				bool Is_use_metric_selected = dial.useMetric->isChecked();				
+				int Number_vertices = dial.number_vertices->value();
 
-				if (Is_use_metric_selected == true) // Decided to use metric to select vertices to be removed
-				{
-					//strcpy(String_MValue, dial.m_metric_value->GetValue().ToAscii());
+				bool Metric_threshold, Is_use_forget_metric_selected, Forget_metric_value;
+				if (Is_use_metric_selected == true) 
+				{					
 					Metric_threshold = dial.metric_value->value();
 
 					Is_use_forget_metric_selected = dial.forgetMetric->isChecked();
 
 					if (Is_use_forget_metric_selected == true)
 					{
-						//strcpy(String_FValue, dial.m_forget_metric_value->GetValue().ToAscii());
 						Forget_metric_value = dial.forget_metric_value->value();
 					}
 				}
 
+				bool Is_bijection_selected = dial.Use_Bijection->isChecked();
 				char File_Name[256];
-				strcpy(File_Name, fileName.toStdString().c_str());			
-
-				Processing_time = component_ptr->Main_Function(*viewer->getScenePtr()->get_polyhedron(),
-															  File_Name,
+				strcpy(File_Name, fileName.toStdString().c_str());
+				
+				// compress
+				QString Result = component_ptr->Main_Function(*viewer->getScenePtr()->get_polyhedron(),
+															  viewer->getScenePtr()->currentFile().toStdString().c_str(),
+														      File_Name,
 															  Qbit,
 															  Number_vertices,
 															  Is_normal_flipping_selected,
@@ -152,80 +100,21 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 															  Is_use_forget_metric_selected,
 															  Forget_metric_value,
 															  Is_compression_selected,
-															  Is_adaptive_quantization_selected, 
-															  Number_layers, 
-															  Init_number_vertices,
-															  Final_number_vertices,
-															  Connectivity_size,
-															  Color_size,
-															  Total_size, 
-															  component_ptr->Initial_file_size);
-
-				// To show result
-				Connectivity_rate = (double)Connectivity_size / Init_number_vertices;
-				Color_rate = (double)Color_size / Init_number_vertices;
-				Total_rate = (double)Total_size * 8 / Init_number_vertices;
-				Geometry_rate = Total_rate - Connectivity_rate - Color_rate;
-
-
-				QString string1 = QString("Base mesh : %1 vertices \n").arg(Final_number_vertices, 3);			
-
-				QString string2 = QString("Connectivity : %1 b/v \n").arg(float(Connectivity_rate), 4, 'f', 3);
-				
-				QString string3("Geometry : ");
-				string3 += QString("%1").arg(float(Geometry_rate), 4, 'f', 3);
-				string3 += " b/v\n";
-
-				
-				QString string4("Color : ");				
-				string4 += QString("%1").arg(float(Color_rate), 4, 'f', 3);
-				string4 += " b/v\n";
-				
-				QString string5("Total size : ");				
-				string5 += QString("%1").arg(float(Total_rate), 4, 'f', 3);
-				string5 += " b/v\n";
-
-				QString string6("Ratio : ");
-				string6 += QString("%1 % \n\n").arg((float)Total_size / component_ptr->Initial_file_size * 100, 3, 'f', 3);
-
-
-				QString string7("Number of layers : ");
-				string7 += QString("%1").arg(Number_layers);
-				string7 += "\n";
-
-				QString string8("Calculation time : ");
-				string8 += QString("%1 seconds \n").arg(float(Processing_time), 3, 'f', 2);
+															  Is_adaptive_quantization_selected,
+															  Is_bijection_selected);															 
 				
 				QApplication::restoreOverrideCursor();
 
 				if (Is_compression_selected)
-				{
-					QString t = string1 + string2 + string3 + string4 + string5 + string6 + string7 + string8;
-					QMessageBox::information(mw, APPLICATION, t);
+				{				
+					QMessageBox::information(mw, APPLICATION, Result);
 				}				
-				mw->statusBar()->showMessage(tr("Encoding is done"));				
-
-				/*	
-				unsigned Init_size;
-				component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,File_Name);
 				
-				int CL = 0;
-				while(CL != Number_layers)
-				{					
-					component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0), File_Name);
-					CL++;					
-					
-				}	
-				*/			
-
+				mw->statusBar()->showMessage(tr("Encoding is done"));
 				viewer->recreateListsAndUpdateGL();	
 			}
 		}
-	}
-
-
-
-	//QApplication::restoreOverrideCursor();
+	}	
 }
 
 int mepp_component_plugin_interface::load_file_from_component(PolyhedronPtr polyhedron_ptr, QString filename, Viewer* viewer)
@@ -234,82 +123,21 @@ int mepp_component_plugin_interface::load_file_from_component(PolyhedronPtr poly
 	mepp_component_Compression_Valence_plugin *mepp_component_plugin = NULL;
 	for (int i=0; i<viewer->lplugin.size(); ++i) {
 		if (dynamic_cast<mepp_component_Compression_Valence_plugin*>(viewer->lplugin[i]) != 0) {
-			mepp_component_plugin = dynamic_cast<mepp_component_Compression_Valence_plugin*>(viewer->lplugin[i]);
-			//cout << "mepp_component_plugin found" << endl;
+			mepp_component_plugin = dynamic_cast<mepp_component_Compression_Valence_plugin*>(viewer->lplugin[i]);			
 		}
 	}
 
 	if (mepp_component_plugin)
 	{
 		Compression_Valence_ComponentPtr component_ptr = mepp_component_plugin->findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
-
-		bool Is_decompression = false;
-		unsigned Init_size = 1;
-
-		/*fseek(file,0,SEEK_END);
-		component_ptr->Initial_file_size = ftell(file);
-		size_t slash = spath.find_last_of("/\\");
-		component_ptr->File_name = spath.substr(slash+1);
-		size_t point = comp->File_name.find_last_of('.');
-		component_ptr->File_name.replace(point+1,3,"p3d");*/
-
-		// MT
-		component_ptr->File_name = filename.toStdString().c_str();
-
-		//if (FILE *file2 = fopen(spath.c_str(), "r"))
-		if (FILE *file2 = fopen(filename.toStdString().c_str(), "r"))
-		{
-			fseek(file2,0,SEEK_END);
-			component_ptr->Compressed_file_size = ftell(file2);
-			fclose(file2);
-		}
-
-		Is_decompression = true;
-		//if (component_ptr)
-		{					
-			component_ptr->Total_layer=component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,filename.toStdString().c_str());
-			component_ptr->IsDecompress = true;
-			component_ptr->Current_level = 0;					
-			component_ptr->Initial_file_size = Init_size;
-
-			viewer->getScenePtr()->set_loadType(Time);
-			viewer->setFps(5);
-
-			//res_load=true;
-		}
-		/*else 
-		  assert(false);	//todo: temp*/
-
-		if (Is_decompression) // Ajout Ho.
-		{
-			float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-			float ratio = 1/ ((float)component_ptr->Calculate_Current_File_Size() / Init_size);
-
-			QString string("Number of all levels : ");
-			//string += wxString::Format(_T("%d"),int(comp->Total_layer));
-			string += QString("%1").arg(int(component_ptr->Total_layer));
-			string += "   |   ";
-
-			//string += wxString::Format(_T("Prog : %3.3f %%"), prog);
-			string += QString("Prog : %1 %").arg(prog, 3, 'f', 3);
-			string += "   |   ";
-
-			//string += wxString::Format(_T("Ratio : %.3f \n"), ratio);
-			string += QString("Ratio : %1 \n").arg(ratio, 0, 'f', 3);
-
-			component_ptr->Prog.push_back(prog);
-			component_ptr->Ratio.push_back(ratio);
-
-			/*child->update_mesh_properties();
-			child->Refresh();					
-			child->set_status_message(string);*/
-			((mainwindow *)viewer->getParent())->statusBar()->showMessage(string);
-		}
-	}
-	else
-	{
-		//todo: temp
-	}
+		
+		component_ptr->File_name = filename.toStdString().c_str();				
+							
+		QString string = component_ptr->Decompress_Init(*polyhedron_ptr);
+		viewer->getScenePtr()->set_loadType(Time);
+		viewer->setFps(5);
+		((mainwindow *)viewer->getParent())->statusBar()->showMessage(string);		
+	}	
 	
 	return 0;	//todo: code de retour
 }
@@ -330,10 +158,7 @@ void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event
 			Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 
 			if (!component_ptr->IsDecompress)
-			{
-				/*(void)wxMessageBox(_T("Decompression not possible\n\n")
-					_T("You must execute Initialization before")
-					   );*/
+			{				
 				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
 				return;
 			}
@@ -342,22 +167,9 @@ void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event
 				component_ptr->Possible_change_sequence = false;
 
 			// read from file
-			if (component_ptr->Sequence == false)
+			if (!component_ptr->Sequence)
 			{
-				if (component_ptr->Current_level >= component_ptr->Total_layer)
-					return;
-
-				if (component_ptr->Process_level == 0)
-					WriteInfo();
-
-				component_ptr->Current_level = component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0), component_ptr->File_name.c_str());
-				if (component_ptr->Current_level > component_ptr->Process_level)
-				{
-					component_ptr->Process_level++;
-					WriteInfo();
-				}
-
-				ShowText();
+				component_ptr->Decompression_From_File(*viewer->getScenePtr()->get_polyhedron(0));				
 			}
 
 			// from sequence
@@ -367,51 +179,25 @@ void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event
 
 				if (component_ptr->Visu_level >= component_ptr->Total_layer)
 					return;
-
-				// if the next mesh already exists in the sequence
+				
+				// if the next mesh already exists in the sequence				
 				if (component_ptr->Visu_level < component_ptr->Process_level)
 				{
 					component_ptr->Visu_level++;
 					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-					ShowText();
 				}
 
 				else
 				{
-					if (component_ptr->Process_level == 0)
-						WriteInfo();
-
 					PolyhedronPtr New_mesh(new Polyhedron());	//Polyhedron * New_mesh = new Polyhedron; // MT
-					component_ptr->Copy_Polyhedron.copy(viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level).get(), New_mesh.get());	// MT: get() 2 fois !!!
 
-					component_ptr->Attibute_Seed_Gate_Flag(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);
-
-					New_mesh->compute_normals();			
-					
+					component_ptr->Decompression_From_Sequence(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);					
 					vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
-					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level, New_mesh);
-					
-					component_ptr->Process_level++;
-					component_ptr->Visu_level++;
-					
-					component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str());
-
-					WriteInfo();
-
-					float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-					float ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-
-					component_ptr->Prog.push_back(prog);
-					component_ptr->Ratio.push_back(ratio);
-
+					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level-1, New_mesh);
 					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);
-
-					ShowText();
 				}
-
 			}
-
+			ShowText();
 			viewer->recreateListsAndUpdateGL();
 		}
 	}
@@ -434,20 +220,7 @@ void mepp_component_Compression_Valence_plugin::OnMouseRightUp(QMouseEvent *even
 			// read from file
 			if (component_ptr->Sequence == false)
 			{
-
-				if (component_ptr->Current_level <= 0)
-					return;
-
-				component_ptr->Stop_Decoder();
-
-				component_ptr->Total_layer = component_ptr->Decompress_Init(*viewer->getScenePtr()->get_polyhedron(0), component_ptr->Initial_file_size, component_ptr->File_name.c_str());
-				int Temp_level = component_ptr->Current_level - 1;
-
-				component_ptr->Current_level = 0;
-				while(component_ptr->Current_level != Temp_level)
-					component_ptr->Current_level = component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0), component_ptr->File_name.c_str());
-
-				ShowText();
+				component_ptr->Decompression_Coarser_From_File(*viewer->getScenePtr()->get_polyhedron(0));				
 			}
 			// read from sequence
 			else
@@ -459,12 +232,10 @@ void mepp_component_Compression_Valence_plugin::OnMouseRightUp(QMouseEvent *even
 				else
 				{
 					component_ptr->Visu_level--;
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-					ShowText();
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);				
 				}
 			}
-
+			ShowText();
 			viewer->recreateListsAndUpdateGL();
 		}
 	}
@@ -482,13 +253,9 @@ void mepp_component_Compression_Valence_plugin::OnMouseWheel(QWheelEvent *event)
 			int rot = event->delta();
 
 			if (rot<0)
-			{
 				OnMouseLeftUp(NULL);	// todo: NULL
-			}
 			else
-			{
 				OnMouseRightUp(NULL);	// todo: NULL
-			}
 		}
 	}
 }
@@ -496,6 +263,7 @@ void mepp_component_Compression_Valence_plugin::OnMouseWheel(QWheelEvent *event)
 void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
+
 
 	// active viewer
 	if (mw->activeMdiChild() != 0)
@@ -508,7 +276,6 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 			if (!component_ptr->IsDecompress)
 			{				
 				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
-
 				return;
 			}
 
@@ -516,68 +283,24 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 				component_ptr->Possible_change_sequence = false;
 
 			// read from file
-			if (component_ptr->Sequence == false)
+			if (!component_ptr->Sequence)
 			{
-				if (component_ptr->Process_level == 0)
-					WriteInfo();
-				while(component_ptr->Current_level != component_ptr->Total_layer)
-				{
-					component_ptr->Current_level = component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0), component_ptr->File_name.c_str());
-					/*if (this->Current_level > this->Process_level)
-					{
-						this->Process_level++;
-						this->WriteInfo();
-					}*/
-				}
-
-				ShowText();
+				component_ptr->Decompression_All_From_File(*viewer->getScenePtr()->get_polyhedron(0));				
 			}
+
 			// read from sequence
 			else
 			{
-				component_ptr->Visu_level = viewer->getScenePtr()->get_current_polyhedron();
-
-				while(component_ptr->Visu_level != component_ptr->Total_layer)
+				while(component_ptr->Process_level != component_ptr->Total_layer)
 				{
-					// if the next mesh already exists in the sequence
-					if (component_ptr->Visu_level < component_ptr->Process_level)
-						component_ptr->Visu_level++;
-
-					else
-					{
-						if (component_ptr->Process_level == 0)
-							WriteInfo();
-
-						PolyhedronPtr New_mesh(new Polyhedron());	//Polyhedron * New_mesh = new Polyhedron;	// MT
-						component_ptr->Copy_Polyhedron.copy(viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level).get(), New_mesh.get());	// MT: get() 2 fois !!!
-						
-						component_ptr->Attibute_Seed_Gate_Flag(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);
-						
-						New_mesh->compute_normals();
-
-						vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
-						viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level, New_mesh);
-
-						component_ptr->Process_level++;
-						component_ptr->Visu_level++;
-
-						component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), component_ptr->File_name.c_str());
-
-						WriteInfo();
-
-						float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-						float ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-
-						component_ptr->Prog.push_back(prog);
-						component_ptr->Ratio.push_back(ratio);
-					}
-
+					PolyhedronPtr New_mesh(new Polyhedron());
+					component_ptr->Decompression_From_Sequence(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);					
+					vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
+					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level-1, New_mesh);				
 				}
-
-				viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);
-				ShowText();
+				viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);				
 			}
-
+			ShowText();
 			viewer->recreateListsAndUpdateGL();
 		}
 	}
@@ -587,165 +310,32 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_one_level()
 {
-	// active viewer
+
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
-		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
+		if (doesExistComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr)) // important !!!
 		{
-			if (!component_ptr->IsDecompress)
-			{
-				/*(void)wxMessageBox(_T("Decompression not possible\n\n")
-					_T("You must execute Initialization before")
-					   );*/
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
-
-				return;
-			}
-
-			if (component_ptr->Possible_change_sequence == true)
-				component_ptr->Possible_change_sequence = false;
-
-
-			// read from file
-			if (component_ptr->Sequence == false)
-			{
-				if (component_ptr->Current_level >= component_ptr->Total_layer)
-					return;
-
-				if (component_ptr->Process_level == 0)
-					WriteInfo();
-
-				component_ptr->Current_level = component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(),component_ptr->File_name.c_str());
-				if (component_ptr->Current_level > component_ptr->Process_level)
-				{
-					component_ptr->Process_level++;
-					WriteInfo();
-				}
-
-				ShowText();
-			}
-
-			// from sequence
-			else
-			{
-				component_ptr->Visu_level = viewer->getScenePtr()->get_current_polyhedron();
-
-				if (component_ptr->Visu_level >= component_ptr->Total_layer)
-					return;
-
-				// if the next mesh already exists in the sequence
-				if (component_ptr->Visu_level < component_ptr->Process_level)
-				{
-					component_ptr->Visu_level++;
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-					ShowText();
-				}
-
-				// Insert a mesh into the sequence
-				else
-				{
-					if (component_ptr->Process_level == 0)
-						WriteInfo();
-
-					PolyhedronPtr New_mesh(new Polyhedron());	//Polyhedron * New_mesh = new Polyhedron;	// MT
-					component_ptr->Copy_Polyhedron.copy(viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level).get(), New_mesh.get());	// MT: get() 2 fois !!!
-
-					component_ptr->Attibute_Seed_Gate_Flag(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);
-					New_mesh->compute_normals();
-
-					vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
-					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level, New_mesh);
-
-					component_ptr->Process_level++;
-					component_ptr->Visu_level++;
-
-					component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str());
-
-					WriteInfo();
-
-					float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-					float ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-
-					component_ptr->Prog.push_back(prog);
-					component_ptr->Ratio.push_back(ratio);
-
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);
-
-					ShowText();
-				}
-			}
-
-			viewer->recreateListsAndUpdateGL();
+			OnMouseLeftUp(NULL);	// todo: NULL				
 		}
-	}
+	}	
 }
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_precedent_level()
 {
-	// active viewer
+
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
-		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
+		if (doesExistComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr)) // important !!!
 		{
-			if (!component_ptr->IsDecompress)
-			{
-				/*(void)wxMessageBox(_T("Decompression not possible\n\n")
-					_T("You must execute Initialization before")
-					   );*/
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
-
-				return;
-			}
-
-			if (component_ptr->Possible_change_sequence == true)
-				component_ptr->Possible_change_sequence = false;
-
-			// read from file
-			if (component_ptr->Sequence == false)
-			{
-
-				if (component_ptr->Current_level <= 0)
-					return;
-
-				component_ptr->Stop_Decoder();
-
-				component_ptr->Total_layer = component_ptr->Decompress_Init(*viewer->getScenePtr()->get_polyhedron(), component_ptr->Initial_file_size, component_ptr->File_name.c_str());
-				int Temp_level = component_ptr->Current_level - 1;
-
-				component_ptr->Current_level = 0;
-		
-				while(component_ptr->Current_level != Temp_level)
-					component_ptr->Current_level = component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0), component_ptr->File_name.c_str());
-
-				ShowText();
-			}
-
-
-			// read from sequence
-			else
-			{
-				component_ptr->Visu_level = viewer->getScenePtr()->get_current_polyhedron();
-
-				if (component_ptr->Visu_level <= 0)
-					return;
-
-				component_ptr->Visu_level--;
-				viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-				ShowText();
-
-			}
-
-			viewer->recreateListsAndUpdateGL();
+			OnMouseRightUp(NULL);	
 		}
-	}
+	}	
 }
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_level()
@@ -759,23 +349,15 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
 			if (!component_ptr->IsDecompress)
-			{
-				/*(void)wxMessageBox(_T("Decompression not possible\n\n")
-					_T("You must execute Initialization before")
-					   );*/
+			{				
 				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
-
 				return;
 			}
 
 			if (component_ptr->Possible_change_sequence == true)
 				component_ptr->Possible_change_sequence = false;
-
-
-			//char WL[256];
+			
 			int Wanted_level = 0;
-
-
 			int CLevel = 0;
 			if (component_ptr->Sequence)
 			{
@@ -783,119 +365,48 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 				CLevel = component_ptr->Visu_level;
 			}
 			else
-				CLevel = component_ptr->Current_level;
-
-			/*Dial_decomp dial(m_frame);
-			wxString Current;
-			Current.Printf(_T("%d"), CLevel);
-
-			wxString Total;
-			Total.Printf(_T("%d"), component_ptr->Total_layer);
-
-			dial.m_staticText4->SetLabel(Current);
-			dial.m_staticText5->SetLabel(Total);*/
+				CLevel = component_ptr->Current_level;			
 
 			SettingsDialogDecomp dial;
 			dial.currentLevel->setText(QString("%1").arg(int(CLevel)));
 			dial.maxLevel->setText(QString("%1").arg(int(component_ptr->Total_layer)));
+
 			if (dial.exec() == QDialog::Accepted)
-			{
-				//strcpy(WL,dial.m_textCtrl3->GetValue().ToAscii());
+			{				
 				Wanted_level = dial.wantedLevel->value();
 			}
 			else
-				return;
-
-
-			if (Wanted_level < 0)
-				Wanted_level = 0;
-
-			if (Wanted_level > component_ptr->Total_layer)
-				Wanted_level = component_ptr->Total_layer;
-
-			if (Wanted_level == CLevel)
-				return;
+				return;	
 
 			// read from file
 			if (component_ptr->Sequence == false)
 			{
-				if (Wanted_level > CLevel)
-				{
-
-					while(component_ptr->Current_level != Wanted_level)
-					{
-						component_ptr->Current_level = component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(0),component_ptr->File_name.c_str());
-					}
-				}
-
-				else if (Wanted_level < CLevel)
-				{
-					component_ptr->Stop_Decoder();
-
-					component_ptr->Total_layer = component_ptr->Decompress_Init(*viewer->getScenePtr()->get_polyhedron(0), component_ptr->Initial_file_size, component_ptr->File_name.c_str());
-
-					component_ptr->Decompress_To_Level(*viewer->getScenePtr()->get_polyhedron(0), Wanted_level);
-					component_ptr->Current_level = Wanted_level;
-				}
-				ShowText();
-
+				component_ptr->Decompression_Specific_Level_From_File(*viewer->getScenePtr()->get_polyhedron(0), Wanted_level);				
 			}
 			//read from sequence
 			else
 			{
-				if (Wanted_level > CLevel)
+				if (Wanted_level > component_ptr->Process_level)
 				{
-					while(component_ptr->Visu_level != Wanted_level)
+					while(component_ptr->Process_level != Wanted_level)
 					{
-						// if the next mesh already exists in the sequence
-						if (component_ptr->Visu_level < component_ptr->Process_level)
-							component_ptr->Visu_level++;
-
-						else
-						{
-							if (component_ptr->Process_level == 0)
-								WriteInfo();
-
-							PolyhedronPtr New_mesh(new Polyhedron());	//Polyhedron * New_mesh = new Polyhedron;	// MT
-							component_ptr->Copy_Polyhedron.copy(viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level).get(), New_mesh.get());	// MT: get() 2 fois !!!
-
-							component_ptr->Attibute_Seed_Gate_Flag(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);
-							New_mesh->compute_normals();
-							//this->m_polyhedron_list->push_back(New_mesh);
-
-							vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT			
-							viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level, New_mesh);
-
-							component_ptr->Process_level++;
-							component_ptr->Visu_level++;
-
-							component_ptr->Decompress_Each_Step(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str());
-
-							WriteInfo();
-
-							float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-							float ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-
-							component_ptr->Prog.push_back(prog);
-							component_ptr->Ratio.push_back(ratio);
-						}
-
+						PolyhedronPtr New_mesh(new Polyhedron());
+						component_ptr->Decompression_From_Sequence(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);					
+						vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
+						viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level-1, New_mesh);				
 					}
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);
-					ShowText();
+					component_ptr->Visu_level = Wanted_level;
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);						
 				}
 				else
 				{
 					component_ptr->Visu_level = Wanted_level;
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-					ShowText();
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);					
 				}
-
 			}
-
-			viewer->recreateListsAndUpdateGL();
 		}
+		ShowText();
+		viewer->recreateListsAndUpdateGL();		
 	}
 }
 
@@ -911,70 +422,17 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_mesh_sequence_on_of
 		{
 			if ((component_ptr->Sequence) && (component_ptr->Possible_change_sequence))
 			{
-				component_ptr->Sequence = false;
-				//m_frame->set_status_message(_T("Sequence : OFF"));
+				component_ptr->Sequence = false;				
 				mw->statusBar()->showMessage(tr("Sequence : OFF"));
 			}
 			else if ((!component_ptr->Sequence) && (component_ptr->Possible_change_sequence))
 			{
 				component_ptr->Sequence = true;
-				//m_frame->set_status_message(_T("Sequence : ON"));
 				mw->statusBar()->showMessage(tr("Sequence : ON"));
 			}
 		}
 	}
 }
-
-void mepp_component_Compression_Valence_plugin::WriteInfo(void)
-{
-	// active viewer
-	if (mw->activeMdiChild() != 0)
-	{
-		Viewer* viewer = (Viewer *)mw->activeMdiChild();
-		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
-
-		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
-		{
-			if (component_ptr->Process_level == 0)
-			{
-				component_ptr->Dec_File_Info = component_ptr->File_name;
-				size_t point = component_ptr->Dec_File_Info.find('.');
-				component_ptr->Dec_File_Info.replace(point+1,3,"txt");
-
-				component_ptr->Dec_Info = fopen(component_ptr->Dec_File_Info.c_str(),"w");
-			}
-			else
-				component_ptr->Dec_Info = fopen(component_ptr->Dec_File_Info.c_str(),"a");
-
-			int CLevel = 0, Number_vertices = 0;
-
-			if (component_ptr->Sequence)
-			{
-				CLevel = component_ptr->Visu_level;
-				Number_vertices = (int)viewer->getScenePtr()->get_polyhedron(CLevel)->size_of_vertices();
-			}
-			else
-			{
-				CLevel = component_ptr->Current_level;
-				Number_vertices = (int)viewer->getScenePtr()->get_polyhedron(0)->size_of_vertices();
-			}
-
-			unsigned Current_file_size = component_ptr->Calculate_Current_File_Size();
-
-			float prog = (float)Current_file_size / component_ptr->Compressed_file_size * 100;
-			
-			
-			if (component_ptr->Process_level == component_ptr->Total_layer)
-				prog = 100.0;
-
-			float ratio = 1 / ((float)Current_file_size / component_ptr->Initial_file_size);
-
-			fprintf(component_ptr->Dec_Info,"Level %2d   #v : %8d      %6u bytes     Prog : %7.3f %%    Ratio : %9.3f\n", CLevel, Number_vertices, Current_file_size, prog, ratio);
-			fclose(component_ptr->Dec_Info);
-		}
-	}
-}
-
 void mepp_component_Compression_Valence_plugin::ShowText(void)
 {
 	// active viewer
@@ -985,52 +443,12 @@ void mepp_component_Compression_Valence_plugin::ShowText(void)
 
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
-			int CLevel = -1;
-			if (component_ptr->Sequence)
-				CLevel = component_ptr->Visu_level;
-			else
-				CLevel = component_ptr->Current_level;
-
-
-			QString string = QString("Current level : %1/%2").arg(CLevel, 2).arg(component_ptr->Total_layer, 2);
-			//string += wxString::Format(_T("%2d"),CLevel);
-			//string += _T("/");
-			//string += wxString::Format(_T("%2d"),component_ptr->Total_layer);
-			string += "   |   ";
-
-			float prog =0, ratio = 0;
-
-			if (component_ptr->Sequence)
-			{
-				prog = component_ptr->Prog[CLevel];
-				ratio = component_ptr->Ratio[CLevel];
-			}
-			else
-			{
-
-				prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-				ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-			}
-
-			if (CLevel != component_ptr->Total_layer)
-				//string += wxString::Format(_T("Prog : %3.3f %% "), prog);
-				string += QString("Prog : %1 % ").arg(prog, 3, 'f', 3);
-			else
-				string += "Prog : 100.000 %";
-
-			string += "   |   ";
-			//string += wxString::Format(_T("Ratio : %3.3f\n"), ratio);
-			string += QString("Ratio : %1\n").arg(ratio, 3, 'f', 3);
-
-			/*m_frame->update_mesh_properties();
-			m_frame->Refresh();
-
-			m_frame->set_status_message(string);*/
-			string += component_ptr->Message;
+			QString string = component_ptr->Show_Text();
 			mw->statusBar()->showMessage(string);
 		}
 	}
 }
+
 
 void mepp_component_Compression_Valence_plugin::OnJCW(void)
 {
@@ -1049,165 +467,63 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 			return;
 		}
 		
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+		//QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		int NVertices = 300;
-		bool Normal_flipping = false;
-		bool Use_metric = false;
-		float Metric_thread = 0.25;
-		bool Use_forget_metric = false;
-		int Forget_value = 3000;
-		int Qbit = 12;
-		unsigned int Connectivity_size =0, Color_size =0, Total_size =0, Initial_file_size =0;
-		int Number_inserted_bits = 0;	
-		int Init_number_vertices = viewer->getScenePtr()->get_polyhedron()->size_of_vertices();
+		SettingsDialogJCW dial;
+		if (dial.exec() == QDialog::Accepted)
+		{
+			QString fileName = dial.file_name->text();
 
-		component_ptr->Joint_Compression_Watermarking(*viewer->getScenePtr()->get_polyhedron(), NVertices, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit,Number_inserted_bits, Connectivity_size, Color_size,Total_size, Initial_file_size);	
-		//component_ptr->Compression(*viewer->getScenePtr()->get_polyhedron(), "output.p3d", Qbit, Connectivity_size, Color_size, Total_size, Initial_file_size);	
-		
-		timer.stop();
-		double Time = timer.time();
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		double Connectivity_rate = (double)Connectivity_size / Init_number_vertices;
-		double Color_rate = (double)Color_size / Init_number_vertices;
-		double Total_rate = (double)Total_size * 8 / Init_number_vertices;
-		double Geometry_rate = Total_rate - Connectivity_rate - Color_rate;
+			int Qbit = dial.quanti->value();
+			int NVertices = dial.number_vertices->value();
 
-		QString string1 = QString("JCW done!\n\n");			
-		QString string2 = QString("Processing time : %1 s \n\n").arg(double(Time), 4, 'f', 3);	
-		
-		QString string3 = QString("%1 bits inserted \n\n").arg(int(Number_inserted_bits));
+			int Number_bins = dial.number_bins->value();
+			int Number_regions = dial.number_regions->value();
+			int Embedding_strength = dial.embedding_strength->value();
+			QString Embedding_message = dial.embedding_message->text();
 
-		QString string4 = QString("Connectivity : %1 b/v \n").arg(float(Connectivity_rate), 4, 'f', 3);
-					
-		QString string5("Geometry : ");
-		string5 += QString("%1").arg(float(Geometry_rate), 4, 'f', 3);
-		string5 += " b/v\n";
+			bool Is_complete_reversibility_selected = dial.complete_reversibility->isChecked();				
+			bool Is_divide_regions_selected = dial.divide_regions->isChecked();
+			int Thres_divide_regions = 0;
+			if (Is_divide_regions_selected)
+				Thres_divide_regions = dial.thres_divide_regions->value();			
 
-		QString string6("Color : ");
-		string6 += QString("%1").arg(float(Color_rate), 4, 'f', 3);
-		string6 += " b/v\n";
-		
-		QString string7("Total size : ");				
-		string7 += QString("%1").arg(float(Total_rate), 4, 'f', 3);
-		string7 += " b/v\n";
-
-		QString t = string1 + string2 + string3 + string4 + string5 + string6 + string7;
-
-		
-		/*		unsigned Init_size;
-				int Number_layers = component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,"output.p3d");
-				
-				int CL = 0;
-				while(CL != Number_layers)
-				{					
-					component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(0), "output.p3d",-1);
-					CL++;					
-					
-				}	
-				
-		component_ptr->JCW_Evaluate_Robustness();*/
-		QMessageBox::information(mw, APPLICATION, t);
-		QApplication::restoreOverrideCursor();
-		
-		viewer->recreateListsAndUpdateGL();
+			bool Normal_flipping = false;
+			bool Use_metric = false;
+			float Metric_thread = 0.25;
+			bool Use_forget_metric = false;
+			int Forget_value = 3000;
+			
+			QString Resulting_message = component_ptr->Joint_Compression_Watermarking(*viewer->getScenePtr()->get_polyhedron(),
+																					   viewer->getScenePtr()->currentFile().toStdString().c_str(),
+																					   fileName.toStdString().c_str(),
+																					   Number_bins,
+																					   Number_regions,
+ 																					   Embedding_strength,
+																					   Embedding_message.toStdString().c_str(),
+																					   Is_complete_reversibility_selected,
+																					   Is_divide_regions_selected,
+																					   Thres_divide_regions,
+																					   Qbit,
+																					   NVertices,
+												   									   Normal_flipping,
+																					   Use_metric,
+																					   Metric_thread,
+																					   Use_forget_metric,
+																					   Forget_value);														 
+			//component_ptr->Compression(*viewer->getScenePtr()->get_polyhedron(), "output.p3d", Qbit, Connectivity_size, Color_size, Total_size, Initial_file_size);			
+			
+			QApplication::restoreOverrideCursor();		
+			QMessageBox::information(mw, APPLICATION, Resulting_message);
+			viewer->recreateListsAndUpdateGL();
+		}
 	}
-
-	
 }
 
-void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
+void mepp_component_Compression_Valence_plugin::OnJCWdecompress(void)
 {
-
-	//vector<QString> Mesh_Names;
-	//
-	//QString Q1("bunny_kai.off");
-	//QString Q2("dragon_kai.off");
-	//QString Q3("horse.off");
-	//QString Q4("venus_kai.off");
-
-	//Mesh_Names.push_back(Q1);
-	//Mesh_Names.push_back(Q2);
-	//Mesh_Names.push_back(Q3);
-	//Mesh_Names.push_back(Q4);
-	//
-	//FILE * test = fopen("test.txt","w");
-	//fclose(test);
-
-	////if (mw->activeMdiChild() != 0)
-	//{
-
-	//	Viewer* viewer = (Viewer *)mw->activeMdiChild();
-
-	//	PolyhedronPtr polyhedron_ptr(new Polyhedron());
-	//	
-
-	//	for(unsigned int i = 0; i < Mesh_Names.size(); i++)
-	//	{
-	//		polyhedron_ptr->clear();
-	//		QString Q = Mesh_Names[i];
-
-	//		polyhedron_ptr->load_mesh_off(Q.toStdString());
-	//		
-
-	//		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
-	//		{
-	//			int NVertices = 300;
-	//			bool Normal_flipping = false;
-	//			bool Use_metric = false;
-	//			float Metric_thread = 0.25;
-	//			bool Use_forget_metric = false;
-	//			int Forget_value = 3000;
-	//			int Qbit = 12;
-	//			unsigned int Connectivity_size =0, Color_size =0, Total_size =0, Initial_file_size =0;
-	//			int Number_inserted_bits = 0;	
-	//			int Init_number_vertices = 10000;
-	//			
-	//			test = fopen("test.txt", "a");
-	//			fprintf(test, "1");
-	//			fclose(test);
-
-	//			component_ptr->Joint_Compression_Watermarking(*polyhedron_ptr, NVertices, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Qbit,Number_inserted_bits, Connectivity_size, Color_size,Total_size, Initial_file_size);	
-
-	//			test = fopen("test.txt" ,"a");
-	//			fprintf(test, "2");
-	//			fclose(test);
-
-	//			component_ptr->Clear_After_Compression();
-
-	//			test = fopen("test.txt" ,"a");
-	//			fprintf(test, "3");
-	//			fclose(test);
-
-	//			unsigned Init_size;
-	//			int NL = component_ptr->Decompress_Init(*polyhedron_ptr,Init_size,"output.p3d");
-	//			
-	//			test = fopen("test.txt", "a");
-	//			fprintf(test, "4");
-	//			fclose(test);
-
-	//			int CL = 0;
-	//			while(CL != NL)
-	//			{					
-	//				component_ptr->JCW_Decompress_One_Level(*polyhedron_ptr, "output.p3d", 1);
-	//				CL++;				
-	//			}
-
-	//			test = fopen("test.txt", "a");
-	//			fprintf(test, "5");
-	//			fclose(test);
-	//			vector<double> res = component_ptr->JCW_Evaluate_Robustness();
-
-	//			test = fopen("test.txt", "a");
-	//			fprintf(test, "6");
-	//			fclose(test);
-
-	//		}
-
-	//		
-	//	}
-	//}
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -1233,23 +549,7 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 			// read from file
 			if (component_ptr->Sequence == false)
 			{
-				if (component_ptr->Current_level >= component_ptr->Total_layer)
-					return;
-
-				if (component_ptr->Process_level == 0)
-					WriteInfo();
-
-				component_ptr->Current_level = component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(),component_ptr->File_name.c_str(), -1);
-				component_ptr->Message = component_ptr->Write_Information_To_Hide();
-
-
-				if (component_ptr->Current_level > component_ptr->Process_level)
-				{
-					component_ptr->Process_level++;
-					WriteInfo();
-				}
-
-				ShowText();
+				component_ptr->JCW_Decompression_From_File(*viewer->getScenePtr()->get_polyhedron(0));				
 			}
 
 			// from sequence
@@ -1264,46 +564,22 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompres(void)
 				if (component_ptr->Visu_level < component_ptr->Process_level)
 				{
 					component_ptr->Visu_level++;
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-					ShowText();
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);					
 				}
 
 				// Insert a mesh into the sequence
 				else
-				{
-					if (component_ptr->Process_level == 0)
-						WriteInfo();
+				{					
 
 					PolyhedronPtr New_mesh(new Polyhedron());	//Polyhedron * New_mesh = new Polyhedron;	// MT
-					component_ptr->Copy_Polyhedron.copy(viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level).get(), New_mesh.get());	// MT: get() 2 fois !!!
 
-					component_ptr->Attibute_Seed_Gate_Flag(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);
-					New_mesh->compute_normals();
-
+					component_ptr->JCW_Decompression_From_Sequence(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);					
 					vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
-					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level, New_mesh);
-
-					component_ptr->Process_level++;
-					component_ptr->Visu_level++;
-
-					component_ptr->JCW_Decompress_One_Level(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str(), -1);
-					component_ptr->Message = component_ptr->Write_Information_To_Hide();					
-
-					WriteInfo();
-
-					float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-					float ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-
-					component_ptr->Prog.push_back(prog);
-					component_ptr->Ratio.push_back(ratio);
-
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);
-
-					ShowText();
+					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level-1, New_mesh);
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);					
 				}
 			}
-
+			ShowText();
 			viewer->recreateListsAndUpdateGL();
 		}
 	}
@@ -1320,12 +596,8 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extracti
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
 			if (!component_ptr->IsDecompress)
-			{
-				/*(void)wxMessageBox(_T("Decompression not possible\n\n")
-					_T("You must execute Initialization before")
-					   );*/
+			{			
 				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
-
 				return;
 			}
 
@@ -1336,20 +608,7 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extracti
 			// read from file
 			if (component_ptr->Sequence == false)
 			{
-				if (component_ptr->Current_level >= component_ptr->Total_layer)
-					return;
-
-				if (component_ptr->Process_level == 0)
-					WriteInfo();
-
-				component_ptr->Current_level = component_ptr->JCW_Decompress_One_Level_Without_Extraction(*viewer->getScenePtr()->get_polyhedron(),component_ptr->File_name.c_str());
-				if (component_ptr->Current_level > component_ptr->Process_level)
-				{
-					component_ptr->Process_level++;
-					WriteInfo();
-				}
-
-				ShowText();
+				component_ptr->JCW_Decompression_Without_Extraction_From_File(*viewer->getScenePtr()->get_polyhedron());//,component_ptr->File_name.c_str());				
 			}
 
 			// from sequence
@@ -1364,44 +623,21 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extracti
 				if (component_ptr->Visu_level < component_ptr->Process_level)
 				{
 					component_ptr->Visu_level++;
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);
-
-					ShowText();
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Visu_level);					
 				}
 
 				// Insert a mesh into the sequence
 				else
 				{
-					if (component_ptr->Process_level == 0)
-						WriteInfo();
-
 					PolyhedronPtr New_mesh(new Polyhedron());	//Polyhedron * New_mesh = new Polyhedron;	// MT
-					component_ptr->Copy_Polyhedron.copy(viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level).get(), New_mesh.get());	// MT: get() 2 fois !!!
 
-					component_ptr->Attibute_Seed_Gate_Flag(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);
-					New_mesh->compute_normals();
-
+					component_ptr->JCW_Decompression_Without_Extraction_From_Sequence(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level), *New_mesh);					
 					vector<PolyhedronPtr/*Polyhedron**/>::iterator it = viewer->getScenePtr()->get_begin_polyhedrons();	// MT
-					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level, New_mesh);
-
-					component_ptr->Process_level++;
-					component_ptr->Visu_level++;
-
-					component_ptr->JCW_Decompress_One_Level_Without_Extraction(*viewer->getScenePtr()->get_polyhedron(component_ptr->Process_level),component_ptr->File_name.c_str());
-
-					WriteInfo();
-
-					float prog = (float)component_ptr->Calculate_Current_File_Size() / component_ptr->Compressed_file_size * 100;
-					float ratio = 1/((float)component_ptr->Calculate_Current_File_Size() / component_ptr->Initial_file_size);
-
-					component_ptr->Prog.push_back(prog);
-					component_ptr->Ratio.push_back(ratio);
-
-					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);
-
-					ShowText();
+					viewer->getScenePtr()->insert_polyhedron(it + component_ptr->Process_level-1, New_mesh);
+					viewer->getScenePtr()->set_current_polyhedron(component_ptr->Process_level);					
 				}
 			}
+			ShowText();
 			viewer->recreateListsAndUpdateGL();
 		}
 	}

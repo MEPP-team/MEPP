@@ -51,7 +51,7 @@ class mepp_component_Compression_Valence_plugin :
 			delete actionDecompress_one_level; delete actionDecompress_precedent_level; delete actionDecompress_go_to_specific_level;
 			delete actionDecompress_mesh_sequence_on_off;
 			delete actionJCW;
-			delete actionJCWdecompres;
+			delete actionJCWdecompress;
 			delete actionJCWdecompress_without_extraction;
 		}
 
@@ -108,9 +108,9 @@ class mepp_component_Compression_Valence_plugin :
 			if (actionJCW)
 				connect(actionJCW, SIGNAL(triggered()), this, SLOT(OnJCW()));
 			
-			actionJCWdecompres = new QAction(tr("JCW: Decompress one level"), this);
-			if (actionJCWdecompres)
-				connect(actionJCWdecompres, SIGNAL(triggered()), this, SLOT(OnJCWdecompres()));
+			actionJCWdecompress = new QAction(tr("JCW: Decompress one level"), this);
+			if (actionJCWdecompress)
+				connect(actionJCWdecompress, SIGNAL(triggered()), this, SLOT(OnJCWdecompress()));
 			
 			actionJCWdecompress_without_extraction = new QAction(tr("JCW: Decompress one level without extraction"), this);
 			if (actionJCWdecompress_without_extraction)
@@ -142,7 +142,7 @@ class mepp_component_Compression_Valence_plugin :
 										<< actionDecompress_mesh_sequence_on_off
 										<< NULL
 										<< actionJCW
-										<< actionJCWdecompres
+										<< actionJCWdecompress
 										<< actionJCWdecompress_without_extraction;
 		}
 
@@ -323,7 +323,7 @@ class mepp_component_Compression_Valence_plugin :
 
 		 */
 
-		void OnJCWdecompres();
+		void OnJCWdecompress();
 
 		/**
 		 \fn	void OnJCWdecompress_without_extraction();
@@ -336,7 +336,7 @@ class mepp_component_Compression_Valence_plugin :
 
 	protected:
 		void ShowText(void);
-		void WriteInfo(void);
+		//void WriteInfo(void);
 
 	private:
 		QAction *actionCompress;
@@ -345,7 +345,7 @@ class mepp_component_Compression_Valence_plugin :
 		QAction *actionDecompress_all, *actionDecompress_one_level, *actionDecompress_precedent_level, *actionDecompress_go_to_specific_level;
 		QAction *actionDecompress_mesh_sequence_on_off;
 		QAction *actionJCW;
-		QAction *actionJCWdecompres, * actionJCWdecompress_without_extraction;
+		QAction *actionJCWdecompress, * actionJCWdecompress_without_extraction;
 };
 
 #endif
