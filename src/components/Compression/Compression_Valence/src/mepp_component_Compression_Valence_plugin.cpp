@@ -29,14 +29,20 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
-			if (component_ptr->IsCompressed == true)
+			if (component_ptr->IsCompressed)
 			{				
-				QMessageBox::information(mw, APPLICATION, tr("Compression not possible: the mesh is already compressed."));
+				QMessageBox::information(mw, APPLICATION, tr("Compression not possible, the mesh is already compressed."));
 				return;
 			}
+			if (component_ptr->IsDecompress)
+			{				
+				QMessageBox::information(mw, APPLICATION, tr("Compression not possible, the mesh is being decompressed."));
+				return;
+			}
+			
 			if (!viewer->getScenePtr()->get_polyhedron()->is_pure_triangle())
 			{				
-				QMessageBox::information(mw, APPLICATION, tr("Compression not possible: the mesh owns non-triangular facets."));
+				QMessageBox::information(mw, APPLICATION, tr("Compression not possible, the mesh owns non-triangular facets."));
 				return;
 			}			
 			
@@ -157,9 +163,14 @@ void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event
 		{
 			Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 
+			/*if (component_ptr->IsCompressed)
+			{				
+				QMessageBox::information(mw, APPLICATION, tr("Compression not possible, the mesh is already compressed."));
+				return;
+			}*/
 			if (!component_ptr->IsDecompress)
 			{				
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
+				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: please load .p3d file first."));
 				return;
 			}
 
@@ -213,6 +224,12 @@ void mepp_component_Compression_Valence_plugin::OnMouseRightUp(QMouseEvent *even
 		if (doesExistComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr)) // important !!!
 		{
 			Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
+			
+			if (!component_ptr->IsDecompress)
+			{				
+				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: please load .p3d file first."));
+				return;
+			}
 
 			if (component_ptr->Possible_change_sequence == true)
 			component_ptr->Possible_change_sequence = false;
@@ -262,7 +279,7 @@ void mepp_component_Compression_Valence_plugin::OnMouseWheel(QWheelEvent *event)
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
+	//QApplication::setOverrideCursor(Qt::WaitCursor);
 
 
 	// active viewer
@@ -273,11 +290,12 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
+
 			if (!component_ptr->IsDecompress)
 			{				
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
+				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: please load .p3d file first."));
 				return;
-			}
+			}			
 
 			if (component_ptr->Possible_change_sequence == true)
 				component_ptr->Possible_change_sequence = false;
@@ -305,7 +323,7 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 		}
 	}
 
-	QApplication::restoreOverrideCursor();
+	//QApplication::restoreOverrideCursor();
 }
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_one_level()
@@ -350,7 +368,7 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 		{
 			if (!component_ptr->IsDecompress)
 			{				
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
+				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: please load .p3d file first."));
 				return;
 			}
 
@@ -377,6 +395,10 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 			}
 			else
 				return;	
+			if(Wanted_level < 0)
+				Wanted_level = 0;
+			if(Wanted_level > component_ptr->Total_layer)
+				Wanted_level = component_ptr->Total_layer;
 
 			// read from file
 			if (component_ptr->Sequence == false)
@@ -416,19 +438,25 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_mesh_sequence_on_of
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
-		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();		
 
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
+			if (!component_ptr->IsDecompress)
+			{				
+				QMessageBox::information(mw, APPLICATION, tr("Switch of decompression mode not possible: please load .p3d file first."));
+				return;
+			}
+
 			if ((component_ptr->Sequence) && (component_ptr->Possible_change_sequence))
 			{
 				component_ptr->Sequence = false;				
-				mw->statusBar()->showMessage(tr("Sequence : OFF"));
+				mw->statusBar()->showMessage(tr("Generation of mesh sequence : OFF"));
 			}
 			else if ((!component_ptr->Sequence) && (component_ptr->Possible_change_sequence))
 			{
 				component_ptr->Sequence = true;
-				mw->statusBar()->showMessage(tr("Sequence : ON"));
+				mw->statusBar()->showMessage(tr("Generation of mesh sequence : ON"));
 			}
 		}
 	}
@@ -464,6 +492,16 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 		if (!viewer->getScenePtr()->get_polyhedron()->is_pure_triangle())
 		{				
 			QMessageBox::information(mw, APPLICATION, tr("JCW not possible: the mesh owns non-triangular facets."));
+			return;
+		}
+		if (component_ptr->IsCompressed)
+		{				
+			QMessageBox::information(mw, APPLICATION, tr("JCW not possible, the mesh is already compressed."));
+			return;
+		}
+		if (component_ptr->IsDecompress)
+		{				
+			QMessageBox::information(mw, APPLICATION, tr("JCW not possible, the mesh is being decompressed."));
 			return;
 		}
 		
@@ -533,14 +571,10 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress(void)
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
 			if (!component_ptr->IsDecompress)
-			{
-				/*(void)wxMessageBox(_T("Decompression not possible\n\n")
-					_T("You must execute Initialization before")
-					   );*/
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
-
+			{				
+				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: please load .p3d file first."));
 				return;
-			}
+			}		
 
 			if (component_ptr->Possible_change_sequence == true)
 				component_ptr->Possible_change_sequence = false;
@@ -596,8 +630,8 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extracti
 		Compression_Valence_ComponentPtr component_ptr = findOrCreateComponentForViewer<Compression_Valence_ComponentPtr, Compression_Valence_Component>(viewer, polyhedron_ptr);
 		{
 			if (!component_ptr->IsDecompress)
-			{			
-				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: you must execute Initialization before."));
+			{				
+				QMessageBox::information(mw, APPLICATION, tr("Decompression not possible: please load .p3d file first."));
 				return;
 			}
 

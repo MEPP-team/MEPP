@@ -1698,4 +1698,38 @@ class Compression_Valence_Component :
 
 #endif
 
+/*! \mainpage component_Compression_Valence Documentation
+ *
+ * \section auth Authors
+ * H. Lee, C. Dikici, G. Lavoué and F. Dupont \n
+ * M2Disco Team, LIRIS, CNRS, Université Lyon 1/INSA-Lyon, France. \n
+ * \n
+ * Please contact H. Lee (hosmail@gmail.com) in case you have any question, comment or a bug to report.
+ * \n
+ * \n
+ *
+ * \section paper_reference Related publications
+ * Here is the list of related papers if you want to cite our methods. \n
+ * It is also strongly recommended that you read these papers
+ * in order to know the parameters used in our methods. 
+ * \n 
+ * 
+ * \subsection compression_paper Progressive compression of colored meshes
+ * H. Lee, G. Lavoué, F. Dupont, \n
+ * Rate-distortion optimization for progressive compression of 3D mesh with color attributes, \n
+ * The Visual Computer, 2011, (accepted for publication).
+ * \n
+ * 
+ * \subsection jcw_paper Joint watermarking and progressive compression of 3D meshes
+ * H. Lee, C. Dikici, G. Lavoué, F. Dupont, \n
+ * Joint reversible watermarking and progressive compression of 3D meshes, \n
+ * The Visual Computer, 2011, (accepted for publication).
+ * \n 
+ * \n 
+ * 
+ * \section last_updated Last updated
+ * 17 May, 2011
+ * 
+ */
+
 #endif // Compression_Valence_COMPONENT_H

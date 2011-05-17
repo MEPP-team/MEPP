@@ -76,7 +76,7 @@ class mepp_component_Compression_Valence_plugin :
 			mParentMenu = mainWindow->menuCompression;
 
 			// debut --- actions ---
-			actionCompress = new QAction(tr("Compress"), this);
+			actionCompress = new QAction(tr("Compression"), this);
 			if (actionCompress)
 				connect(actionCompress, SIGNAL(triggered()), this, SLOT(OnCompress()));
 
@@ -84,37 +84,37 @@ class mepp_component_Compression_Valence_plugin :
 			if (actionOpen_P3D_file)
 				connect(actionOpen_P3D_file, SIGNAL(triggered()), this, SLOT(load_P3D_file()));
 
-			actionDecompress_all = new QAction(tr("Decompress: all"), this);
+			actionDecompress_all = new QAction(tr("Decompression : all LoDs"), this);
 			if (actionDecompress_all)
 				connect(actionDecompress_all, SIGNAL(triggered()), this, SLOT(OnDecompress_all()));
 
-			actionDecompress_one_level = new QAction(tr("Decompress: one level"), this);
+			actionDecompress_one_level = new QAction(tr("Decompression : next LoD"), this);
 			if (actionDecompress_one_level)
 				connect(actionDecompress_one_level, SIGNAL(triggered()), this, SLOT(OnDecompress_one_level()));
 
-			actionDecompress_precedent_level = new QAction(tr("Decompress: precedent level"), this);
+			actionDecompress_precedent_level = new QAction(tr("Decompression : previous LoD"), this);
 			if (actionDecompress_precedent_level)
 				connect(actionDecompress_precedent_level, SIGNAL(triggered()), this, SLOT(OnDecompress_precedent_level()));
 
-			actionDecompress_go_to_specific_level = new QAction(tr("Decompress: go to specific level"), this);
+			actionDecompress_go_to_specific_level = new QAction(tr("Decompression : go to specific LoD"), this);
 			if (actionDecompress_go_to_specific_level)
-				connect(actionDecompress_go_to_specific_level, SIGNAL(triggered()), this, SLOT(OnDecompress_go_to_specific_level()));
-
-			actionDecompress_mesh_sequence_on_off = new QAction(tr("Decompress: mesh sequence on/off"), this);
-			if (actionDecompress_mesh_sequence_on_off)
-				connect(actionDecompress_mesh_sequence_on_off, SIGNAL(triggered()), this, SLOT(OnDecompress_mesh_sequence_on_off()));
+				connect(actionDecompress_go_to_specific_level, SIGNAL(triggered()), this, SLOT(OnDecompress_go_to_specific_level()));	
 			
-			actionJCW = new QAction(tr("JCW: Insertion"), this);
+			actionJCW = new QAction(tr("JCW - Compression and Watermark embedding"), this);
 			if (actionJCW)
 				connect(actionJCW, SIGNAL(triggered()), this, SLOT(OnJCW()));
 			
-			actionJCWdecompress = new QAction(tr("JCW: Decompress one level"), this);
+			actionJCWdecompress = new QAction(tr("JCW - Decompression and Watermark extraction : next LoD"), this);
 			if (actionJCWdecompress)
 				connect(actionJCWdecompress, SIGNAL(triggered()), this, SLOT(OnJCWdecompress()));
 			
-			actionJCWdecompress_without_extraction = new QAction(tr("JCW: Decompress one level without extraction"), this);
+			actionJCWdecompress_without_extraction = new QAction(tr("JCW - Decompression without extraction : next LoD"), this);
 			if (actionJCWdecompress_without_extraction)
 				connect(actionJCWdecompress_without_extraction, SIGNAL(triggered()), this, SLOT(OnJCWdecompress_without_extraction()));
+
+			actionDecompress_mesh_sequence_on_off = new QAction(tr("Activate/Desactivate mesh sequence generation"), this);
+			if (actionDecompress_mesh_sequence_on_off)
+				connect(actionDecompress_mesh_sequence_on_off, SIGNAL(triggered()), this, SLOT(OnDecompress_mesh_sequence_on_off()));
 
 			// fin --- actions ---
 		}
@@ -131,6 +131,7 @@ class mepp_component_Compression_Valence_plugin :
 		QList<QAction*> actions() const
 		{
 			return QList<QAction*>()	<< actionCompress
+										<< actionJCW
 										<< NULL
 										<< actionOpen_P3D_file
 										<< NULL
@@ -138,12 +139,11 @@ class mepp_component_Compression_Valence_plugin :
 										<< actionDecompress_one_level
 										<< actionDecompress_precedent_level
 										<< actionDecompress_go_to_specific_level
-										<< NULL
-										<< actionDecompress_mesh_sequence_on_off
-										<< NULL
-										<< actionJCW
+										<< NULL																														
 										<< actionJCWdecompress
-										<< actionJCWdecompress_without_extraction;
+										<< actionJCWdecompress_without_extraction
+										<< NULL
+										<< actionDecompress_mesh_sequence_on_off;
 		}
 
 		/**

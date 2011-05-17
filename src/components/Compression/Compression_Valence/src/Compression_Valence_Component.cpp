@@ -43,7 +43,6 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 	timer.start();	
 
 	// read size of input mesh (file size)
-	//component_ptr->Initial_file_size = 1;
 	if (FILE *file = fopen(_Input_File_Name, "r"))
 	{
 		fseek(file,0,SEEK_END);
@@ -51,11 +50,12 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 		fclose(file);
 	}
 
+	// Use of bijection or not for the geometry encoding
 	this->Is_Bijection_Enabled = _Is_bijection_selected;
 	
 	unsigned Init_number_vertices = (unsigned)_pMesh.size_of_vertices();
 	
-	// Initialization - Quantization, Color, Multiple components;
+	// Initialization - Quantization, Color, Multiple components
 	this->Global_Initialization(_pMesh, _Qbit, _File_Name);
 		
 	// When use of adaptive quantization is selected
@@ -115,6 +115,7 @@ void Compression_Valence_Component::Global_Initialization(Polyhedron & _pMesh,
 	// (6) Color quantization - Descrease of possible color numbers 
 	this->Color_Initialization(_pMesh);	
 	
+	// Initialization of multiple components (quantization is performed separately for each component)
 	this->Multiple_Components_Initialization(_pMesh, _Qbit);		
 
 	// Quantization of each component
@@ -5435,9 +5436,7 @@ QString Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron
 		this->Geometry[0].push_back(Geo);
 	}
 	
-	FILE * test = fopen("test2.txt", "w");
-	fprintf(test, "%d",Number_non_reversible_vertices);
-	fclose(test);
+	this->IsCompressed = true;
 		
 	_pMesh.compute_normals();
 
