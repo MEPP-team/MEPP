@@ -1704,7 +1704,7 @@ class Compression_Valence_Component :
  * H. Lee, C. Dikici, G. Lavoué and F. Dupont \n
  * M2Disco Team, LIRIS, CNRS, Université Lyon 1/INSA-Lyon, France. \n
  * \n
- * Please contact H. Lee (hosmail@gmail.com) in case you have any question, comment or a bug to report.
+ * Please contact Ho Lee (hosmail@gmail.com) in case you have any question, comment or a bug to report.
  * \n
  * \n
  *
@@ -1727,8 +1727,68 @@ class Compression_Valence_Component :
  * \n 
  * \n 
  * 
+ * \section overview Overview
+ * This Compression Valence component has two main functions:
+ * (1) a progressive compresion and (2) a joint progressive compression and reversible watermarking for 3D meshes. \n
+ * The progressive compression method simplifies iteratively an input mesh to generate differents levels of details (LoDs). \n
+ * These LoDs are then transmitted progressively in a coarse-to-fine way at the decompression. \n
+ * In particular, our method adapts the quantization precision (both geometry and color) to each LoD in order to optimize the rate-distortion (R-D) trade-off. \n \n
+ * Our joint progressive compression and reversible watermarking method offers a possibility to embed an watermark information
+ * in order to protect the ownership of the input mesh. \n
+ * Hence, at each decompression step, the inserted message can be extracted also progressively. \n
+ * The embedded watermarks are reversible, meaning that the deformation caused by watermarking embedding step can be removed when extracting the watermark.
+ * \n
+ * \n
+ * 
+ * \section howto_use How to use this component
+ * \subsection howto_progressive_compression Progressive compression
+ * First of all you have to load a mesh. \n
+ * To compress the input mesh, choose "Compression" and a windows appears. \n
+ * (1) File name              : to choose a name for the compressed file. Please be aware that the file extension should be ".p3d". \n
+ * (2) Mode                   : the mode "Simplification" does not generate a compressed file. \n
+ * (3) Compression mode       : to enable or disable the use of the adaptation of quantization precision. \n
+ * (4) Quantization bits      : the number of bits for the geometry quantization. \n
+ * (5) # Vertices wanted      : the number of vertices of the base (the coarsest) mesh. \n
+ * (6) Use bijection          : to enable or disable the use of the bijection for the geometry encoding. This bijection reduces the coding rates but it needs a longer processing time. \n
+ * (7) Forbid normal flipping : this option is used to forbid a normal flipping when removing a vertex. \n
+ * (8) Use Metric             : this option is used to forbid a vertex removal if it induces a significant deformation. The threshold value is initially set to 0.25. \n
+                                The use of this metric can be "forgetted" if the number of vertices of the current intermediate mesh is superior to an user-defined threshold. \n
+ * \n
+ * For the decompression, first you have to load a .p3d file. Then, the base mesh is rendered. \n
+ * To obtain higher LoDs, you can use : \n
+ * (1) "Decompression : all LoDs", to decompress all LoDs and the finest intermediate is visualized, \n
+ * (2) "Decompression : next LoD", to decompress one level and the next LoD is rendered (ALT + left mouse button), \n
+ * (3) "Decompression : go to specific LoD", to reach the desired LoD. \n 
+ * You can also visualize the previous LoDs by selecting "Decompression : previous LoD" (ALT + right mouse button). \n \n 
+ * After loading the .p3d file, you can enable or disable the option of mesh sequence generation with the menu "Activate/Desactivate mesh sequence generation". \n
+ * When this option is enabled, all LoDs are stored in the memory, so that the navigation of differents LoDs can be performed quickly. \n
+ * You can disable this option in order to save the memory.
+ * In this case, when you want to visualize the previous LoD, the decompression is performed again until getting the previous LoD.
+ * The navigation takes a longer time. \n
+ * Note that this option can be modified only after the rendering of the base mesh and it cannot be modified when any decompression operation is achieved. \n 
+ * \n
+ * \subsection howto_jcw Joint compression and watermarking
+ * First of all you have to load a mesh. \n
+ * You can apply our joint method by selecting "JCW - Compression and Watermarking embedding". \n
+ * (1) File name              : to choose a name for the compressed file (.p3d). \n
+ * (2) Q bits                 : the number of bits for the geometry quantization. \n
+ * (3) # vertices             : the number of the base mesh after an iterative simplification. \n
+ * (4) # Bins				  : the number of the histogram bins. \n
+ * (5) # Regions              : the number of regions. One watermark bit is embedded in each region. \n
+ * (6) Embedding Strength     : the number of shifted bins when embedding/extracting the watermark. \n
+ * (7) Embedding Message      : the message to insert. When this field is empty or the length of the message is shorter than necessary, the message is generated randomly. \n
+ * (8) Divide Regions         : when this option is selected, the big region is divided in two in order to insert more watermark bits. \n
+ * (9) Complete Reversibility : When this option is checked, the initial positions of all vertices are exactly restored. Some extra coding bits are necessary.
+ * \n
+ * For the decompression and the watermark extraction,
+ * you have to load a .p3d file. \n
+ * To obtain higher LoDs, you can select "JCW - Decompression and Watermark extraction : next LoD". \n
+ * The extracted message is shown in the status bar of the main window. \n
+ * To visualize the results without watermark extraction (non authorized users), you can use "JCW - Decompression without extraction : next LoD". \n
+ * \n
+ * 
  * \section last_updated Last updated
- * 17 May, 2011
+ * 18 May, 2011
  * 
  */
 
