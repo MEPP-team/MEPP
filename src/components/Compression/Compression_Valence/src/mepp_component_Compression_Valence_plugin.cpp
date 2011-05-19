@@ -279,8 +279,8 @@ void mepp_component_Compression_Valence_plugin::OnMouseWheel(QWheelEvent *event)
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 {
-	//QApplication::setOverrideCursor(Qt::WaitCursor);
-
+	Timer timer;
+	timer.start();
 
 	// active viewer
 	if (mw->activeMdiChild() != 0)
@@ -322,7 +322,10 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 			viewer->recreateListsAndUpdateGL();
 		}
 	}
-
+	timer.stop();
+	double Time = timer.time();
+	QString Total_time = QString("Processing time : %1 s \n\n").arg(double(Time), 4, 'f', 3);			
+	QMessageBox::information(mw, APPLICATION, Total_time);
 	//QApplication::restoreOverrideCursor();
 }
 
@@ -458,6 +461,11 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_mesh_sequence_on_of
 				component_ptr->Sequence = true;
 				mw->statusBar()->showMessage(tr("Generation of mesh sequence : ON"));
 			}
+			if (!component_ptr->Possible_change_sequence)
+			{
+				mw->statusBar()->showMessage(tr("Mode change can not be modified."));
+			}
+
 		}
 	}
 }

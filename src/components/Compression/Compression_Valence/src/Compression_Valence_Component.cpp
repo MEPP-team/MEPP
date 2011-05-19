@@ -11310,7 +11310,7 @@ void Compression_Valence_Component::JCW_Decompression_From_Sequence(Polyhedron &
 	this->JCW_Decompress_One_Level(pMesh, this->File_name.c_str(),-1);
 	this->Message = this->Write_Information_To_Hide();
 
-	Write_Info(pMesh);
+	this->Write_Info(pMesh);
 
 	float prog = (float)this->Calculate_Current_File_Size() / this->Compressed_file_size * 100;
 	float ratio = 1/((float)this->Calculate_Current_File_Size() / this->Initial_file_size);
@@ -11408,7 +11408,7 @@ QString Compression_Valence_Component::Show_Text(void)
 	}
 
 	if (CLevel != this->Total_layer)
-		string += QString("Prog : %1 % ").arg(prog, 3, 'f', 3);
+		string += QString("Prog : %1 % ").arg(prog, 3, 'f', 3); 
 	else
 		string += "Prog : 100.000 %";
 
