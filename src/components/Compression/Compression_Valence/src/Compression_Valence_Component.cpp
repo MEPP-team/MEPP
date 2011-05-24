@@ -1,12 +1,12 @@
+///////////////////////////////////////////////////////////////////////////
+// Author: Ho LEE
+// Year: 2011
+// Month: MAY
+// CNRS-Lyon, LIRIS UMR 5205
+///////////////////////////////////////////////////////////////////////////
+
 #include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
-
-//////////////////////////////////////////////////////////////////////////////
-//														 					//
-// Author : Ho LEE													   		//
-//														   					//
-//////////////////////////////////////////////////////////////////////////////
-
 
 #include "Compression_Valence_Component.h"
 #include "Compression_Valence_Polyhedron.h"
@@ -5852,7 +5852,7 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 		double Diff_CM = Center_mass_decimated - Center_mass_remained;		
 		
 		// If the difference of center of mass < 2* embedding level, we can embed a bit
-		if(abs(Diff_CM) < 2 * this->m_EmbeddingStrength)
+		if(abs(Diff_CM) < this->m_EmbeddingStrength)
 		{
 			Cases.push_back(0);
 			//
@@ -5920,12 +5920,12 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 			{			
 				if(Watermarks_to_insert[Region_index] == 0)
 				{					
-					P_bar_S[0] -= 2. * this->m_EmbeddingStrength * this->m_Dist;
+					P_bar_S[0] -= this->m_EmbeddingStrength * this->m_Dist;
 					Direction = 0;										
 				}
 				else
 				{					
-					P_bar_S[0] += 2 * this->m_EmbeddingStrength * this->m_Dist;
+					P_bar_S[0] += this->m_EmbeddingStrength * this->m_Dist;
 					Direction = 1;
 				}					
 			}			
@@ -5933,12 +5933,12 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 			{
 				if(Directions[Region_index] == 0)
 				{
-					P_bar_S[0] -= 2.* this->m_EmbeddingStrength * this->m_Dist;
+					P_bar_S[0] -= this->m_EmbeddingStrength * this->m_Dist;
 					Direction = 0;
 				}		
 				else
 				{						
-					P_bar_S[0] += 2.* this->m_EmbeddingStrength * this->m_Dist;
+					P_bar_S[0] += this->m_EmbeddingStrength * this->m_Dist;
 					Direction = 1;
 				}
 			}
@@ -5978,9 +5978,9 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Insert_Watermark(Poly
 			// To verify if we can not obtain the original position
 			
 			if(Direction == 0)
-				Q_bar_S[0] += 2.*this->m_EmbeddingStrength * this->m_Dist;
+				Q_bar_S[0] += this->m_EmbeddingStrength * this->m_Dist;
 			else
-				Q_bar_S[0] -= 2.*this->m_EmbeddingStrength * this->m_Dist;					
+				Q_bar_S[0] -= this->m_EmbeddingStrength * this->m_Dist;					
 
 			double Pp_R[3];		
 
@@ -6104,7 +6104,7 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Watermark(Pol
 		
 		double Diff_CM = Center_mass_inserted - Center_mass_remained;
 
-		if (abs(Diff_CM) > 4 * this->m_EmbeddingStrength)
+		if (abs(Diff_CM) > 2 * this->m_EmbeddingStrength)
 		{
 			Cases[i] = 1;
 
@@ -6152,9 +6152,9 @@ void Compression_Valence_Component::JCW_Region_Mass_Center_Extract_Watermark(Pol
 			if(pVert->Removal_Order == this->GlobalCountOperation - this->Decompress_count)
 			{
 				if(Direction[Bin_index] == 0)
-					Spheric[0] += 2.0 * this->m_EmbeddingStrength * this->m_Dist;
+					Spheric[0] += this->m_EmbeddingStrength * this->m_Dist;
 				else
-					Spheric[0] -= 2.0 * this->m_EmbeddingStrength * this->m_Dist;
+					Spheric[0] -= this->m_EmbeddingStrength * this->m_Dist;
 			}						
 			double Cart[3];
 			Convert_To_Cartesian(Spheric, Cart);
@@ -7061,9 +7061,9 @@ Point3d Compression_Valence_Component::JCW_Barycenter_Patch_After_Removal(const 
 		double Spheric[3];
 		this->Convert_To_Spherical(Pt, Spheric);
 		if(Direction == 0)
-			Spheric[0] -= 2.0 * this->m_Dist * this->m_EmbeddingStrength;
+			Spheric[0] -= this->m_Dist * this->m_EmbeddingStrength;
 		else
-			Spheric[0] += 2.0 * this->m_Dist * this->m_EmbeddingStrength;			
+			Spheric[0] += this->m_Dist * this->m_EmbeddingStrength;			
 		
 		g = g->next();
 
@@ -7107,9 +7107,9 @@ Point3d Compression_Valence_Component::JCW_Barycenter_Patch_Before_Removal(const
 		double Spheric[3];
 		this->Convert_To_Spherical(Pt, Spheric);
 		if(Direction == 0)
-			Spheric[0] -= 2.0 * this->m_Dist * this->m_EmbeddingStrength;
+			Spheric[0] -= this->m_Dist * this->m_EmbeddingStrength;
 		else
-			Spheric[0] += 2.0 * this->m_Dist * this->m_EmbeddingStrength;		
+			Spheric[0] += this->m_Dist * this->m_EmbeddingStrength;		
 
 		double Cart[3];
 	    this->Convert_To_Cartesian(Spheric, Cart);

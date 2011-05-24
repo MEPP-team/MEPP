@@ -1,3 +1,10 @@
+///////////////////////////////////////////////////////////////////////////
+// Author: Ho LEE
+// Year: 2011
+// Month: MAY
+// CNRS-Lyon, LIRIS UMR 5205
+///////////////////////////////////////////////////////////////////////////
+
 #ifndef Compression_Valence_COMPONENT_H
 #define Compression_Valence_COMPONENT_H
 
@@ -176,7 +183,7 @@ struct Color_Unit
 	///
 	/// \brief	Comparison operatior ==.
 	///	
-	/// \param	Col	The col.
+	/// \param	m_color	The col.
 	///
 	/// \return	true if the parameters are considered equivalent.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,7 +198,7 @@ struct Color_Unit
 	///
 	/// \brief	Comparison operatior !=.
 	///
-	/// \param	Col	The col.
+	/// \param	m_color	The col.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool operator !=(const Color_Unit & m_color) const
@@ -380,7 +387,7 @@ class Compression_Valence_Component :
 		void Color_Quantization(Polyhedron &pMesh);		
 
 		/**
-			\fn	void Multiple_Components_Initialization(Polyhedron & pMesh, const int & Qbit);
+			\fn	void Multiple_Components_Initialization(Polyhedron & pMesh, const int & Quantization_bit);
 			
 			\brief	Initialization to deal with a mesh composed of multiple separated components.
 			
@@ -421,8 +428,8 @@ class Compression_Valence_Component :
 							const int &Forget_value);		
 
 		/**
-			\fn	int Decimation_Conquest(Polyhedron &pMesh,const bool Normal_flipping,
-			 	const bool Use_metric,const float &Metric_thread, const bool Use_forget_metric,
+			\fn	int Decimation_Conquest(Polyhedron &pMesh,const bool Is_normal_flipping_selected,
+			 	const bool Is_use_metric_selected,const float &Metric_thread, const bool Is_use_forget_metric_selected,
 			 	const int &Forget_value, const int & Component_ID);
 			
 			\brief	Removal of a set of independent vertices.
@@ -447,8 +454,8 @@ class Compression_Valence_Component :
 								const int & Component_ID);													
 
 		/**
-			\fn	int Regulation(Polyhedron &pMesh,const bool Normal_flipping,const bool Use_metric,
-			 	const float &Metric_thread, const bool Use_forget_metric,const int &Forget_value,
+			\fn	int Regulation(Polyhedron &pMesh,const bool Is_normal_flipping_selected,const bool Is_use_metric_selected,
+			 	const float &Metric_thread, const bool Is_use_forget_metric_selected,const int &Forget_value,
 			 	const int & Component_ID);
 			
 			\brief	Removal of a set of independent vertices.
@@ -475,9 +482,14 @@ class Compression_Valence_Component :
 		// Adaptive Quantization		
 
 		/**
-		 \fn	void Adaptive_Quantization(Polyhedron &pMesh, const int & NVertices,
-		 		const bool Normal_flipping,const bool Use_metric,const float &Metric_thread,
-		 		const bool Use_forget_metric,const int &Forget_value,const int &Qbit);
+		 \fn	void Adaptive_Quantization(Polyhedron &pMesh,
+		 const int & NVertices,
+		 		const bool Is_normal_flipping_selected,
+				const bool Is_use_metric_selected,
+				const float &Metric_thread,
+		 		const bool Is_use_forget_metric_selected,
+				const int &Forget_value,
+				const int &Qbit);
 		
 		 \brief	Adaptive quantization which not only decimates a input mesh but also adapts quantization precision for all intermediate meshes.
 		
@@ -495,7 +507,7 @@ class Compression_Valence_Component :
 								   const int & NVertices, 
 								   const bool Is_normal_flipping_selected,
 								   const bool Is_use_metric_selected,
-								   const float &Metric_thread, 
+								   const float & Metric_thread, 
 								   const bool Is_use_forget_metric_selected,
 								   const int &Forget_value,
 								   const int &Qbit);
@@ -583,8 +595,7 @@ class Compression_Valence_Component :
 		 \param	Qbit						 	The quantization of geometry.
 		 \param [in,out]	Connectivity_size	Size of the connectivity.
 		 \param [in,out]	Color_size		 	Size of the color.
-		 \param [in,out]	Total_size		 	Size of the total.
-		 \param	Initial_file_size			 	Size of the initial file.
+		 \param [in,out]	Total_size		 	Size of the total.		 
 		 */
 
 		void Compression(Polyhedron &pMesh,const char* File_Name, const int &Qbit, unsigned &Connectivity_size, unsigned & Color_size, unsigned & Total_size);
@@ -644,9 +655,7 @@ class Compression_Valence_Component :
 		
 		 \brief	Initialize the Decompression by loading the base mesh into pMesh.
 				
-		 \param [in,out]	pMesh			 	The mesh.
-		 \param [in,out]	Initial_file_size	Size of the initial file.
-		 \param	File_Name					 	Filename of the compressed file.
+		 \param [in,out]	pMesh			 	The mesh.		
 		
 		 \return	Information related to the decompression (number of LoDs, size of the input file, etc).
 		 */
@@ -673,11 +682,12 @@ class Compression_Valence_Component :
 		void Write_Info(Polyhedron &pMesh);
 
 		/**
-		 \fn	void Decompression_From_Sequence(Polyhedron &pMesh);
+		 \fn	void Decompression_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
 		
 		 \brief	Decompression from sequence (Creation of mesh sequence).
 		
 		 \param [in,out]	pMesh	The mesh.		 
+		 \param [in,out]	New_mesh	The new copied mesh.
 		 */
 		void Decompression_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
 
@@ -708,7 +718,8 @@ class Compression_Valence_Component :
 		
 		 \brief	To obtain a user-desired LoD from file (No creation of mesh sequence).
 		
-		 \param [in,out]	pMesh	The mesh.		 
+		 \param [in,out]	pMesh	The mesh.
+		 \param             WL      The wanted level.
 		 */
 		void Decompression_Specific_Level_From_File(Polyhedron &pMesh, const int & WL);
 
@@ -733,21 +744,23 @@ class Compression_Valence_Component :
 
 
 		/**
-		 \fn	void JCW_Decompression_From_Sequence(Polyhedron &pMesh);
+		 \fn	void JCW_Decompression_From_Sequence(Polyhedron &pMesh,  Polyhedron &New_mesh);
 		
 		 \brief	Decompression from sequence for JCW (Creation of mesh sequence).
 		
 		 \param [in,out]	pMesh	The mesh.		 
+		 \param [in,out]	New_mesh	The new copied mesh.
 		 */
 		void JCW_Decompression_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
 
 
 		/**
-		 \fn	void JCW_Decompression_Without_Extraction_From_Sequence(Polyhedron &pMesh);
+		 \fn	void JCW_Decompression_Without_Extraction_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
 		
 		 \brief	Decompression from sequence without watermark extraction (Creation of mesh sequence).
 		
 		 \param [in,out]	pMesh	The mesh.		 
+		 \param [in,out]	New_mesh	The new copied mesh.
 		 */
 
 		void JCW_Decompression_Without_Extraction_From_Sequence(Polyhedron &pMesh, Polyhedron &New_mesh);
@@ -774,21 +787,7 @@ class Compression_Valence_Component :
 		 \return Index of the current LoD.
 		 */
 
-		int    Decompress_Each_Step(Polyhedron &pMesh, const char* File_Name);
-
-		/**
-		 \fn	int Decompress_To_Level(Polyhedron &pMesh,const int Wanted_level);
-		
-		 \brief	Decompress to level.
-		
-		
-		 \param [in,out]	pMesh	The mesh.
-		 \param	Wanted_level	 	The wanted level.
-		
-		 \return Index of the current LoD.
-		 */
-
-		//int    Decompress_To_Level(Polyhedron &pMesh,const int Wanted_level);
+		int    Decompress_Each_Step(Polyhedron &pMesh, const char* File_Name);		
 
 		/**
 		 \fn	void Un_Decimation_Conquest(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
@@ -803,7 +802,7 @@ class Compression_Valence_Component :
 		void   Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & Decoder, const int & Component_ID);		
 
 		/**
-		 \fn	void Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & dec, const int & id);
+		 \fn	void Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
 		
 		 \brief	Decoding of the regulation conquest.
 				
@@ -830,7 +829,7 @@ class Compression_Valence_Component :
 		double Calculate_Area(Polyhedron & pMesh);
 
 		/**
-		 \fn	bool Error_Projected_Surface(Polyhedron & pMesh, const Halfedge_handle & _h, const int & _Component_ID, const double & Mean_color, const double & Mean_area);
+		 \fn	bool Error_Projected_Surface(Polyhedron & pMesh, const Halfedge_handle & h, const int & Component_ID, const double & Mean_color, const double & Mean_area);
 		
 		 \brief	Calculate an error cause by a vertex removal and decide in order not to remove an important vertex.
 				
@@ -871,7 +870,7 @@ class Compression_Valence_Component :
 		inline Point_Int Change_Real_Int(const Point3d &pt, const int & Component_ID);		
 
 		/**
-		 \fn	Point3d Change_Int_Real(const Point_Int &vec, const int & Component_ID);
+		 \fn	Point3d Change_Int_Real(const Point_Int &pt, const int & Component_ID);
 		
 		 \brief	Change from int to real point(related to quantization bit)
 		
@@ -894,19 +893,7 @@ class Compression_Valence_Component :
 		 \param [in,out]	New_mesh	 	The new mesh.
 		 */
 
-		void Attibute_Seed_Gate_Flag(Polyhedron &Original_mesh, Polyhedron &New_mesh);			
-		
-		/**
-		 \fn	int Coding_Cost_Each_Layer_Color_Clustering(Polyhedron &pMesh);
-		
-		 \brief	Color coding cost - prediction method
-
-		 \param [in,out]	pMesh	The mesh.
-		
-		 \return	.
-		 */
-		//int Coding_Cost_Each_Layer_Color_Clustering(Polyhedron &pMesh);	
-		
+		void Attibute_Seed_Gate_Flag(Polyhedron &Original_mesh, Polyhedron &New_mesh);					
 	 
 		/**
 		 \fn	unsigned Calculate_Current_File_Size(void)
@@ -1155,7 +1142,7 @@ class Compression_Valence_Component :
 		void JCW_Un_Decimation_Conquest(Polyhedron &pMesh,Arithmetic_Codec & Decoder, const int & Component_ID);		
 
 		/**
-		 \fn	void JCW_Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & dec, const int & id);
+		 \fn	void JCW_Un_Regulation(Polyhedron &pMesh, Arithmetic_Codec & Decoder, const int & Component_ID);
 		
 		 \brief	JCW unregulation.
 		
@@ -1359,16 +1346,7 @@ class Compression_Valence_Component :
          */
 
         void JCW_Region_Mass_Center_Insert_Watermark(Polyhedron & pMesh, list<Point3d> & FP_Geometry, list<int> & FP_Region_Number, list<Point_Int> & SP_Watermarked_Position, list<Point3d> & SP_Moved_Position, list<Point3d> & SP_Original_Position, list<vector<int> > & JCW_ERROR);
-
-		/**
-		 \fn	void JCW_Choose_Valid_Vertices(Polyhedron & pMesh);
-		
-		 \brief	JCW choose valid vertices.
 	
-		 \param [in,out]	pMesh	The mesh.
-		 */
-
-		//void JCW_Choose_Valid_Vertices(Polyhedron & pMesh);
 
 		/**
 		 \fn	vector<int> JCW_Region_Mass_Center_Extract_Watermark(Polyhedron & pMesh);
@@ -1448,7 +1426,7 @@ class Compression_Valence_Component :
 		 \param	File_Name		 	Filename of the file.
 		 \param	Noise_mode		 	The noise mode.
 		
-		 \return	.
+		 \return The current level.
 		 */
 
 		int  JCW_Decompress_One_Level(Polyhedron &pMesh, const char* File_Name, const int & Noise_mode);
@@ -1461,24 +1439,24 @@ class Compression_Valence_Component :
 		 \param [in,out]	pMesh	The mesh.
 		 \param	File_Name		 	Filename of the file.
 		
-		 \return	.
+		 \return	The current level.
 		 */
 
 		int  JCW_Decompress_One_Level_Without_Extraction(Polyhedron &pMesh, const char* File_Name);
 		
 
 		/**
-		 \fn	int JCW_Divide_Big_Regions(Polyhedron &pMesh);
+		 \fn	int JCW_Divide_Big_Regions(Polyhedron &pMesh,  const int & Thres_divide_regions);
 		
 		 \brief	Jcw divide big regions.
 		
 		
 		 \param [in,out]	pMesh	The mesh.
-		
+		 \param Thres_divide_regions The threshold.
 		 \return Number of divided regions.
 		 */
 
-		int  JCW_Divide_Big_Regions(Polyhedron &pMesh, const int & _Thres_divide_regions);
+		int  JCW_Divide_Big_Regions(Polyhedron &pMesh, const int & Thres_divide_regions);
 
 		/**
 		 \fn	void JCW_Colorify_Regions(Polyhedron & pMesh);
@@ -1701,10 +1679,12 @@ class Compression_Valence_Component :
 /*! \mainpage component_Compression_Valence Documentation
  *
  * \section auth Authors
- * H. Lee, C. Dikici, G. Lavoué and F. Dupont \n
- * M2Disco Team, LIRIS, CNRS, Université Lyon 1/INSA-Lyon, France. \n
+ * H. LEE, C. DIKICI, G. LAVOUE and F. DUPONT \n
+ * M2DisCo Team, LIRIS, CNRS, Universite Lyon 1/INSA-Lyon, France. \n
  * \n
- * Please contact Ho Lee (hosmail@gmail.com) in case you have any question, comment or a bug to report.
+ * Please contact the authors \n H. LEE (hosmail@gmail.com), C. DIKICI (cagataydikici@yahoo.com),
+ * G. LAVOUE (glavoue@liris.cnrs.fr) and F. DUPONT (fdupont@liris.cnrs.fr) \n
+ * in case you have any question, comment or a bug to report.
  * \n
  * \n
  *
@@ -1715,15 +1695,15 @@ class Compression_Valence_Component :
  * \n 
  * 
  * \subsection compression_paper Progressive compression of colored meshes
- * H. Lee, G. Lavoué, F. Dupont, \n
+ * H. LEE, G. LAVOUE, F. DUPONT, \n
  * Rate-distortion optimization for progressive compression of 3D mesh with color attributes, \n
- * The Visual Computer, 2011, (accepted for publication).
+ * The Visual Computer, 2011.
  * \n
  * 
  * \subsection jcw_paper Joint watermarking and progressive compression of 3D meshes
- * H. Lee, C. Dikici, G. Lavoué, F. Dupont, \n
+ * H. LEE, C. DIKICI, G. LAVOUE, F. DUPONT, \n
  * Joint reversible watermarking and progressive compression of 3D meshes, \n
- * The Visual Computer, 2011, (accepted for publication).
+ * The Visual Computer 27(6-8):781-792, 2011.
  * \n 
  * \n 
  * 

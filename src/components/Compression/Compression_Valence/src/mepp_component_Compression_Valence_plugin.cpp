@@ -1,3 +1,10 @@
+///////////////////////////////////////////////////////////////////////////
+// Author: Ho LEE
+// Year: 2011
+// Month: MAY
+// CNRS-Lyon, LIRIS UMR 5205
+///////////////////////////////////////////////////////////////////////////
+
 #include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
@@ -44,8 +51,8 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 			{				
 				QMessageBox::information(mw, APPLICATION, tr("Compression not possible, the mesh owns non-triangular facets."));
 				return;
-			}			
-			
+			}				
+
 			// read parameters
 			SettingsDialogComp dial;
 			if (dial.exec() == QDialog::Accepted)

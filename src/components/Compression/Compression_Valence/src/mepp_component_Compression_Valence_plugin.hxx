@@ -317,7 +317,7 @@ class mepp_component_Compression_Valence_plugin :
 		void OnJCW();
 
 		/**
-		 \fn	void OnJCWdecompres();
+		 \fn	void OnJCWdecompress();
 		
 		 \brief	Executes the JCW decompres action.
 
