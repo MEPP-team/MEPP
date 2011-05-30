@@ -4,17 +4,26 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-(A) s'inscrire sur la forge du laboratoire: https://gforge.liris.cnrs.fr/account/register.php
 
-(B) demander à rejoindre le projet Mepp: https://gforge.liris.cnrs.fr/project/request.php?group_id=39
+Si vous êtes membres permanents ou temporaires (doctorants, stagiaires, ...) du LIRIS :
+---------------------------------------------------------------------------------------
+(A) inscrivez vous sur la forge du laboratoire: https://gforge.liris.cnrs.fr/account/register.php
+(B) demandez à rejoindre le projet Mepp: https://gforge.liris.cnrs.fr/project/request.php?group_id=39
+(C) abonnez-vous aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
+puis
+(D) utilisez SVN pour récupérer MEPP
 
-(C) s'abonner aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
 
-(D) utiliser SVN:
+Si vous êtes un utilisateur anonyme :
+-------------------------------------
+(A) utilisez SVN pour récupérer MEPP
 
 
-Sous Windows :
---------------
+---
+
+
+SVN sous Windows :
+------------------
 
 1) installation et configuration de TortoiseSVN (Sub)Version Control:
 
@@ -29,14 +38,14 @@ Sous Windows :
 - créer un dossier sur votre système qui hébergera votre version de MEPP (ex. : MEPP_SVN) : c’est dans ce dossier que nous allons procéder au "checkout" du projet
 - faire un "bouton-droit" sur le dossier créé ci-dessus puis choisir "SVN Checkout" dans le menu contextuel
 - dans la fenêtre qui s’ouvre, renseigner le champ "URL of repository" par l’url du projet MEPP sur la forge : https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp
-en prenant bien soin de renseigner "votre_username_gforge" puis valider par "Ok"
+(en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes) puis valider par "Ok"
 - à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "Oui" pour stocker la clef dans le cache
 - une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors
 
 
-Sous Linux :
-------------
+SVN sous Linux :
+----------------
 
 1) installation et configuration de SVN (Sub)Version Control:
 
@@ -45,14 +54,14 @@ Sous Linux :
 2) récupération du projet MEPP:
 
 - créer un dossier sur votre système qui hébergera votre version de MEPP (ex. : MEPP_SVN) : c’est dans ce dossier que nous allons procéder au "checkout" du projet
-- utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" en prenant bien soin de renseigner "votre_username_gforge"
+- utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou "svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp" (pour les utilisateurs anonymes)
 - à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "yes" pour stocker la clef dans le cache
 - une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors
 
 
-Sous Mac OS X :
----------------
+SVN sous Mac OS X :
+-------------------
 
 1) installation et configuration de SVN (Sub)Version Control:
 
@@ -64,7 +73,7 @@ Sous Mac OS X :
 2) récupération du projet MEPP:
 
 - créer un dossier sur votre système qui hébergera votre version de MEPP (ex. : MEPP_SVN) : c’est dans ce dossier que nous allons procéder au "checkout" du projet
-- utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" en prenant bien soin de renseigner "votre_username_gforge"
+- utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou "svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp" (pour les utilisateurs anonymes)
 - à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "yes" pour stocker la clef dans le cache
 - une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors

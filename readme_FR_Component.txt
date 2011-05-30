@@ -7,7 +7,6 @@
 A) Développer un nouveau composant:
 -----------------------------------
 
-
 1) le « noyau » de MEPP ne doit en principe pas être modifié
 
 2) votre composant doit avoir un nom en anglais (validé par Florent) et doit être rattaché à une catégorie ci-dessous:
@@ -99,9 +98,19 @@ A partir de là, le script CMake s'occupe de tout, il n'y a pas à toucher une s
 -----
 
 
-B) Utiliser le code d'un composant X au sein de votre composant (sans la gestion des boîtes de dialogue du composant X pour le moment):
----------------------------------------------------------------------------------------------------------------------------------------
+B) Commenter votre nouveau composant avec Doxygen:
+--------------------------------------------------
 
+Cf. mini-tutoriel pour Doxygen: http://franckh.developpez.com/tutoriels/outils/doxygen/ (pas exhaustif mais suffisant)
+
+
+
+-----
+
+
+
+C) Utiliser le code d'un composant X au sein de votre composant (sans la gestion des boîtes de dialogue du composant X pour le moment):
+---------------------------------------------------------------------------------------------------------------------------------------
 
 Note: dans cette exemple, on utilise le composant Curvature dans le composant CGAL_Example
 

@@ -28,7 +28,7 @@ Note: si vous n'installez pas ce patch en dernier, tous les .exe 64 bits compil�
 
 2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_v01.rar (646 Mo)
-et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev)
+et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev - Attention, ne pas utiliser un chemin 'exotique' du type "Documents and Settings\$USER$\My ...\My ...")
 
 2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_ffmpeg_addon.rar (8 Mo)

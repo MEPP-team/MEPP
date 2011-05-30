@@ -16,7 +16,7 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/VS2008ExpressWithSP1
 
 2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/MEPP/mepp_prebuilt_binaries_vs2008_x86_v02.rar (497 Mo)
-et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev32)
+et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev32 - Attention, ne pas utiliser un chemin 'exotique' du type "Documents and Settings\$USER$\My ...\My ...")
 
 2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2008/MEPP/mepp_prebuilt_binaries_vs2008_x86_ffmpeg_addon.rar (9 Mo)

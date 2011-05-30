@@ -19,7 +19,7 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/VS2010ExpressFRA.iso
 
 2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x86_v01.rar (584 Mo)
-et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev)
+et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev - Attention, ne pas utiliser un chemin 'exotique' du type "Documents and Settings\$USER$\My ...\My ...")
 
 2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x86_ffmpeg_addon.rar (9 Mo)
