@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.45.1 - 13/05/2011 - (trunk version)"
+#define MEPP_VERSION "v0.45.2 - 06/06/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -463,6 +463,7 @@ void mainwindow::writeSettings()
 
 void mainwindow::readSettings()
 {
+	// HKEY_CURRENT_USER\Software\LIRIS
 	QSettings settings(ORGANIZATION, APPLICATION);
 
 	treeLocation = settings.value("treeLocation", QDir::currentPath()).toString();

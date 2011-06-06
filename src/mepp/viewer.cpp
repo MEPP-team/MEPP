@@ -79,30 +79,54 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	m_parent = parent;
 	lplugin = lp;
 
+	// settings
+	QSettings settings("./mepp.ini", QSettings::IniFormat);
+
 	// rendering options
-	m_Lighting = true;
-	m_Culling = false;
-	m_FirstView = true;
-	m_UseNormals = true;
-	m_Antialiasing = false;
-	m_SmoothShading = true;
-	m_UseVertexColor = false;
-	m_UseFaceColor = false;
-	m_PolygonMode = GL_FILL;
-	m_SuperimposeEdges = true;
-	m_DrawVoronoiEdges = false;
-	m_DrawBoundingBox = false;
-	m_SuperimposeVertices = false;
-	m_SuperimposeVerticesBig = false;
-	m_ThicknessControlEdges = 3.0f;
-	m_DrawBoundingBoxWhenMoving = false;
+	settings.beginGroup("Rendering");
+		m_Lighting = settings.value("Lighting", true).toBool();
+		m_Culling = settings.value("Culling", false).toBool();
+		//m_FirstView = true;
+		m_UseNormals = settings.value("ShowNormals", true).toBool();
+		m_Antialiasing = settings.value("Antialiasing", false).toBool();
+		m_SmoothShading = settings.value("SmoothShading", true).toBool();
+		m_UseVertexColor = settings.value("VertexColorMode", false).toBool();
+		m_UseFaceColor = settings.value("FaceColorMode", false).toBool();
+		m_PolygonMode = GL_FILL;
+		m_SuperimposeEdges = settings.value("SuperimposeEdges", true).toBool();
+		m_DrawVoronoiEdges = false;
+		m_DrawBoundingBox = settings.value("BoundingBox", false).toBool();
+		m_SuperimposeVertices = settings.value("SuperimposeVertices", false).toBool();
+		m_SuperimposeVerticesBig = settings.value("SuperimposeVerticesBigger", false).toBool();
+		//m_ThicknessControlEdges = 3.0f;
+		m_DrawBoundingBoxWhenMoving = settings.value("BoundingBoxWhenMoving", false).toBool();
+
+		setFPSIsDisplayed(settings.value("ShowFps", false).toBool());
+		setAxisIsDrawn(settings.value("ShowAxis", false).toBool());
+		setGridIsDrawn(settings.value("ShowGrid", false).toBool());
+	settings.endGroup();
 
 	// other options
-	m_PointSize = 3.0f;
-	m_BackColor[0] = m_BackColor[1] = m_BackColor[2] = 0.4f;
-	m_MeshColor[0] = m_MeshColor[1] = m_MeshColor[2] = 1.0f;
-	m_EdgeColor[0] = m_EdgeColor[1] = m_EdgeColor[2] = 0.0f;
-	m_VertexColor[0] = m_VertexColor[1] = m_VertexColor[2] = 0.0f;
+	//m_PointSize = 3.0f;
+	settings.beginGroup("Colors");
+		m_BackColor[0] = settings.value("BackColor/Red", 0.4).toFloat();
+		m_BackColor[1] = settings.value("BackColor/Green", 0.4).toFloat();
+		m_BackColor[2] = settings.value("BackColor/Blue", 0.4).toFloat();
+
+		m_MeshColor[0] = settings.value("FaceColor/Red", 1.0).toFloat();
+		m_MeshColor[1] = settings.value("FaceColor/Green", 1.0).toFloat();
+		m_MeshColor[2] = settings.value("FaceColor/Blue", 1.0).toFloat();
+
+		m_EdgeColor[0] = settings.value("EdgeColor/Red", 0.0).toFloat();
+		m_EdgeColor[1] = settings.value("EdgeColor/Green", 0.0).toFloat();
+		m_EdgeColor[2] = settings.value("EdgeColor/Blue", 0.0).toFloat();
+
+		m_VertexColor[0] = settings.value("VertexColor/Red", 0.0).toFloat();
+		m_VertexColor[1] = settings.value("VertexColor/Green", 0.0).toFloat();
+		m_VertexColor[2] = settings.value("VertexColor/Blue", 0.0).toFloat();
+
+		m_last_material = settings.value("Material", "Light blue").toString().toStdString().c_str();
+	settings.endGroup();
 
 	// mouse
 	m_LeftButtonDown = false;
@@ -110,20 +134,82 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	m_Moving = false;
 	m_HasMoved = false;
 
-	mCouplingTranslations = mCouplingRotations = mCouplingZooms = false;
+	mCouplingTranslations = mCouplingZooms = false;
+	settings.beginGroup("Space");
+		mCouplingRotations = settings.value("CouplingRotations", false).toBool();
+	settings.endGroup();
 	
 	show_normals = false;
-	VBO_mode = true;
+	settings.beginGroup("Rendering");
+		VBO_mode = settings.value("DisplayListsMode", true).toBool();
+	settings.endGroup();
 	save_animation = false;
 
 	timerDynamic = new QTimer(this);
     connect(timerDynamic, SIGNAL(timeout()), this, SLOT(shotDynamic()));
-	m_fps = 24;	//12;
+	settings.beginGroup("Time");
+		m_fps = settings.value("Fps", 24).toInt();	//12;
+	settings.endGroup();
 	m_reverse = m_loop = false;
 
 	if (VBO_mode) m_DrawBoundingBoxWhenMoving = false;
 	createLists = true;
 	glId = 0;
+
+	// write settings
+	settings.beginGroup("Rendering");
+		//settings.setValue("RenderMode", m_PolygonMode);
+
+		settings.setValue("SuperimposeVertices", m_SuperimposeVertices);
+		settings.setValue("SuperimposeVerticesBigger", m_SuperimposeVerticesBig);
+		settings.setValue("SuperimposeEdges", m_SuperimposeEdges);
+
+		settings.setValue("VertexColorMode", m_UseVertexColor);
+		settings.setValue("FaceColorMode", m_UseFaceColor);
+
+		settings.setValue("Lighting", m_Lighting);
+		settings.setValue("SmoothShading", m_SmoothShading);
+		settings.setValue("Antialiasing", m_Antialiasing);
+		settings.setValue("Culling", m_Culling);
+
+		settings.setValue("ShowFps", FPSIsDisplayed());
+		settings.setValue("ShowAxis", axisIsDrawn());
+		settings.setValue("ShowGrid", gridIsDrawn());
+
+		settings.setValue("ShowNormals", show_normals);
+		settings.setValue("BoundingBox", m_DrawBoundingBox);
+		settings.setValue("BoundingBoxWhenMoving", m_DrawBoundingBoxWhenMoving);
+
+		settings.setValue("DisplayListsMode", VBO_mode);
+	settings.endGroup();
+
+	settings.beginGroup("Colors");
+		settings.setValue("BackColor/Red", QString::number(m_BackColor[0]));
+		settings.setValue("BackColor/Green", QString::number(m_BackColor[1]));
+		settings.setValue("BackColor/Blue", QString::number(m_BackColor[2]));
+
+		settings.setValue("VertexColor/Red", QString::number(m_VertexColor[0]));
+		settings.setValue("VertexColor/Green", QString::number(m_VertexColor[1]));
+		settings.setValue("VertexColor/Blue", QString::number(m_VertexColor[2]));
+
+		settings.setValue("EdgeColor/Red", QString::number(m_EdgeColor[0]));
+		settings.setValue("EdgeColor/Green", QString::number(m_EdgeColor[1]));
+		settings.setValue("EdgeColor/Blue", QString::number(m_EdgeColor[2]));
+
+		settings.setValue("FaceColor/Red", QString::number(m_MeshColor[0]));
+		settings.setValue("FaceColor/Green", QString::number(m_MeshColor[1]));
+		settings.setValue("FaceColor/Blue", QString::number(m_MeshColor[2]));
+
+		settings.setValue("Material", QString(m_last_material.c_str()));
+	settings.endGroup();
+
+	settings.beginGroup("Space");
+		settings.setValue("CouplingRotations", mCouplingRotations);
+	settings.endGroup();
+
+	settings.beginGroup("Time");
+		settings.setValue("Fps", QString::number(m_fps));
+	settings.endGroup();
 }
 
 Viewer::~Viewer()
@@ -525,7 +611,7 @@ void Viewer::change_material(string mat_name)
 		// Shininess
 		shininess[0] = 27.8974f;
 	}
-	else if (mat_name == " None ")
+	else // None // if (mat_name == "None")
 	{
         // Ambient
         ambient[0] = 0.3f;
@@ -863,10 +949,10 @@ void Viewer::init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	setBackgroundColor(QColor (220, 220, 220));
+	//setBackgroundColor(QColor (220, 220, 220));
 
 	// back material
-	change_material("Light blue");
+	change_material(m_last_material);
 
 	if (!VBO_mode)
 		setMouseTracking(true);	// Absolutely needed for MouseGrabber

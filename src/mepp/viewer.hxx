@@ -952,13 +952,13 @@ class Viewer : public QGLViewer
 		bool m_UseVertexColor;
 		bool m_UseFaceColor;
 		bool m_UseNormals;
-		bool m_FirstView;
+		//bool m_FirstView;
 		bool m_SuperimposeEdges;
 		bool m_SuperimposeVertices;
 		bool m_SuperimposeVerticesBig;
 		bool m_Antialiasing;
-		float m_ThicknessControlEdges;
-		float m_PointSize;
+		//float m_ThicknessControlEdges;
+		//float m_PointSize;
 		bool m_DrawBoundingBox;
 		bool m_DrawBoundingBoxWhenMoving;
 		bool m_DrawVoronoiEdges;
