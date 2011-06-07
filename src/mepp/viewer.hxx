@@ -767,6 +767,22 @@ class Viewer : public QGLViewer
 				createLists = false;*/
 		}
 
+		/*!
+		 * \fn double getYStep()
+		 * \brief get the 'y step' used for Space Mode (between each mesh).
+		 *
+		 * \return the 'y step'.
+		 */
+		double getYStep() { return mYStep; }
+
+		/*!
+		 * \fn bool getForceFFMPEG()
+		 * \brief return true if we want always FFMPEG if available.
+		 *
+		 * \return true of false.
+		 */
+		bool getForceFFMPEG() { return mForceFFMPEGifAvailable; }
+
 	protected:
 		/*!
 		 * \fn init()
@@ -1010,9 +1026,12 @@ class Viewer : public QGLViewer
 		bool mCouplingRotations;
 		bool mCouplingZooms;
 
+		double mYStep;
+
 		bool show_normals;
 		bool VBO_mode;
 		bool save_animation;
+		bool mForceFFMPEGifAvailable;
 
 		//
 

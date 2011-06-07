@@ -99,13 +99,13 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 		setVisible(true);
 
 		// if mode Space
-		todoIfModeSpace(viewer);
+		todoIfModeSpace(viewer, viewer->getYStep());
 	}
 
 	return res;
 }
 
-void Scene::todoIfModeSpace(Viewer* viewer)
+void Scene::todoIfModeSpace(Viewer* viewer, double ystep)
 {
 	if (m_loadType==Space && (m_polyhedrons.size() > (unsigned)viewer->get_nb_frames()))
 	{
@@ -122,9 +122,9 @@ void Scene::todoIfModeSpace(Viewer* viewer)
 			int m = i%2;
 
 			if (m)
-				viewer->frame(i)->setPosition(qglviewer::Vec(0.f, 1.1 * ceil(i/2.), 0.f));
+				viewer->frame(i)->setPosition(qglviewer::Vec(0.f, ystep * ceil(i/2.), 0.f));
 			else
-				viewer->frame(i)->setPosition(qglviewer::Vec(0.f, -1.1 * ceil(i/2.), 0.f));
+				viewer->frame(i)->setPosition(qglviewer::Vec(0.f, -ystep * ceil(i/2.), 0.f));
 		}
 		while (m_polyhedrons.size() > (unsigned)viewer->get_nb_frames());
 	}

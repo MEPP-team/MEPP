@@ -137,6 +137,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingZooms = false;
 	settings.beginGroup("Space");
 		mCouplingRotations = settings.value("CouplingRotations", false).toBool();
+		mYStep = settings.value("YStepBetweenEachMesh", 1.1).toFloat();
 	settings.endGroup();
 	
 	show_normals = false;
@@ -151,6 +152,10 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 		m_fps = settings.value("Fps", 24).toInt();	//12;
 	settings.endGroup();
 	m_reverse = m_loop = false;
+
+	settings.beginGroup("Export");
+		mForceFFMPEGifAvailable = settings.value("ForceFFMPEGifAvailable", true).toBool();
+	settings.endGroup();
 
 	if (VBO_mode) m_DrawBoundingBoxWhenMoving = false;
 	createLists = true;
@@ -205,10 +210,15 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 
 	settings.beginGroup("Space");
 		settings.setValue("CouplingRotations", mCouplingRotations);
+		settings.setValue("YStepBetweenEachMesh", QString::number(mYStep));
 	settings.endGroup();
 
 	settings.beginGroup("Time");
 		settings.setValue("Fps", QString::number(m_fps));
+	settings.endGroup();
+
+	settings.beginGroup("Export");
+		settings.setValue("ForceFFMPEGifAvailable", mForceFFMPEGifAvailable);
 	settings.endGroup();
 }
 

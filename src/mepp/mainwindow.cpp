@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.45.2 - 06/06/2011 - (trunk version)"
+#define MEPP_VERSION "v0.45.3 - 07/06/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1130,7 +1130,7 @@ void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
 		{
 			viewer->getScenePtr()->set_loadType(Space);
 			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (-> to Time)"));
-			viewer->getScenePtr()->todoIfModeSpace(viewer);
+			viewer->getScenePtr()->todoIfModeSpace(viewer, viewer->getYStep());
 
 			viewer->setManipulatedFrame(viewer->frame(viewer->getScenePtr()->get_current_polyhedron()));
 			viewer->setSelectedFrameNumber(viewer->getScenePtr()->get_current_polyhedron());
@@ -1480,18 +1480,26 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
 #ifdef WITH_FFMPEG
-		bool ok=true;
-		int bitrate=6000;	//1280x720 b=19700k
+		if (viewer->getForceFFMPEG()) // test if we want always FFMPEG if available
+		{
+			bool ok=true;
+			int bitrate=6000;	//1280x720 b=19700k
 
-		if (actionScreenshot_sequence->isChecked())
-			bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);
+			if (actionScreenshot_sequence->isChecked())
+				bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);
 
-		if (ok)
-			viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), saveAVILocation, bitrate);
+			if (ok)
+				viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), saveAVILocation, bitrate);
+			else
+				viewer->setSave_animation(false);
+
+			actionScreenshot_sequence->setChecked(viewer->getSave_animation());
+		}
 		else
-			viewer->setSave_animation(false);
-
-		actionScreenshot_sequence->setChecked(viewer->getSave_animation());
+		{
+			viewer->saveAnimation(actionScreenshot_sequence->isChecked(), savePNGLocation);
+			actionScreenshot_sequence->setChecked(viewer->getSave_animation());
+		}
 #else
 		viewer->saveAnimation(actionScreenshot_sequence->isChecked(), savePNGLocation);
 		actionScreenshot_sequence->setChecked(viewer->getSave_animation());

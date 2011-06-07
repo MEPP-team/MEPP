@@ -40,12 +40,13 @@ class Scene
 		 */
 		int add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* viewer);
 		/*!
-		 * \fn todoIfModeSpace(Viewer* viewer)
+		 * \fn todoIfModeSpace(Viewer* viewer, double ystep)
 		 * \brief Do everything we need for the space mode after a mesh loading (adding frame...).
 		 *
 		 * \param viewer the viewer.
+		 * \param ystep 'y step' between meshes.
 		 */
-		void todoIfModeSpace(Viewer* viewer);
+		void todoIfModeSpace(Viewer* viewer, double ystep);
 		/*!
 		 * \fn int save_file(QString filename, typeFuncOpenSave f, Viewer* viewer)
 		 * \brief Save polyhedron(s) from the viewer in file(s).
