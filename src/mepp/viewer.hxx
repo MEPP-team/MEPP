@@ -738,11 +738,23 @@ class Viewer : public QGLViewer
 			if (scene_ptr->get_nb_polyhedrons() > 1)
 			{
 				int i = scene_ptr->get_current_polyhedron();
+				int id = i;
 
 				scene_ptr->delete_polyhedron(i);
 				if (i!=0)
-                                        i=i-1;
+					i=i-1;
 				scene_ptr->set_current_polyhedron(i);
+
+				// for Space mode consistency
+				for (int f=id; f<get_nb_frames(); f++)
+				{
+					if ((f+1)<get_nb_frames())
+					{
+						frame(f)->setPosition(frame(f+1)->position());
+						frame(f)->setOrientation(frame(f+1)->orientation());
+					}
+				}
+				// for Space mode consistency
 
 				setDynTitle();
 				recreateListsAndUpdateGL();

@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.45.3 - 07/06/2011 - (trunk version)"
+#define MEPP_VERSION "v0.45.4 - 08/06/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1130,6 +1130,7 @@ void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
 		{
 			viewer->getScenePtr()->set_loadType(Space);
 			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (-> to Time)"));
+			viewer->setSelectedName(-1); // fix bug
 			viewer->getScenePtr()->todoIfModeSpace(viewer, viewer->getYStep());
 
 			viewer->setManipulatedFrame(viewer->frame(viewer->getScenePtr()->get_current_polyhedron()));
