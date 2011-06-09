@@ -75,6 +75,14 @@ class Viewer : public QGLViewer
 		~Viewer();
 
 		/*!
+		 * \fn void WriteIni()
+		 * \brief Write mepp.ini.
+		 *
+		 * \param force : force writing or not.
+		 */
+		void WriteIni(bool force=false);
+
+		/*!
 		 * \fn QString userFriendlyCurrentFile()
 		 * \brief Return filename (without path) of the current active polyhedron.
 		 *
@@ -728,12 +736,13 @@ class Viewer : public QGLViewer
 		 * \brief Go to last position of dynamic time sequence.
 		 */
 		void setDynLast() { scene_ptr->set_current_polyhedron(scene_ptr->get_nb_polyhedrons()-1); setDynTitle(); recreateListsAndUpdateGL(); }
+		// dynamic options
 
 		/*!
-		 * \fn setDynDelete()
-		 * \brief Delete current position of dynamic time sequence.
+		 * \fn setDelete()
+		 * \brief Delete current mesh - only in Space or Time mode.
 		 */
-		void setDynDelete()
+		void setDelete()
 		{
 			if (scene_ptr->get_nb_polyhedrons() > 1)
 			{
@@ -762,7 +771,6 @@ class Viewer : public QGLViewer
 			else
 				QMessageBox::warning(m_parent, APPLICATION, QObject::tr("Deleting last mesh not allowed."));
 		}
-		// dynamic options
 
 		/*!
 		 * \fn recreateListsAndUpdateGL()
@@ -971,6 +979,8 @@ class Viewer : public QGLViewer
 	private:
 		QWidget *m_parent;			//!< parent widget of the viewer
 		ScenePtr scene_ptr;			//!< Scene pointer associated to the viewer
+
+		bool m_AutoSaveIni;
 
 		// OpenGL
 		bool m_Lighting;

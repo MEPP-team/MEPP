@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.45.4 - 08/06/2011 - (trunk version)"
+#define MEPP_VERSION "v0.45.5 - 09/06/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -107,6 +107,8 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	mdiArea->setMainWindow(this);
 	mdiArea->setAcceptDrops(true);
+
+	lastViewerCreated = NULL;
 }
 
 mainwindow::~mainwindow()
@@ -510,6 +512,8 @@ void mainwindow::updateMenus()
 	actionSave_As->setEnabled(hasMdiChild);
     actionClose->setEnabled(hasMdiChild);
 
+	actionDelete->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() != Normal);
+
 	actionClone->setEnabled(hasMdiChild);
 
 	actionClose_Window->setEnabled(hasMdiChild);
@@ -656,8 +660,6 @@ void mainwindow::updateMenus()
 	actionDynPrevious->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time);
 	actionDynNext->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time);
 	actionDynLast->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time);
-
-	actionDynDelete->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time);
 	// dynamic options
 
 	// status bar
@@ -1082,6 +1084,19 @@ void mainwindow::on_actionClose_triggered()
 	mdiArea->closeActiveSubWindow();
 }
 
+
+void mainwindow::on_actionDelete_triggered()
+{
+	if (activeMdiChild() != 0)
+	{
+		if (((Viewer *)activeMdiChild())->getScenePtr()->get_nb_polyhedrons() > 1)
+			((Viewer *)activeMdiChild())->setSelectedName(-1); // no mesh selected and no arrow
+
+		((Viewer *)activeMdiChild())->setDelete();
+		updateMenus();
+	}
+}
+
 void mainwindow::on_actionClone_triggered()
 {
 	QMessageBox::information(this, APPLICATION, tr("Function not yet implemented."));
@@ -1130,7 +1145,7 @@ void mainwindow::on_actionChange_Viewer_Mode_Space_Time_triggered()
 		{
 			viewer->getScenePtr()->set_loadType(Space);
 			actionChange_Viewer_Mode_Space_Time->setText(tr("Change Viewer Mode (-> to Time)"));
-			viewer->setSelectedName(-1); // fix bug
+			viewer->setSelectedName(-1); // no mesh selected and no arrow
 			viewer->getScenePtr()->todoIfModeSpace(viewer, viewer->getYStep());
 
 			viewer->setManipulatedFrame(viewer->frame(viewer->getScenePtr()->get_current_polyhedron()));
@@ -1245,17 +1260,26 @@ void mainwindow::on_actionRender_Fill_triggered()
 void mainwindow::on_actionSuperimpose_Edges_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setSuperimpose_Edges(actionSuperimpose_Edges->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 void mainwindow::on_actionSuperimpose_Vertices_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setSuperimpose_Vertices(actionSuperimpose_Vertices->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 void mainwindow::on_actionSuperimpose_Vertices_big_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setSuperimpose_Vertices_big(actionSuperimpose_Vertices_big->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 
 void mainwindow::on_actionVertex_Color_triggered()
@@ -1264,6 +1288,7 @@ void mainwindow::on_actionVertex_Color_triggered()
 	{
 		((Viewer *)activeMdiChild())->setVertex_Color(actionVertex_Color->isChecked());
 		actionFace_Color->setChecked(((Viewer *)activeMdiChild())->getFace_Color());
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 void mainwindow::on_actionFace_Color_triggered()
@@ -1272,29 +1297,42 @@ void mainwindow::on_actionFace_Color_triggered()
 	{
 		((Viewer *)activeMdiChild())->setFace_Color(actionFace_Color->isChecked());
 		actionVertex_Color->setChecked(((Viewer *)activeMdiChild())->getVertex_Color());
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 
 void mainwindow::on_actionLighting_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setLighting(actionLighting->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 void mainwindow::on_actionSmooth_Shading_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setSmooth_Shading(actionSmooth_Shading->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 
 void mainwindow::on_actionAntialiasing_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setAntialiasing(actionAntialiasing->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 void mainwindow::on_actionCulling_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setCulling(actionCulling->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 // rendering options
 
@@ -1308,6 +1346,8 @@ void mainwindow::on_actionBackground_color_triggered()
 		QColor new_color = QColorDialog::getColor(viewer->getViewerBackgroundColor(), this);
 		if (new_color.isValid())
 			viewer->setViewerBackgroundColor(new_color);
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 void mainwindow::on_actionVertex_color_triggered()
@@ -1319,6 +1359,8 @@ void mainwindow::on_actionVertex_color_triggered()
 		QColor new_color = QColorDialog::getColor(viewer->getViewerVertexColor(), this);
 		if (new_color.isValid())
 			viewer->setViewerVertexColor(new_color);
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 void mainwindow::on_actionEdge_color_triggered()
@@ -1330,6 +1372,8 @@ void mainwindow::on_actionEdge_color_triggered()
 		QColor new_color = QColorDialog::getColor(viewer->getViewerEdgeColor(), this);
 		if (new_color.isValid())
 			viewer->setViewerEdgeColor(new_color);
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 void mainwindow::on_actionFace_color_triggered()
@@ -1341,6 +1385,8 @@ void mainwindow::on_actionFace_color_triggered()
 		QColor new_color = QColorDialog::getColor(viewer->getViewerFaceColor(), this);
 		if (new_color.isValid())
 			viewer->setViewerFaceColor(new_color);
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 
@@ -1363,6 +1409,8 @@ void mainwindow::on_actionMaterial_triggered()
 			viewer->change_material(item.toStdString());
 			viewer->recreateListsAndUpdateGL();
 		}
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 // color options
@@ -1371,43 +1419,61 @@ void mainwindow::on_actionMaterial_triggered()
 void mainwindow::on_actionShow_FPS_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->toggleFPSIsDisplayed();
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
+
 }
 void mainwindow::on_actionShow_axis_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->toggleAxisIsDrawn();
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 void mainwindow::on_actionShow_grid_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->toggleGridIsDrawn();
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 
 void mainwindow::on_actionShow_normals_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setShowNormals(actionShow_normals->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 
 void mainwindow::on_actionBounding_box_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setBounding_box(actionBounding_box->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 void mainwindow::on_actionBounding_box_when_moving_triggered()
 {
 	if (activeMdiChild() != 0)
 	{
-                Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+        Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
-                if (viewer->getVBO_mode())
+        if (viewer->getVBO_mode())
 		{
 			actionBounding_box_when_moving->setChecked(false);
 			QMessageBox::information(this, APPLICATION, tr("Sorry, 'bounding box when moving' is not possible with this mode."));
 		}
 
-                viewer->setBounding_box_when_moving(actionBounding_box_when_moving->isChecked());
+		viewer->setBounding_box_when_moving(actionBounding_box_when_moving->isChecked());
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 // show options
@@ -1453,13 +1519,19 @@ void mainwindow::on_actionCenter_all_objects_triggered()
 void mainwindow::on_actionCouplingRotations_triggered()
 {
 	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space)
+	{
 		((Viewer *)activeMdiChild())->setCouplingRotations(actionCouplingRotations->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 
 void mainwindow::on_actionVBO_triggered()
 {
 	if (activeMdiChild() != 0)
+	{
 		((Viewer *)activeMdiChild())->setVBO_mode(actionVBO->isChecked());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
 }
 // view options
 
@@ -1552,6 +1624,8 @@ void mainwindow::on_actionParams_triggered()
 
 		if (ok)
 			viewer->setFps(res);
+
+		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
 
@@ -1600,11 +1674,5 @@ void mainwindow::on_actionDynLast_triggered()
 {
 	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time)
 		((Viewer *)activeMdiChild())->setDynLast();
-}
-
-void mainwindow::on_actionDynDelete_triggered()
-{
-	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Time)
-		((Viewer *)activeMdiChild())->setDynDelete();
 }
 // dynamic options

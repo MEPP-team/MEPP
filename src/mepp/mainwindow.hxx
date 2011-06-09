@@ -149,6 +149,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		QString savePNGLocation, saveAVILocation;		//!< default paths to save PNG snapshots or AVI video
 
+		Viewer *lastViewerCreated;						//!< last viewer created pointeur
+
 	protected:
 		/*!
 		 * \brief Close all viewers (event).
@@ -234,6 +236,12 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \brief Close the current viewer (from menu).
 		 */
 		void on_actionClose_triggered();
+
+		/*!
+		 * \fn on_actionDelete_triggered()
+		 * \brief Delete current mesh - only in Space or Time mode (from menu).
+		 */
+		void on_actionDelete_triggered();
 
 		/*!
 		 * \fn on_actionClone_triggered
@@ -611,12 +619,6 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \brief Go to last position of dynamic time sequence (from menu).
 		 */
 		void on_actionDynLast_triggered();
-
-		/*!
-		 * \fn on_actionDynDelete_triggered()
-		 * \brief Delete current position of dynamic time sequence (from menu).
-		 */
-		void on_actionDynDelete_triggered();
 		// dynamic options
 
 	private:

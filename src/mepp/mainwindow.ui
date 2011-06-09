@@ -164,6 +164,8 @@
    <addaction name="actionNew"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave_As"/>
+   <addaction name="separator"/>
+   <addaction name="actionDelete"/>
   </widget>
   <widget class="QToolBar" name="Toolbar_viewer">
    <property name="windowTitle">
@@ -284,8 +286,6 @@
    <addaction name="actionDynPrevious"/>
    <addaction name="actionDynNext"/>
    <addaction name="actionDynLast"/>
-   <addaction name="separator"/>
-   <addaction name="actionDynDelete"/>
   </widget>
   <action name="actionNew">
    <property name="icon">
@@ -605,13 +605,16 @@
     <string>Last</string>
    </property>
   </action>
-  <action name="actionDynDelete">
+  <action name="actionDelete">
    <property name="icon">
     <iconset resource="mepp.qrc">
      <normaloff>:/icons/Pictures/Icons/_Delete.png</normaloff>:/icons/Pictures/Icons/_Delete.png</iconset>
    </property>
    <property name="text">
-    <string>Delete</string>
+    <string>Delete current mesh (in Space or Time mode)</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete current mesh (in Space or Time mode)</string>
    </property>
   </action>
   <action name="actionCouplingRotations">

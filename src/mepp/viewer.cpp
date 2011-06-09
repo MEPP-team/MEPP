@@ -79,8 +79,11 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	m_parent = parent;
 	lplugin = lp;
 
+	((mainwindow *)getParent())->lastViewerCreated=this;
+
 	// settings
-	QSettings settings("./mepp.ini", QSettings::IniFormat);
+	QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
+	m_AutoSaveIni = settings.value("AutoSaveIni", true).toBool();
 
 	// rendering options
 	settings.beginGroup("Rendering");
@@ -90,8 +93,8 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 		m_UseNormals = settings.value("ShowNormals", true).toBool();
 		m_Antialiasing = settings.value("Antialiasing", false).toBool();
 		m_SmoothShading = settings.value("SmoothShading", true).toBool();
-		m_UseVertexColor = settings.value("VertexColorMode", false).toBool();
-		m_UseFaceColor = settings.value("FaceColorMode", false).toBool();
+		m_UseVertexColor = settings.value("VertexColorMode", false).toBool(); if (m_UseVertexColor) m_UseFaceColor = !m_UseVertexColor;
+		m_UseFaceColor = settings.value("FaceColorMode", false).toBool(); if (m_UseFaceColor) m_UseVertexColor = !m_UseFaceColor;
 		m_PolygonMode = GL_FILL;
 		m_SuperimposeEdges = settings.value("SuperimposeEdges", true).toBool();
 		m_DrawVoronoiEdges = false;
@@ -109,23 +112,23 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	// other options
 	//m_PointSize = 3.0f;
 	settings.beginGroup("Colors");
-		m_BackColor[0] = settings.value("BackColor/Red", 0.4).toFloat();
-		m_BackColor[1] = settings.value("BackColor/Green", 0.4).toFloat();
-		m_BackColor[2] = settings.value("BackColor/Blue", 0.4).toFloat();
+		m_BackColor[0] = settings.value("BackColor/Red", 0.4).toFloat(); if ((m_BackColor[0] < 0.) || (m_BackColor[0] > 1.)) m_BackColor[0]=0.4f;
+		m_BackColor[1] = settings.value("BackColor/Green", 0.4).toFloat(); if ((m_BackColor[1] < 0.) || (m_BackColor[1] > 1.)) m_BackColor[1]=0.4f;
+		m_BackColor[2] = settings.value("BackColor/Blue", 0.4).toFloat(); if ((m_BackColor[2] < 0.) || (m_BackColor[2] > 1.)) m_BackColor[2]=0.4f;
 
-		m_MeshColor[0] = settings.value("FaceColor/Red", 1.0).toFloat();
-		m_MeshColor[1] = settings.value("FaceColor/Green", 1.0).toFloat();
-		m_MeshColor[2] = settings.value("FaceColor/Blue", 1.0).toFloat();
+		m_MeshColor[0] = settings.value("FaceColor/Red", 1.0).toFloat(); if ((m_MeshColor[0] < 0.) || (m_MeshColor[0] > 1.)) m_MeshColor[0]=1.0f;
+		m_MeshColor[1] = settings.value("FaceColor/Green", 1.0).toFloat(); if ((m_MeshColor[1] < 0.) || (m_MeshColor[1] > 1.)) m_MeshColor[1]=1.0f;
+		m_MeshColor[2] = settings.value("FaceColor/Blue", 1.0).toFloat(); if ((m_MeshColor[2] < 0.) || (m_MeshColor[2] > 1.)) m_MeshColor[2]=1.0f;
 
-		m_EdgeColor[0] = settings.value("EdgeColor/Red", 0.0).toFloat();
-		m_EdgeColor[1] = settings.value("EdgeColor/Green", 0.0).toFloat();
-		m_EdgeColor[2] = settings.value("EdgeColor/Blue", 0.0).toFloat();
+		m_EdgeColor[0] = settings.value("EdgeColor/Red", 0.0).toFloat(); if ((m_EdgeColor[0] < 0.) || (m_EdgeColor[0] > 1.)) m_EdgeColor[0]=0.0f;
+		m_EdgeColor[1] = settings.value("EdgeColor/Green", 0.0).toFloat(); if ((m_EdgeColor[1] < 0.) || (m_EdgeColor[1] > 1.)) m_EdgeColor[1]=0.0f;
+		m_EdgeColor[2] = settings.value("EdgeColor/Blue", 0.0).toFloat(); if ((m_EdgeColor[2] < 0.) || (m_EdgeColor[2] > 1.)) m_EdgeColor[2]=0.0f;
 
-		m_VertexColor[0] = settings.value("VertexColor/Red", 0.0).toFloat();
-		m_VertexColor[1] = settings.value("VertexColor/Green", 0.0).toFloat();
-		m_VertexColor[2] = settings.value("VertexColor/Blue", 0.0).toFloat();
+		m_VertexColor[0] = settings.value("VertexColor/Red", 0.0).toFloat(); if ((m_VertexColor[0] < 0.) || (m_VertexColor[0] > 1.)) m_VertexColor[0]=0.0f;
+		m_VertexColor[1] = settings.value("VertexColor/Green", 0.0).toFloat(); if ((m_VertexColor[1] < 0.) || (m_VertexColor[1] > 1.)) m_VertexColor[1]=0.0f;
+		m_VertexColor[2] = settings.value("VertexColor/Blue", 0.0).toFloat(); if ((m_VertexColor[2] < 0.) || (m_VertexColor[2] > 1.)) m_VertexColor[2]=0.0f;
 
-		m_last_material = settings.value("Material", "Light blue").toString().toStdString().c_str();
+		m_last_material = settings.value("Material", "Light blue").toString().toStdString().c_str(); // if bad string Material = None
 	settings.endGroup();
 
 	// mouse
@@ -137,7 +140,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingZooms = false;
 	settings.beginGroup("Space");
 		mCouplingRotations = settings.value("CouplingRotations", false).toBool();
-		mYStep = settings.value("YStepBetweenEachMesh", 1.1).toFloat();
+		mYStep = settings.value("YStepBetweenEachMesh", 1.1).toFloat(); if (mYStep < 0.) mYStep=1.1;
 	settings.endGroup();
 	
 	show_normals = false;
@@ -149,7 +152,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	timerDynamic = new QTimer(this);
     connect(timerDynamic, SIGNAL(timeout()), this, SLOT(shotDynamic()));
 	settings.beginGroup("Time");
-		m_fps = settings.value("Fps", 24).toInt();	//12;
+		m_fps = settings.value("Fps", 24).toInt(); if (m_fps < 1) mYStep=24;
 	settings.endGroup();
 	m_reverse = m_loop = false;
 
@@ -162,6 +165,42 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	glId = 0;
 
 	// write settings
+	WriteIni(true);
+}
+
+Viewer::~Viewer()
+{
+	// VBO
+	/*if (MeshBuffers[0]!=0 && MeshBuffers[1]!=0)
+		glDeleteBuffers(2, MeshBuffers);*/
+	// VBO
+
+	// todo: commented because there is a problem when we close a child and that there is another child in rotation
+	/*if (glId)
+		glDeleteLists(glId, 1);
+
+	for (unsigned int i=0; i<frame_.size(); i++)
+		glDeleteLists(glList(i), 1);*/
+
+	frame_.clear();
+
+	delete timerDynamic;
+}
+
+void Viewer::WriteIni(bool force)
+{
+	if (force==false)
+	{
+		if (((mainwindow *)getParent())->lastViewerCreated != this)
+			return;
+		if (m_AutoSaveIni==false)
+			return;
+	}
+
+	// settings
+	QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
+	settings.setValue("AutoSaveIni", m_AutoSaveIni);
+
 	settings.beginGroup("Rendering");
 		//settings.setValue("RenderMode", m_PolygonMode);
 
@@ -220,25 +259,6 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	settings.beginGroup("Export");
 		settings.setValue("ForceFFMPEGifAvailable", mForceFFMPEGifAvailable);
 	settings.endGroup();
-}
-
-Viewer::~Viewer()
-{
-	// VBO
-	/*if (MeshBuffers[0]!=0 && MeshBuffers[1]!=0)
-		glDeleteBuffers(2, MeshBuffers);*/
-	// VBO
-
-	// todo: commented because there is a problem when we close a child and that there is another child in rotation
-	/*if (glId)
-		glDeleteLists(glId, 1);
-
-	for (unsigned int i=0; i<frame_.size(); i++)
-		glDeleteLists(glList(i), 1);*/
-
-	frame_.clear();
-
-	delete timerDynamic;
 }
 
 void Viewer::closeEvent(QCloseEvent *event)
@@ -1404,6 +1424,7 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 	menu.addAction(mw->actionOpen_and_Add_space);
 	menu.addAction(mw->actionOpen_and_Add_time);
 	menu.addAction(mw->actionSave_As);
+	menu.addAction(mw->actionDelete);
 	menu.addSeparator();
 
 	menu.addAction(mw->actionChange_Viewer_Mode_Space_Time);
@@ -1467,8 +1488,6 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 		menu_dynamic.addAction(mw->actionDynPrevious);
 		menu_dynamic.addAction(mw->actionDynNext);
 		menu_dynamic.addAction(mw->actionDynLast);
-		menu_dynamic.addSeparator();
-		menu_dynamic.addAction(mw->actionDynDelete);
 
 	menu.addAction(mw->actionRender_Point);
 	menu.addAction(mw->actionRender_Line);
