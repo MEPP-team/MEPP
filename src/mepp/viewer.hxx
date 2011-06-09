@@ -763,6 +763,19 @@ class Viewer : public QGLViewer
 						frame(f)->setOrientation(frame(f+1)->orientation());
 					}
 				}
+				for (int f=0; f<get_nb_frames(); f++)
+				{
+					if (f > scene_ptr->get_nb_polyhedrons()-1)
+					{
+						int m = f%2;
+						if (m)
+							frame(f)->setPosition(qglviewer::Vec(0.f, mYStep * ceil(f/2.), 0.f));
+						else
+							frame(f)->setPosition(qglviewer::Vec(0.f, -mYStep * ceil(f/2.), 0.f));
+
+						frame(f)->setOrientation(qglviewer::Quaternion(0, 0, 0, 1)); // identity Quaternion
+					}
+				}
 				// for Space mode consistency
 
 				setDynTitle();
