@@ -1,12 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////
-// Author: Guillaume LAVOUE
+// Author: Guillaume Lavoué
 // Year: 2010
-// INSA-Lyon, LIRIS UMR 5205, M2DISCO.
-//According to: Perceptually driven 3d distance metrics with application to watermarking
-//			G. Lavoué, E. Drelie Gelasca, F. Dupont, A. Baskurt, and T. Ebrahimi 
-//			In SPIE Applications of Digital Image Processing XXIX, vol. 6312, 2006.
-//
-///////////////////////////////////////////////////////////////////////////
+// CNRS-Lyon, LIRIS UMR 5205
+/////////////////////////////////////////////////////////////////////////// 
 
 #ifndef HEADER_MEPP_COMPONENT_MSDM_PLUGIN_INTERFACE_H
 #define HEADER_MEPP_COMPONENT_MSDM_PLUGIN_INTERFACE_H
