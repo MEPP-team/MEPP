@@ -218,8 +218,8 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
 			double fact2=(fabs(variance1-variance2))/(max(variance1,variance2)+1);
 			
 	#else
-			double fact1=(fabs(MoyX-MoyY))/(std::max(MoyX,MoyY)+1);
-			double fact2=(fabs(SigX-SigY))/(std::max(SigX,SigY)+1);
+			double fact1=(fabs(moyenne1-moyenne2))/(std::max(moyenne1,moyenne2)+1);
+			double fact2=(fabs(variance1-variance2))/(std::max(variance1,variance2)+1);
 	#endif
 			double fact3=(fabs(variance1*variance2-covariance))/(variance1*variance2+1);
 			
