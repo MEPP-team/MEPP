@@ -984,8 +984,9 @@ void Viewer::init()
 	// back material
 	change_material(m_last_material);
 
-	if (!VBO_mode)
-		setMouseTracking(true);	// Absolutely needed for MouseGrabber
+	// pb with setMouseTracking
+	/*if (!VBO_mode)
+		setMouseTracking(true);	// Absolutely needed for MouseGrabber*/
 }
 
 void Viewer::postSelection(const QPoint& point)
@@ -1098,9 +1099,9 @@ void Viewer::dessine_space(bool names)
 				else
 				{
 					// Draws the scene
-					if (frame(i)->grabsMouse())
+					/*if (frame(i)->grabsMouse()) // pb with setMouseTracking
 						render(selectedName()==i, true);
-					else
+					else*/
 						render(selectedName()==i, false);
 				}
 			}

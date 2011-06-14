@@ -544,7 +544,7 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-        void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); setMouseTracking(!b); recreateListsAndUpdateGL(); }
+        void setVBO_mode(bool b) { VBO_mode = b; if (b) setVBO_modeUncheck(b); /*setMouseTracking(!b);*/ recreateListsAndUpdateGL(); } // pb with setMouseTracking
 		/*!
 		 * \fn bool getVBO_mode()
 		 * \brief return true if display lists mode is on.
