@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a MEPP component
-# Martial TOLA - Janvier 2011
+# Martial TOLA - Juin 2011
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -142,10 +142,10 @@ if (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCES
 	endif (FFMPEG_FOUND) 
 	
 	#Documentation
-	option(BUILD_${COMPONENT_NAME}_DOC "Build Doxygen documentation for ${COMPONENT_NAME}" ON)
-	if(BUILD_${COMPONENT_NAME}_DOC)
+	#option(BUILD_doc_${COMPONENT_NAME} "Build Doxygen documentation for ${COMPONENT_NAME}" ON)
+	#if(BUILD_doc_${COMPONENT_NAME})
 	  include(TargetDoc)
-	endif(BUILD_${COMPONENT_NAME}_DOC)
+	#endif(BUILD_doc_${COMPONENT_NAME})
 
 else (CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
 
