@@ -4,7 +4,7 @@
 // CNRS-Lyon, LIRIS UMR 5205
 /////////////////////////////////////////////////////////////////////////// 
 #include <mepp_config.h>
-#ifdef BUILD_component_MSDM
+#ifdef BUILD_component_MSDM2
 
 #include "dialSettings.hxx"
 

@@ -7,7 +7,7 @@
 #define HEADER_MEPP_COMPONENT_MSDM2_PLUGIN_SETTINGS_H
 
 #include <mepp_config.h>
-#ifdef BUILD_component_MSDM
+#ifdef BUILD_component_MSDM2
 
 #include <QtGui/QDialog>
 
