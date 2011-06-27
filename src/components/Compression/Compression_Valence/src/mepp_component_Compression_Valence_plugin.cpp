@@ -85,6 +85,7 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 				int Number_vertices = dial.number_vertices->value();
 
 				bool Metric_threshold, Is_use_forget_metric_selected, Forget_metric_value;
+				Metric_threshold=Is_use_forget_metric_selected=Forget_metric_value=false;
 				if (Is_use_metric_selected == true) 
 				{					
 					Metric_threshold = dial.metric_value->value();
