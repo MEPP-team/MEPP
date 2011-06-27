@@ -207,7 +207,7 @@ void Compression_Valence_Component::Multiple_Components_Initialization(Polyhedro
 					
 					if (!Is_seed_edge_found)
 					{
-						if ((!pHalfedge->is_border_edge()) && (!Is_Border_Vertex(pHalfedge)) && (!Is_Border_Vertex(pHalfedge->opposite())) || (pHalfedge->next()->vertex_degree() != 6))
+						if ( ( (!pHalfedge->is_border_edge()) && (!Is_Border_Vertex(pHalfedge)) && (!Is_Border_Vertex(pHalfedge->opposite())) ) || (pHalfedge->next()->vertex_degree() != 6) )
 						{
 							Is_seed_edge_found = true;
 							
@@ -3093,18 +3093,20 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 	this->Calculate_Geometry_Color_Offset_Range();	
 	
 	FILE * fp  = fopen(File_Name, "wb");													//Main FILE to save compression information.		
-		
-	fwrite(&this->Smallest_Alpha, sizeof(int), 1, fp);				  			 // smallest value of alpha (to save the negative value)
-	fwrite(&this->Smallest_Gamma, sizeof(int), 1, fp);						 	 // smallest value of gamma (to save the negative value)
-	fwrite(&this->Initial_file_size, sizeof(unsigned), 1, fp);			// Intial size of the input file (To visualize during decompression)	
-	fwrite(&this->NumberComponents, sizeof(int), 1, fp);
+	
+	int res;
+
+	res=fwrite(&this->Smallest_Alpha, sizeof(int), 1, fp);				  			 // smallest value of alpha (to save the negative value)
+	res=fwrite(&this->Smallest_Gamma, sizeof(int), 1, fp);						 	 // smallest value of gamma (to save the negative value)
+	res=fwrite(&this->Initial_file_size, sizeof(unsigned), 1, fp);			// Intial size of the input file (To visualize during decompression)	
+	res=fwrite(&this->NumberComponents, sizeof(int), 1, fp);
 	
 	for (int i =0; i<this->NumberComponents; i++)
 	{
-		fwrite(&this->Quantization_Step[i], sizeof(float), 1, fp);							    // Quantization_Step(step of quantization)
-		fwrite(&this->xmin[i], sizeof(float), 1, fp);																	   // xmin value
-		fwrite(&this->ymin[i], sizeof(float), 1, fp);																	   // ymin value
-		fwrite(&this->zmin[i], sizeof(float), 1, fp);																	   // zmin value
+		res=fwrite(&this->Quantization_Step[i], sizeof(float), 1, fp);							    // Quantization_Step(step of quantization)
+		res=fwrite(&this->xmin[i], sizeof(float), 1, fp);																	   // xmin value
+		res=fwrite(&this->ymin[i], sizeof(float), 1, fp);																	   // ymin value
+		res=fwrite(&this->zmin[i], sizeof(float), 1, fp);																	   // zmin value
 	}
 	
 	
@@ -3123,9 +3125,9 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 	else			
 		Colored = 0;	
 	
-	fwrite(&Colored, sizeof(char), 1, fp);
+	res=fwrite(&Colored, sizeof(char), 1, fp);
 	if (this->IsColored)
-		fwrite(&OneColor, sizeof(char), 1, fp);
+		res=fwrite(&OneColor, sizeof(char), 1, fp);
 
 
 
@@ -3134,16 +3136,16 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 	if ((this->IsColored) && (!this->IsOneColor))
 	{
 
-		fwrite(&this->Color_Quantization_Step, sizeof(float), 1, fp);
+		res=fwrite(&this->Color_Quantization_Step, sizeof(float), 1, fp);
 
 		// En-tete pour la couleur
-		fwrite(&this->C0_Min, sizeof(float), 1, fp); // smallest value of c0 
-		fwrite(&this->C1_Min, sizeof(float), 1, fp); // smallest value of c1 
-		fwrite(&this->C2_Min, sizeof(float), 1, fp); // smallest value of c2		
+		res=fwrite(&this->C0_Min, sizeof(float), 1, fp); // smallest value of c0 
+		res=fwrite(&this->C1_Min, sizeof(float), 1, fp); // smallest value of c1 
+		res=fwrite(&this->C2_Min, sizeof(float), 1, fp); // smallest value of c2		
 			
-		fwrite(&this->Smallest_C0, sizeof(int), 1, fp);  
-		fwrite(&this->Smallest_C1, sizeof(int), 1, fp); 
-		fwrite(&this->Smallest_C2, sizeof(int), 1, fp);
+		res=fwrite(&this->Smallest_C0, sizeof(int), 1, fp);  
+		res=fwrite(&this->Smallest_C1, sizeof(int), 1, fp); 
+		res=fwrite(&this->Smallest_C2, sizeof(int), 1, fp);
 		
 		Color_size += sizeof(int) * 8 * 9;		
 	
@@ -3152,9 +3154,9 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 	if ((this->IsColored) && (this->IsOneColor))
 	{
 
-		fwrite(&this->OnlyColor[0], sizeof(float), 1, fp); // smallest value of c0 
-		fwrite(&this->OnlyColor[1], sizeof(float), 1, fp); // smallest value of c1 
-		fwrite(&this->OnlyColor[2], sizeof(float), 1, fp); // smallest value of c2		
+		res=fwrite(&this->OnlyColor[0], sizeof(float), 1, fp); // smallest value of c0 
+		res=fwrite(&this->OnlyColor[1], sizeof(float), 1, fp); // smallest value of c1 
+		res=fwrite(&this->OnlyColor[2], sizeof(float), 1, fp); // smallest value of c2		
 	}
 
 	// Declaration du codeur.
@@ -5278,13 +5280,16 @@ QString Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron
 		reversibility = 0;	
 
 	FILE * f_Dist = fopen("Keys.txt", "ab");
-	fwrite(&this->m_Dist, sizeof(double), 1, f_Dist);
-	fwrite(&this->m_NumberBin, sizeof(int), 1, f_Dist);
-	fwrite(&this->m_NumberRegion, sizeof(int), 1, f_Dist);
-	fwrite(&this->m_EmbeddingStrength, sizeof(int), 1, f_Dist);
-	fwrite(&division, sizeof(int), 1, f_Dist);
-	fwrite(&reversibility, sizeof(int), 1, f_Dist);
-	fwrite(&_Thres_divide_regions, sizeof(int), 1, f_Dist);
+
+	int res;
+
+	res=fwrite(&this->m_Dist, sizeof(double), 1, f_Dist);
+	res=fwrite(&this->m_NumberBin, sizeof(int), 1, f_Dist);
+	res=fwrite(&this->m_NumberRegion, sizeof(int), 1, f_Dist);
+	res=fwrite(&this->m_EmbeddingStrength, sizeof(int), 1, f_Dist);
+	res=fwrite(&division, sizeof(int), 1, f_Dist);
+	res=fwrite(&reversibility, sizeof(int), 1, f_Dist);
+	res=fwrite(&_Thres_divide_regions, sizeof(int), 1, f_Dist);
 
 	fclose(f_Dist);
 	delete Temp_mesh;
@@ -5489,10 +5494,12 @@ void Compression_Valence_Component::JCW_Calculate_Mesh_Center(Polyhedron &_pMesh
 	this->m_VC[0] = xc;
 	this->m_VC[1] = yc;
 	this->m_VC[2] = zc;
+
+	int res;
 	
-	fwrite(&xc, sizeof(double), 1, f_Center);
-	fwrite(&yc, sizeof(double), 1, f_Center);
-	fwrite(&zc, sizeof(double), 1, f_Center);
+	res=fwrite(&xc, sizeof(double), 1, f_Center);
+	res=fwrite(&yc, sizeof(double), 1, f_Center);
+	res=fwrite(&zc, sizeof(double), 1, f_Center);
 
 	fclose(f_Center);
 }
