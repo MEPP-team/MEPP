@@ -46,7 +46,8 @@ Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner 
 
 4) télécharger les sources de Mepp:
 Par exemple, dans C:/mepp/SVN,
-avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
+avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
+http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
 
 5) utiliser CMake-gui (dans C:\dev\_cmake-2.8.3.20110118_\bin)
  - renseigner le champ "Where is the source code" avec C:/mepp/SVN/trunk (attention, pas C:/mepp/SVN/trunk/src !)

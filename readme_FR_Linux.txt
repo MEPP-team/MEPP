@@ -58,11 +58,11 @@ si Linux 64 bit
 ------------------------------------------
 
 
--------------------------------------------------
-(B) Marche à suivre pour Mepp sous Fedora 14/15 :
--------------------------------------------------
+----------------------------------------------------
+(B) Marche à suivre pour Mepp sous Fedora 14 ou 15 :
+----------------------------------------------------
 
-1) installer Fedora 14
+1) installer Fedora 14 ou 15
 2) faire la mise à jour de la distribution et des paquets déjà installés (facultatif)
 3) installer les paquets suivants:
 sudo yum install subversion CGAL-devel qt-creator libQGLViewer-devel cmake-gui glew-devel doxygen graphviz xerces-c-devel
@@ -93,7 +93,8 @@ sudo make install
 
 
 4) télécharger les sources de Mepp:
-svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
+svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
+svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
 
 5a) compiler Mepp avec CMake et Makefile:
 se positionner dans trunk, puis,

@@ -31,7 +31,8 @@ sudo port install python_select
 sudo python_select pythonXX (ex.: python27)
 
 5) télécharger les sources de Mepp:
-svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp/trunk
+svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
+svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
 
 6a) compiler Mepp avec CMake et Makefile:
 se positionner dans trunk, puis,

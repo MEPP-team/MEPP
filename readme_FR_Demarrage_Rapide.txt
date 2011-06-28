@@ -55,8 +55,12 @@ SVN sous Linux :
 
 - créer un dossier sur votre système qui hébergera votre version de MEPP (ex. : MEPP_SVN) : c’est dans ce dossier que nous allons procéder au "checkout" du projet
 - utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou "svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp" (pour les utilisateurs anonymes)
-- à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "yes" pour stocker la clef dans le cache
-- une demande d'authentification vous est ensuite demandée
+- pour les membres du LIRIS:
+	- choisir "(t)emporaire" en appuyant sur la touche 't'
+	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur 'vadmin', appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
+	- saisissez ensuite votre mot de passe GForge associé
+	- vous pouvez cliquer sur "annuler" sur la boite de dialogue relative au trousseau de clés
+	- vous pouvez répondre "non" à la question du stockage en clair du mot de passe
 - le "checkout" commence alors
 
 
@@ -74,6 +78,10 @@ SVN sous Mac OS X :
 
 - créer un dossier sur votre système qui hébergera votre version de MEPP (ex. : MEPP_SVN) : c’est dans ce dossier que nous allons procéder au "checkout" du projet
 - utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou "svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp" (pour les utilisateurs anonymes)
-- à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "yes" pour stocker la clef dans le cache
-- une demande d'authentification vous est ensuite demandée
+- pour les membres du LIRIS:
+	- choisir "(t)emporaire" en appuyant sur la touche 't'
+	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur 'vadmin', appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
+	- saisissez ensuite votre mot de passe GForge associé
+	- vous pouvez cliquer sur "annuler" sur la boite de dialogue relative au trousseau de clés
+	- vous pouvez répondre "non" à la question du stockage en clair du mot de passe
 - le "checkout" commence alors
