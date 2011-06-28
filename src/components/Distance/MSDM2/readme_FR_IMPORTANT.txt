@@ -1,0 +1,1 @@
+nécessite cgal3.8 sous Mac et Linux (donc Fedora 15 ou future Ubuntu 11.10 -> octobre 2011)

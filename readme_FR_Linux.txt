@@ -44,12 +44,23 @@ si Linux 32 bit
 si Linux 64 bit
  sudo ln -s x86_64-linux-gnu/libX11.so libX11.so
  sudo ln -s x86_64-linux-gnu/libXext.so libXext.so
+ 
+ou
+
+sous Ubuntu 11.10 (The Oneiric Ocelot - l'ocelot onirique, testé avec 'pré-version' du 24 juin -> http://cdimage.ubuntu.com/daily-live/current/), créer 2 liens:
+ cd /usr/lib
+si Linux 32 bit
+ sudo ln -s i386-linux-gnu/libGLU.so libGLU.so
+ sudo ln -s i386-linux-gnu/libGL.so libGL.so
+si Linux 64 bit
+ sudo ln -s x86_64-linux-gnu/libGLU.so libGLU.so
+ sudo ln -s x86_64-linux-gnu/libGL.so libGL.so
 ------------------------------------------
 
 
-----------------------------------------------
-(B) Marche à suivre pour Mepp sous Fedora 14 :
-----------------------------------------------
+-------------------------------------------------
+(B) Marche à suivre pour Mepp sous Fedora 14/15 :
+-------------------------------------------------
 
 1) installer Fedora 14
 2) faire la mise à jour de la distribution et des paquets déjà installés (facultatif)
