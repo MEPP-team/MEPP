@@ -192,7 +192,7 @@ double Area_Facet_Triangle(const Halfedge_handle &h)
 double Area_Facet_Triangle(const Point3d &P,const Point3d &Q, const Point3d &R)
 {
 	Vector PQ = Q - P;
-	Vector PR = R - P;
+        //Vector PR = R - P; // MT
 	Vector QR = R - Q;
 
 	Vector normal = CGAL::cross_product(PQ,QR);
@@ -246,7 +246,7 @@ Vector Triangle_Normal(const Halfedge_handle &h)
 	Point3d R = h->next()->next()->vertex()->point();
 
 	Vector PQ = Q-P;
-	Vector PR = R-P;
+        //Vector PR = R-P; // MT
 	Vector QR = R-Q;
 
 	Vector normal = CGAL::cross_product(PQ,QR);
@@ -274,7 +274,7 @@ Vector Triangle_Normal(const Halfedge_handle &h)
 Vector Triangle_Normal(const Point3d & P,const Point3d & Q,const Point3d &R)
 {
 	Vector PQ = Q - P;
-	Vector PR = R - P;
+        //Vector PR = R - P; // MT
 	Vector QR = R - Q;
 
 	Vector normal = CGAL::cross_product(PQ,QR);

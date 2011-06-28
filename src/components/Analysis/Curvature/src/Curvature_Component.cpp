@@ -70,7 +70,7 @@ double fix_sine(double sine)
 		Point3d R = pHalfedge->next()->next()->vertex()->point();
 
 		Vector PQ=Q-P;
-		Vector PR=R-P;
+                //Vector PR=R-P; // MT
 		Vector QR=R-Q;
 
 
@@ -249,8 +249,8 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 	  bool NoValPro=false;
 
     double ppMatrix_sum[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
-	double eigenvalues[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
-	double eigenvectors[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+    //double eigenvalues[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+    //double eigenvectors[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 
     if (IsGeod==true)//geodesic neighborhood
 		geodes_principal_curvature_per_vert((&(*pVertex)),ppMatrix_sum,radius);
@@ -321,8 +321,8 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				Vector VKmaxCurv(VectPro[1][2],VectPro[2][2],VectPro[3][2]);
 				Vector VKminCurv(VectPro[1][1],VectPro[2][1],VectPro[3][1]);
 
-
-				eigenvalues[0][0]=Valpro[1][1];
+                                // MT
+                                /*eigenvalues[0][0]=Valpro[1][1];
 				eigenvalues[0][1]=Valpro[1][2];
 				eigenvalues[0][2]=Valpro[1][3];
 				eigenvalues[1][0]=Valpro[2][1];
@@ -340,7 +340,7 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				eigenvectors[1][2]=VectPro[2][3];
 				eigenvectors[2][0]=VectPro[3][1];
 				eigenvectors[2][1]=VectPro[3][2];
-				eigenvectors[2][2]=VectPro[3][3];
+                                eigenvectors[2][2]=VectPro[3][3];*/
 
 
 

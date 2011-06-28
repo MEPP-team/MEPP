@@ -86,6 +86,7 @@ public:
                     unsigned int degree = 0;
                     degree = Polyhedron::degree(pFacet);  //facet degree
                     CGAL_assertion(degree >= 3);
+                    degree = degree; // just for warning with gcc 4.6
 
                     Halfedge_handle pHalfedge = pFacet->halfedge();
                     //int tag = 0; // MT

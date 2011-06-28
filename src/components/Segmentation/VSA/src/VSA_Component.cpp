@@ -49,7 +49,7 @@
 		Point3d R = pHalfedge->next()->next()->vertex()->point();
 
 		Vector PQ=Q-P;
-		Vector PR=R-P;
+                //Vector PR=R-P; // MT
 		Vector QR=R-Q;
 
 
@@ -453,7 +453,7 @@ void VSA_Component::Flooding()
 	void VSA_Component::ConstructFaceColorMap(PolyhedronPtr pMesh)
 {
 		
-		Vertex_iterator pVertex = NULL;
+                //Vertex_iterator pVertex = NULL; // MT
 
 		Facet_iterator pFacet	=	pMesh->facets_begin();
 		for(;pFacet	!= pMesh->facets_end();pFacet++)

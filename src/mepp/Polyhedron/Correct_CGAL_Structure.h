@@ -180,17 +180,17 @@ class CORRECT_CGAL_STRUCTURE
 									// Re_orient check
 									// If (re_orient_needed)
 									// Re_orient of neighboring facet
-									bool Is_reorientation_needed;
+                                                                        //bool Is_reorientation_needed; // MT
 									if ((FV_position - SV_position == 1) || (SV_position - FV_position == (int)(*Facets)[Neighbor_index].size() - 1))
 									{
-										Is_reorientation_needed = false;
+                                                                                //Is_reorientation_needed = false; // MT
 										Reoriented_facet[Neighbor_index] = 0;
 
 										Normal_facet_count++;
 									}
 									else
 									{
-										Is_reorientation_needed = true;
+                                                                                //Is_reorientation_needed = true; // MT
 										Reoriented_facet[Neighbor_index] = 1;
 
 										int temp = (*Facets)[Neighbor_index][0];

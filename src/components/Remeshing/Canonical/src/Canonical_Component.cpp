@@ -57,7 +57,7 @@ void Init(PolyhedronPtr pMesh)
 double Area_Facet_Triangle(const Point3d &P,const Point3d &Q, const Point3d &R)
 {
 	Vector PQ=Q-P;
-	Vector PR=R-P;
+        //Vector PR=R-P; // MT
 	Vector QR=R-Q;
 
 
@@ -75,7 +75,7 @@ Vector Triangle_Normal(const Halfedge_handle &h)
 	Point3d R = h->next()->next()->vertex()->point();
 
 	Vector PQ=Q-P;
-	Vector PR=R-P;
+        //Vector PR=R-P; // MT
 	Vector QR=R-Q;
 
 	Vector normal = CGAL::cross_product(PQ,QR);
@@ -89,7 +89,7 @@ Vector Triangle_Normal(const Halfedge_handle &h)
 Vector Triangle_Normal(const Point3d & P,const Point3d & Q,const Point3d &R)
 {
 	Vector PQ=Q-P;
-	Vector PR=R-P;
+        //Vector PR=R-P; // MT
 	Vector QR=R-Q;
 
 	Vector normal = CGAL::cross_product(PQ,QR);
@@ -109,7 +109,7 @@ double Area_Facet_Triangle(const Halfedge_handle &h)
 	Point3d R = h->next()->next()->vertex()->point();
 
 	Vector PQ=Q-P;
-	Vector PR=R-P;
+        //Vector PR=R-P; // MT
 	Vector QR=R-Q;
 
 	Vector normal =	CGAL::cross_product(PQ,QR);
@@ -1121,7 +1121,7 @@ void Canonical_Component::Regulation(PolyhedronPtr pMesh,const bool Normal_flipp
 
 			if (Global_check == false)
 			{
-				Halfedge_handle pass = h;
+                                //Halfedge_handle pass = h; // MT
 
 				g = h->next();
 				g->vertex()->Vertex_Flag_S = TO_BE_REMOVED;

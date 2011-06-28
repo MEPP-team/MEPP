@@ -93,7 +93,7 @@ void MSDM2_Component::Matching_Multires_Update(PolyhedronPtr m_PolyDegrad, Facet
 					pVertex	!= m_PolyDegrad->vertices_end();
 					pVertex++)
 		{
-			Point3d Nearest=pVertex->match;
+                        //Point3d Nearest=pVertex->match; // MT
 			Facet* f_Nearest=&_TabMatchedFacet[ind];
 
 			pVertex->tag(ind);
@@ -210,9 +210,9 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
 	covariance=covariance/SommeWi1;
 
 	///we then compute the MSDM2_Local value
-	double C1=1;
-	double C2=1;
-	double C3=0.5;
+        //double C1=1; // MT
+        //double C2=1; // MT
+        //double C3=0.5; // MT
 	#ifdef _MSC_VER
 			double fact1=(fabs(moyenne1-moyenne2))/(max(moyenne1,moyenne2)+1);
 			double fact2=(fabs(variance1-variance2))/(max(variance1,variance2)+1);
@@ -489,7 +489,7 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
 		TabPoint2.push_back(pVertex->match);
 
 		int NbSommetInSphere=0;
-		double SommeDistance=0;
+                //double SommeDistance=0; // MT
 	
 
         while(!S.empty())
