@@ -39,8 +39,9 @@ SVN sous Windows :
 - faire un "bouton-droit" sur le dossier créé ci-dessus puis choisir "SVN Checkout" dans le menu contextuel
 - dans la fenêtre qui s’ouvre, renseigner le champ "URL of repository" par l’url du projet MEPP sur la forge : https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp
 (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes) puis valider par "Ok"
-- à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "Oui" pour stocker la clef dans le cache
-- une demande d'authentification vous est ensuite demandée
+- pour les membres du LIRIS:
+	- à la première utilisation vous pouvez obtenir une alerte de sécurité relatif à la clef SSH (et/ou à un certificat), répondre "Oui" pour stocker la clef dans le cache
+	- une demande d'authentification vous est ensuite demandée
 - le "checkout" commence alors
 
 
