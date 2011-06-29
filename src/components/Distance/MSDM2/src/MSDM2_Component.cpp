@@ -41,6 +41,8 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #endif
 
+#if defined (_MSC_VER) || ((defined (__linux__) || defined (__APPLE__)) && (CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(3,8,0)))
+
 typedef CGAL::Simple_cartesian<double>					AABB_Kernel;
 typedef CGAL::AABB_polyhedron_triangle_primitive<AABB_Kernel,Polyhedron> AABB_Primitive;
 typedef CGAL::AABB_traits<AABB_Kernel, AABB_Primitive>								AABB_Traits;
@@ -581,20 +583,7 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
 			
 		}
 	}
-
-	
-
-
-	
-
-	
-
-	
-		
-
-
-
-
+#endif
 
 MSDM2_Component::MSDM2_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p)
 {
@@ -621,7 +610,5 @@ MSDM2_Component::MSDM2_Component(Viewer* v, PolyhedronPtr p):mepp_component(v, p
 
 	// MEPP 2
 	componentName = "MSDM2_Component";
-	
-
 }
 //#endif

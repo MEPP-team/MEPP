@@ -36,6 +36,7 @@ void mepp_component_MSDM2_plugin::MSDM2_computation()
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
+#if defined (_MSC_VER) || ((defined (__linux__) || defined (__APPLE__)) && (CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(3,8,0)))
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 		
@@ -131,9 +132,10 @@ void mepp_component_MSDM2_plugin::MSDM2_computation()
 		}
 		else
 			QMessageBox::information(mw, APPLICATION, tr("MSDM2 computation needs 2 meshes opened in time or in space"));
+#else
+	QMessageBox::information(mw, APPLICATION, tr("Warning: to use this component under LINUX or MAC, you must install CGAL 3.8."));
+#endif
 	}
-
-	
 }
 
 
@@ -142,12 +144,12 @@ void mepp_component_MSDM2_plugin::MSDM2_computation()
 
 void mepp_component_MSDM2_plugin::DistanceToColorMap()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	
-
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
+#if defined (_MSC_VER) || ((defined (__linux__) || defined (__APPLE__)) && (CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(3,8,0)))
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
@@ -156,10 +158,12 @@ void mepp_component_MSDM2_plugin::DistanceToColorMap()
 		component_ptr->ConstructColorMap(polyhedron_ptr,1);
 
 		viewer->recreateListsAndUpdateGL();
-	}
-
-	QApplication::restoreOverrideCursor();
-
+		
+		QApplication::restoreOverrideCursor();
+#else
+	QMessageBox::information(mw, APPLICATION, tr("Warning: to use this component under LINUX or MAC, you must install CGAL 3.8."));
+#endif
+	}	
 }
 
 
