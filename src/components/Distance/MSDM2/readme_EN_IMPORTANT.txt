@@ -1,0 +1,1 @@
+This component needs cgal3.8 under MAC and Linux (included in Fedora 15 or future Ubuntu 11.10 to appear in October 2011)
