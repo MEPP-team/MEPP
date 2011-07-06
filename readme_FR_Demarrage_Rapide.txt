@@ -5,8 +5,8 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-Si vous êtes membres permanents ou temporaires (doctorants, stagiaires, ...) du LIRIS :
----------------------------------------------------------------------------------------
+* Si vous êtes membres permanents ou temporaires (doctorants, stagiaires, ...) du LIRIS :
+-----------------------------------------------------------------------------------------
 (A) inscrivez vous sur la forge du laboratoire: https://gforge.liris.cnrs.fr/account/register.php
 (B) demandez à rejoindre le projet Mepp: https://gforge.liris.cnrs.fr/project/request.php?group_id=39
 (C) abonnez-vous aux listes de diffusion: https://gforge.liris.cnrs.fr/mail/?group_id=39
@@ -14,9 +14,9 @@ puis
 (D) utilisez SVN pour récupérer MEPP
 
 
-Si vous êtes un utilisateur anonyme :
--------------------------------------
-(A) utilisez SVN pour récupérer MEPP
+* Si vous êtes un utilisateur anonyme :
+---------------------------------------
+ utilisez SVN pour récupérer MEPP
 
 
 ---
@@ -30,8 +30,8 @@ SVN sous Windows :
 - télécharger la dernière version en date pour Windows à l’adresse suivante : http://tortoisesvn.net/downloads.html
 - installer le logiciel et redémarrer tout de suite (important)
 
-- pour démarrer facilement avec TortoiseSVN, je vous conseille de lire ce petit tutoriel: http://www.jonathan-petitcolas.com/fr/utiliser-subversion-svn-avec-tortoise
-- pour une utilisation plus approfondie de TortoiseSVN, je vous recommande ce document: http://kevin.fardel.perso.esil.univmed.fr/documentation/TutorielTortoiseSVN.pdf
+- pour démarrer facilement avec TortoiseSVN, je vous conseille de lire ce petit tutoriel: http://liris.cnrs.fr/martial.tola/MEPP/doc_for_readme/Utiliser%20Subversion%20SVN%20avec%20Tortoise.pdf (source: Jonathan Petitcolas - http://www.jonathan-petitcolas.com/utiliser-subversion-svn-avec-tortoise/)
+- pour une utilisation plus approfondie de TortoiseSVN, je vous recommande ce document: http://liris.cnrs.fr/martial.tola/MEPP/doc_for_readme/Tutoriel%20TortoiseSVN.pdf (source: Kevin Fardel - http://kevin.fardel.perso.esil.univmed.fr/documentation/TutorielTortoiseSVN.pdf)
 
 2) récupération du projet MEPP:
 
@@ -58,7 +58,7 @@ SVN sous Linux :
 - utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou "svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp" (pour les utilisateurs anonymes)
 - pour les membres du LIRIS:
 	- choisir "(t)emporaire" en appuyant sur la touche 't'
-	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur 'vadmin', appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
+	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur courant unix, appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
 	- saisissez ensuite votre mot de passe GForge associé
 	- vous pouvez cliquer sur "annuler" sur la boite de dialogue relative au trousseau de clés
 	- vous pouvez répondre "non" à la question du stockage en clair du mot de passe
@@ -81,8 +81,7 @@ SVN sous Mac OS X :
 - utiliser la commande "svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp" (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou "svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp" (pour les utilisateurs anonymes)
 - pour les membres du LIRIS:
 	- choisir "(t)emporaire" en appuyant sur la touche 't'
-	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur 'vadmin', appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
+	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur courant unix, appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
 	- saisissez ensuite votre mot de passe GForge associé
-	- vous pouvez cliquer sur "annuler" sur la boite de dialogue relative au trousseau de clés
 	- vous pouvez répondre "non" à la question du stockage en clair du mot de passe
 - le "checkout" commence alors

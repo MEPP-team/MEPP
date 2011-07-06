@@ -39,7 +39,7 @@ Pour ce faire, il faut:
 	b) renommer ce "nouveau" dossier "CGAL_Example" en "Various_Tools"
 	c) supprimer récursivement tous les dossiers ".svn" du dossier "Various_Tools"
 	d) décommenter éventuellement la ligne 10 (suppression du #) du fichier "trunk\src\components\Tools\Various_Tools\cmake\use_components.txt"
-				si vous souhaitez utiliser un autre composant au sein de votre propre composant (ici on laisse commenté car on ne veut pas, par exemple, utiliser "Curvature" dans "Various_Tools"), cf. cas B) ci-dessous
+				si vous souhaitez utiliser un autre composant au sein de votre propre composant, cf. cas C) ci-dessous (ici on laisse commenté car on ne veut pas utiliser "Curvature" dans "Various_Tools")
 	e) dans "trunk\src\components\Tools\Various_Tools\src", renommer tous les fichiers en changeant "CGAL_Example" par "Various_Tools" (attention à la "case sensitive")
 	f) enfin, avec un éditeur de texte et une fonction "rechercher/remplacer", remplacer (en respectant la casse) dans tous les fichiers présents (*.cpp;*.h;*.hxx) dans le dossier "trunk\src\components\Tools\Various_Tools\src" :
 				CGAL_Example par Various_Tools et CGAL_EXAMPLE par VARIOUS_TOOLS
@@ -93,6 +93,7 @@ public:
         }
 
 A partir de là, le script CMake s'occupe de tout, il n'y a pas à toucher une seule ligne de code du noyau de Mepp (ni le mepp_config.h.in, ni le polyhedron_enriched_polyhedron.h, ni le mainwindow.ui pour le menu).
+Il suffit tout simplement de réinvoquer CMake (cf. readme_FR_Windows_VSxxxx.txt, readme_FR_Linux.txt ou readme_FR_Mac_OS_X.txt).
 
 
 -----
@@ -101,12 +102,10 @@ A partir de là, le script CMake s'occupe de tout, il n'y a pas à toucher une s
 B) Commenter votre nouveau composant avec Doxygen:
 --------------------------------------------------
 
-Cf. mini-tutoriel pour Doxygen: http://franckh.developpez.com/tutoriels/outils/doxygen/ (pas exhaustif mais suffisant)
-
+Cf. mini-tutoriel pour Doxygen: Franck Hecht - http://franckh.developpez.com/tutoriels/outils/doxygen/ (pas exhaustif mais suffisant)
 
 
 -----
-
 
 
 C) Utiliser le code d'un composant X au sein de votre composant (sans la gestion des boîtes de dialogue du composant X pour le moment):

@@ -55,7 +55,6 @@ si Linux 32 bit
 si Linux 64 bit
  sudo ln -s x86_64-linux-gnu/libGLU.so libGLU.so
  sudo ln -s x86_64-linux-gnu/libGL.so libGL.so
-------------------------------------------
 
 
 ----------------------------------------------------
@@ -114,7 +113,7 @@ mais malheureusement pas encore des projets Qt Creator (.pro).
 Qt Creator sait par contre interprêter directement le CMakeLists.txt de cmake
 pour générer les projets Qt Creator (.pro).
 
-Donc, pour générer les projets Qt Creator (.pro), voici la marche à suivre au sein de Qt Creator:
+Donc, pour générer les projets Qt Creator (.pro), voici la marche à suivre au sein de Qt Creator (menu "Applications > Programmation > Qt Creator"):
 
 Ouvrir un fichier et choisir en bas 'Fichier de projet CMake'
 puis choisir le CMakeLists.txt de la racine du trunk puis cliquer sur 'suivant'

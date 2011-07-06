@@ -74,7 +74,7 @@ Note au sujet de la génération d'un bundle portable (mepp.app):
 
 
 
-* Sous Mac OS X 10.5 Leopard, gcc 4 contient un bug lors de la compilation optimisée d'une application avec la librairie CGAL,
+* Sous 'Mac OS X 10.5 Leopard', gcc 4 contient un bug lors de la compilation optimisée d'une application avec la librairie CGAL,
 il faut donc utiliser gcc 4.2 à la place:
 cmake .. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.2 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.2
 
