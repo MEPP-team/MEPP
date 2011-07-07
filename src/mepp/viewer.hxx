@@ -574,7 +574,8 @@ class Viewer : public QGLViewer
 		 * \fn saveAnimation(bool b)
 		 * \brief Start or stop saving an animation (on/off).
 		 *
-		 * \param b true or false.
+		 * \param b true (on) or false (off).
+		 * \param savePNGLocation contains the default PNG save location.
 		 */
 		void saveAnimation(bool b, QString &savePNGLocation)
 		{
@@ -614,6 +615,10 @@ class Viewer : public QGLViewer
 		 * \brief Start or stop saving an FFmpeg animation (on/off).
 		 *
 		 * \param b true or false.
+		 * \param saveAVILocation contains the default AVI save location.
+		 * \param bitrate bitrate of the video (default: 1500).
+ 		 * \param resize false (unused).
+ 		 * \param gop gop of the video (default: 12).
 		 */
 		void saveFFmpegAnimation(bool b, QString &saveAVILocation, int bitrate=1500, bool resize=false, int gop=12)
 		{
