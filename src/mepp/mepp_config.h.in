@@ -11,6 +11,7 @@
 #define ARCHITECTURE QObject::tr("(64 bits)")
 #ifdef _MSC_VER
 #pragma warning(disable : 4267)
+#pragma warning(disable : 4244)
 #endif
 #else
 #define PORTABLE_32_BIT
