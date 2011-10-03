@@ -26,12 +26,12 @@ namespace Polyhedron_geometric_global_measure_3
 	{
 		CGAL_assertion(&P != NULL);
 
-		typedef typename Polyhedron_3::Traits									Traits;
-		typedef typename Traits::FT												Number_type;
-		typedef typename Traits::Triangle_3										Triangle_3;
+		typedef typename Polyhedron_3::Traits								Traits;
+		typedef typename Traits::FT									Number_type;
+		typedef typename Traits::Triangle_3								Triangle_3;
 		typedef typename Polyhedron_3::Facet_const_iterator						Facet_const_it;
 		typedef typename Polyhedron_3::Edge_const_iterator						Edge_const_it;
-		typedef typename Traits::Vector_3										Vector_3;
+		typedef typename Traits::Vector_3								Vector_3;
 
 		for (Edge_const_it eit = P.edges_begin(); eit != P.edges_end(); ++eit)
 		{
@@ -58,11 +58,12 @@ namespace Polyhedron_geometric_global_measure_3
 	{
 		CGAL_assertion(&P != NULL);
 
-		typedef typename Polyhedron_3::Traits									Traits;
-		typedef typename Traits::FT												Number_type;
-		typedef typename Traits::Triangle_3										Triangle_3;
+		typedef typename Polyhedron_3::Traits								Traits;
+		typedef typename Traits::FT									Number_type;
+		typedef typename Traits::Triangle_3								Triangle_3;
 		typedef typename Polyhedron_3::Facet_const_iterator						Facet_const_it;
 		typedef typename Polyhedron_3::Edge_const_iterator						Edge_const_it;
+                typedef typename Traits::Vector_3                                                               Vector_3; // MT
 
 		for (Edge_const_it eit = P.edges_begin(); eit != P.edges_end(); ++eit)
 		{

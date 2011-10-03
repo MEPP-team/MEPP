@@ -22,7 +22,7 @@ namespace Polyhedron_geometric_transformation_3
 	*                                  Polyhedron_3 translation                                            *
 	*******************************************************************************************************/
 	template <typename Polyhedron_3>
-	inline void translate(Polyhedron_3& P, typename const Polyhedron_3::Point_3& source, typename const Polyhedron_3::Point_3& target)
+	inline void translate(Polyhedron_3& P, const typename Polyhedron_3::Point_3& source, const typename Polyhedron_3::Point_3& target)
 	{
 		CGAL_assertion(&P != NULL);
 
@@ -31,7 +31,7 @@ namespace Polyhedron_geometric_transformation_3
 	}
 	
 	template <typename Polyhedron_3>
-	inline void translate(Polyhedron_3& P, typename const Polyhedron_3::Traits::Vector_3& transl)
+	inline void translate(Polyhedron_3& P, const typename Polyhedron_3::Traits::Vector_3& transl)
 	{
 		CGAL_assertion(&P != NULL);
 
@@ -46,7 +46,7 @@ namespace Polyhedron_geometric_transformation_3
 	*                                  Polyhedron_3 scaling                                                *
 	*******************************************************************************************************/
 	template <typename Polyhedron_3>
-	inline void scale(Polyhedron_3& P, typename const Polyhedron_3::Traits::FT& factor, typename const Polyhedron_3::Point_3& center = CGAL::ORIGIN)
+	inline void scale(Polyhedron_3& P, const typename Polyhedron_3::Traits::FT& factor, const typename Polyhedron_3::Point_3& center = CGAL::ORIGIN)
 	{
 		CGAL_assertion(&P != NULL);
 
@@ -75,7 +75,7 @@ namespace Polyhedron_geometric_transformation_3
 		{
 			for (int c = 0; c != 4; ++c)
 			{
-				matrix_4X4[r][c] = Number_type(r == c);
+				/*matrix_4X4*/matrix[r][c] = Number_type(r == c); // MT
 			}
 		}
 	}
@@ -87,7 +87,7 @@ namespace Polyhedron_geometric_transformation_3
 				transpose[r][c] = matrix[c][r];
 	}
 	template <typename Kernel>
-	inline void get_rotation_matrix(typename const Kernel::Vector_3& u, typename const Kernel::FT& radAngle, typename Kernel::FT rot_matrix[4][4])
+	inline void get_rotation_matrix(const typename Kernel::Vector_3& u, const typename Kernel::FT& radAngle, typename Kernel::FT rot_matrix[4][4])
 	{
 		typedef typename Kernel::FT																	Number_type;
 		typedef typename Kernel::Vector_3															Vector_3;
@@ -117,8 +117,8 @@ namespace Polyhedron_geometric_transformation_3
 	}
 	
 	template <typename Polyhedron_3>
-	inline void rotate(Polyhedron_3& P, typename const Polyhedron_3::Traits::Vector_3& rot_axis,
-		typename const Polyhedron_3::Traits::FT& radAngle, typename const Polyhedron_3::Traits::Point_3 center = CGAL::ORIGIN)
+	inline void rotate(Polyhedron_3& P, const typename Polyhedron_3::Traits::Vector_3& rot_axis,
+		const typename Polyhedron_3::Traits::FT& radAngle, const typename Polyhedron_3::Traits::Point_3 center = CGAL::ORIGIN)
 	{
 		CGAL_assertion(&P != NULL);
 
@@ -148,7 +148,7 @@ namespace Polyhedron_geometric_transformation_3
 	*                                  Polyhedron_3 reflexion                                              *
 	*******************************************************************************************************/
 	template <typename Polyhedron_3>
-	inline void reflect(Polyhedron_3& P, typename const Polyhedron_3::Point_3& center = CGAL::ORIGIN)
+	inline void reflect(Polyhedron_3& P, const typename Polyhedron_3::Point_3& center = CGAL::ORIGIN)
 	{
 		CGAL_assertion(&P != NULL);
 
