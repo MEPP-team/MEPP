@@ -72,7 +72,9 @@ public:
 		for (pVertex = m_pMesh->vertices_begin() ; pVertex != m_pMesh->vertices_end() ; pVertex++)
 		{
 			pVertex->tag(index);       //tag each original vertex
-            B.add_vertex(pVertex->point());  //add original vertices to the new poly
+            Vertex_handle vertex = B.add_vertex(pVertex->point());  //add original vertices to the new poly
+			vertex->color(pVertex->color(0), pVertex->color(1), pVertex->color(2)); // MT: add color
+
 			index++;
 		}
 	}

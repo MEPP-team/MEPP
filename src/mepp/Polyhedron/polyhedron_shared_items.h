@@ -979,8 +979,13 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			CCopyPoly<MEPP_Common_Polyhedron<kernel, items>, kernel > copier;
 			copier.copy(new_mesh, this);
 			
+			this->compute_bounding_box();
+
 			this->compute_normals();
 			this->compute_type();
+
+			(void)this->calc_nb_components();
+			(void)this->calc_nb_boundaries();
 		}
 
 		bool has_color() { return m_has_color; }

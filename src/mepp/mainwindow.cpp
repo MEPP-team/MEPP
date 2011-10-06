@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.45.8 - 28/06/2011 - (tagged version)"
+#define MEPP_VERSION "v0.46.0 - 06/10/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -187,7 +187,7 @@ void mainwindow::loadPlugins()
       QObject *obj = loader.instance();
       if (obj)
 	  {
-        if (initPlugin(obj))
+        if (initPlugin(obj, nb_plugins))
 		{
 			qDebug("### %02d: loading \"%s\"...", nb_plugins, fileName.toUtf8().data());
 			nb_plugins++;
@@ -214,7 +214,7 @@ void mainwindow::loadPlugins()
   }
 }
 
-bool mainwindow::initPlugin(QObject* obj)
+bool mainwindow::initPlugin(QObject* obj, int nu_plugin)
 {
 	mepp_component_plugin_interface* plugin = qobject_cast<mepp_component_plugin_interface*>(obj);
 
@@ -237,7 +237,7 @@ bool mainwindow::initPlugin(QObject* obj)
 	// dock
 	plugin->mToolBar = new QToolBar(inner);
 	plugin->mToolBar->setOrientation(Qt::Vertical);
-	plugin->mToolBar->setWindowTitle(plugin->getPluginName().remove("mepp_component_").remove("_plugin").replace(QRegExp("[_]"), " "));
+	plugin->mToolBar->setWindowTitle(QString("%1: ").arg(nu_plugin).rightJustified(4,'0')+plugin->getPluginName().remove("mepp_component_").remove("_plugin").replace(QRegExp("[_]"), " "));
 	plugin->mToolBar->setVisible(false);
 	inner->addToolBar(Qt::LeftToolBarArea, plugin->mToolBar);
 	// dock
@@ -1099,7 +1099,31 @@ void mainwindow::on_actionDelete_triggered()
 
 void mainwindow::on_actionClone_triggered()
 {
-	QMessageBox::information(this, APPLICATION, tr("Function not yet implemented."));
+	if (activeMdiChild() != 0)
+	{
+		Viewer *viewer_org = qobject_cast<Viewer *>(activeMdiChild()); // must be done before emit
+
+		emit(get_actionNewEmpty()->trigger());
+
+		QList<QMdiSubWindow *> lwindow = mdiArea->subWindowList();
+
+		for (int i=0; i<lwindow.size(); i++) // all viewers
+		{
+			Viewer* viewer = (Viewer *)qobject_cast<QWidget *>(lwindow[i]->widget());
+			if (viewer->getScenePtr()->get_polyhedron()->empty())
+			{
+				PolyhedronPtr new_polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+				PolyhedronPtr polyhedron_ptr = viewer_org->getScenePtr()->get_polyhedron();
+
+				new_polyhedron_ptr->copy_from(&(*polyhedron_ptr));
+
+				viewer->showAllScene();
+
+				viewer->getScenePtr()->setcurrentFile(viewer_org->userFriendlyCurrentFile());
+				viewer->setDynTitle();
+			}
+		}
+	}
 }
 
 void mainwindow::on_actionClose_Window_triggered()

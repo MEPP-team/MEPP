@@ -1425,6 +1425,9 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 	menu.addAction(mw->actionOpen_and_Add_space);
 	menu.addAction(mw->actionOpen_and_Add_time);
 	menu.addAction(mw->actionSave_As);
+	menu.addSeparator();
+
+	menu.addAction(mw->actionClone);
 	menu.addAction(mw->actionDelete);
 	menu.addSeparator();
 

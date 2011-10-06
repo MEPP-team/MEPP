@@ -177,9 +177,10 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \brief Init all plugins (components).
 		 *
 		 * \param obj a plugin.
+		 * \param nu_plugin plugin number.
 		 * \return true if ok.
 		 */
-		bool initPlugin(QObject*);
+		bool initPlugin(QObject* obj, int nu_plugin);
 
     private slots:
 		/*!
