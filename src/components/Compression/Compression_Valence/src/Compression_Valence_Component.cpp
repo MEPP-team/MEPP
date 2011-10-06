@@ -3158,6 +3158,8 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 		res=fwrite(&this->OnlyColor[1], sizeof(float), 1, fp); // smallest value of c1 
 		res=fwrite(&this->OnlyColor[2], sizeof(float), 1, fp); // smallest value of c2		
 	}
+	
+	res+=0; // just to avoid gcc 4.6 warning
 
 	// Declaration du codeur.
 	Arithmetic_Codec enc(AC_BUFFER); 
@@ -4452,6 +4454,8 @@ QString Compression_Valence_Component::Decompress_Init(Polyhedron &_pMesh)//, un
 	this->Decoder.set_buffer(AC_BUFFER);
 	this->Decoder.read_from_file(fp);
 	
+	res+=0; // just to avoid gcc 4.6 warning
+	
 	// To know if each component is colored or not, and closed of not.
 	for (int i = 0; i < this->NumberComponents; i++)
 	{
@@ -5293,6 +5297,7 @@ QString Compression_Valence_Component::Joint_Compression_Watermarking(Polyhedron
 
 	fclose(f_Dist);
 	delete Temp_mesh;
+	res+=0; // just to avoid gcc 4.6 warning
 	
 	this->Color_Initialization(_pMesh);	
 
@@ -5502,6 +5507,7 @@ void Compression_Valence_Component::JCW_Calculate_Mesh_Center(Polyhedron &_pMesh
 	res=fwrite(&zc, sizeof(double), 1, f_Center);
 
 	fclose(f_Center);
+	res+=0; // just to avoid gcc 4.6 warning
 }
 
 void Compression_Valence_Component::JCW_Calculate_Radius(Polyhedron & _pMesh)
@@ -6624,7 +6630,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 						//#endif
 					}
 
-					Halfedge_handle g = Input_gate;
+					//Halfedge_handle g = Input_gate; // MT
 
 					this->InterGeometry.push_front(Vertex_position);
 
@@ -7550,7 +7556,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_Conquest(Polyhedron       
 				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());
 
 				// Assign the region number to inserted vertex
-				Halfedge_handle reg = h;
+				//Halfedge_handle reg = h; // MT
 
 				int Selected_region = 500000;
 				//int Number_vertices = 500000;
@@ -8573,11 +8579,11 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 
 	//unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];	
 	
-	float Color_step = 0.0;
-	if(this->NumberColorQuantization[Component_ID] == 0)
+	//float Color_step = 0.0; // MT
+	/*if(this->NumberColorQuantization[Component_ID] == 0)
 		Color_step = this->Color_Quantization_Step;
 	else
-		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);
+		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);*/
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))	
 		hi++;	
@@ -8723,7 +8729,7 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Insertion(Polyhedron &
 
 			this->JCW_Geometry.push_back(Frenet_coords);
 			
-			Point3d Origin_pt = SP_Original_Position.front();
+			/*Point3d Origin_pt = */SP_Original_Position.front();
 			SP_Original_Position.pop_front();
 
 			Point3d Watermarked_pt = SP_Moved_Position.front();
@@ -8828,11 +8834,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 
 	//unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];
 
-	float Color_step = 0.0;
-	if(this->NumberColorQuantization[Component_ID] == 0)
+	//float Color_step = 0.0; // MT
+	/*if(this->NumberColorQuantization[Component_ID] == 0)
 		Color_step = this->Color_Quantization_Step;
 	else
-		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);
+		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);*/
 	
 	while((hi->vertex()->Seed_Edge != 2 * Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2 * Component_ID+1))
 		hi++;	
@@ -9097,7 +9103,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				_pMesh.add_facet_to_border(Prev_edge, Border_edges[0]->opposite());	
 
 				// Assign the region number to inserted vertex
-				Halfedge_handle reg = h;
+				//Halfedge_handle reg = h; // MT
 
 				int Selected_region = 500000;
 				//int Number_vertices = 500000;
@@ -9163,7 +9169,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				Point_Int CRV_int = SP_Watermarked_Position.front();
 				SP_Watermarked_Position.pop_front();
 
-				Point3d CRV_real = this->Change_Int_Real(CRV_int, Component_ID);	
+				/*Point3d CRV_real = */this->Change_Int_Real(CRV_int, Component_ID);	
 
 				// Calculate position of new barycenter 									
 				Barycenter_real = Barycenter_Patch_Before_Removal(h);
@@ -9381,7 +9387,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Insertion(Polyhedron &
 				Point_Int CRV_int = SP_Watermarked_Position.front();
 				SP_Watermarked_Position.pop_front();
 
-				Point3d CRV_real = this->Change_Int_Real(CRV_int, Component_ID);		
+				/*Point3d CRV_real = */this->Change_Int_Real(CRV_int, Component_ID);		
 				
 				// Calculate position of new barycenter 
 				Point3d Barycenter_real = Barycenter_Patch_Before_Removal(h);
@@ -9546,11 +9552,11 @@ void Compression_Valence_Component::JCW_Un_Regulation_For_Region_Detection(Polyh
 
 	//unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];	
 	
-	float Color_step = 0.0;
-	if(this->NumberColorQuantization[Component_ID] == 0)
+	//float Color_step = 0.0; // MT
+	/*if(this->NumberColorQuantization[Component_ID] == 0)
 		Color_step = this->Color_Quantization_Step;
 	else
-		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);
+		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);*/
 	
 	while((hi->vertex()->Seed_Edge != 2*Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*Component_ID+1))	
 		hi++;	
@@ -9713,11 +9719,11 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 
 	//unsigned Qbit = this->Qbit[Component_ID] + this->NumberChangeQuantization[Component_ID];	
 
-	float Color_step = 0.0;
-	if(this->NumberColorQuantization[Component_ID] == 0)
+	//float Color_step = 0.0; // MT
+	/*if(this->NumberColorQuantization[Component_ID] == 0)
 		Color_step = this->Color_Quantization_Step;
 	else
-		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);
+		Color_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[Component_ID]);*/
 	
 	while((hi->vertex()->Seed_Edge != 2 * Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2 * Component_ID+1))
 		hi++;	
@@ -9903,7 +9909,7 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 				g->vertex()->point() = Center_vertex;
 
 				// Assign the region number to inserted vertex
-				Halfedge_handle reg = g;
+				//Halfedge_handle reg = g; // MT
 
 				int Selected_region = 500000;
 				//int Number_vertices = 500000;
@@ -10505,6 +10511,7 @@ int Compression_Valence_Component::JCW_Decompress_One_Level(Polyhedron &_pMesh, 
 	//
 	_pMesh.compute_normals();	
 	
+	res+=0; // just to avoid gcc 4.6 warning
 	return this->Decompress_count;
 }
 
@@ -10580,7 +10587,7 @@ int Compression_Valence_Component::JCW_Decompress_One_Level_Without_Extraction(P
 	this->Decompress_count++;	
 	_pMesh.compute_normals();
 	
-	
+	res+=0; // just to avoid gcc 4.6 warning
 	return this->Decompress_count;
 }
 

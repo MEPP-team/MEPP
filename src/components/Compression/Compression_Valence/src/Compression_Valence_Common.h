@@ -630,9 +630,9 @@ inline Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const V
 {
 	Matrix R(T1.x(),T2.x(),normal.x(),T1.y(),T2.y(),normal.y(),T1.z(),T2.z(),normal.z());
 	Matrix M = R;
-	Matrix Rt = R.transpose();
+	/*Matrix Rt = */R.transpose(); // MT
 	Vector Dist1(Dist.x, Dist.y, Dist.z);
-	Vector Dist2 = Rt * Dist1;
+	//Vector Dist2 = Rt * Dist1; // MT
 	Matrix D1(1,0,0,  0,1,0,  0,0,1);
 	Matrix D2(0,1,0,  1,0,0,  0,0,1);
 	Matrix D3(-1,0,0,  0,-1,0,  0,0,1);
@@ -726,7 +726,7 @@ inline Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const V
 	
 	Matrix R3(std::cos(theta),-std::sin(theta),0,  std::sin(theta),std::cos(theta),0,  0,0,1);	
 	Matrix R3inv = inverse_matrix(R3);
-	Matrix S16 = product_matrices(R3inv,M);
+	/*Matrix S16 = */product_matrices(R3inv,M); // MT
 		
 	Vector u(Dist.x,Dist.y,Dist.z);	
 	Matrix m_inter;	
@@ -875,7 +875,7 @@ inline Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &
 	
 	Matrix R3(std::cos(theta),-std::sin(theta),0,  std::sin(theta),std::cos(theta),0,  0,0,1);	
 	Matrix R3inv = inverse_matrix(R3);
-	Matrix S16 = product_matrices(R3inv,M);
+	/*Matrix S16 = */product_matrices(R3inv,M); // MT
 	Vector u(Frenet.x, Frenet.y, Frenet.z);
 	
 	Matrix m_inter;
