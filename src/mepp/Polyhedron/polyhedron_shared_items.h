@@ -6,6 +6,9 @@
 #endif
 #include <GL/glu.h>
 
+#include <QGLViewer/vec.h>
+#include <QGLViewer/quaternion.h>
+
 #include <fstream>
 #include <list>
 
@@ -330,6 +333,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		unsigned int nb_boundaries() {  return m_nb_boundaries; }
 		string pName;
 		bool pShow;
+		qglviewer::Vec pInitialCameraPosition;
+		qglviewer::Quaternion pInitialCameraOrientation;
 
 		// tag : AJOUT Céline
 		int& tag() {  return m_tag; }

@@ -75,10 +75,10 @@ class Viewer : public QGLViewer
 		~Viewer();
 
 		/*!
-		 * \fn void WriteIni()
+		 * \fn void WriteIni(bool force=false)
 		 * \brief Write mepp.ini.
 		 *
-		 * \param force : force writing or not.
+		 * \param force : force writing or not (default: false).
 		 */
 		void WriteIni(bool force=false);
 
@@ -149,20 +149,22 @@ class Viewer : public QGLViewer
 		 */
 		GLuint glList(unsigned short i) { return glList_[i]; }
 
+#if(0)
 		/*!
 		 * \fn qglviewer::Vec getInitialCameraPosition()
 		 * \brief Get the camera position.
 		 *
 		 * \return the camera position.
 		 */
-		qglviewer::Vec getInitialCameraPosition() { return initialCameraPosition; }
+		//qglviewer::Vec getInitialCameraPosition() { return initialCameraPosition; }
 		/*!
 		 * \fn qglviewer::Quaternion getInitialCameraOrientation()
 		 * \brief Get the camera orientation.
 		 *
 		 * \return the camera orientation.
 		 */
-		qglviewer::Quaternion getInitialCameraOrientation() { return initialCameraOrientation; }
+		//qglviewer::Quaternion getInitialCameraOrientation() { return initialCameraOrientation; }
+#endif
 
 		/*!
 		 * \fn change_material(string mat_name)
@@ -458,23 +460,38 @@ class Viewer : public QGLViewer
 				showEntireScene();
 			}
 
-			initialCameraPosition = camera()->position();
-			initialCameraOrientation = camera()->orientation();
+			p->pInitialCameraPosition = camera()->position();
+			p->pInitialCameraOrientation = camera()->orientation();
 		}
 
 		/*!
-		 * \fn centerAllObjects()
+		 * \fn centerAllObjects(bool forcePosition=true)
 		 * \brief Center all objects in Space mode.
+		 *
+		 * \param forcePosition true or false (default: true).
 		 */
-		void centerAllObjects()
+		void centerAllObjects(bool forcePosition=true)
 		{
 			int nbMesh = qMin(scene_ptr->get_nb_polyhedrons(), get_nb_frames());
 			for (int i=0; i<nbMesh; i++)
 			{
-				if (!scene_ptr->get_polyhedron(i)->empty())
+				//if (!scene_ptr->get_polyhedron(i)->empty())
 				{
-					frame(i)->setPosition(qglviewer::Vec(0.f, 0.f, 0.f));
+					if (forcePosition)
+						frame(i)->setPosition(qglviewer::Vec(0.f, 0.f, 0.f));
+					else
+					{
+						int m = i%2;
+
+						if (m)
+							frame(i)->setPosition(qglviewer::Vec(0.f, getYStep() * ceil(i/2.), 0.f));
+						else
+							frame(i)->setPosition(qglviewer::Vec(0.f, -getYStep() * ceil(i/2.), 0.f));
+					}
+
 					frame(i)->setOrientation(qglviewer::Quaternion(0, 0, 0, 1)); // identity Quaternion
+
+					frame(i)->moved=true;
 				}
 			}
 
@@ -487,8 +504,15 @@ class Viewer : public QGLViewer
 		 */
 		void resetView()
 		{
-			camera()->setPosition(getInitialCameraPosition());
-			camera()->setOrientation(getInitialCameraOrientation());
+			/*camera()->setPosition(getInitialCameraPosition());
+			camera()->setOrientation(getInitialCameraOrientation());*/
+
+			PolyhedronPtr p = scene_ptr->get_polyhedron();
+			//if (!p->empty())
+			{
+				camera()->setPosition(p->pInitialCameraPosition);
+				camera()->setOrientation(p->pInitialCameraOrientation);
+			}
 
 			updateGL();
 		}
@@ -1035,8 +1059,8 @@ class Viewer : public QGLViewer
 
 		//
 
-		qglviewer::Vec initialCameraPosition;
-		qglviewer::Quaternion initialCameraOrientation;
+		/*qglviewer::Vec initialCameraPosition;
+		qglviewer::Quaternion initialCameraOrientation;*/
 
 		//
 

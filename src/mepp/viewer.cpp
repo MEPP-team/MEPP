@@ -140,7 +140,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingZooms = false;
 	settings.beginGroup("Space");
 		mCouplingRotations = settings.value("CouplingRotations", false).toBool();
-		mYStep = settings.value("YStepBetweenEachMesh", 1.1).toFloat(); if (mYStep < 0.) mYStep=1.1;
+		mYStep = 0.;//settings.value("YStepBetweenEachMesh", /*1.1*/0.).toFloat(); if (mYStep < 0.) mYStep=/*1.1*/0.;
 	settings.endGroup();
 	
 	show_normals = false;
@@ -152,7 +152,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	timerDynamic = new QTimer(this);
     connect(timerDynamic, SIGNAL(timeout()), this, SLOT(shotDynamic()));
 	settings.beginGroup("Time");
-		m_fps = settings.value("Fps", 24).toInt(); if (m_fps < 1) mYStep=24;
+		m_fps = settings.value("Fps", 24).toInt(); if (m_fps < 1) m_fps=24;
 	settings.endGroup();
 	m_reverse = m_loop = false;
 
@@ -249,7 +249,7 @@ void Viewer::WriteIni(bool force)
 
 	settings.beginGroup("Space");
 		settings.setValue("CouplingRotations", mCouplingRotations);
-		settings.setValue("YStepBetweenEachMesh", QString::number(mYStep));
+		//settings.setValue("YStepBetweenEachMesh", QString::number(mYStep));
 	settings.endGroup();
 
 	settings.beginGroup("Time");
@@ -1401,7 +1401,13 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 
     QMenu menu(this);
 
-	QMenu menu_pid(tr("Pid"), this);
+	QMenu menu_pid(this);
+	if (scene_ptr->get_loadType()==Space)
+		menu_pid.setTitle(tr("Pid - Space mode (click to focus / hide / unhide and focus)"));
+	else if (scene_ptr->get_loadType()==Time)
+		menu_pid.setTitle(tr("Pid - Time mode (click to show)"));
+	else
+		menu_pid.setTitle(tr("Pid - Normal mode"));
 	menu.addMenu(&menu_pid);
 	menu.addSeparator();
 
@@ -1412,8 +1418,11 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 		for (int p=0; p<scene_ptr->get_nb_polyhedrons(); p++)
 		{
 			action = menu_pid.addAction(tr("%1 - %2 (pid: %3)").arg(p+1, 3).arg(scene_ptr->userFriendlyCurrentFile(p)).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
-			action->setCheckable(true);
-			action->setChecked(scene_ptr->get_polyhedron() == scene_ptr->get_polyhedron(p));
+			if (scene_ptr->get_loadType()!=Normal)
+			{
+				action->setCheckable(true);
+				action->setChecked(scene_ptr->get_polyhedron() == scene_ptr->get_polyhedron(p));
+			}
 
 			connect(action, SIGNAL(triggered()), meshMapper, SLOT(map()));
 			meshMapper->setMapping(action, p);

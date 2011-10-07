@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.0 - 06/10/2011 - (trunk version)"
+#define MEPP_VERSION "v0.46.1 - 07/10/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1505,6 +1505,9 @@ void mainwindow::on_actionBounding_box_when_moving_triggered()
 // view options
 void mainwindow::on_actionReset_viewpoint_triggered()
 {
+	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space)
+		((Viewer *)activeMdiChild())->centerAllObjects(false); // MT 7/10
+
 	if (activeMdiChild() != 0)
 		((Viewer *)activeMdiChild())->resetView();
 }

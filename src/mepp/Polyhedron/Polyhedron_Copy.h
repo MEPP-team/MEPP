@@ -71,8 +71,9 @@ public:
 		Vertex_iterator pVertex;
 		for (pVertex = m_pMesh->vertices_begin() ; pVertex != m_pMesh->vertices_end() ; pVertex++)
 		{
-			pVertex->tag(index);       //tag each original vertex
-            Vertex_handle vertex = B.add_vertex(pVertex->point());  //add original vertices to the new poly
+			pVertex->tag(index); // tag each original vertex
+            Vertex_handle vertex = B.add_vertex(pVertex->point());  // add original vertices to the new poly
+
 			vertex->color(pVertex->color(0), pVertex->color(1), pVertex->color(2)); // MT: add color
 
 			index++;
@@ -86,14 +87,14 @@ public:
 		for (pFacet = m_pMesh->facets_begin() ; pFacet != m_pMesh->facets_end() ; pFacet++)
 		{
                     unsigned int degree = 0;
-                    degree = Polyhedron::degree(pFacet);  //facet degree
+                    degree = Polyhedron::degree(pFacet);  // facet degree
                     CGAL_assertion(degree >= 3);
                     degree = degree; // just for warning with gcc 4.6
 
                     Halfedge_handle pHalfedge = pFacet->halfedge();
                     //int tag = 0; // MT
 
-                    B.begin_facet();
+                    Facet_handle facet = B.begin_facet();
                     do
                     {
                         B.add_vertex_to_facet(pHalfedge->vertex()->tag());
@@ -101,6 +102,8 @@ public:
                     } while (pHalfedge != pFacet->halfedge());
 
                     B.end_facet();
+
+					facet->color(pFacet->color(0), pFacet->color(1), pFacet->color(2)); // MT: add color
 		}
 		CGAL_assertion(!B.check_unconnected_vertices());
 	}

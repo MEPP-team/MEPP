@@ -81,6 +81,16 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 
 	if (!res)
 	{
+		if (get_nb_polyhedrons()>0)
+		{
+			PolyhedronPtr p = get_polyhedron();
+			//if (!p->empty())
+			{
+				viewer->camera()->setPosition(p->pInitialCameraPosition);
+				viewer->camera()->setOrientation(p->pInitialCameraOrientation);
+			}
+		}
+
 		if (!polyhedron_ptr->empty())
 		{
 			polyhedron_ptr->compute_bounding_box();
@@ -100,6 +110,8 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 
 		// if mode Space
 		todoIfModeSpace(viewer, viewer->getYStep());
+
+		viewer->showAllScene();
 	}
 
 	return res;
