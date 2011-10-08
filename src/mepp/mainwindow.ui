@@ -791,7 +791,7 @@
      <normaloff>:/icons/Pictures/Icons/_CenterAll.png</normaloff>:/icons/Pictures/Icons/_CenterAll.png</iconset>
    </property>
    <property name="text">
-    <string>Center all objects</string>
+    <string>Center all meshes</string>
    </property>
   </action>
   <action name="actionScreenshot_sequence">
@@ -865,7 +865,7 @@
      <normaloff>:/icons/Pictures/Icons/_ShowAll.png</normaloff>:/icons/Pictures/Icons/_ShowAll.png</iconset>
    </property>
    <property name="text">
-    <string>Reset viewpoint</string>
+    <string>Reset viewpoint for current mesh</string>
    </property>
   </action>
   <action name="actionSuperimpose_Vertices_big">
