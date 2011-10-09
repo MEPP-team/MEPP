@@ -451,8 +451,12 @@ class Viewer : public QGLViewer
 		 */
 		void showAllScene()
 		{
-			PolyhedronPtr p = scene_ptr->get_polyhedron();
+			setSceneRadius(1.0);
+			setSceneCenter(qglviewer::Vec(0.0, 0.0, 0.0));
+			camera()->setZNearCoefficient(0.005f);
+			camera()->setZClippingCoefficient(sqrt(3.0));
 
+			PolyhedronPtr p = scene_ptr->get_polyhedron();
 			if (!p->empty())
 			{
 				setSceneBoundingBox(qglviewer::Vec(to_double(p->xmin()),to_double(p->ymin()),to_double(p->zmin())), qglviewer::Vec(to_double(p->xmax()),to_double(p->ymax()),to_double(p->zmax())));
@@ -498,6 +502,7 @@ class Viewer : public QGLViewer
 			updateGL();
 		}
 
+#if(0)
 		/*!
 		 * \fn resetView()
 		 * \brief Reset the camera position and orientation to see the initial view.
@@ -516,6 +521,7 @@ class Viewer : public QGLViewer
 
 			updateGL();
 		}
+#endif
 
 		/*!
 		 * \fn setCouplingTranslations(bool b)

@@ -791,7 +791,7 @@
      <normaloff>:/icons/Pictures/Icons/_CenterAll.png</normaloff>:/icons/Pictures/Icons/_CenterAll.png</iconset>
    </property>
    <property name="text">
-    <string>Center all meshes</string>
+    <string>Center all meshes (in Space mode)</string>
    </property>
   </action>
   <action name="actionScreenshot_sequence">

@@ -140,7 +140,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingZooms = false;
 	settings.beginGroup("Space");
 		mCouplingRotations = settings.value("CouplingRotations", false).toBool();
-		mYStep = 0.;//settings.value("YStepBetweenEachMesh", /*1.1*/0.).toFloat(); if (mYStep < 0.) mYStep=/*1.1*/0.;
+		mYStep = settings.value("YStepBetweenEachMesh", 1.1).toFloat(); if (mYStep < 0.) mYStep=1.1;
 	settings.endGroup();
 	
 	show_normals = false;
@@ -249,7 +249,7 @@ void Viewer::WriteIni(bool force)
 
 	settings.beginGroup("Space");
 		settings.setValue("CouplingRotations", mCouplingRotations);
-		//settings.setValue("YStepBetweenEachMesh", QString::number(mYStep));
+		settings.setValue("YStepBetweenEachMesh", QString::number(mYStep));
 	settings.endGroup();
 
 	settings.beginGroup("Time");
@@ -968,12 +968,12 @@ void Viewer::init()
 	//setAxisIsDrawn(); // avoid bug under Mac OS X
 
 	//camera()->setZClippingCoefficient(100.0);	// 50
-		setSceneRadius(1.0);
+		/*setSceneRadius(1.0);
 		setSceneCenter(Vec(0.0, 0.0, 0.0));
 		camera()->setZNearCoefficient(0.005f);
-		camera()->setZClippingCoefficient(sqrt(3.0));
+		camera()->setZClippingCoefficient(sqrt(3.0));*/
 
-	showAllScene();
+	//showAllScene();
 
 	// Enable semi-transparent culling planes
 	glEnable(GL_BLEND);
@@ -1427,6 +1427,10 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 			connect(action, SIGNAL(triggered()), meshMapper, SLOT(map()));
 			meshMapper->setMapping(action, p);
 		}
+
+	menu.addAction(mw->actionReset_viewpoint);
+	menu.addAction(mw->actionCenter_all_objects);
+	menu.addSeparator();
 
 	menu.addAction(mw->actionClose);
 	menu.addSeparator();

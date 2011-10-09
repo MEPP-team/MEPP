@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.1 - 07/10/2011 - (trunk version)"
+#define MEPP_VERSION "v0.46.2 - 09/10/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1509,7 +1509,12 @@ void mainwindow::on_actionReset_viewpoint_triggered()
 		((Viewer *)activeMdiChild())->centerAllObjects(false); // MT 7/10
 
 	if (activeMdiChild() != 0)
-		((Viewer *)activeMdiChild())->resetView();
+	{
+		((Viewer *)activeMdiChild())->camera()->setPosition(qglviewer::Vec(0.f, 0.f, 0.f));
+		((Viewer *)activeMdiChild())->camera()->setOrientation(qglviewer::Quaternion(0, 0, 0, 1)); // identity Quaternion
+
+		((Viewer *)activeMdiChild())->/*resetView*/showAllScene();
+	}
 }
 
 void mainwindow::on_actionCopy_viewpoint_triggered()
