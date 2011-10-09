@@ -140,7 +140,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	mCouplingTranslations = mCouplingZooms = false;
 	settings.beginGroup("Space");
 		mCouplingRotations = settings.value("CouplingRotations", false).toBool();
-		mYStep = settings.value("YStepBetweenEachMesh", 1.1).toFloat(); if (mYStep < 0.) mYStep=1.1;
+		mYStep = settings.value("YStepBetweenEachMesh", 0.).toFloat(); if (mYStep < 0.) mYStep=0.;
 	settings.endGroup();
 	
 	show_normals = false;
