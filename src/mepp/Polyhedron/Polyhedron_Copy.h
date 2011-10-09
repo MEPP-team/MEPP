@@ -32,6 +32,7 @@ private:
 	typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
 	typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
 	typedef typename Polyhedron::Edge_iterator Edge_iterator;
+        typedef typename Polyhedron::Facet_handle Facet_handle; // MT
 	typedef typename Polyhedron::Facet_iterator Facet_iterator;
 
 	typedef typename Polyhedron::Halfedge_around_vertex_circulator
@@ -72,7 +73,7 @@ public:
 		for (pVertex = m_pMesh->vertices_begin() ; pVertex != m_pMesh->vertices_end() ; pVertex++)
 		{
 			pVertex->tag(index); // tag each original vertex
-            Vertex_handle vertex = B.add_vertex(pVertex->point());  // add original vertices to the new poly
+                        Vertex_handle vertex = B.add_vertex(pVertex->point());  // add original vertices to the new poly
 
 			vertex->color(pVertex->color(0), pVertex->color(1), pVertex->color(2)); // MT: add color
 
@@ -103,7 +104,7 @@ public:
 
                     B.end_facet();
 
-					facet->color(pFacet->color(0), pFacet->color(1), pFacet->color(2)); // MT: add color
+                    facet->color(pFacet->color(0), pFacet->color(1), pFacet->color(2)); // MT: add color
 		}
 		CGAL_assertion(!B.check_unconnected_vertices());
 	}
@@ -123,7 +124,7 @@ public:
 public:
    int copy(Polyhedron *OriginalMesh, Polyhedron *NewMesh)
    {
-		CModifierCopyPoly<HalfedgeDS, Polyhedron, kernel> builder(OriginalMesh);
+	CModifierCopyPoly<HalfedgeDS, Polyhedron, kernel> builder(OriginalMesh);
         NewMesh->delegate(builder);                     //calls the `operator()' of the `modifier'
         return(0);
    }
