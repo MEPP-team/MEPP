@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.2 - 09/10/2011 - (trunk version)"
+#define MEPP_VERSION "v0.46.2 - 09/10/2011 - (tagged version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
