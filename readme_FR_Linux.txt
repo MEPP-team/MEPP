@@ -4,16 +4,15 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
----------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10 ou 11.04 / Debian 6:
----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04 ou 11.10 / Debian 6:
+----------------------------------------------------------------------------------------
 
 1) installer Ubuntu 9.10, 10.04, 10.10 ou 11.04 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
 sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui doxygen graphviz libxerces-c-dev
-sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-dev
 
 ----------------------------------------
 Suivant votre version d'Ubuntu / Debian:
@@ -47,14 +46,22 @@ si Linux 64 bit
  
 ou
 
-sous Ubuntu 11.10 (The Oneiric Ocelot - l'ocelot onirique, testé avec 'pré-version' du 28 juin 2011 -> http://cdimage.ubuntu.com/daily-live/current/), créer 2 liens:
+sous Ubuntu 11.10* (The Oneiric Ocelot - l'ocelot onirique), créer 5 liens:
  cd /usr/lib
 si Linux 32 bit
+ sudo ln -s i386-linux-gnu/libQtOpenGL.so libQtOpenGL.so
+ sudo ln -s i386-linux-gnu/libQtGui.so libQtGui.so
+ sudo ln -s i386-linux-gnu/libQtCore.so libQtCore.so
  sudo ln -s i386-linux-gnu/libGLU.so libGLU.so
  sudo ln -s i386-linux-gnu/libGL.so libGL.so
 si Linux 64 bit
+ sudo ln -s x86_64-linux-gnu/libQtOpenGL.so libQtOpenGL.so
+ sudo ln -s x86_64-linux-gnu/libQtGui.so libQtGui.so
+ sudo ln -s x86_64-linux-gnu/libQtCore.so libQtCore.so
  sudo ln -s x86_64-linux-gnu/libGLU.so libGLU.so
  sudo ln -s x86_64-linux-gnu/libGL.so libGL.so
+
+* pour réinstaller le bureau GNOME classique : sudo apt-get install gnome-panel
 
 
 ----------------------------------------------------
