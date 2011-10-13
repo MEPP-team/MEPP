@@ -1,3 +1,5 @@
+IF(WIN32)
+
 # Locate ffmpeg
 # This module defines
 # FFMPEG_LIBRARIES
@@ -163,4 +165,8 @@ ELSE ()
 
 #    MESSAGE(STATUS "Could not find FFMPEG")
 
+ENDIF()
+
+ELSE ()
+SET(FFMPEG_FOUND "NO")
 ENDIF()

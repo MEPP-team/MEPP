@@ -20,7 +20,7 @@ sudo port -v selfupdate
 sudo port install subversion (il se peut que le paquet dépendant db46 nécessite l'installation de java pour Mac OS X, dans ce cas, l'installer puis relancer la commande)
 sudo port install cgal												(assez long, <= 1 heure)
 sudo port install qt4-mac											(très long, environ 2-3 heures)
-sudo port install libQGLViewer										(très rapide, quelques minutes)
+sudo port install libQGLViewer											(très rapide, quelques minutes)
 sudo port install glew												(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
 sudo port install ffmpeg											(très rapide, quelques minutes)
