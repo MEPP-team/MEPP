@@ -71,7 +71,9 @@ class Curvature_Polyhedron : virtual public MEPP_Common_Polyhedron<kernel,items>
 {
 	public:
 
-		Curvature_Polyhedron() {}
+		Curvature_Polyhedron() { curvature_is_calculated=false; }
+
+		bool curvature_is_calculated;
 };
 
 #endif

@@ -26,7 +26,7 @@ void mepp_component_Curvature_plugin::post_draw()
 		if (doesExistComponentForViewer<Curvature_ComponentPtr, Curvature_Component>(viewer, polyhedron_ptr)) // important !!!
 		{
 			Curvature_ComponentPtr component_ptr = findOrCreateComponentForViewer<Curvature_ComponentPtr, Curvature_Component>(viewer, polyhedron_ptr);
-			if (component_ptr->get_init() == 2)
+			if (component_ptr->get_init() == 2 && polyhedron_ptr->curvature_is_calculated)
 			{	
 				glPushMatrix();
 					// here your code
@@ -126,6 +126,8 @@ void mepp_component_Curvature_plugin::OnCurvature()
 
 				//m_frame->set_status_message(_T("Curvature...done"));
 				mw->statusBar()->showMessage(tr("Curvature is done"));
+
+				polyhedron_ptr->curvature_is_calculated=true;
 
 				component_ptr->set_init(2);
 				viewer->updateGL();
