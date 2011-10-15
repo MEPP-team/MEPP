@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
 // Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
@@ -12,7 +12,7 @@
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
-sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui doxygen graphviz libxerces-c-dev
+sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev
 
 ----------------------------------------
 Suivant votre version d'Ubuntu / Debian:

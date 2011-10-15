@@ -1,40 +1,62 @@
-﻿///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
 // Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'* ou '10.6 Snow Leopard') :
-----------------------------------------------------------------------------------
+Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard' ou '10.7 Lion') :
+-----------------------------------------------------------------------------------------------
 
 1) installer Xcode:
-http://developer.apple.com/technologies/xcode.html
+http://developer.apple.com/xcode/
 
-2) installer MacPorts:
+2) installer Java Developer Package for Mac OS X
+https://connect.apple.com/
+
+3a) installer MacPorts:
 http://www.macports.org/install.php
 
-3) mettre à jour MacPorts: 
+---> mettre à jour MacPorts: 
 sudo port -v selfupdate
 
-4) installer les paquets suivants avec MacPorts:
+---> installer les paquets suivants avec MacPorts:
 sudo port install subversion (il se peut que le paquet dépendant db46 nécessite l'installation de java pour Mac OS X, dans ce cas, l'installer puis relancer la commande)
 sudo port install cgal												(assez long, <= 1 heure)
 sudo port install qt4-mac											(très long, environ 2-3 heures)
 sudo port install libQGLViewer											(très rapide, quelques minutes)
 sudo port install glew												(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
-sudo port install ffmpeg											(très rapide, quelques minutes)
 
-puis
-
+---> puis:
 sudo port install python_select
 sudo python_select pythonXX (ex.: python27)
 
-5) télécharger les sources de Mepp:
+ou
+
+3b) installer Homebrew (http://mxcl.github.com/homebrew/):
+/usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+
+---> installer les paquets suivants avec Homebrew:
+brew install subversion
+brew install cgal
+brew install qt
+brew install glew
+brew install doxygen graphviz xerces-c
+
+---> télécharger libQGLViewer: http://www.libqglviewer.com/src/libQGLViewer-2.3.10.tar.gz
+---> puis compiler et installer libQGLViewer:
+tar -xzf libQGLViewer-2.3.10.tar.gz
+cd libQGLViewer-2.3.10/QGLViewer
+---> !!! supprimer la ligne 166 du fichier VRenderInterface.Qt4.ui !!!
+qmake -spec macx-g++
+make
+sudo make install
+
+4) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
 svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
 
-6a) compiler Mepp avec CMake et Makefile:
+5a) compiler Mepp avec CMake et Makefile:
 se positionner dans trunk, puis,
  - mkdir build; cd build
  - pour une version Release: "cmake .." puis make
@@ -46,7 +68,7 @@ note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 
 ou
 
-6b) compiler Mepp avec CMake et Qt Creator:
+5b) compiler Mepp avec CMake et Qt Creator:
 CMake (ou CMake-gui) est capable de générer (pour le moment) des Makefiles Unix ainsi que des projets Code::Blocks ou encore KDevelop,
 mais malheureusement pas encore des projets Qt Creator (.pro).
 Qt Creator sait par contre interprêter directement le CMakeLists.txt de cmake
@@ -70,7 +92,7 @@ Note au sujet de l'activation/désactivation des composants avec CMake:
 ---------------------------------------------------------------
 Note au sujet de la génération d'un bundle portable (mepp.app):
 ---------------------------------------------------------------
-"make install" permet de déployer un bundle portable sur un autre système Mac, le bundle généré se trouve dans le dossier mepp_deploy
+"sudo make install" permet de déployer un bundle portable sur un autre système Mac, le bundle généré se trouve dans le dossier mepp_deploy
 
 
 
@@ -79,4 +101,3 @@ il faut donc utiliser gcc 4.2 à la place:
 cmake .. -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.2 -DCMAKE_C_COMPILER=/usr/bin/gcc-4.2
 
 De plus, si votre processeur ne supporte pas le 64 bits, il faut également passer -DCMAKE_C_FLAGS='-arch i386'
- 
