@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
 // Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
@@ -13,31 +13,12 @@ http://developer.apple.com/xcode/
 2) installer Java Developer Package for Mac OS X
 https://connect.apple.com/
 
-3a) installer MacPorts:
-http://www.macports.org/install.php
+///////////////////////////////////////////////////////////////////////////
 
----> mettre à jour MacPorts: 
-sudo port -v selfupdate
-
----> installer les paquets suivants avec MacPorts:
-sudo port install subversion (il se peut que le paquet dépendant db46 nécessite l'installation de java pour Mac OS X, dans ce cas, l'installer puis relancer la commande)
-sudo port install cgal							(assez long, <= 1 heure)
-sudo port install qt4-mac						(très long, environ 2-3 heures)
-sudo port install libQGLViewer					(très rapide, quelques minutes)
-sudo port install glew							(très très rapide, quelques secondes)
-sudo port install doxygen graphviz xercesc3
-
----> puis:
-sudo port install python_select
-sudo python_select pythonXX (ex.: python27)
-
-ou
-
-3b) installer Homebrew (http://mxcl.github.com/homebrew/):
+3a) installer Homebrew (http://mxcl.github.com/homebrew/):
 /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
 
 ---> installer les paquets suivants avec Homebrew:
-brew install subversion
 brew install cgal
 brew install qt
 brew install glew
@@ -51,6 +32,27 @@ cd libQGLViewer-2.3.10/QGLViewer
 qmake -spec macx-g++
 make
 sudo make install
+
+ou
+
+3b) installer MacPorts:
+http://www.macports.org/install.php
+
+---> mettre à jour MacPorts: 
+sudo port -v selfupdate
+
+---> installer les paquets suivants avec MacPorts:
+sudo port install cgal				(assez long, <= 1 heure)
+sudo port install qt4-mac			(très long, environ 2-3 heures)
+sudo port install libQGLViewer		(très rapide, quelques minutes)
+sudo port install glew				(très très rapide, quelques secondes)
+sudo port install doxygen graphviz xercesc3
+
+---> puis:
+sudo port install python_select
+sudo python_select pythonXX (ex.: python27)
+
+///////////////////////////////////////////////////////////////////////////
 
 4) télécharger les sources de Mepp:
 svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
