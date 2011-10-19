@@ -15,8 +15,15 @@ https://connect.apple.com/
 
 ///////////////////////////////////////////////////////////////////////////
 
+3) utiliser Homebrew (3a) ou MacPorts (3b)
+Je vous recommande fortement Homebrew, plus puissant et plus rapide lors de l'installation car disposant notamment parfois de "Bottle" (paquet binaire)
+
 3a) installer Homebrew (http://mxcl.github.com/homebrew/):
 /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+
+---> !!! sous Mac OS X 10.7.x Lion avec Xcode 4.2, mettre à jour la formule Ruby de gmp (dépendance de cgal) !!! :
+remplacer donc /usr/local/Library/Formula/gmp.rb par ce fichier: http://liris.cnrs.fr/mepp/download/gmp.rb
+(ce point n'est pas nécessaire sous Mac OS X 10.7.x Lion avec Xcode 4.1)
 
 ---> installer les paquets suivants avec Homebrew:
 brew install cgal
@@ -30,7 +37,6 @@ tar -xzf libQGLViewer-2.3.10.tar.gz
 cd libQGLViewer-2.3.10/QGLViewer
 ---> !!! supprimer la ligne 166 du fichier VRenderInterface.Qt4.ui !!!
 qmake -spec macx-g++
-make
 sudo make install
 
 ou

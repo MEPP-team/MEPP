@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
 // Year: 2010-2011
 // CNRS-Lyon, LIRIS UMR 5205
@@ -8,7 +8,7 @@
 (A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04 ou 11.10 / Debian 6:
 ----------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10 ou 11.04 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04 ou 11.10 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
