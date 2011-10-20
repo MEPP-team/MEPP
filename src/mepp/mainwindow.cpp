@@ -1384,7 +1384,7 @@ void mainwindow::on_actionVertex_color_triggered()
 		if (new_color.isValid())
 			viewer->setViewerVertexColor(new_color);
 
-		viewer->>WriteIni();
+		viewer->WriteIni();
 	}
 }
 void mainwindow::on_actionEdge_color_triggered()
