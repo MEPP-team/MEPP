@@ -1371,7 +1371,7 @@ void mainwindow::on_actionBackground_color_triggered()
 		if (new_color.isValid())
 			viewer->setViewerBackgroundColor(new_color);
 
-		((Viewer *)activeMdiChild())->WriteIni();
+		viewer->WriteIni();
 	}
 }
 void mainwindow::on_actionVertex_color_triggered()
@@ -1384,7 +1384,7 @@ void mainwindow::on_actionVertex_color_triggered()
 		if (new_color.isValid())
 			viewer->setViewerVertexColor(new_color);
 
-		((Viewer *)activeMdiChild())->WriteIni();
+		viewer->>WriteIni();
 	}
 }
 void mainwindow::on_actionEdge_color_triggered()
@@ -1397,7 +1397,7 @@ void mainwindow::on_actionEdge_color_triggered()
 		if (new_color.isValid())
 			viewer->setViewerEdgeColor(new_color);
 
-		((Viewer *)activeMdiChild())->WriteIni();
+		viewer->WriteIni();
 	}
 }
 void mainwindow::on_actionFace_color_triggered()
@@ -1410,7 +1410,7 @@ void mainwindow::on_actionFace_color_triggered()
 		if (new_color.isValid())
 			viewer->setViewerFaceColor(new_color);
 
-		((Viewer *)activeMdiChild())->WriteIni();
+		viewer->WriteIni();
 	}
 }
 
@@ -1434,7 +1434,7 @@ void mainwindow::on_actionMaterial_triggered()
 			viewer->recreateListsAndUpdateGL();
 		}
 
-		((Viewer *)activeMdiChild())->WriteIni();
+		viewer->WriteIni();
 	}
 }
 // color options
@@ -1447,7 +1447,6 @@ void mainwindow::on_actionShow_FPS_triggered()
 		((Viewer *)activeMdiChild())->toggleFPSIsDisplayed();
 		((Viewer *)activeMdiChild())->WriteIni();
 	}
-
 }
 void mainwindow::on_actionShow_axis_triggered()
 {
@@ -1487,17 +1486,17 @@ void mainwindow::on_actionBounding_box_when_moving_triggered()
 {
 	if (activeMdiChild() != 0)
 	{
-        Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
-
-        if (viewer->getVBO_mode())
+		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+		
+		if (viewer->getVBO_mode())
 		{
 			actionBounding_box_when_moving->setChecked(false);
 			QMessageBox::information(this, APPLICATION, tr("Sorry, 'bounding box when moving' is not possible with this mode."));
 		}
-
+		
 		viewer->setBounding_box_when_moving(actionBounding_box_when_moving->isChecked());
-
-		((Viewer *)activeMdiChild())->WriteIni();
+		
+		viewer->WriteIni();
 	}
 }
 // show options
