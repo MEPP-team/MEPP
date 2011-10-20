@@ -1656,7 +1656,7 @@ void mainwindow::on_actionParams_triggered()
 		if (ok)
 			viewer->setFps(res);
 
-		((Viewer *)activeMdiChild())->WriteIni();
+		viewer->WriteIni();
 	}
 }
 
