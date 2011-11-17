@@ -109,8 +109,12 @@ void mepp_component_CGAL_Example_plugin::post_draw_all_scene()
 				if (nbMesh == 2)
 				{
 					glPushMatrix();
+					glDisable(GL_LIGHTING);
+
 						// here your code
 						draw_connections(viewer, 0, 1); // link between first and second mesh (first and second frame)
+
+					glEnable(GL_LIGHTING);
 					glPopMatrix();
 				}
 			}
@@ -121,21 +125,25 @@ void mepp_component_CGAL_Example_plugin::post_draw_all_scene()
 void mepp_component_CGAL_Example_plugin::draw_connections(Viewer* viewer, int frame_i, int frame_j)
 {
 #if (1)
-	PolyhedronPtr pMesh = viewer->getScenePtr()->get_polyhedron(frame_i);
+	PolyhedronPtr pMesh_i = viewer->getScenePtr()->get_polyhedron(frame_i);
+	PolyhedronPtr pMesh_j = viewer->getScenePtr()->get_polyhedron(frame_j);
 
-	int nbp_i = pMesh->size_of_vertices();
-	int nbp_j = viewer->getScenePtr()->get_polyhedron(frame_j)->size_of_vertices();
+	int nbp_i = pMesh_i->size_of_vertices();
+	int nbp_j = pMesh_j->size_of_vertices();
 
 	if (nbp_i == nbp_j)
 	{
 		glLineWidth(2);
 		glColor3f(1., 0., 0.);
 
-		Vertex_iterator pVertex = NULL;
-		for (pVertex = pMesh->vertices_begin(); pVertex != pMesh->vertices_end(); pVertex++)
+		Vertex_iterator pVertex_i = NULL;
+		Vertex_iterator pVertex_j = NULL;
+		for (pVertex_i = pMesh_i->vertices_begin(), pVertex_j = pMesh_j->vertices_begin(); pVertex_i != pMesh_i->vertices_end(); pVertex_i++, pVertex_j++)
 		{
-			Vec p(pVertex->point().x(), pVertex->point().y(), pVertex->point().z());
-			draw_link(viewer, frame_i, frame_j, p, p);
+			Vec pi(pVertex_i->point().x(), pVertex_i->point().y(), pVertex_i->point().z());
+			Vec pj(pVertex_j->point().x(), pVertex_j->point().y(), pVertex_j->point().z());
+
+			draw_link(viewer, frame_i, frame_j, pi, pj);
 		}
 	}
 #endif
