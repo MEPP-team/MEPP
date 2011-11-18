@@ -64,14 +64,15 @@ si Linux 64 bit
 * pour réinstaller le bureau GNOME classique : sudo apt-get install gnome-panel
 
 
-----------------------------------------------------
-(B) Marche à suivre pour Mepp sous Fedora 14 ou 15 :
-----------------------------------------------------
+--------------------------------------------------------
+(B) Marche à suivre pour Mepp sous Fedora 14, 15 ou 16 :
+--------------------------------------------------------
 
-1) installer Fedora 14 ou 15
+1) installer Fedora 14, 15 ou 16
 2) faire la mise à jour de la distribution et des paquets déjà installés (facultatif)
 3) installer les paquets suivants:
-sudo yum install subversion CGAL-devel qt-creator libQGLViewer-devel cmake-gui glew-devel doxygen graphviz xerces-c-devel
+su (entrer le mot de passe de l'utilisateur courant)
+yum install subversion CGAL-devel qt-creator libQGLViewer-devel cmake-gui glew-devel doxygen graphviz xerces-c-devel
 
 
 --------------------------------------------------
