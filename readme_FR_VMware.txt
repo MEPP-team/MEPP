@@ -6,12 +6,12 @@
 
 Vous trouverez ici http://download.gforge.liris.cnrs.fr/meppbin/vmware/ des machines virtuelles VMware prête à l'emploi avec VMware Player (gratuit) fournit au même endroit.
 
-Il suffit de décompresser la machine de votre choix (format 7z mais se décompresse aussi avec Winrar) puis de démarrer la machine avec VMware Player.
+Il suffit de décompresser la machine de votre choix (format Winrar) puis de démarrer la machine avec VMware Player.
 
 
--------------------------------------------------------------------------------------------------------
-(A) Marche à suivre pour la machine virtuelle Ubuntu 11.10 ('pré-version' du 28 juin 2011) / CGAL 3.8 :
--------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------
+Marche à suivre pour la machine virtuelle Ubuntu 11.10 / CGAL 3.8 :
+-------------------------------------------------------------------
 
 1) Une fois que la machine Linux est active, ouvrez un terminal (menu "Applications > Accessoires > Terminal") et procédez ainsi:
 - cd Desktop
@@ -35,34 +35,3 @@ Password: mepp2011
 
 Username: root
 Password: mepp2011
-
-
--------------------------------------------------------------------------
-(B) Marche à suivre pour la machine virtuelle Ubuntu 10.04 / CGAL 3.5.1 :
--------------------------------------------------------------------------
-
-1) Une fois que la machine Linux est active, ouvrez un terminal (menu "Applications > Accessoires > Terminal") et procédez ainsi:
-- cd Desktop
-- svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
-svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
-- puis, pour les membres du LIRIS:
-	- choisir "(t)emporaire" en appuyant sur la touche 't'
-	- on vous propose ensuite d'entrer le mot de passe pour l'utilisateur 'vadmin', appuyez alors une fois sur la touche "entrée" pour saisir à la place votre nom d'utilisateur GForge
-	- saisissez ensuite votre mot de passe GForge associé
-	- vous pouvez cliquer sur "annuler" sur la boite de dialogue relative au trousseau de clés
-	- vous pouvez répondre "non" à la question du stockage en clair du mot de passe
-
-2) Installer les paquets manquants suivants:
-sudo apt-get install doxygen graphviz libxerces-c-dev
-
-3) Pour compiler, suivez les instructions 5a) ou 5b) du fichier "readme_FR_Linux.txt" présent à la racine du trunk.
-
----
-
-Si besoin, voici les mots de passe de la machine virtuelle Linux:
-
-Username: vadmin
-Password: mepp2010
-
-Username: root
-Password: mepp2010
