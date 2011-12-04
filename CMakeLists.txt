@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - Juin 2011
+# Martial TOLA - December 2011
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -26,6 +26,7 @@ file(
 	GLOB_RECURSE
 	mepp_components
 	src/components/*/CMakeLists.txt
+	src/private_components/*/CMakeLists.txt
 )
 FOREACH (MEPP_COMPONENT ${mepp_components})
 	get_filename_component (MEPP_COMPONENT_DIR "${MEPP_COMPONENT}" PATH)
@@ -37,12 +38,12 @@ FOREACH (MEPP_COMPONENT ${mepp_components})
 	OPTION(BUILD_${MEPP_COMPONENT_NAME} "Build ${MEPP_COMPONENT_NAME} " ON)
 	if (BUILD_${MEPP_COMPONENT_NAME})
 	  ADD_SUBDIRECTORY(${MEPP_COMPONENT_DIR})
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/components/_enrichment_.in/polyhedron_enrichment_define.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/components/_enrichment_.in/polyhedron_enrichment_include.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/components/_enrichment_.in/polyhedron_enrichment_facet.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/components/_enrichment_.in/polyhedron_enrichment_halfedge.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/components/_enrichment_.in/polyhedron_enrichment_vertex.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/components/_enrichment_.in/polyhedron_enrichment_polyhedron.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_${MEPP_SHORT_COMPONENT_NAME}.h)  
+	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_define.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
+	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_include.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
+	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_facet.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_${MEPP_SHORT_COMPONENT_NAME}.h)
+	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_halfedge.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_${MEPP_SHORT_COMPONENT_NAME}.h)
+	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_vertex.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_${MEPP_SHORT_COMPONENT_NAME}.h)
+	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_polyhedron.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_${MEPP_SHORT_COMPONENT_NAME}.h)  
 	else (BUILD_${MEPP_COMPONENT_NAME})
 		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
 	  FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
