@@ -57,7 +57,7 @@ QVideoEncoder::~QVideoEncoder()
    }*/
 }
 
-bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,unsigned bitrate,unsigned gop)
+bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,unsigned bitrate,unsigned gop,unsigned fps)
 {
    // If we had an open video, close it.
    close();
@@ -73,9 +73,9 @@ bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,u
       return false;
    }
 
-   pOutputFormat = ffmpeg::av_guess_format(NULL, fileName.toStdString().c_str(), NULL); // MT
+   pOutputFormat = ffmpeg::av_guess_format(NULL, fileName.toStdString().c_str(), NULL);
    if (!pOutputFormat) {
-      printf("Could not deduce output format from file extension: using MPEG.\n"); // MT
+      printf("Could not deduce output format from file extension: using MPEG.\n");
       pOutputFormat = ffmpeg::av_guess_format("mpeg", NULL, NULL);
    }
 
@@ -101,12 +101,12 @@ bool QVideoEncoder::createFile(QString fileName,unsigned width,unsigned height,u
 
    pCodecCtx=pVideoStream->codec;
    pCodecCtx->codec_id = pOutputFormat->video_codec;
-   pCodecCtx->codec_type = ffmpeg::CODEC_TYPE_VIDEO;
+   pCodecCtx->codec_type = ffmpeg::AVMEDIA_TYPE_VIDEO;
 
    pCodecCtx->bit_rate = Bitrate;
    pCodecCtx->width = getWidth();
    pCodecCtx->height = getHeight();
-   pCodecCtx->time_base.den = 25;
+   pCodecCtx->time_base.den = fps;
    pCodecCtx->time_base.num = 1;
    pCodecCtx->gop_size = Gop;
    pCodecCtx->pix_fmt = ffmpeg::PIX_FMT_YUV420P;
@@ -207,9 +207,6 @@ bool QVideoEncoder::close()
    // Free the stream
    av_free(pFormatCtx);
 
-   // MT: free the sws-context
-   sws_freeContext(img_convert_ctx);
-
    initVars();
    return true;
 }
@@ -239,7 +236,7 @@ int QVideoEncoder::encodeImage(const QImage &img)
       if (pCodecCtx->coded_frame->pts != (0x8000000000000000LL))
          pkt.pts= av_rescale_q(pCodecCtx->coded_frame->pts, pCodecCtx->time_base, pVideoStream->time_base);
       if(pCodecCtx->coded_frame->key_frame)
-         pkt.flags |= PKT_FLAG_KEY;
+         pkt.flags |= AV_PKT_FLAG_KEY;
 
       pkt.stream_index= pVideoStream->index;
       pkt.data= outbuf;
@@ -293,12 +290,12 @@ bool QVideoEncoder::initCodec()
 **/
 bool QVideoEncoder::isSizeValid()
 {
-	// MT
-	/*if(getWidth()%8)
-	  return false;
-	if(getHeight()%8)
-	  return false;*/
-	return true;
+   // MT
+   /*if(getWidth()%8)
+      return false;
+   if(getHeight()%8)
+      return false;*/
+   return true;
 }
 
 unsigned QVideoEncoder::getWidth()

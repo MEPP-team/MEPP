@@ -601,7 +601,7 @@ class Viewer : public QGLViewer
 		bool getSave_animation() { return save_animation; }
 
 		/*!
-		 * \fn saveAnimation(bool b)
+		 * \fn saveAnimation(bool b, QString &savePNGLocation)
 		 * \brief Start or stop saving an animation (on/off).
 		 *
 		 * \param b true (on) or false (off).
@@ -641,16 +641,17 @@ class Viewer : public QGLViewer
 
 #ifdef WITH_FFMPEG
 		/*!
-		 * \fn saveFFmpegAnimation(bool b)
+		 * \fn saveFFmpegAnimation(bool b, QString &saveAVILocation, int bitrate=1500, int fps=25, bool resize=false, int gop=12)
 		 * \brief Start or stop saving an FFmpeg animation (on/off).
 		 *
 		 * \param b true or false.
 		 * \param saveAVILocation contains the default AVI save location.
 		 * \param bitrate bitrate of the video (default: 1500).
+                 * \param fps fps of the video (default: 25).
  		 * \param resize false (unused).
- 		 * \param gop gop of the video (default: 12).
+ 		 * \param gop gop of the video (default: 12).                 
 		 */
-		void saveFFmpegAnimation(bool b, QString &saveAVILocation, int bitrate=1500, bool resize=false, int gop=12)
+		void saveFFmpegAnimation(bool b, QString &saveAVILocation, int bitrate=1500, int fps=25, bool resize=false, int gop=12)
 		{
 			if (b)
 			{
@@ -671,7 +672,7 @@ class Viewer : public QGLViewer
 					int height=this->height();
 					//int bitrate=1000;
 					//int gop=20;
-					encoder.createFile(fileName,width,height,bitrate*1000,gop);
+					encoder.createFile(fileName,width,height,bitrate*1000,gop,fps);
 
 					connect(this, SIGNAL(drawFinished(bool)), SLOT(shotCapture(bool)));
 					setSave_animation(true);

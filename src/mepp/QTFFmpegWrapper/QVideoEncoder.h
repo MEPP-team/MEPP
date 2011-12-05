@@ -1,6 +1,7 @@
 #ifndef __QVideoEncoder_H
 #define __QVideoEncoder_H
 
+
 /*
    QTFFmpegWrapper - QT FFmpeg Wrapper Class
    Copyright (C) 2009,2010:
@@ -15,8 +16,6 @@ Redistribution and use in source and binary forms, with or without modification,
 
 THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE FREEBSD PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-#ifdef WITH_FFMPEG
 
 #include <QIODevice>
 #include <QFile>
@@ -76,7 +75,7 @@ class QVideoEncoder
       QVideoEncoder();
       virtual ~QVideoEncoder();
 
-      bool createFile(QString filename,unsigned width,unsigned height,unsigned bitrate,unsigned gop);
+      bool createFile(QString filename,unsigned width,unsigned height,unsigned bitrate,unsigned gop,unsigned fps=25);
       virtual bool close();
 
       virtual int encodeImage(const QImage &);
@@ -84,6 +83,7 @@ class QVideoEncoder
 
 };
 
-#endif
+
+
 
 #endif // QVideoEncoder_H

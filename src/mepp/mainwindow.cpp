@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.2 - 09/10/2011 - (tagged version)"
+#define MEPP_VERSION "v0.46.3 - 05/12/2011 - (trunk version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1588,12 +1588,17 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 		{
 			bool ok=true;
 			int bitrate=6000;	//1280x720 b=19700k
+			int fps=12;
 
 			if (actionScreenshot_sequence->isChecked())
-				bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);
+                        {
+				bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);                   
+                                if (ok) fps = QInputDialog::getInteger(this, tr("Select fps"), tr("Frames per second:"), fps, 3, 25, 1, &ok);
+                                if (ok) actionScreenshot_sequence->setChecked(true);
+                        }
 
 			if (ok)
-				viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), saveAVILocation, bitrate);
+				viewer->saveFFmpegAnimation(actionScreenshot_sequence->isChecked(), saveAVILocation, bitrate, fps);
 			else
 				viewer->setSave_animation(false);
 

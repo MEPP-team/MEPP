@@ -30,6 +30,7 @@ brew install cgal
 brew install qt
 brew install glew
 brew install doxygen graphviz xerces-c
+brew install ffmpeg
 
 ---> télécharger libQGLViewer: http://www.libqglviewer.com/src/libQGLViewer-2.3.10.tar.gz
 ---> puis compiler et installer libQGLViewer:
@@ -53,6 +54,7 @@ sudo port install qt4-mac			(très long, environ 2-3 heures)
 sudo port install libQGLViewer		(très rapide, quelques minutes)
 sudo port install glew				(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
+sudo port install ffmpeg			(très rapide, quelques minutes)
 
 ---> puis:
 sudo port install python_select

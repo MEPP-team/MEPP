@@ -137,7 +137,7 @@ bool QVideoDecoder::openFile(QString filename)
    // Find the first video stream
    videoStream=-1;
    for(unsigned i=0; i<pFormatCtx->nb_streams; i++)
-       if(pFormatCtx->streams[i]->codec->codec_type==ffmpeg::CODEC_TYPE_VIDEO)
+       if(pFormatCtx->streams[i]->codec->codec_type==ffmpeg::AVMEDIA_TYPE_VIDEO)
        {
            videoStream=i;
            break;

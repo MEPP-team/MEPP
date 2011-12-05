@@ -24,6 +24,11 @@
 
 #include <vector>
 
+// MT
+#if defined (__linux__)
+#include <stddef.h>
+#endif
+
 namespace XIOT {
 
 	/**
@@ -64,7 +69,13 @@ namespace XIOT {
 			unsigned long _exponentBits;
 			unsigned long _mantissaBits;
 
-			unsigned int _exponent_bias;			unsigned int _sign_shift;			unsigned int _sign_mask;			unsigned int _exponent_mask;			unsigned int _mantissa_mask;			int _exponent_max;			int _exponent_min;
+			unsigned int _exponent_bias;
+			unsigned int _sign_shift;
+			unsigned int _sign_mask;
+			unsigned int _exponent_mask;
+			unsigned int _mantissa_mask;
+			int _exponent_max;
+			int _exponent_min;
 
 	};
 

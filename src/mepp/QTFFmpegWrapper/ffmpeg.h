@@ -25,10 +25,10 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #endif
 #include "stdint.h"
 
-#ifdef __APPLE__
-	#ifndef UINT64_C
-	#define UINT64_C(v)  (v ## ULL)
-	#endif
+#if defined (__linux__) || defined (__APPLE__)
+        #ifndef UINT64_C
+        #define UINT64_C(v)  (v ## ULL)
+        #endif
 #endif
 
 #if _MSC_VER
@@ -45,11 +45,13 @@ extern "C" {
 
 #include <stdint.h>*/
 
+
+
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavutil/mathematics.h"
-//#include "libavformat/riff.h"	// MT
-//#include "libavformat/metadata.h"	// MT
+//#include "libavformat/riff.h"
+//#include "libavformat/metadata.h"
 //#include "libavformat/utils.h"
 #include "libavcodec/opt.h"
 #include "libavutil/rational.h"

@@ -1,4 +1,4 @@
-IF(WIN32)
+IF(1)#(WIN32)
 
 # Locate ffmpeg
 # This module defines
