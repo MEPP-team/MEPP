@@ -16,7 +16,7 @@ endif (COMMAND cmake_policy)
 # Configuration du projet
 set(PRJ_NAME mepp)
 project( ${PRJ_NAME} )
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy")
 
