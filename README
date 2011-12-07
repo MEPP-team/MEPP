@@ -1,0 +1,67 @@
+Based on CGAL, Qt, libQGLViewer, OpenGL, Boost, FFmpeg and CMake, MEPP aims at building a framework around novel mesh processing techniques. Oriented towards modularity, it targets developers as well as GUI users.
+
+It federates the developments on mesh processing of the LIRIS research team M2DISCO.
+
+MEPP works on Windows, Linux and Mac OS X.
+It supports dynamic meshes.
+
+
+Features :
+- C++, Open Source (GNU GPL v3),
+- multiplatform (Windows, Linux, Mac OS X),
+- compilation with CMake,
+- fast and easy installation,
+- installation documentation, user manual,
+- VMware virtual machine with Ubuntu Linux "ready to start",
+- drag and drop objects from one application window or from a browser.
+
+
+MEPP ​​is a platform development environment based on the class "Polyhedron" of CGAL, for processing and visualization of mesh and mesh sequences.
+It allows the loading of multiple meshes or mesh sequences, processing and visualization.
+It is intended for engineers, researchers but also to students with a quick start, facilitated by the proposed architecture.
+
+
+Supported formats :
+- obj (Wavefront),
+- off (Object File Format),
+- ply (Polygon File Format),
+- smf (3D World Studio),
+- x3d (XML based royalty-free open standard file format).
+
+
+Exports :
+- image capture,
+- video capture.
+
+
+Display features :
+- management of multiple objects in one or more windows,
+- accelerated display with "Display Lists".
+
+
+MEPP ​​platform allows two types of loading :
+- mode "space" in which several objects are loaded into the same scene,
+- mode "time" in which several objects are loaded as a sequence of meshes.
+
+It is then possible to visualize the sequence through a VCR 3D + t.
+
+
+Components :
+- implemented as plugins with automatic detection and loading,
+- selection of components at compile time,
+- easy creation of new components from an example.
+
+
+Available components :
+- basic mesh processing : triangulation, subdivision, simplification,
+- curvature analysis,
+- boolean operations : union, intersection, subtraction,
+- segmentation (Variational Shape Approximation),
+- progressive compression/watermarking,
+- visual quality metrics...
+
+Possibility to contribute to the platform by creating new components.
+
+
+
+For more details, have a look to the project homepage http://liris.cnrs.fr/mepp

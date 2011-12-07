@@ -51,7 +51,7 @@ sudo port -v selfupdate
 ---> installer les paquets suivants avec MacPorts:
 sudo port install cgal				(assez long, <= 1 heure)
 sudo port install qt4-mac			(très long, environ 2-3 heures)
-sudo port install libQGLViewer		(très rapide, quelques minutes)
+sudo port install libQGLViewer		        (très rapide, quelques minutes)
 sudo port install glew				(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
 sudo port install ffmpeg			(très rapide, quelques minutes)
