@@ -30,8 +30,8 @@ SVN sous Windows :
 - télécharger la dernière version en date pour Windows à l’adresse suivante : http://tortoisesvn.net/downloads.html
 - installer le logiciel et redémarrer tout de suite (important)
 
-- pour démarrer facilement avec TortoiseSVN, je vous conseille de lire ce petit tutoriel: http://liris.cnrs.fr/martial.tola/MEPP/doc_for_readme/Utiliser%20Subversion%20SVN%20avec%20Tortoise.pdf (source: Jonathan Petitcolas - http://www.jonathan-petitcolas.com/utiliser-subversion-svn-avec-tortoise/)
-- pour une utilisation plus approfondie de TortoiseSVN, je vous recommande ce document: http://liris.cnrs.fr/martial.tola/MEPP/doc_for_readme/Tutoriel%20TortoiseSVN.pdf (source: Kevin Fardel - http://kevin.fardel.perso.esil.univmed.fr/documentation/TutorielTortoiseSVN.pdf)
+- pour démarrer facilement avec TortoiseSVN, je vous conseille de lire ce petit tutoriel: http://liris.cnrs.fr/mepp/download/Utiliser%20Subversion%20SVN%20avec%20Tortoise.pdf (source: Jonathan Petitcolas - http://www.jonathan-petitcolas.com/utiliser-subversion-svn-avec-tortoise/)
+- pour une utilisation plus approfondie de TortoiseSVN, je vous recommande ce document: http://liris.cnrs.fr/mepp/download/Tutoriel%20TortoiseSVN.pdf (source: Kevin Fardel - http://kevin.fardel.perso.esil.univmed.fr/documentation/TutorielTortoiseSVN.pdf)
 
 2) récupération du projet MEPP:
 
