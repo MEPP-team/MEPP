@@ -1,6 +1,6 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011
+// Year: 2010-2011-2012
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +51,7 @@ sudo port -v selfupdate
 ---> installer les paquets suivants avec MacPorts:
 sudo port install cgal				(assez long, <= 1 heure)
 sudo port install qt4-mac			(très long, environ 2-3 heures)
-sudo port install libQGLViewer		        (très rapide, quelques minutes)
+sudo port install libQGLViewer		(très rapide, quelques minutes)
 sudo port install glew				(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
 sudo port install ffmpeg			(très rapide, quelques minutes)
@@ -62,12 +62,8 @@ sudo python_select pythonXX (ex.: python27)
 
 ///////////////////////////////////////////////////////////////////////////
 
-4) télécharger les sources de Mepp:
-svn checkout https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
-svn checkout http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
-
-5a) compiler Mepp avec CMake et Makefile:
-se positionner dans trunk, puis,
+4a) compiler Mepp avec CMake et Makefile:
+se positionner dans le dossier MEPP.git, puis,
  - mkdir build; cd build
  - pour une version Release: "cmake .." puis make
  - pour une version Debug: "cmake .. -DCMAKE_BUILD_TYPE=Debug" (2 fois pour la prise en compte du mode Debug) puis make
@@ -78,7 +74,7 @@ note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 
 ou
 
-5b) compiler Mepp avec CMake et Qt Creator:
+4b) compiler Mepp avec CMake et Qt Creator:
 CMake (ou CMake-gui) est capable de générer (pour le moment) des Makefiles Unix ainsi que des projets Code::Blocks ou encore KDevelop,
 mais malheureusement pas encore des projets Qt Creator (.pro).
 Qt Creator sait par contre interprêter directement le CMakeLists.txt de cmake
@@ -87,7 +83,7 @@ pour générer les projets Qt Creator (.pro).
 Donc, pour générer les projets Qt Creator (.pro), voici la marche à suivre au sein de Qt Creator:
 
 Ouvrir un fichier et choisir en bas 'Fichier de projet CMake'
-puis choisir le CMakeLists.txt de la racine du trunk puis cliquer sur 'suivant'
+puis choisir le CMakeLists.txt du dossier MEPP.git (attention, pas le dossier MEPP.git/src !) puis cliquer sur 'suivant'
 puis dans 'Arguments' mettre -DCMAKE_BUILD_TYPE=Debug pour générer les projets Qt Creator (.pro) en Debug
 ou rien pour générer les projets Qt Creator (.pro) en Release.
 Renseigner si besoin le chemin pour CMake: /opt/local/bin/cmake 

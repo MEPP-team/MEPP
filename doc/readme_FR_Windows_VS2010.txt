@@ -1,6 +1,6 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011
+// Year: 2010-2011-2012
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,7 @@ Marche à suivre pour Mepp (32 bits) sous Windows avec Visual Studio Express 201
 
 
 1a) récupérer et installer DAEMON Tools Lite afin de pouvoir installer les images 'iso' des logiciels ci-dessous:
-http://download.gforge.liris.cnrs.fr/meppbin/windows/DTLite4402-0131.exe
+http://download.gforge.liris.cnrs.fr/meppbin/windows/utils/ (DTLitexxxx-yyyy.exe)
 
 1b) Seulement si vous êtes sous Windows XP, récupérer et installer Windows Installer 4.5 Redistributable:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/WindowsXP-KB942288-v3-x86.exe (3 Mo)
@@ -36,7 +36,7 @@ C:\dev\CGAL-3.7 si vous avez décompressé le fichier ci-dessus dans C:\dev
 Note: il se peut que vous disposiez d'un autre logiciel (exemple: MiKTeX) utilisant une autre version de Qt (et donc des dll incompatibles) ce qui provoquera une erreur au lancement de Mepp.
 Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner C:\dev\qt-x.x.x\bin avant le logiciel en question.
 
-3b) installer Graphviz : http://download.gforge.liris.cnrs.fr/meppbin/windows/graphviz-2.26.3.msi
+3b) installer Graphviz : http://download.gforge.liris.cnrs.fr/meppbin/windows/utils/ (graphviz-x.yy.z.msi)
 
 Note: Graphviz est utilisé par Doxygen pour la génération des images des graphes de dépendances. C'est l'outil 'dot.exe' qui est appelé.
 Par exemple, si vous avez préalablement installé MATLAB, celui-ci utilise lui aussi un outil 'dot.exe' ce qui posera problème et aura pour conséquence d'avoir des images 'vides'.
@@ -44,24 +44,19 @@ Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner 
 
 3c) redémarrer la machine pour la prise en compte des variables d'environnement ci-dessus
 
-4) télécharger les sources de Mepp:
-Par exemple, dans C:/mepp/SVN,
-avec TortoiseSVN (SVN Checkout...): https://nom-du-développeur@scm.gforge.liris.cnrs.fr/svnroot/mepp (en prenant bien soin de renseigner "votre_username_gforge" pour les membres du LIRIS) ou
-http://scm.gforge.liris.cnrs.fr/public/mepp (pour les utilisateurs anonymes)
-
-5) utiliser CMake-gui (dans C:\dev\_cmake-2.8.3.20110118_\bin)
- - renseigner le champ "Where is the source code" avec C:/mepp/SVN/trunk (attention, pas C:/mepp/SVN/trunk/src !)
- - renseigner le champ "Where to build the binaries" avec C:/mepp/SVN/trunk/build
+4) utiliser CMake-gui (dans C:\dev\_cmake-2.8.3.20110118_\bin)
+ - renseigner le champ "Where is the source code" avec C:\MEPP.git (attention, pas C:\MEPP.git\src !)
+ - renseigner le champ "Where to build the binaries" avec C:\MEPP.git\build
  - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 10"
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau
  - cliquer sur Generate (en bas à gauche)
- - ouvrir avec Visual Studio* la solution mepp.sln générée dans C:/mepp/SVN/trunk/build puis compiler Mepp
+ - ouvrir avec Visual Studio la solution mepp.sln générée dans C:\MEPP.git\build puis compiler Mepp
  - se positionner sur le "sous-projet" mepp, faire un "bouton droit" puis cliquer sur "Définir comme projet de démarrage"
  
 Note: attention, par défaut le projet se compile en Debug, à vous de basculer en Release si vous le souhaitez.
 
-6) la documentation de Mepp (à venir...) et de votre composant au format Doxygen se génère également via Visual Studio
+5) la documentation de Mepp (à venir...) et de votre composant au format Doxygen se génère également via Visual Studio
 
 
 
