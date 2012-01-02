@@ -11,7 +11,7 @@ Marche à suivre pour Mepp (32 bits) sous Windows avec Visual Studio Express 201
 1a) récupérer et installer DAEMON Tools Lite afin de pouvoir installer les images 'iso' des logiciels ci-dessous:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/utils/ (DTLitexxxx-yyyy.exe)
 
-1b) Seulement si vous êtes sous Windows XP, récupérer et installer Windows Installer 4.5 Redistributable:
+1b) seulement si vous êtes sous Windows XP, récupérer et installer Windows Installer 4.5 Redistributable:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/WindowsXP-KB942288-v3-x86.exe (3 Mo)
 
 1c) récupérer et installer Visual Studio Express 2010:
@@ -39,29 +39,29 @@ Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner 
 3b) installer Graphviz : http://download.gforge.liris.cnrs.fr/meppbin/windows/utils/ (graphviz-x.yy.z.msi)
 
 Note: Graphviz est utilisé par Doxygen pour la génération des images des graphes de dépendances. C'est l'outil 'dot.exe' qui est appelé.
-Par exemple, si vous avez préalablement installé MATLAB, celui-ci utilise lui aussi un outil 'dot.exe' ce qui posera problème et aura pour conséquence d'avoir des images 'vides'.
+Mais, si vous avez préalablement installé MATLAB, celui-ci utilise lui aussi un outil 'dot.exe' ce qui posera problème et aura pour conséquence d'avoir des images 'vides'.
 Dans ce cas, il faut donc changer l'ordre de votre variable Path et positionner Graphviz avant MATLAB.
 
 3c) redémarrer la machine pour la prise en compte des variables d'environnement ci-dessus
 
 4) utiliser CMake-gui (dans C:\dev\_cmake-2.8.3.20110118_\bin)
- - renseigner le champ "Where is the source code" avec C:\MEPP.git (attention, pas C:\MEPP.git\src !)
- - renseigner le champ "Where to build the binaries" avec C:\MEPP.git\build
- - cliquer sur Configure (en bas à gauche) et choisir comme Generator "Visual Studio 10"
+ - renseigner le champ "Where is the source code" avec C:\MEPP.git\MEPP (attention, pas C:\MEPP.git\MEPP\src !)
+ - renseigner le champ "Where to build the binaries" avec C:\MEPP.git\MEPP\build
+ - cliquer sur Configure (en bas à gauche) et choisir comme 'Generator': "Visual Studio 10"
  - activer/désactiver les composants que vous désirez ou non (premières lignes en haut toujours du type BUILD_component_nomducomposant, exemple: BUILD_component_Curvature)
  - cliquer sur Configure (en bas à gauche) à nouveau
  - cliquer sur Generate (en bas à gauche)
- - ouvrir avec Visual Studio la solution mepp.sln générée dans C:\MEPP.git\build puis compiler Mepp
+ - ouvrir avec Visual Studio la solution mepp.sln générée dans C:\MEPP.git\MEPP\build puis compiler Mepp
  - se positionner sur le "sous-projet" mepp, faire un "bouton droit" puis cliquer sur "Définir comme projet de démarrage"
  
 Note: attention, par défaut le projet se compile en Debug, à vous de basculer en Release si vous le souhaitez.
 
-5) la documentation de Mepp (à venir...) et de votre composant au format Doxygen se génère également via Visual Studio
+5) la documentation de Mepp et de votre composant au format Doxygen se génère également via Visual Studio
 
 
 
 * Au premier lancement de Visual Studio 2010, il est conseillé d'activer cette option:
-Menu Outils -> Paramètres -> Paramètres avancés
+Menu "Outils -> Paramètres -> Paramètres avancés"
 
 * Avec Visual Studio 2010 Ultimate, pour compiler Mepp en debug il peut être nécessaire de désactiver cette option:
 Projet « mepp » -> bouton droit -> Propriétés -> Propriétés de configuration -> Outil Manifeste -> Sortie des commentaires -> Non

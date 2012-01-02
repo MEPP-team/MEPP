@@ -100,13 +100,13 @@ sudo make install
 --------------------------------------
 
 4a) compiler Mepp avec CMake et Makefile:
-se positionner dans le dossier MEPP.git, puis,
+se positionner dans le dossier MEPP.git/MEPP, puis,
  - mkdir build; cd build
  - pour une version Release: "cmake .." puis make
  - pour une version Debug: "cmake .. -DCMAKE_BUILD_TYPE=Debug" (2 fois pour la prise en compte du mode Debug) puis make
 note: vous pouvez également utiliser la version "graphique" de CMake: cmake-gui
 
- - la documentation de Mepp (à venir...) se génère avec: make mepp_DOC
+ - la documentation de Mepp se génère avec: make mepp_DOC
  - la documentation de votre composant au format Doxygen se génère avec: make component_nomducomposant_DOC (exemple: make component_CGAL_Example_DOC)
 
 ou
@@ -114,13 +114,13 @@ ou
 4b) compiler Mepp avec CMake et Qt Creator:
 CMake (ou CMake-gui) est capable de générer (pour le moment) des Makefiles Unix ainsi que des projets Code::Blocks ou encore KDevelop,
 mais malheureusement pas encore des projets Qt Creator (.pro).
-Qt Creator sait par contre interprêter directement le CMakeLists.txt de cmake
+Qt Creator sait par contre importer directement le CMakeLists.txt de cmake
 pour générer les projets Qt Creator (.pro).
 
 Donc, pour générer les projets Qt Creator (.pro), voici la marche à suivre au sein de Qt Creator (menu "Applications > Programmation > Qt Creator"):
 
 Ouvrir un fichier et choisir en bas 'Fichier de projet CMake'
-puis choisir le CMakeLists.txt du dossier MEPP.git (attention, pas le dossier MEPP.git/src !) puis cliquer sur 'suivant'
+puis choisir le CMakeLists.txt du dossier MEPP.git/MEPP (attention, pas le dossier MEPP.git/MEPP/src !) puis cliquer sur 'suivant'
 puis dans 'Arguments' mettre -DCMAKE_BUILD_TYPE=Debug pour générer les projets Qt Creator (.pro) en Debug
 ou rien pour générer les projets Qt Creator (.pro) en Release.
 Cliquer ensuite sur 'Exécuter CMake', puis, après le déroulement de CMake, cliquer sur 'Terminer' et le projet (.pro) se charge dans l'IDE.
