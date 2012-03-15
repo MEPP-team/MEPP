@@ -1,0 +1,1 @@
+See http://liris.cnrs.fr/mepp/mepp-git-doc.html for up-to-date version.

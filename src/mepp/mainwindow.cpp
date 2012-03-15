@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.3 - 07/12/2011 - (git master version)"
+#define MEPP_VERSION "v0.46.4 - 15/03/2012 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -48,7 +48,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	// Components
 	dockComponents = new QDockWidget(tr(" Components (right-click)"), this);
-	dockComponents->setMinimumWidth(220);
+	dockComponents->setMinimumWidth(m_dockComponents_MinimumWidth);
 	inner = new QMainWindow(dockComponents);
 	inner->setWindowFlags(Qt::Widget); // <---------
 	dockComponents->setWidget(inner);
@@ -58,7 +58,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	// DirView
 	dockDirView = new QDockWidget(tr(" Directory view"), this);
-	dockDirView->setMinimumWidth(260);
+	dockDirView->setMinimumWidth(m_dockDirView_MinimumWidth);
 	this->addDockWidget(Qt::RightDockWidgetArea, dockDirView);
 
 		model = new QFileSystemModel;
@@ -403,7 +403,7 @@ void mainwindow::update_mesh_properties(bool update_component, bool update_bound
 
 void mainwindow::setCurrentFile(const QString &fileName)
 {
-    QSettings settings(ORGANIZATION, APPLICATION);
+    QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
     QStringList files = settings.value("recentFileList").toStringList();
     files.removeAll(fileName);
     files.prepend(fileName);
@@ -417,7 +417,7 @@ void mainwindow::setCurrentFile(const QString &fileName)
 
 void mainwindow::updateRecentFileActions()
 {
-    QSettings settings(ORGANIZATION, APPLICATION);
+    QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
     QStringList files = settings.value("recentFileList").toStringList();
 
     int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
@@ -442,7 +442,7 @@ QString mainwindow::strippedName(const QString &fullFileName)
 
 void mainwindow::writeSettings()
 {
-	QSettings settings(ORGANIZATION, APPLICATION);
+	QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
 
 	QString path;
 	QFileInfo fileInfo = model->fileInfo(proxyModel->mapToSource(tree->currentIndex()));
@@ -460,13 +460,16 @@ void mainwindow::writeSettings()
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
+
+	settings.setValue("dockComponents_MinimumWidth", m_dockComponents_MinimumWidth);
+	settings.setValue("dockDirView_MinimumWidth", m_dockDirView_MinimumWidth);
 	settings.endGroup();
 }
 
 void mainwindow::readSettings()
 {
 	// HKEY_CURRENT_USER\Software\LIRIS
-	QSettings settings(ORGANIZATION, APPLICATION);
+	QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);//QSettings settings(ORGANIZATION, APPLICATION);
 
 	treeLocation = settings.value("treeLocation", QDir::currentPath()).toString();
 
@@ -478,6 +481,9 @@ void mainwindow::readSettings()
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(1024, 768)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
+
+	m_dockComponents_MinimumWidth = settings.value("dockComponents_MinimumWidth", 220).toInt(); if (m_dockComponents_MinimumWidth < 1) m_dockComponents_MinimumWidth=220;
+	m_dockDirView_MinimumWidth = settings.value("dockDirView_MinimumWidth", 260).toInt(); if (m_dockDirView_MinimumWidth < 1) m_dockDirView_MinimumWidth=260;
 	settings.endGroup();
 }
 

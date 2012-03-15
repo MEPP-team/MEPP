@@ -706,6 +706,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		QString treeLocation;
 		QString openLocation, saveLocation;
+
+		int m_dockComponents_MinimumWidth, m_dockDirView_MinimumWidth;
 };
 
 #endif
