@@ -82,7 +82,7 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 	((mainwindow *)getParent())->lastViewerCreated=this;
 
 	// settings
-	QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
+	QSettings settings(QString(APPLICATION+"_viewer.ini").toLower(), QSettings::IniFormat);
 	m_AutoSaveIni = settings.value("AutoSaveIni", true).toBool();
 
 	// rendering options
@@ -198,7 +198,7 @@ void Viewer::WriteIni(bool force)
 	}
 
 	// settings
-	QSettings settings(QString(APPLICATION+".ini").toLower(), QSettings::IniFormat);
+	QSettings settings(QString(APPLICATION+"_viewer.ini").toLower(), QSettings::IniFormat);
 	settings.setValue("AutoSaveIni", m_AutoSaveIni);
 
 	settings.beginGroup("Rendering");
