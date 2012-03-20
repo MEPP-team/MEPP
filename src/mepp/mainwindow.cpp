@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.4 - 15/03/2012 - (git master version)"
+#define MEPP_VERSION "v0.46.5 - 20/03/2012 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1216,17 +1216,19 @@ void mainwindow::setActiveSubWindow(QWidget *window)
 
 void mainwindow::on_actionAbout_triggered()
 {
-	QMessageBox::about(this, tr("About MEPP"),
-		tr("<br>"
-			"<b>MEPP</b><br>"
-			"<br>"
-			"3D MEsh Processing Platform<br>"
-			"LIRIS M2DISCO (c) 2010<br>"
-			"<br>"
-			"Martial TOLA<br>"
-			"<br>"
-			MEPP_VERSION"<br>"
-			"<br>"));
+	QMessageBox::about(this, tr("About MEPP / Help"),
+		tr("<br/>"
+			"<b>MEPP</b><br/>"
+			"<br/>"
+			"3D MEsh Processing Platform<br/>"
+			"LIRIS M2DISCO (c) 2010-2012<br/>"
+			"<br/>"
+			"Martial TOLA<br/>"
+			"<br/>"
+			MEPP_VERSION
+			"<br/>"
+			"<p><b>User documentation: <a href=\"http://liris.cnrs.fr/mepp/mepp-user-doc.html\">see online help</a>.</b></p>"
+			"<p><b>Component developer guide: <a href=\"http://liris.cnrs.fr/mepp/mepp-dev-doc.html\">see online help</a>.</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>"));
 }
 
 void mainwindow::on_actionAbout_QGLViewer_triggered()
