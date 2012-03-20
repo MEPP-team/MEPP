@@ -1531,9 +1531,9 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 
 QString Viewer::helpString() const
 {
-	QString text(tr("<h2>MEPP</h2>"));
+	QString text(tr("<h2>MEPP user documentation</h2>"));
 
-	text += tr("HELP: todo");
+	text += tr(" See online help: <a href=\"http://liris.cnrs.fr/mepp/mepp-user-doc.html\">http://liris.cnrs.fr/mepp/mepp-user-doc.html</a>");
 
 	return text;
 }
