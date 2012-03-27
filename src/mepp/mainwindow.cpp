@@ -1217,16 +1217,16 @@ void mainwindow::setActiveSubWindow(QWidget *window)
 void mainwindow::on_actionAbout_triggered()
 {
 	QMessageBox::about(this, tr("About MEPP / Help"),
-		tr("<br/>"
-			"<b>MEPP</b><br/>"
-			"<br/>"
-			"3D MEsh Processing Platform<br/>"
-			"LIRIS M2DISCO (c) 2010-2012<br/>"
-			"<br/>"
-			"Martial TOLA<br/>"
-			"<br/>"
+		tr("<br>"
+			"<b>MEPP</b><br>"
+			"<br>"
+			"3D MEsh Processing Platform<br>"
+			"LIRIS M2DISCO (c) 2010-2012<br>"
+			"<br>"
+			"Martial TOLA<br>"
+			"<br>"
 			MEPP_VERSION
-			"<br/>"
+			"<br>"
 			"<p><b>User documentation: <a href=\"http://liris.cnrs.fr/mepp/mepp-user-doc.html\">see online help</a>.</b></p>"
 			"<p><b>Component developer guide: <a href=\"http://liris.cnrs.fr/mepp/mepp-dev-doc.html\">see online help</a>.</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>"));
 }
