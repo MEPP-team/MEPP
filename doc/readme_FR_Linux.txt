@@ -4,11 +4,11 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-----------------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04 ou 11.10 / Debian 6:
-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10 ou 12.04 / Debian 6:
+-----------------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10, 11.04 ou 11.10 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10 ou 12.04 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
@@ -62,7 +62,12 @@ si Linux 64 bit
  sudo ln -s x86_64-linux-gnu/libGLU.so libGLU.so
  sudo ln -s x86_64-linux-gnu/libGL.so libGL.so
 
+ou
+
+sous Ubuntu 12.04* (The Precise Pangolin - le pangolin précis), rien à faire
+
 * pour réinstaller le bureau GNOME classique : sudo apt-get install gnome-panel
+  pour réinstaller l'application Synaptic :    sudo apt-get install synaptic
 
 
 --------------------------------------------------------

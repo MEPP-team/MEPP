@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a MEPP component
-# Martial TOLA - Juin 2011
+# Martial TOLA - April 2012
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -10,6 +10,9 @@ if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
   IF(POLICY CMP0017)
 	cmake_policy(SET CMP0017 OLD) # or NEW
+  ENDIF()
+  IF(POLICY CMP0011)
+	cmake_policy(SET CMP0011 OLD) # or NEW
   ENDIF()
 endif (COMMAND cmake_policy)
 
