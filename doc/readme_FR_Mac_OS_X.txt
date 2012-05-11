@@ -10,6 +10,10 @@ Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard' o
 1) installer Xcode:
 http://developer.apple.com/xcode/
 
+---> avec une version récente de Xcode (par exemple 4.3.x), vous devez aussi installer les 'outils en ligne de commande' pour Xcode.
+Vous pouvez les installer à l'intérieur de Xcode (Download preferences). Vous aurez aussi également besoin d'éxécuter cette commande:
+sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+
 2) installer Java Developer Package for Mac OS X
 https://connect.apple.com/
 
@@ -19,26 +23,21 @@ https://connect.apple.com/
 Je vous recommande fortement Homebrew, plus puissant et plus rapide lors de l'installation car disposant notamment parfois de "Bottle" (paquet binaire)
 
 3a) installer Homebrew (http://mxcl.github.com/homebrew/):
-/usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+/usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 
----> !!! sous Mac OS X 10.7.x Lion avec Xcode 4.2, mettre à jour la formule Ruby de gmp (dépendance de cgal) !!! :
-remplacer donc /usr/local/Library/Formula/gmp.rb par ce fichier: http://liris.cnrs.fr/mepp/download/gmp.rb
-(ce point n'est pas nécessaire sous Mac OS X 10.7.x Lion avec Xcode 4.1)
+---> mettre à jour Homebrew: 
+brew update
 
 ---> installer les paquets suivants avec Homebrew:
 brew install cgal
 brew install qt
+brew install libqglviewer
 brew install glew
 brew install doxygen graphviz xerces-c
 brew install ffmpeg
 
----> télécharger libQGLViewer: http://www.libqglviewer.com/src/libQGLViewer-2.3.10.tar.gz
----> puis compiler et installer libQGLViewer:
-tar -xzf libQGLViewer-2.3.10.tar.gz
-cd libQGLViewer-2.3.10/QGLViewer
----> !!! supprimer la ligne 166 du fichier VRenderInterface.Qt4.ui !!!
-qmake -spec macx-g++
-sudo make install
+---> il vous sera peut-être utile de créer ce lien pour libqglviewer (attention ici, 2.3.15 est un exemple...)
+sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
 ou
 
@@ -51,7 +50,7 @@ sudo port -v selfupdate
 ---> installer les paquets suivants avec MacPorts:
 sudo port install cgal				(assez long, <= 1 heure)
 sudo port install qt4-mac			(très long, environ 2-3 heures)
-sudo port install libQGLViewer		(très rapide, quelques minutes)
+sudo port install libQGLViewer			(très rapide, quelques minutes)
 sudo port install glew				(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
 sudo port install ffmpeg			(très rapide, quelques minutes)

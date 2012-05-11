@@ -10,6 +10,10 @@ How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard' or '10.7 Li
 1) install Xcode:
 http://developer.apple.com/xcode/
 
+---> with recent version of Xcode (for example 4.3.x) you need then to install the 'Command Line Tools' for Xcode.
+You can install them from inside Xcode's Download preferences. Finally, you also need to do that command:
+sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+
 2) install Java Developer Package for Mac OS X
 https://connect.apple.com/
 
@@ -19,26 +23,21 @@ https://connect.apple.com/
 I highly recommend Homebrew, stronger and faster during the installation because there is sometimes "Bottle" (binary package)
 
 3a) install Homebrew (http://mxcl.github.com/homebrew/):
-/usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+/usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 
----> !!! under Mac OS X 10.7.x Lion with Xcode 4.2, update the Ruby formula for gmp (cgal dependency) !!! :
-so replace /usr/local/Library/Formula/gmp.rb by this file: http://liris.cnrs.fr/mepp/download/gmp.rb
-Note: this point is not necessary under Mac OS X 10.7.x Lion with Xcode 4.1
+---> update Homebrew: 
+brew update
 
 ---> install this packages with Homebrew:
 brew install cgal
 brew install qt
+brew install libqglviewer
 brew install glew
 brew install doxygen graphviz xerces-c
 brew install ffmpeg
 
----> download libQGLViewer: http://www.libqglviewer.com/src/libQGLViewer-2.3.10.tar.gz
----> then compile and install libQGLViewer:
-tar -xzf libQGLViewer-2.3.10.tar.gz
-cd libQGLViewer-2.3.10/QGLViewer
----> !!! erase line 166 of VRenderInterface.Qt4.ui file !!!
-qmake -spec macx-g++
-sudo make install
+---> it may be necessary to create this link for libQGLViewer (here 2.3.15 is an example...)
+sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
 or
 
