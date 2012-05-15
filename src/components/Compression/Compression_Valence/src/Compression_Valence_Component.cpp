@@ -18,6 +18,8 @@
 #include <set>
 #include <bitset>
 
+#include <time.h>
+
 #define COLOR_NUMBER 10000
 #define USE_COLOR_METRIC
 #define AC_BUFFER 1024 * 10000

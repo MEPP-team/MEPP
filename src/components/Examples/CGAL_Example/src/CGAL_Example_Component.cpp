@@ -12,6 +12,8 @@
 
 #include "CGAL_Example_Component.h"
 
+#include <time.h>
+
 // subdivision
 #include "../../../../mepp/Tools/Tools_sqrt3.h"
 

@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - December 2011
+# Martial TOLA - May 2012
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -321,6 +321,6 @@ else (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_
     set(MEPP_MISSING_DEPS "Xerces-C++, ${MEPP_MISSING_DEPS}")
   endif ()
 
-  message(STATUS "NOTICE: This software requires ${MEPP_MISSING_DEPS}and will not be compiled.")
+  message(FATAL_ERROR "ERROR: this software requires ${MEPP_MISSING_DEPS}and will not be compiled.")
 
 endif (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
