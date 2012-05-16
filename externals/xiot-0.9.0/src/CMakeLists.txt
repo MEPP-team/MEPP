@@ -8,8 +8,8 @@ string(TOLOWER ${XML_PARSER_SELECTION} ${XML_PARSER_SELECTION})
 
 # MT
 if (WIN32)
-	set(QTDIR $ENV{QTDIR} )
-	set(DEV_DIRECTORY ${QTDIR}/.. )
+	set( CGAL_DIR $ENV{CGAL_DIR} )
+	set( DEV_DIRECTORY ${CGAL_DIR}/.. )
 endif (WIN32)
 
 # Find the Z library
