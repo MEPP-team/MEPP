@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 
+# MT
+# By default, do not warn when built on machines using only VS Express:
+IF(NOT DEFINED CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS)
+    SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_NO_WARNINGS ON)
+ENDIF()
+
 project(xiot)
  
 # Setup output paths.
