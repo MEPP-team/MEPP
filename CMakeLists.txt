@@ -75,7 +75,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
 # Find OpenMesh
-find_package (OpenMesh)
+#find_package (OpenMesh)
 # if (NOT OPENMESH_FOUND)
 #     message (FATAL_ERROR "OpenMesh not found!")
 # endif ()

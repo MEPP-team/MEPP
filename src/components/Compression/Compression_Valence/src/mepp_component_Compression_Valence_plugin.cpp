@@ -8,6 +8,8 @@
 #include <mepp_config.h>
 #ifdef BUILD_component_Compression_Valence
 
+#include <time.h>
+
 #include "mepp_component_Compression_Valence_plugin.hxx"
 
 #include "dialSettingsComp.hxx"
