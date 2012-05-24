@@ -74,6 +74,12 @@ Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMA
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
+# Find OpenMesh
+find_package (OpenMesh)
+# if (NOT OPENMESH_FOUND)
+#     message (FATAL_ERROR "OpenMesh not found!")
+# endif ()
+
 # Find CGAL
 find_package(CGAL COMPONENTS)
 include( ${CGAL_USE_FILE} )
@@ -133,7 +139,11 @@ if (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FO
   
   include_directories ( ${XML_PARSER_INCLUDE_DIR} )
   
-  if(GLEW_FOUND)
+  if (OPENMESH_FOUND)
+	include_directories ( ${OPENMESH_INCLUDE_DIR} )
+  endif (OPENMESH_FOUND)
+  
+  if (GLEW_FOUND)
     include_directories ( ${GLEW_INCLUDE_PATH} )
   else(GLEW_FOUND)
     message(STATUS "NOTICE: GLEW library is not found. VBO rendering will not be available.")
@@ -202,7 +212,12 @@ if (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FO
 	# Link with XercesC
 	target_link_libraries( ${PRJ_NAME} ${XML_PARSER_LIBRARY} ) 
 	
-	if(GLEW_FOUND)
+	# Link with OpenMesh
+	if (OPENMESH_FOUND)
+		target_link_libraries( ${PRJ_NAME} ${OPENMESH_LIBRARY} )
+	endif (OPENMESH_FOUND)
+	
+	if (GLEW_FOUND)
 		target_link_libraries( ${PRJ_NAME} ${GLEW_LIBRARIES} )
 	endif(GLEW_FOUND)
 	

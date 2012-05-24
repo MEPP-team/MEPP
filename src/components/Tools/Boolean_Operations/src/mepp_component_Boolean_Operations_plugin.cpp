@@ -2,6 +2,7 @@
 #ifdef BUILD_component_Boolean_Operations
 
 //#include "../../../../mepp/scene.h"
+#include <time.h>
 
 #include "mepp_component_Boolean_Operations_plugin.hxx"
 
