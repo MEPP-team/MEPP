@@ -56,7 +56,7 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 			}				
 
 			// read parameters
-			SettingsDialogComp dial;
+			SettingsDialogComp dial(mw, mw->saveLocation);
 			if (dial.exec() == QDialog::Accepted)
 			{	
 				QString fileName = dial.file_name->text();
@@ -525,7 +525,7 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 		
 		//QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		SettingsDialogJCW dial;
+		SettingsDialogJCW dial(mw, mw->saveLocation);
 		if (dial.exec() == QDialog::Accepted)
 		{
 			QString fileName = dial.file_name->text();

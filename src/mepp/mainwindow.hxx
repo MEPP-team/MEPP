@@ -151,6 +151,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 
 		Viewer *lastViewerCreated;						//!< last viewer created pointeur
 
+		QString saveLocation;							//!< default or last save location
+
 	protected:
 		/*!
 		 * \brief Close all viewers (event).
@@ -705,7 +707,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		QTreeView *tree;
 
 		QString treeLocation;
-		QString openLocation, saveLocation;
+		QString openLocation;
 
 		int m_dockComponents_MinimumWidth, m_dockDirView_MinimumWidth;
 };

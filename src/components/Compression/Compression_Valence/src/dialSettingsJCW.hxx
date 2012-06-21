@@ -30,7 +30,7 @@ public:
      \param [in,out]	parent	If non-null, the parent.
      */
 
-    SettingsDialogJCW(QWidget *parent = 0);
+    SettingsDialogJCW(QWidget *parent, QString &saveLocation);
 
     /**
      \fn	void SettingsDialogJCW::accept();
@@ -80,6 +80,7 @@ private slots:
 	void setFilename();
 
 private:
+	QString &saveLocation_;
 };
 
 #endif

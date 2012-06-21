@@ -7,8 +7,8 @@
 
 #include "dialSettingsComp.hxx"
 
-SettingsDialogComp::SettingsDialogComp(QWidget *parent)
-    : QDialog(parent)
+SettingsDialogComp::SettingsDialogComp(QWidget *parent, QString &saveLocation)
+    : QDialog(parent), saveLocation_(saveLocation)
 {
     setupUi(this);
 
@@ -43,10 +43,18 @@ void SettingsDialogComp::accept()
 void SettingsDialogComp::setFilename()
 {
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save P3DW File - from Valence"),
-											 QDir::currentPath(), //QString()
+											 saveLocation_, //QDir::currentPath(), //QString()
 											 tr("P3DW files (*.p3dw)"));
 	if (!fileName.isEmpty())
+	{
+#ifdef __linux__
+		if (suffix.indexOf(".p3dw") >= 0)
+			fileName += ".p3dw";
+#endif
+		saveLocation_ = QFileInfo(fileName).absolutePath();
+
 		file_name->setText(fileName);
+	}
 }
 
 #endif
