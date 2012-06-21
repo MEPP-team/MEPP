@@ -1000,6 +1000,9 @@ void Viewer::postSelection(const QPoint& point)
 		setSelectedFrameNumber(0);
 
 		scene_ptr->set_current_polyhedron(0);
+
+		if (VBO_mode)
+			createLists = true;
 	}
 	else
 	{
