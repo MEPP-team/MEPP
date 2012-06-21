@@ -42,9 +42,10 @@ void SettingsDialogComp::accept()
 
 void SettingsDialogComp::setFilename()
 {
+	QString suffix;
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save P3DW File - from Valence"),
 											 saveLocation_, //QDir::currentPath(), //QString()
-											 tr("P3DW files (*.p3dw)"));
+											 tr("P3DW files (*.p3dw)"), &suffix);
 	if (!fileName.isEmpty())
 	{
 #ifdef __linux__
