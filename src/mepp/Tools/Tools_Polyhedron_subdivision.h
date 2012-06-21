@@ -183,7 +183,7 @@ void Polyhedron_subdivision<_P>::quad_quadralize_1step(_P& p, RULE<_P> rule) {
   // Step 1.
   eitr = p.edges_begin();
   for (int i = 0; i < num_edge; i++, ++eitr) {
-    Vertex_handle vh = insert_vertex(p, eitr);
+    Vertex_handle vh = Polyhedron_subdivision::insert_vertex(p, eitr);
     vh->point() = edge_point_buffer[i];
   }
   fitr = p.facets_begin();
@@ -199,10 +199,10 @@ void Polyhedron_subdivision<_P>::quad_quadralize_1step(_P& p, RULE<_P> rule) {
     ++hcir; // Skips one original vertex
     Halfedge_handle e2 = ++hcir; // points to the next newly inserted vertex
     ++hcir; // Must move the cir before inserts the new edge !!
-    Halfedge_handle newe = insert_edge(p, e1, e2);
+    Halfedge_handle newe = Polyhedron_subdivision::insert_edge(p, e1, e2);
 
     // Step 3.
-    Halfedge_handle newv = insert_vertex_return_edge(p, newe);
+    Halfedge_handle newv = Polyhedron_subdivision::insert_vertex_return_edge(p, newe);
     newv = newv->opposite()->prev(); // change newv to the larger face and
                                      // still points to the newly inserted
                                      // vertex
@@ -213,7 +213,7 @@ void Polyhedron_subdivision<_P>::quad_quadralize_1step(_P& p, RULE<_P> rule) {
     while (hcir != hcir_begin) {
       e1 = ++hcir;
       ++hcir; // Must move the cir before inserts the new edge !!
-      insert_edge(p, e1, newv);
+      Polyhedron_subdivision::insert_edge(p, e1, newv);
     }
   }
 
@@ -277,7 +277,7 @@ void Polyhedron_subdivision<_P>::tri_quadralize_1step(_P& p, RULE<_P> rule) {
   // Step 1.
   eitr = p.edges_begin();
   for (int i = 0; i < num_edge; i++, ++eitr) {
-    Vertex_handle vh = insert_vertex(p, eitr);
+    Vertex_handle vh = Polyhedron_subdivision::insert_vertex(p, eitr);
     vh->point() = edge_point_buffer[i];
   }
   Facet_iterator fitr = p.facets_begin();
@@ -294,9 +294,9 @@ void Polyhedron_subdivision<_P>::tri_quadralize_1step(_P& p, RULE<_P> rule) {
     Halfedge_handle e2 = ++hcir;
     ++hcir;
     Halfedge_handle e3 = ++hcir;
-    e2 = insert_edge(p, e1, e2);
-    e3 = insert_edge(p, e2, e3);
-    insert_edge(p, e3, e1);
+    e2 = Polyhedron_subdivision::insert_edge(p, e1, e2);
+    e3 = Polyhedron_subdivision::insert_edge(p, e2, e3);
+    Polyhedron_subdivision::insert_edge(p, e3, e1);
   }
 
   // Update the geometry data of the newly inserted vertices by the

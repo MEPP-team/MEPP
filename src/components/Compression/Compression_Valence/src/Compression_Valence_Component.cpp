@@ -1273,7 +1273,7 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 						Border_edges[i]->vertex()->Vertex_Flag = CONQUERED;
 						Border_edges[i]->opposite()->vertex()->Vertex_Flag = CONQUERED;
 
-						if (i != (unsigned)Number_jump)
+						if ((unsigned)i != (unsigned)Number_jump)
 							Halfedges.push(Border_edges[i]);
 					}
 					
@@ -6699,7 +6699,7 @@ int Compression_Valence_Component::JCW_Decimation_For_Segmentation(Polyhedron  &
 						Border_edges[i]->vertex()->Vertex_Flag = CONQUERED;
 						Border_edges[i]->opposite()->vertex()->Vertex_Flag = CONQUERED;
 
-						if (i != (unsigned)Number_jump)
+						if ((unsigned)i != (unsigned)Number_jump)
 							Halfedges.push(Border_edges[i]);
 					}
 					

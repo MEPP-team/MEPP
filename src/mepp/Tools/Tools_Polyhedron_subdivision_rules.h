@@ -132,8 +132,8 @@ public:
     Point p1 = edge->vertex()->point();
     Point p2 = edge->opposite()->vertex()->point();
     Point f1, f2;
-    face_point_rule(edge->facet(), f1);
-    face_point_rule(edge->opposite()->facet(), f2);
+    CatmullClark_rule::face_point_rule(edge->facet(), f1);
+    CatmullClark_rule::face_point_rule(edge->opposite()->facet(), f2);
     pt = Point((p1[0]+p2[0]+f1[0]+f2[0])/4,
 	       (p1[1]+p2[1]+f1[1]+f2[1])/4,
 	       (p1[2]+p2[2]+f1[2]+f2[2])/4 );
@@ -152,7 +152,7 @@ public:
       R[0] += (S[0]+p2[0])/2;
       R[1] += (S[1]+p2[1])/2;
       R[2] += (S[2]+p2[2])/2;
-      face_point_rule(vcir->facet(), q);
+      CatmullClark_rule::face_point_rule(vcir->facet(), q);
       Q[0] += q[0];
       Q[1] += q[1];
       Q[2] += q[2];
