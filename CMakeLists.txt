@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - May 2012
+# Martial TOLA - July 2012
 IF(APPLE)
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -74,15 +74,15 @@ Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMA
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
-# Find OpenMesh
-#find_package (OpenMesh)
-# if (NOT OPENMESH_FOUND)
-#     message (FATAL_ERROR "OpenMesh not found!")
-# endif ()
-
 # Find CGAL
 find_package(CGAL COMPONENTS)
 include( ${CGAL_USE_FILE} )
+
+# Find OpenMesh
+#find_package (OpenMesh)
+#if (NOT OPENMESH_FOUND)
+#	message (FATAL_ERROR "OpenMesh not found!")
+#endif ()
 
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
@@ -232,6 +232,21 @@ if (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FO
 	#endif(BUILD_doc_${PRJ_NAME})
 
 
+IF(WIN32)
+ #--------------------------------------------------------------------------------
+ # Copy Qt plugins to 'Debug and Release' directories and configure qt.conf file
+ #--------------------------------------------------------------------------------
+ file (GLOB qtplugin_dirs RELATIVE  "${QT_PLUGINS_DIR}"  "${QT_PLUGINS_DIR}/*"  )
+ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Debug/QtPlugins" )
+ file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Release/QtPlugins" )
+ foreach (qtplugin ${qtplugin_dirs})
+	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Debug/QtPlugins/")
+	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Release/QtPlugins/")
+ endforeach ()
+ file(WRITE "@CMAKE_BINARY_DIR@/Debug/qt.conf" "[Paths]\nPlugins = QtPlugins")
+ file(WRITE "@CMAKE_BINARY_DIR@/Release/qt.conf" "[Paths]\nPlugins = QtPlugins")
+ENDIF(WIN32)
+
 IF(APPLE)
 	#--------------------------------------------------------------------------------
 	# Now the installation stuff : http://www.cmake.org/Wiki/BundleUtilitiesExample
@@ -259,13 +274,13 @@ IF(APPLE)
 	#--------------------------------------------------------------------------------
 	# Install needed Qt plugins by copying directories from the qt installation
 	# One can cull what gets copied by using 'REGEX "..." EXCLUDE'
-	#INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+	INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
 
 	#--------------------------------------------------------------------------------
 	# install a qt.conf file
 	# this inserts some cmake code into the install script to write the file
 	INSTALL(CODE "
-	file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"\")
+	file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"[Paths]\nPlugins = MacOS/plugins\")
 	" COMPONENT Runtime)
 
 	# install qt_menu.nib
