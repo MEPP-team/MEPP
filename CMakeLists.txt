@@ -236,7 +236,7 @@ IF(WIN32)
  #--------------------------------------------------------------------------------
  # Copy Qt plugins to 'Debug and Release' directories and configure qt.conf file
  #--------------------------------------------------------------------------------
- file (GLOB qtplugin_dirs RELATIVE  "${QT_PLUGINS_DIR}"  "${QT_PLUGINS_DIR}/*"  )
+ file (GLOB qtplugin_dirs RELATIVE  "${QT_PLUGINS_DIR}"  "${QT_PLUGINS_DIR}/imageformats*"  )
  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Debug/QtPlugins" )
  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Release/QtPlugins" )
  foreach (qtplugin ${qtplugin_dirs})

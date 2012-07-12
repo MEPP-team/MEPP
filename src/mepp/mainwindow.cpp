@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.46.7 - 21/06/2012 - (git master version)"
+#define MEPP_VERSION "v0.47.0 (beta) - 12/07/2012 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -522,6 +522,10 @@ void mainwindow::updateMenus()
 
 	actionClone->setEnabled(hasMdiChild);
 
+	actionOpen_texture->setEnabled(hasMdiChild);
+	actionTexture_settings->setEnabled(hasMdiChild);
+	actionTexture_to_Vertex_Color->setEnabled(hasMdiChild);
+
 	actionClose_Window->setEnabled(hasMdiChild);
 	actionClose_All->setEnabled(hasMdiChild);
 	actionTile->setEnabled(hasMdiChild && (mdiArea->viewMode()==QMdiArea::SubWindowView));
@@ -546,6 +550,7 @@ void mainwindow::updateMenus()
 
 	actionVertex_Color->setEnabled(hasMdiChild);
 	actionFace_Color->setEnabled(hasMdiChild);
+	actionTexture_Mode->setEnabled(hasMdiChild);
 
 	actionLighting->setEnabled(hasMdiChild);
 	actionSmooth_Shading->setEnabled(hasMdiChild);
@@ -580,6 +585,7 @@ void mainwindow::updateMenus()
 
 		actionVertex_Color->setChecked(viewer->getVertex_Color());
 		actionFace_Color->setChecked(viewer->getFace_Color());
+		actionTexture_Mode->setChecked(viewer->getTexture());
 
 		actionLighting->setChecked(viewer->getLighting());
 		actionSmooth_Shading->setChecked(viewer->getSmooth_Shading());
@@ -621,7 +627,7 @@ void mainwindow::updateMenus()
 	actionEdge_color->setEnabled(hasMdiChild);
 	actionFace_color->setEnabled(hasMdiChild);
 
-	actionMaterial->setEnabled(hasMdiChild);
+	actionMaterial->setEnabled(!actionTexture_Mode->isChecked()); //actionMaterial->setEnabled(hasMdiChild);
 	// color options
 
 	// show options
@@ -1132,6 +1138,58 @@ void mainwindow::on_actionClone_triggered()
 	}
 }
 
+void mainwindow::on_actionOpen_texture_triggered()
+{
+	if (activeMdiChild() != 0)
+	{
+		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+
+		QString selectedFilter = tr("JPEG Files (*.jpg;*.jpeg)");
+		QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Texture File"),
+                                         /*QDir::currentPath()*//*openLocation*/treeLocation,
+                                         tr("BMP Files (*.bmp);;GIF Files (*.gif);;JPEG Files (*.jpg;*.jpeg);;PNG Files (*.png);;TGA Files (*.tga);;TIFF Files (*.tif;*.tiff);;ALL files (*.*)"),
+										 &selectedFilter);
+
+		if (files.size()>=1)
+		{
+			PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+
+			vector<string> tex_name;
+			tex_name.push_back(files.first().toStdString());
+			polyhedron_ptr->set_texture(tex_name);
+			polyhedron_ptr->load_gl_texture();
+
+			openLocation = QFileInfo(files[0]).absolutePath();
+		}
+	}
+
+}
+void mainwindow::on_actionTexture_settings_triggered()
+{
+	if (activeMdiChild() != 0)
+	{
+		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+
+		QMessageBox::information(this, APPLICATION, tr("Texture_settings"));		
+	}
+}
+void mainwindow::on_actionTexture_to_Vertex_Color_triggered()
+{
+	if (activeMdiChild() != 0)
+	{
+		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
+
+		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+
+		if (polyhedron_ptr->has_texture())
+		{
+			polyhedron_ptr->apply_texture_to_vertex_colors();
+
+			viewer->recreateListsAndUpdateGL();
+		}
+	}
+}
+
 void mainwindow::on_actionClose_Window_triggered()
 {
 	on_actionClose_triggered();
@@ -1320,6 +1378,7 @@ void mainwindow::on_actionVertex_Color_triggered()
 	{
 		((Viewer *)activeMdiChild())->setVertex_Color(actionVertex_Color->isChecked());
 		actionFace_Color->setChecked(((Viewer *)activeMdiChild())->getFace_Color());
+		actionTexture_Mode->setChecked(((Viewer *)activeMdiChild())->getTexture());
 		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }
@@ -1329,6 +1388,17 @@ void mainwindow::on_actionFace_Color_triggered()
 	{
 		((Viewer *)activeMdiChild())->setFace_Color(actionFace_Color->isChecked());
 		actionVertex_Color->setChecked(((Viewer *)activeMdiChild())->getVertex_Color());
+		actionTexture_Mode->setChecked(((Viewer *)activeMdiChild())->getTexture());
+		((Viewer *)activeMdiChild())->WriteIni();
+	}
+}
+void mainwindow::on_actionTexture_Mode_triggered()
+{
+	if (activeMdiChild() != 0)
+	{
+		((Viewer *)activeMdiChild())->setTexture(actionTexture_Mode->isChecked()); actionMaterial->setEnabled(!actionTexture_Mode->isChecked());
+		actionVertex_Color->setChecked(((Viewer *)activeMdiChild())->getVertex_Color());
+		actionFace_Color->setChecked(((Viewer *)activeMdiChild())->getFace_Color());
 		((Viewer *)activeMdiChild())->WriteIni();
 	}
 }

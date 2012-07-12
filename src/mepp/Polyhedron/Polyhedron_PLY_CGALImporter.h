@@ -28,8 +28,9 @@ private:
     FILE *m_pFile;
 	vector< vector<float> > Vertices_position;
 	vector< vector<float> > Vertices_color;
+	vector< vector<float> > Vertices_texture_coordinates;
 	vector< vector<int> >   Facets;
-	
+	bool m_has_texture_coordinates;
 
 	Mesh_ply mesh;
 
@@ -38,7 +39,7 @@ public:
     Builder_ply(string filename)
     {
         m_filename = filename;
-        
+        m_has_texture_coordinates = false;
     }
 
     bool is_ok()
@@ -67,6 +68,10 @@ public:
 		}
     }
 
+	bool hasTextureCoordinates()
+	{
+		return m_has_texture_coordinates;
+	}
 
 private:
 	void initialize()
@@ -97,6 +102,14 @@ private:
 
 				Vertices_color.push_back(Temp_color);
 				//vertex->color(rgb[0], rgb[1], rgb[2]);
+			}
+			if (this->mesh.mTexCoords.size() != 0)
+			{
+				vector<float> Temp_texture_coordinates;
+				Temp_texture_coordinates.push_back(mesh.mTexCoords[i].u);
+				Temp_texture_coordinates.push_back(mesh.mTexCoords[i].v);
+
+				Vertices_texture_coordinates.push_back(Temp_texture_coordinates);
 			}
 		}
 		for (int i = 0 ; i < Number_faces; i++)
@@ -135,6 +148,15 @@ private:
 				rgb[1] = this->Vertices_color[i][1];
 				rgb[2] = this->Vertices_color[i][2];
 				vertex->color(rgb[0], rgb[1], rgb[2]);
+			}
+			if (this->Vertices_texture_coordinates.size() != 0)
+			{
+				m_has_texture_coordinates = true;
+
+				float Texture_coordinates[2];
+				Texture_coordinates[0] = this->Vertices_texture_coordinates[i][0];
+				Texture_coordinates[1] = this->Vertices_texture_coordinates[i][1];
+				vertex->texture_coordinates(Texture_coordinates[0], Texture_coordinates[1]);
 			}
 		}
 		for (int i = 0 ; i < Number_faces; i++)
