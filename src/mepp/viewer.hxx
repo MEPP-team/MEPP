@@ -255,7 +255,7 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) { m_UseFaceColor = !b; setTexture(false); } recreateListsAndUpdateGL(); }
+		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) { m_UseFaceColor = !b; if (m_UseTexture) setTexture(false); } recreateListsAndUpdateGL(); }
 		/*!
 		 * \fn getVertex_Color
 		 * \brief return true if viewing mesh(es) in vertex color mode is active.
@@ -269,7 +269,7 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) { m_UseVertexColor = !b; setTexture(false); } recreateListsAndUpdateGL(); }
+		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) { m_UseVertexColor = !b; if (m_UseTexture) setTexture(false); } recreateListsAndUpdateGL(); }
 		/*!
 		 * \fn getFace_Color
 		 * \brief return true if viewing mesh(es) in face color mode is active.

@@ -191,8 +191,8 @@ void Viewer::WriteIni(bool force)
 {
 	if (force==false)
 	{
-		if (((mainwindow *)getParent())->lastViewerCreated != this)
-			return;
+		/*if (((mainwindow *)getParent())->lastViewerCreated != this)
+			return;*/
 		if (m_AutoSaveIni==false)
 			return;
 	}
@@ -733,9 +733,6 @@ void Viewer::render(bool sel, bool grab)
 
 	// polygon mode (point, line or fill)
 	glPolygonMode(GL_FRONT_AND_BACK,m_PolygonMode);
-
-	//change_material(m_last_material);
-	//glColor3f(m_MeshColor[0],m_MeshColor[1],m_MeshColor[2]);
 
 	if ( m_UseVertexColor || m_UseFaceColor )
 	{

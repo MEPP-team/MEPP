@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.47.0 (beta) - 12/07/2012 - (git master version)"
+#define MEPP_VERSION "v0.47.0 (beta) - 13/07/2012 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -676,6 +676,9 @@ void mainwindow::updateMenus()
 
 	// status bar
 	update_mesh_properties(false, false);
+
+	if (hasMdiChild)
+		((Viewer *)activeMdiChild())->WriteIni();
 }
 
 void mainwindow::updateWindowMenu()
@@ -1154,10 +1157,16 @@ void mainwindow::on_actionOpen_texture_triggered()
 		{
 			PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
-			vector<string> tex_name;
+			/*vector<string> tex_name;
 			tex_name.push_back(files.first().toStdString());
 			polyhedron_ptr->set_texture(tex_name);
-			polyhedron_ptr->load_gl_texture();
+			polyhedron_ptr->load_gl_texture();*/
+
+			QString fname = files.first();
+			if (polyhedron_ptr->QImageTexture().load( fname ))
+				polyhedron_ptr->set_texture_om();
+
+			viewer->recreateListsAndUpdateGL();
 
 			openLocation = QFileInfo(files[0]).absolutePath();
 		}
