@@ -50,9 +50,8 @@ using namespace CGAL;
 
 struct Texture
 {
-	string m_name;
+	QString m_name;
 	QImage m_data;
-	QImage m_data_gl;
 	GLuint m_id;
 };
 
@@ -327,11 +326,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		
 		GLuint id_cube;
 
-		vector<Texture> m_texture_array; 
-		vector<GLuint> m_id_texture_array;
-
-		QImage _texsrc;
-		GLuint tex_id_;
+		vector<Texture> m_texture_array;
 
 	public:
 		// life cycle
@@ -347,7 +342,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			m_nb_boundaries = 0;
 
 			id_cube = 0;
-			tex_id_ = 0;
+			m_texture_array.clear();
 		}
 
 		virtual ~MEPP_Common_Polyhedron()
@@ -357,9 +352,10 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			/*if (id_cube)
 				glDeleteLists(id_cube, 1);*/
 
-			if ( tex_id_ > 0 )
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
 			{
-				glDeleteTextures(1, &tex_id_);
+				if ( m_texture_array[i].m_id > 0 )
+					glDeleteTextures(1, &m_texture_array[i].m_id);
 			}
 		}
 
@@ -370,8 +366,6 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		bool pShow;
 		qglviewer::Vec pInitialCameraPosition;
 		qglviewer::Quaternion pInitialCameraOrientation;
-
-		QImage& QImageTexture() {  return _texsrc; }
 
 		// tag : AJOUT Céline
 		int& tag() {  return m_tag; }
@@ -582,7 +576,14 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		{
 			// texture
 			if (use_texture && has_texture())
-				glBindTexture(GL_TEXTURE_2D, tex_id_);
+			{
+				//int r = (double)rand() / (RAND_MAX + 1) * (m_texture_array.size());
+				int r = 0;
+				GLuint id = m_texture_array[r].m_id;
+				QString name = m_texture_array[r].m_name;
+
+				glBindTexture(GL_TEXTURE_2D, id);
+			}
 
 			// draw polygons
 			Facet_iterator pFacet = this->facets_begin();
@@ -1041,7 +1042,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			(void)this->calc_nb_components();
 			(void)this->calc_nb_boundaries();
 
-			copy_texture(new_mesh);
+			copy_textures(new_mesh);
 		}
 
 		bool has_color() { return m_has_color; }
@@ -1310,25 +1311,32 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			this->compute_type();
         }
 
-		void set_texture(vector<string> texture_array)
+		void set_textures(QStringList files)
 		{
-			m_texture_array.clear();
-			m_id_texture_array.clear();
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
+			{
+				if ( m_texture_array[i].m_id > 0 )
+					glDeleteTextures(1, &m_texture_array[i].m_id);
+			}
 
-			for (unsigned int i = 0; i < texture_array.size(); i++)
+			m_texture_array.clear();
+
+			for (int i = 0; i < files.size(); i++)
 			{
 				Texture texture;
-				texture.m_name = texture_array[i];
-				bool load_sucess = texture.m_data.load(texture.m_name.c_str());
+
+				texture.m_name = files[i];
+				bool load_sucess = texture.m_data.load(texture.m_name);
 				if (load_sucess)
 				{
-					texture.m_data_gl = QGLWidget::convertToGLFormat(texture.m_data);
+					texture.m_id = convertTextureToGLFormat(texture.m_data);
+
 					m_texture_array.push_back(texture);
 				}
 			}
 		}
 
-		void set_texture_om( /*QImage& _texsrc*/ )
+		GLuint convertTextureToGLFormat( QImage& _texsrc )
 		{
 		  {
 			// adjust texture size: 2^k * 2^l
@@ -1353,10 +1361,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		  glPixelStorei(GL_PACK_SKIP_PIXELS,   0);
 		  glPixelStorei(GL_PACK_ALIGNMENT,     1);    
 		  
-		  if ( tex_id_ > 0 )
-		  {
-			glDeleteTextures(1, &tex_id_);
-		  }
+		  GLuint tex_id_ = 0;
 		  glGenTextures(1, &tex_id_);
 		  glBindTexture(GL_TEXTURE_2D, tex_id_);
 		    
@@ -1377,56 +1382,20 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				   GL_RGBA,             // format
 				   GL_UNSIGNED_BYTE,    // type
 				   texture.bits() );    // pointer to pixels
+
+		  return tex_id_;
 		}
 
 		bool has_texture()
 		{
-			//return (m_texture_array.size() > 0);
-			if ( tex_id_ > 0 )
-				return true;
-			else
-				return false;
-		}
-
-		void load_gl_texture(int indexe = 0)
-		{
-			if (has_texture())
-			{
-				GLboolean current_state;
-				glGetBooleanv(GL_TEXTURE_2D,&current_state);
-				
-				QImage m_data;
-				bool load_sucess = m_data.load(m_texture_array[indexe].m_name.c_str());
-				m_data = QGLWidget::convertToGLFormat(m_data);
-
-				if ( tex_id_ > 0 )
-				{
-					glDeleteTextures(1, &tex_id_);
-				}
-				glGenTextures(1, &tex_id_);   
-				glBindTexture(GL_TEXTURE_2D, tex_id_);
-
-				if (m_data.format() == QImage::/*Format::*/Format_ARGB32) // MT
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_data.width(), m_data.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_data.bits() );   
-				else
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_data.width(), m_data.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_data.bits() ); 
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-				if (!current_state)
-					glDisable(GL_TEXTURE_2D);
-			}
+			return (m_texture_array.size() > 0);
 		}
 
 		void apply_texture_to_vertex_colors(unsigned int indexe = 0,
 			float modifier_offset_texture_coordinate_s = 1.0f, float modifier_offset_texture_coordinate_t = 1.0f)
 		{
 			if (m_texture_array.size() > indexe && indexe >= 0)
-				for (Vertex_iterator it = this->vertices_begin(); it !=  this->vertices_end(); ++it)
+				for (Vertex_iterator it = this->vertices_begin(); it != this->vertices_end(); ++it)
 				{
 					std::vector<int> position_coordinate_upper_left;
 					std::vector<int> position_coordinate_upper_right;
@@ -1492,35 +1461,16 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 					interpolate(color_target,color_p1,color_p2,texture_coordinate_target[0],texture_coordinate_upper_right[0],texture_coordinate_down_right[0]);
 
 					it->color(color_target[0]/255.,color_target[1]/255.,color_target[2]/255.);
-#if 0
-					int x,y;
-					int r = 0;
-					int g = 0;
-					int b = 0;
-					x = it->texture_coordinate(0)*m_texture_array[indexe].m_data.size().width();
-					y = it->texture_coordinate(1)*m_texture_array[indexe].m_data.size().height();
-					if(x < m_texture_array[indexe].m_data.size().width() || y < m_texture_array[indexe].m_data.size().height())
-					{
-						QRgb rgb = m_texture_array[indexe].m_data.pixel(x,y);
-						QColor color = QColor(rgb);
-						color.getRgb(&r,&g,&b);
-					}
-					it->color(r,g,b);
-#endif
 				}
 		}
 
-		void copy_texture(const MEPP_Common_Polyhedron* mesh)
+		void copy_textures(const MEPP_Common_Polyhedron* mesh)
 		{
 			m_has_texture_coordinates = mesh->m_has_texture_coordinates;
-			tex_id_ = 0;
 
 			m_texture_array = mesh->m_texture_array;
-			m_id_texture_array = mesh->m_id_texture_array;
-			//load_gl_texture();
-
-			_texsrc = mesh->_texsrc;
-			set_texture_om();
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
+				m_texture_array[i].m_id = convertTextureToGLFormat(m_texture_array[i].m_data);
 		}
 
 	protected:

@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.47.0 (beta) - 13/07/2012 - (git master version)"
+#define MEPP_VERSION "v0.47.0 (beta) - 16/07/2012 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1130,7 +1130,16 @@ void mainwindow::on_actionClone_triggered()
 				PolyhedronPtr new_polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 				PolyhedronPtr polyhedron_ptr = viewer_org->getScenePtr()->get_polyhedron();
 
-				new_polyhedron_ptr->copy_from(&(*polyhedron_ptr));
+				QApplication::setOverrideCursor(Qt::WaitCursor);
+
+					new_polyhedron_ptr->copy_from(&(*polyhedron_ptr));
+					if (!actionTexture_Mode->isChecked())
+					{
+						actionTexture_Mode->setChecked(true);
+						on_actionTexture_Mode_triggered();
+					}
+
+				QApplication::restoreOverrideCursor();
 
 				viewer->showAllScene();
 
@@ -1147,7 +1156,8 @@ void mainwindow::on_actionOpen_texture_triggered()
 	{
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
-		QString selectedFilter = tr("JPEG Files (*.jpg;*.jpeg)");
+		//QString selectedFilter = tr("JPEG Files (*.jpg;*.jpeg)");
+		QString selectedFilter = tr("PNG Files (*.png)");
 		QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Texture File"),
                                          /*QDir::currentPath()*//*openLocation*/treeLocation,
                                          tr("BMP Files (*.bmp);;GIF Files (*.gif);;JPEG Files (*.jpg;*.jpeg);;PNG Files (*.png);;TGA Files (*.tga);;TIFF Files (*.tif;*.tiff);;ALL files (*.*)"),
@@ -1157,14 +1167,16 @@ void mainwindow::on_actionOpen_texture_triggered()
 		{
 			PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
-			/*vector<string> tex_name;
-			tex_name.push_back(files.first().toStdString());
-			polyhedron_ptr->set_texture(tex_name);
-			polyhedron_ptr->load_gl_texture();*/
+			QApplication::setOverrideCursor(Qt::WaitCursor);
 
-			QString fname = files.first();
-			if (polyhedron_ptr->QImageTexture().load( fname ))
-				polyhedron_ptr->set_texture_om();
+				polyhedron_ptr->set_textures(files);
+				if (!actionTexture_Mode->isChecked())
+				{
+					actionTexture_Mode->setChecked(true);
+					on_actionTexture_Mode_triggered();
+				}
+
+			QApplication::restoreOverrideCursor();
 
 			viewer->recreateListsAndUpdateGL();
 
