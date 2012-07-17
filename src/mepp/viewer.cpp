@@ -4,7 +4,6 @@
  * \author Martial TOLA, CNRS-Lyon, LIRIS UMR 5205
  * \date 2010
  */ 
-//#include <GL/glew.h>
 
 #include "viewer.hxx"
 #include "scene.h"
@@ -93,8 +92,9 @@ Viewer::Viewer(QWidget *parent, QList<mepp_component_plugin_interface *> lp) : Q
 		m_UseNormals = settings.value("ShowNormals", true).toBool();
 		m_Antialiasing = settings.value("Antialiasing", false).toBool();
 		m_SmoothShading = settings.value("SmoothShading", true).toBool();
-		m_UseVertexColor = settings.value("VertexColorMode", false).toBool(); if (m_UseVertexColor) m_UseFaceColor = !m_UseVertexColor;
-		m_UseFaceColor = settings.value("FaceColorMode", false).toBool(); if (m_UseFaceColor) m_UseVertexColor = !m_UseFaceColor;
+		m_UseVertexColor = settings.value("VertexColorMode", false).toBool(); if (m_UseVertexColor) { m_UseFaceColor = !m_UseVertexColor; m_UseTexture = false; }
+		m_UseFaceColor = settings.value("FaceColorMode", false).toBool(); if (m_UseFaceColor) { m_UseVertexColor = !m_UseFaceColor; m_UseTexture = false; }
+		m_UseTexture = settings.value("TextureMode", false).toBool(); if (m_UseTexture) m_UseVertexColor = m_UseFaceColor = false;
 		m_PolygonMode = GL_FILL;
 		m_SuperimposeEdges = settings.value("SuperimposeEdges", true).toBool();
 		m_DrawVoronoiEdges = false;
@@ -191,8 +191,8 @@ void Viewer::WriteIni(bool force)
 {
 	if (force==false)
 	{
-		if (((mainwindow *)getParent())->lastViewerCreated != this)
-			return;
+		/*if (((mainwindow *)getParent())->lastViewerCreated != this)
+			return;*/
 		if (m_AutoSaveIni==false)
 			return;
 	}
@@ -244,7 +244,7 @@ void Viewer::WriteIni(bool force)
 		settings.setValue("FaceColor/Green", QString::number(m_MeshColor[1]));
 		settings.setValue("FaceColor/Blue", QString::number(m_MeshColor[2]));
 
-		settings.setValue("Material", QString(m_last_material.c_str()));
+		if (!m_UseTexture) settings.setValue("Material", QString(m_last_material.c_str()));
 	settings.endGroup();
 
 	settings.beginGroup("Space");
@@ -760,15 +760,15 @@ void Viewer::render(bool sel, bool grab)
 	if (m_Antialiasing)
 	{
 		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 		glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
 		glLineWidth(1.5f);
 	}
 	else
 	{
 		glDisable(GL_LINE_SMOOTH);
-		glDisable(GL_BLEND);
+		//glDisable(GL_BLEND);
 		glLineWidth(1.0f);
 	}
 
@@ -831,7 +831,7 @@ void Viewer::render(bool sel, bool grab)
 
 	if (!m_Moving || !m_DrawBoundingBoxWhenMoving)
 	{
-		scene_ptr->get_polyhedron()->gl_draw(m_SmoothShading, m_UseNormals, m_UseVertexColor, m_UseFaceColor);
+		scene_ptr->get_polyhedron()->gl_draw(m_SmoothShading, m_UseNormals, m_UseVertexColor, m_UseFaceColor, m_UseTexture);
 
 		if (show_normals)
 		{

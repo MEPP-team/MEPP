@@ -90,6 +90,9 @@ void MdiArea::dropEvent(QDropEvent *event)
 
 			if (res)
 				break;
+
+			m_mw->writeSettings();
+			m_mw->readSettings();
 		}
 	}
 	if (viewer)
