@@ -142,6 +142,18 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 */
 		void update_mesh_properties(bool update_component=false, bool update_boundary=false);
 
+		/*!
+		 * \fn readSettings()
+		 * \brief Read Mepp settings: mainwindow pos and size, recent files list, tree location (init).
+		 */
+		void readSettings();
+
+		/*!
+		 * \fn writeSettings()
+		 * \brief Write Mepp settings: mainwindow pos and size, recent files list, tree location (exit).
+		 */
+		void writeSettings();
+
 		// copy/paste viewpoint
 		bool viewpointCopied;							//!< true if a camera viewpoint is copied
 		qglviewer::Vec copyCameraPosition;				//!< the copied camera position
@@ -251,6 +263,10 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \brief Clone the current viewer (from menu).
 		 */
 		void on_actionClone_triggered();
+
+		void on_actionOpen_texture_triggered();
+		void on_actionTexture_settings_triggered();
+		void on_actionTexture_to_Vertex_Color_triggered();
 
 		/*!
 		 * \brief Close the current viewer (from window menu).
@@ -428,6 +444,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \brief View mesh(es) in face color mode (from menu).
 		 */
 		void on_actionFace_Color_triggered();
+
+		void on_actionTexture_Mode_triggered();
 
 		/*!
 		 * \fn on_actionLighting_triggered()
@@ -653,17 +671,6 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		QLabel *STATUSBAR_EDGES;		//!< label for status bar
 		QLabel *STATUSBAR_BOUNDARIES;	//!< label for status bar
 		QLabel *STATUSBAR_GENUS;		//!< label for status bar
-
-		/*!
-		 * \fn readSettings()
-		 * \brief Read Mepp settings: mainwindow pos and size, recent files list, tree location (init).
-		 */
-		void readSettings();
-		/*!
-		 * \fn writeSettings()
-		 * \brief Write Mepp settings: mainwindow pos and size, recent files list, tree location (exit).
-		 */
-		void writeSettings();
 
 		/*!
 		 * \fn setCurrentFile()

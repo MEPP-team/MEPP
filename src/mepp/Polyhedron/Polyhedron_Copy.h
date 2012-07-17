@@ -32,7 +32,7 @@ private:
 	typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
 	typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
 	typedef typename Polyhedron::Edge_iterator Edge_iterator;
-        typedef typename Polyhedron::Facet_handle Facet_handle; // MT
+	typedef typename Polyhedron::Facet_handle Facet_handle; // MT
 	typedef typename Polyhedron::Facet_iterator Facet_iterator;
 
 	typedef typename Polyhedron::Halfedge_around_vertex_circulator
@@ -76,6 +76,7 @@ public:
                         Vertex_handle vertex = B.add_vertex(pVertex->point());  // add original vertices to the new poly
 
 			vertex->color(pVertex->color(0), pVertex->color(1), pVertex->color(2)); // MT: add color
+			vertex->texture_coordinates(pVertex->texture_coordinates(0), pVertex->texture_coordinates(1)); // texture coordinates
 
 			index++;
 		}

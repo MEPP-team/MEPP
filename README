@@ -58,7 +58,10 @@ Available components :
 - boolean operations : union, intersection, subtraction,
 - segmentation (Variational Shape Approximation),
 - progressive compression/watermarking,
-- visual quality metrics...
+- visual quality metrics,
+- remeshing : canonical simplification,
+- mathematical morphology,
+- mesh repairing... 
 
 Possibility to contribute to the platform by creating new components.
 

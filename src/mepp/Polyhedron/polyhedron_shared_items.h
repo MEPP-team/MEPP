@@ -4,6 +4,8 @@
 #ifdef _MSC_VER
 #include <windows.h>
 #endif
+
+//#include <GL/glew.h>
 #include <GL/glu.h>
 
 #include <QGLViewer/vec.h>
@@ -45,6 +47,13 @@
 
 using namespace std;
 using namespace CGAL;
+
+struct Texture
+{
+	QString m_name;
+	QImage m_data;
+	GLuint m_id;
+};
 
 // compute facet normal
 struct Facet_normal // (functor)
@@ -179,8 +188,9 @@ class MEPP_Common_Facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 		Normal_3& normal() { return m_normal; }
 		const Normal_3& normal() const { return m_normal; }
 
-		float color(int index) { return m_color[index]; };
-		void color(float r, float g, float b) { m_color[0] = r; m_color[1] = g; m_color[2] = b; };
+		// color
+		float color(int index) { return m_color[index]; }
+		void color(float r, float g, float b) { m_color[0] = r; m_color[1] = g; m_color[2] = b; }
 };
 
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
@@ -236,20 +246,30 @@ class MEPP_Common_Vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 		// color
 		float m_color[3];
 
+		// texture coordinates
+		float m_texture_coordinates[2];
+
 	public:
 		// life cycle
 		MEPP_Common_Vertex()
 		{
 			color(0.5f, 0.5f, 0.5f);
+			texture_coordinates(0.0f, 0.0f);
 		}
 		// repeat mandatory constructors
 		MEPP_Common_Vertex(const P& pt) : CGAL::HalfedgeDS_vertex_base<Refs, T, P>(pt)
 		{
 			color(0.5f, 0.5f, 0.5f);
+			texture_coordinates(0.0f, 0.0f);
 		}
 
-		float color(int index) { return m_color[index]; };
-		void color(float r, float g, float b) { m_color[0] = r; m_color[1] = g; m_color[2] = b; };
+		// color
+		float color(int index) { return m_color[index]; }
+		void color(float r, float g, float b) { m_color[0] = r; m_color[1] = g; m_color[2] = b; }
+
+		// texture coordinates
+		float texture_coordinates(int index) { return m_texture_coordinates[index]; }
+		void texture_coordinates(float u, float v) { m_texture_coordinates[0] = u; m_texture_coordinates[1] = v; }
 
 		// normal
 		typedef Norm Normal_3;
@@ -298,12 +318,15 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		bool m_pure_triangle;
 
 		bool m_has_color;
+		bool m_has_texture_coordinates;
 
 		// MT
 		unsigned int m_nb_components;
 		unsigned int m_nb_boundaries;
 		
 		GLuint id_cube;
+
+		vector<Texture> m_texture_array;
 
 	public:
 		// life cycle
@@ -312,12 +335,14 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			m_pure_quad = false;
 			m_pure_triangle = false;
 			m_has_color = false;
+			m_has_texture_coordinates = false;
 
 			// MT
 			m_nb_components = 0;
 			m_nb_boundaries = 0;
 
 			id_cube = 0;
+			m_texture_array.clear();
 		}
 
 		virtual ~MEPP_Common_Polyhedron()
@@ -326,6 +351,12 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			/*if (id_cube)
 				glDeleteLists(id_cube, 1);*/
+
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
+			{
+				if ( m_texture_array[i].m_id > 0 )
+					glDeleteTextures(1, &m_texture_array[i].m_id);
+			}
 		}
 
 		// MT
@@ -541,8 +572,19 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			return sum / (FT) degree;
 		}
 
-		virtual void gl_draw(bool smooth_shading, bool use_normals, bool use_vertex_color, bool use_face_color)
+		virtual void gl_draw(bool smooth_shading, bool use_normals, bool use_vertex_color, bool use_face_color, bool use_texture)
 		{
+			// texture
+			if (use_texture && has_texture())
+			{
+				//int r = (double)rand() / (RAND_MAX + 1) * (m_texture_array.size());
+				int r = 0;
+				GLuint id = m_texture_array[r].m_id;
+				QString name = m_texture_array[r].m_name;
+
+				glBindTexture(GL_TEXTURE_2D, id);
+			}
+
 			// draw polygons
 			Facet_iterator pFacet = this->facets_begin();
 			for (;pFacet != this->facets_end();pFacet++)
@@ -556,7 +598,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 						float b = pFacet->color(2);
 						::glColor3f(r, g, b);
 					}
-					gl_draw_facet(pFacet, smooth_shading, use_normals, use_vertex_color, use_face_color);
+					gl_draw_facet(pFacet, smooth_shading, use_normals, use_vertex_color, use_face_color, use_texture);
 				::glEnd();
 				// end polygon assembly
 			}
@@ -564,7 +606,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		}
 
 		virtual void gl_draw_facet(Facet_handle pFacet, bool smooth_shading, bool use_normals,
-									bool use_vertex_color, bool use_face_color)
+									bool use_vertex_color, bool use_face_color, bool use_texture)
 		{
 			use_face_color = use_face_color ; // avoid warning
 
@@ -594,6 +636,14 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 					float g = pHalfedge->vertex()->color(1);
 					float b = pHalfedge->vertex()->color(2);
 					::glColor3f(r, g, b);
+				}
+
+				// texture
+				if (use_texture && has_texture())
+				{
+					float s = pHalfedge->vertex()->texture_coordinates(0);
+					float t = pHalfedge->vertex()->texture_coordinates(1);
+					::glTexCoord2f(s, t);
 				}
 
 				// polygon assembly is performed per vertex
@@ -991,6 +1041,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			(void)this->calc_nb_components();
 			(void)this->calc_nb_boundaries();
+
+			copy_textures(new_mesh);
 		}
 
 		bool has_color() { return m_has_color; }
@@ -1155,6 +1207,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			// build the polyhedron
 			Builder_ply<HalfedgeDS> poly_builder(filename);
 			this->delegate(poly_builder);
+			m_has_texture_coordinates = poly_builder.hasTextureCoordinates();
 
 			return 0;
 		}
@@ -1258,7 +1311,207 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			this->compute_type();
         }
 
+		void set_textures(QStringList files)
+		{
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
+			{
+				if ( m_texture_array[i].m_id > 0 )
+					glDeleteTextures(1, &m_texture_array[i].m_id);
+			}
+
+			m_texture_array.clear();
+
+			for (int i = 0; i < files.size(); i++)
+			{
+				Texture texture;
+
+				texture.m_name = files[i];
+				bool load_sucess = texture.m_data.load(texture.m_name);
+				if (load_sucess)
+				{
+					texture.m_id = convertTextureToGLFormat(texture.m_data);
+
+					m_texture_array.push_back(texture);
+				}
+			}
+		}
+
+		GLuint convertTextureToGLFormat( QImage& _texsrc )
+		{
+		  {
+			// adjust texture size: 2^k * 2^l
+			int tex_w, w( _texsrc.width()  );
+			int tex_h, h( _texsrc.height() );
+
+			for (tex_w=1; tex_w <= w; tex_w <<= 1) {};
+			for (tex_h=1; tex_h <= h; tex_h <<= 1) {};
+			tex_w >>= 1;
+			tex_h >>= 1;
+			_texsrc = _texsrc.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+		  }
+
+		  QImage texture( QGLWidget::convertToGLFormat ( _texsrc ) );
+		  
+		  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		  glPixelStorei(GL_UNPACK_SKIP_ROWS,   0);
+		  glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+		  glPixelStorei(GL_UNPACK_ALIGNMENT,   1);
+		  glPixelStorei(GL_PACK_ROW_LENGTH,    0);
+		  glPixelStorei(GL_PACK_SKIP_ROWS,     0);
+		  glPixelStorei(GL_PACK_SKIP_PIXELS,   0);
+		  glPixelStorei(GL_PACK_ALIGNMENT,     1);    
+		  
+		  GLuint tex_id_ = 0;
+		  glGenTextures(1, &tex_id_);
+		  glBindTexture(GL_TEXTURE_2D, tex_id_);
+		    
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);      
+		  
+		  glTexImage2D(GL_TEXTURE_2D,       // target
+				   0,                   // level
+				   GL_RGBA,             // internal format
+				   texture.width(),     // width  (2^n)
+				   texture.height(),    // height (2^m)
+				   0,                   // border
+				   GL_RGBA,             // format
+				   GL_UNSIGNED_BYTE,    // type
+				   texture.bits() );    // pointer to pixels
+
+		  return tex_id_;
+		}
+
+		bool has_texture()
+		{
+			return (m_texture_array.size() > 0);
+		}
+
+		void apply_texture_to_vertex_colors(unsigned int indexe = 0,
+			float modifier_offset_texture_coordinate_s = 1.0f, float modifier_offset_texture_coordinate_t = 1.0f)
+		{
+			if (m_texture_array.size() > indexe && indexe >= 0)
+				for (Vertex_iterator it = this->vertices_begin(); it != this->vertices_end(); ++it)
+				{
+					std::vector<int> position_coordinate_upper_left;
+					std::vector<int> position_coordinate_upper_right;
+					std::vector<int> position_coordinate_down_left;
+					std::vector<int> position_coordinate_down_right;
+					std::vector<int> position_coordinate_target;
+
+					std::vector<int> color_upper_left;
+					std::vector<int> color_upper_right;
+					std::vector<int> color_down_left;
+					std::vector<int> color_down_right;
+					std::vector<int> color_target;
+
+					std::vector<float> texture_coordinate_upper_left;
+					std::vector<float> texture_coordinate_upper_right;
+					std::vector<float> texture_coordinate_down_left;
+					std::vector<float> texture_coordinate_down_right;
+					std::vector<float> texture_coordinate_target;
+
+					float texture_coordinate_s = it->texture_coordinates(0);
+					float texture_coordinate_t = 1-it->texture_coordinates(1);
+
+					float offset_texture_coordinate_s = (1.0f/m_texture_array[indexe].m_data.size().width())*modifier_offset_texture_coordinate_s;
+					float offset_texture_coordinate_t = (1.0f/m_texture_array[indexe].m_data.size().height())*modifier_offset_texture_coordinate_t;
+
+					texture_coordinate_upper_left.push_back(texture_coordinate_s-offset_texture_coordinate_s);
+					texture_coordinate_upper_left.push_back(texture_coordinate_t+offset_texture_coordinate_t);
+
+					texture_coordinate_upper_right.push_back(texture_coordinate_s+offset_texture_coordinate_s);
+					texture_coordinate_upper_right.push_back(texture_coordinate_t+offset_texture_coordinate_t);
+
+					texture_coordinate_down_left.push_back(texture_coordinate_s-offset_texture_coordinate_s);
+					texture_coordinate_down_left.push_back(texture_coordinate_t-offset_texture_coordinate_t);
+
+					texture_coordinate_down_right.push_back(texture_coordinate_s+offset_texture_coordinate_s);
+					texture_coordinate_down_right.push_back(texture_coordinate_t-offset_texture_coordinate_t);
+
+					texture_coordinate_target.push_back(texture_coordinate_s);
+					texture_coordinate_target.push_back(texture_coordinate_t);
+
+					GetPos(indexe, position_coordinate_upper_left, texture_coordinate_upper_left);
+					GetPixel(indexe, position_coordinate_upper_left, color_upper_left);
+
+					GetPos(indexe, position_coordinate_upper_right, texture_coordinate_upper_right);
+					GetPixel(indexe, position_coordinate_upper_right, color_upper_right);
+
+					GetPos(indexe, position_coordinate_down_left, texture_coordinate_down_left);
+					GetPixel(indexe, position_coordinate_down_left, color_down_left);
+
+					GetPos(indexe, position_coordinate_down_right, texture_coordinate_down_right);
+					GetPixel(indexe, position_coordinate_down_right, color_down_right);
+
+					GetPos(indexe, position_coordinate_target, texture_coordinate_target);
+					GetPixel(indexe, position_coordinate_target, color_target);
+
+					std::vector<int> color_p1;
+					std::vector<int> color_p2;
+
+					interpolate(color_p1,color_upper_left,color_down_left,texture_coordinate_target[1],texture_coordinate_upper_left[1],texture_coordinate_down_left[1]);
+
+					interpolate(color_p2,color_upper_right,color_down_right,texture_coordinate_target[1],texture_coordinate_upper_right[1],texture_coordinate_down_right[1]);
+
+					interpolate(color_target,color_p1,color_p2,texture_coordinate_target[0],texture_coordinate_upper_right[0],texture_coordinate_down_right[0]);
+
+					it->color(color_target[0]/255.,color_target[1]/255.,color_target[2]/255.);
+				}
+		}
+
+		void copy_textures(const MEPP_Common_Polyhedron* mesh)
+		{
+			m_has_texture_coordinates = mesh->m_has_texture_coordinates;
+
+			m_texture_array = mesh->m_texture_array;
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
+				m_texture_array[i].m_id = convertTextureToGLFormat(m_texture_array[i].m_data);
+		}
+
 	protected:
+		void GetPos(int indexe, std::vector<int> &position, const std::vector<float> &texture_coordinate_target) 
+		{
+			position.clear();
+			position.push_back(texture_coordinate_target[0]*m_texture_array[indexe].m_data.size().width());
+			position.push_back(texture_coordinate_target[1]*m_texture_array[indexe].m_data.size().height());
+
+			if (position[0] >= m_texture_array[indexe].m_data.size().width())
+				position[0] = m_texture_array[indexe].m_data.size().width() - 1;
+			if (position[1] >= m_texture_array[indexe].m_data.size().height())
+				position[1] = m_texture_array[indexe].m_data.size().height() - 1;
+
+			if (position[0] < 0)
+				position[0] = 0;
+			if (position[1] < 0)
+				position[1] = 0;
+		}
+
+		void GetPixel(int indexe, const std::vector<int> &position, std::vector<int> &color ) 
+		{
+			color.clear();
+			color.resize(3);
+
+			QRgb rgb = m_texture_array[indexe].m_data.pixel(position[0],position[1]);
+			QColor pixel_color = QColor(rgb);
+			pixel_color.getRgb(&color[0],&color[1],&color[2]);
+		}
+
+		void interpolate(std::vector<int> &color,const std::vector<int> &color1, const std::vector<int> &color2,
+			const float &y, const float &y1, const float &y2)
+		{
+			color.clear();
+			color.resize(3);
+			for (unsigned int i = 0; i < color.size(); i++)
+			{
+				if ((y2 - y1)!=0)
+					color[i] = color1[i] + (color2[i]-color1[i])*(y - y1)/(y2 - y1);
+				else
+					color[i] = color1[i];
+			}
+		}
+
 #if (0)
 		bool load_mesh_off(string filename)
 		{

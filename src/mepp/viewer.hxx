@@ -7,6 +7,7 @@
 #ifndef HEADER_VIEWER
 #define HEADER_VIEWER
 
+//#include <GL/glew.h>
 #include <QGLViewer/qglviewer.h>
 
 #include <QtGui/QCloseEvent>
@@ -254,7 +255,7 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) m_UseFaceColor = !b; recreateListsAndUpdateGL(); }
+		void setVertex_Color(bool b) { m_UseVertexColor = b; if (b) { m_UseFaceColor = !b; if (m_UseTexture) setTexture(false); } recreateListsAndUpdateGL(); }
 		/*!
 		 * \fn getVertex_Color
 		 * \brief return true if viewing mesh(es) in vertex color mode is active.
@@ -268,7 +269,7 @@ class Viewer : public QGLViewer
 		 *
 		 * \param b true or false.
 		 */
-		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) m_UseVertexColor = !b; recreateListsAndUpdateGL(); }
+		void setFace_Color(bool b) { m_UseFaceColor = b; if (b) { m_UseVertexColor = !b; if (m_UseTexture) setTexture(false); } recreateListsAndUpdateGL(); }
 		/*!
 		 * \fn getFace_Color
 		 * \brief return true if viewing mesh(es) in face color mode is active.
@@ -276,6 +277,38 @@ class Viewer : public QGLViewer
 		 * \return b true or false.
 		 */
 		bool getFace_Color() { return m_UseFaceColor; }
+		/*!
+		 * \fn setTexture(bool b)
+		 * \brief View mesh(es) in texture mode (or not).
+		 *
+		 * \param b true or false.
+		 */
+		void setTexture(bool b)
+		{
+			m_UseTexture = b;
+			if (b)
+			{
+				m_last_material_saved = m_last_material;
+				change_material("None");
+
+				glEnable(GL_TEXTURE_2D);
+				m_UseVertexColor = m_UseFaceColor = false;
+			}
+			else
+			{
+				m_last_material = m_last_material_saved;
+				change_material(m_last_material);
+
+				glDisable(GL_TEXTURE_2D);
+			}
+			recreateListsAndUpdateGL(); }
+		/*!
+		 * \fn getTexture
+		 * \brief return true if viewing mesh(es) in texture mode is active.
+		 *
+		 * \return b true or false.
+		 */
+		bool getTexture() { return m_UseTexture; }
 
 		/*!
 		 * \fn setLighting(bool b)
@@ -1038,6 +1071,7 @@ class Viewer : public QGLViewer
 		bool m_SmoothShading;
 		bool m_UseVertexColor;
 		bool m_UseFaceColor;
+		bool m_UseTexture;
 		bool m_UseNormals;
 		//bool m_FirstView;
 		bool m_SuperimposeEdges;
@@ -1062,7 +1096,7 @@ class Viewer : public QGLViewer
 		bool m_Moving;
 		bool m_HasMoved;
 
-		string m_last_material;
+		string m_last_material, m_last_material_saved;
 
 		//
 
