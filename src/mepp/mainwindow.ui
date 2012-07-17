@@ -180,7 +180,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen_texture"/>
-   <addaction name="actionTexture_settings"/>
    <addaction name="actionTexture_to_Vertex_Color"/>
   </widget>
   <widget class="QToolBar" name="Toolbar_viewer">

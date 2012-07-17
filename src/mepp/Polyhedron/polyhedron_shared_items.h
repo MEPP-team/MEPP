@@ -1365,9 +1365,6 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		  glGenTextures(1, &tex_id_);
 		  glBindTexture(GL_TEXTURE_2D, tex_id_);
 		    
-		  // glTexGenfv( GL_S, GL_SPHERE_MAP, 0 );
-		  // glTexGenfv( GL_T, GL_SPHERE_MAP, 0 );
-		    
 		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
