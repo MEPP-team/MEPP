@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.47.0 - 17/07/2012 - (git master version)"
+#define MEPP_VERSION "v0.47.1 (beta) - 17/07/2012 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1156,11 +1156,13 @@ void mainwindow::on_actionOpen_texture_triggered()
 	{
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
+#ifdef __linux__
 		if (!actionTexture_Mode->isChecked()) // here because of a problem under Linux otherwise
 		{
 			actionTexture_Mode->setChecked(true);
 			on_actionTexture_Mode_triggered();
 		}
+#endif
 
 		QString selectedFilter = tr("PNG Files (*.png)");
 		QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Texture File"),
@@ -1173,20 +1175,19 @@ void mainwindow::on_actionOpen_texture_triggered()
 			PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
 
 			QApplication::setOverrideCursor(Qt::WaitCursor);
+
 				polyhedron_ptr->set_textures(files);
+				if (!actionTexture_Mode->isChecked())
+				{
+					actionTexture_Mode->setChecked(true);
+					on_actionTexture_Mode_triggered();
+				}
+
 			QApplication::restoreOverrideCursor();
 
 			viewer->recreateListsAndUpdateGL();
 
 			openLocation = QFileInfo(files[0]).absolutePath();
-		}
-		else
-		{
-			if (actionTexture_Mode->isChecked())
-			{
-				actionTexture_Mode->setChecked(false);
-				on_actionTexture_Mode_triggered();
-			}
 		}
 	}
 
