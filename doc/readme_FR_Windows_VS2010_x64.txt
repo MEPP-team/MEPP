@@ -16,11 +16,15 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/utils/ (DTLitexxxx-yyyy.exe
 1b) récupérer et installer Visual Studio Express 2010:
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/VS2010ExpressFRA.iso (728 Mo)
 
-1c) récupérer et installer MSDK for Windows 7 and .NET Framework 4:
+1c) récupérer et installer Windows SDK 7.1 (ie MSDK for Windows 7 and .NET Framework 4):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/GRMSDKX_EN_DVD_7_and_4.0_(7.1).iso (571 Mo)
+Note: si vous rencontrez un problème d'installation, vous pouvez utiliser à la place l'installeur web: http://www.microsoft.com/en-us/download/details.aspx?id=8279
 
-1d) récupérer et installer un patch pour Visual Studio Express 2010 (IMPORTANT):
-http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/VS10-KB2280741-x86.exe (8 Mo)
+1d) récupérer et installer Visual Studio Express 2010 SP1 (IMPORTANT):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/sp1/VS2010SP1dvd1.iso (1.5 Go)
+
+1e) récupérer et installer Visual C++ 2010 SP1 Compiler Update for the Windows SDK 7.1 (IMPORTANT):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/sp1/VC-Compiler-KB2519277.exe (121 Mo)
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Note: si vous n'installez pas ce patch en dernier, tous les .exe 64 bits compilés en Release déclencheront une erreur à l'exécution, c'est un bug de Visual Studio 2010 (x64 recode optimization issue. application crashes when otim).

@@ -4,13 +4,16 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard' or '10.7 Lion') :
---------------------------------------------------------------------------------------
+How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion' or '10.8 Mountain Lion') :
+------------------------------------------------------------------------------------------------------------
 
-1) install Xcode:
+1a) starting from Mac OS X '10.8 Mountain Lion', X11 is no longer part of the system, you must install in this case XQuartz:
+http://xquartz.macosforge.org/
+
+1b) install Xcode:
 http://developer.apple.com/xcode/
 
----> with recent version of Xcode (for example 4.3.x) you need then to install the 'Command Line Tools' for Xcode.
+---> with recent version of Xcode (for example > 4.3.x) you need then to install the 'Command Line Tools' for Xcode.
 You can install them from inside Xcode's Download preferences. Finally, you also need to do that command:
 sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
 
@@ -23,7 +26,7 @@ https://connect.apple.com/
 I highly recommend Homebrew, stronger and faster during the installation because there is sometimes "Bottle" (binary package)
 
 3a) install Homebrew (http://mxcl.github.com/homebrew/):
-/usr/bin/ruby -e "$(/usr/bin/curl -fsSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
 
 ---> update Homebrew: 
 brew update
