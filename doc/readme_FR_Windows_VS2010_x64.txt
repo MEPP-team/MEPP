@@ -26,10 +26,6 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/sp1/VS2010SP1dvd1.is
 1e) récupérer et installer Visual C++ 2010 SP1 Compiler Update for the Windows SDK 7.1 (IMPORTANT):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/sp1/VC-Compiler-KB2519277.exe (121 Mo)
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Note: si vous n'installez pas ce patch en dernier, tous les .exe 64 bits compilés en Release déclencheront une erreur à l'exécution, c'est un bug de Visual Studio 2010 (x64 recode optimization issue. application crashes when otim).
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 2a) récupérer les dépendances du projet MEPP (headers & libs, CMake & CMake-gui):
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_v01.rar (646 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev - Attention, ne pas utiliser un chemin 'exotique' du type "Documents and Settings\$USER$\My ...\My ...")
