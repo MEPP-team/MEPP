@@ -4,20 +4,20 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
------------------------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10 ou 12.04 / Debian 6:
------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 ou 12.10 / Debian 6 :
+-------------------------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10 ou 12.04 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 ou 12.10 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
 sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev
 sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-dev
 
-----------------------------------------
-Suivant votre version d'Ubuntu / Debian:
-----------------------------------------
+-----------------------------------------
+Suivant votre version d'Ubuntu / Debian :
+-----------------------------------------
 Sous Ubuntu 9.10 (The Karmic Koala - le koala karmique), créer 2 liens:
  cd /usr/lib
  sudo ln -s libqglviewer-qt4.so libQGLViewer.so
@@ -64,7 +64,7 @@ si Linux 64 bit
 
 ou
 
-sous Ubuntu 12.04* (The Precise Pangolin - le pangolin précis), rien à faire
+sous Ubuntu 12.04* (The Precise Pangolin - le pangolin précis) et Ubuntu 12.10* (The Quantal Quetzal - le quetzal quantique), rien à faire
 
 * pour réinstaller le bureau GNOME classique : sudo apt-get install gnome-panel
   pour réinstaller l'application Synaptic :    sudo apt-get install synaptic
