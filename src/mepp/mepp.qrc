@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="icons">
+    <file>Pictures/Icons/textureEnable.png</file>
+    <file>Pictures/Icons/textureOpen.png</file>
+    <file>Pictures/Icons/textureSettings.png</file>
+    <file>Pictures/Icons/textureToColor.png</file>
     <file>Pictures/Icons/_DL.png</file>
     <file>Pictures/Icons/_SuperimposeSpheres.png</file>
     <file>Pictures/Icons/_Antialiasing.png</file>
