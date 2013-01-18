@@ -921,6 +921,10 @@
    </property>
   </action>
   <action name="actionOpen_texture">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/textureOpen.png</normaloff>:/icons/Pictures/Icons/textureOpen.png</iconset>
+   </property>
    <property name="text">
     <string>Open texture</string>
    </property>
@@ -931,6 +935,10 @@
    </property>
   </action>
   <action name="actionTexture_to_Vertex_Color">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/textureToColor.png</normaloff>:/icons/Pictures/Icons/textureToColor.png</iconset>
+   </property>
    <property name="text">
     <string>Texture to Vertex Color</string>
    </property>
@@ -938,6 +946,10 @@
   <action name="actionTexture_Mode">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/textureEnable.png</normaloff>:/icons/Pictures/Icons/textureEnable.png</iconset>
    </property>
    <property name="text">
     <string>Texture Mode</string>

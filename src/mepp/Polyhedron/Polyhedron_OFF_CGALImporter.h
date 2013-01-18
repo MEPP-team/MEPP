@@ -61,11 +61,11 @@ class OFF_CGALImporter : public CGAL::Modifier_base<HDS>
 
 			// name
 			//file >> s;
-			if (s == "COFF") 
+			if (s.compare(0,4,"COFF")==0) 
 				color = true;
-			if (s == "NOFF")
+			if (s.compare(0,4,"NOFF")==0)
 				normal = true;
-			if ((s == "NCOFF") || (s == "CNOFF"))
+			if ( (s.compare(0,5,"NCOFF")==0) || (s.compare(0,5,"CNOFF")==0) )
 			{
 				normal = true; 
 				color = true; 
