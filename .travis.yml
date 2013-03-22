@@ -13,4 +13,5 @@ before_script:
 
 script:
   - cmake . $BTYPE
+  - cmake . $BTYPE
   - make
