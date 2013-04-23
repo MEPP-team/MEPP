@@ -4,7 +4,13 @@
 #include <mepp_config.h>
 #ifdef BUILD_component_Curvature
 
+#ifndef _MSC_VER
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
 #include <QtGui/QDialog>
+#ifndef _MSC_VER
+#pragma GCC diagnostic warning "-Wuninitialized"
+#endif
 
 #include "ui_dialSettings.h"
 

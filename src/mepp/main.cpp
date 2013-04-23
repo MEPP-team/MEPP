@@ -5,7 +5,6 @@
  * \date 2010
  */
 #include <QApplication>
-#include <QtGui>
 
 #include "mainwindow.hxx"
 

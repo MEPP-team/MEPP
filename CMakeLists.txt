@@ -22,6 +22,19 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy")
 
 set(DOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
+#------------------------------------------------------------------------------
+# Specific compiler options
+#------------------------------------------------------------------------------
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Qunused-arguments")
+  message(STATUS "Clang compiler detected")
+  if ( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
+  endif( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
+endif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+#------------------------------------------------------------------------------
+
 file(
 	GLOB_RECURSE
 	mepp_components

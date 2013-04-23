@@ -2,8 +2,15 @@
 #ifdef BUILD_component_Compression_Valence
 
 #include <QDir>
+
+#ifndef _MSC_VER
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
 #include <QFileDialog>
 #include <QMessageBox>
+#ifndef _MSC_VER
+#pragma GCC diagnostic warning "-Wuninitialized"
+#endif
 
 #include "dialSettingsComp.hxx"
 

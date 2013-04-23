@@ -7,7 +7,13 @@
 #ifndef HEADER_MAINWINDOW
 #define HEADER_MAINWINDOW
 
+#ifndef _MSC_VER
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
 #include <QtGui>
+#ifndef _MSC_VER
+#pragma GCC diagnostic warning "-Wuninitialized"
+#endif
 
 #include "ui_mainwindow.h"
 

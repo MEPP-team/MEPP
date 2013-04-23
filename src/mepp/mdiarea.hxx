@@ -7,7 +7,14 @@
 #ifndef HEADER_MDIAREA
 #define HEADER_MDIAREA
 
+#ifndef _MSC_VER
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
 #include <QMdiArea>
+#ifndef _MSC_VER
+#pragma GCC diagnostic warning "-Wuninitialized"
+#endif
+
 #include <QDragEnterEvent>
 
 class mainwindow;

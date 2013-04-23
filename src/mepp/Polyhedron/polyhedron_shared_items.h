@@ -1391,7 +1391,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		void apply_texture_to_vertex_colors(unsigned int indexe = 0,
 			float modifier_offset_texture_coordinate_s = 1.0f, float modifier_offset_texture_coordinate_t = 1.0f)
 		{
-			if (m_texture_array.size() > indexe && indexe >= 0)
+			if (m_texture_array.size() > indexe && indexe)
 				for (Vertex_iterator it = this->vertices_begin(); it != this->vertices_end(); ++it)
 				{
 					std::vector<int> position_coordinate_upper_left;
