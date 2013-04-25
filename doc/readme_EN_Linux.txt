@@ -4,11 +4,11 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-----------------------------------------------------------------------------------------------
-(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 or 12.10 / Debian 6 :
-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------
+(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10 or 13.04 / Debian 6 :
+-----------------------------------------------------------------------------------------------------
 
-1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 or 12.10 / Debian 6
+1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10 or 13.04 / Debian 6
 2) update distribution and packages:
 sudo apt-get update
 3) install new packages:
@@ -65,6 +65,11 @@ if Linux 64 bit
 or
 
 under Ubuntu 12.04* (The Precise Pangolin) and Ubuntu 12.10* (The Quantal Quetzal), nothing to do
+
+or
+
+under Ubuntu 13.04* (The Raring Ringtail), activate qt4 because by default qt5 is now active:
+sudo apt-get install qt4-default
 
 * to reinstall the standard GNOME desktop : sudo apt-get install gnome-panel
   to reinstall the Synaptic application :   sudo apt-get install synaptic

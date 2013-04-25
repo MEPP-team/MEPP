@@ -1,14 +1,14 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012
+// Year: 2010-2011-2012-2013
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
--------------------------------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 ou 12.10 / Debian 6 :
--------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10 ou 13.04 / Debian 6 :
+--------------------------------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 ou 12.10 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10 ou 13.04 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
@@ -65,6 +65,11 @@ si Linux 64 bit
 ou
 
 sous Ubuntu 12.04* (The Precise Pangolin - le pangolin précis) et Ubuntu 12.10* (The Quantal Quetzal - le quetzal quantique), rien à faire
+
+ou
+
+sous Ubuntu 13.04* (The Raring Ringtail - le bassaris enthousiaste), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
 
 * pour réinstaller le bureau GNOME classique : sudo apt-get install gnome-panel
   pour réinstaller l'application Synaptic :    sudo apt-get install synaptic
