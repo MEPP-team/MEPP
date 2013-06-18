@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.47.2 - 23/04/2013 - (git master version)"
+#define MEPP_VERSION "v0.47.3 - 18/06/2013 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -463,6 +463,8 @@ void mainwindow::writeSettings()
 
 	settings.setValue("dockComponents_MinimumWidth", m_dockComponents_MinimumWidth);
 	settings.setValue("dockDirView_MinimumWidth", m_dockDirView_MinimumWidth);
+
+	settings.setValue("state", saveState());
 	settings.endGroup();
 }
 
@@ -484,6 +486,9 @@ void mainwindow::readSettings()
 
 	m_dockComponents_MinimumWidth = settings.value("dockComponents_MinimumWidth", 220).toInt(); if (m_dockComponents_MinimumWidth < 1) m_dockComponents_MinimumWidth=220;
 	m_dockDirView_MinimumWidth = settings.value("dockDirView_MinimumWidth", 260).toInt(); if (m_dockDirView_MinimumWidth < 1) m_dockDirView_MinimumWidth=260;
+
+	if(!settings.value("state").isNull())
+		restoreState(settings.value("state").toByteArray());
 	settings.endGroup();
 }
 
