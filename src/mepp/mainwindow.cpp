@@ -1703,8 +1703,8 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 
 			if (actionScreenshot_sequence->isChecked())
                         {
-				bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);                   
-                                if (ok) fps = QInputDialog::getInteger(this, tr("Select fps"), tr("Frames per second:"), fps, 3, 25, 1, &ok);
+				bitrate = QInputDialog::getInt(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);                   
+                                if (ok) fps = QInputDialog::getInt(this, tr("Select fps"), tr("Frames per second:"), fps, 3, 25, 1, &ok);
                                 if (ok) actionScreenshot_sequence->setChecked(true);
                         }
 
@@ -1767,7 +1767,7 @@ void mainwindow::on_actionParams_triggered()
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
 		bool ok;
-		int res = QInputDialog::getInteger(this, tr("Select fps"), tr("Fps:"), viewer->getFps(), 1, 60, 1, &ok);
+		int res = QInputDialog::getInt(this, tr("Select fps"), tr("Fps:"), viewer->getFps(), 1, 60, 1, &ok);
 
 		if (ok)
 			viewer->setFps(res);

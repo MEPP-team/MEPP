@@ -15,6 +15,10 @@
 #pragma GCC diagnostic warning "-Wuninitialized"
 #endif
 
+#if QT_VERSION >= 0x050000
+#include <QtWidgets>
+#endif
+
 #include "ui_mainwindow.h"
 
 #include "viewer.hxx"
