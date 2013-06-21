@@ -22,6 +22,9 @@ class mepp_component_CGAL_Example_plugin :
 {
 	Q_OBJECT
 	Q_INTERFACES(mepp_component_plugin_interface);
+#if QT_VERSION >= 0x050000
+	Q_PLUGIN_METADATA(IID "mepp_component_CGAL_Example_plugin")
+#endif
 
 	public:
 		mepp_component_CGAL_Example_plugin() : mepp_component_plugin_interface() {}

@@ -606,6 +606,8 @@ void mepp_component_CGAL_Example_plugin::example()
 	QApplication::restoreOverrideCursor();
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(mepp_component_CGAL_Example_plugin, mepp_component_CGAL_Example_plugin);
+#endif
 
 #endif
