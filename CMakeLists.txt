@@ -16,7 +16,7 @@ endif(WITH_QT5)
 if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
   IF(POLICY CMP0017)
-	cmake_policy(SET CMP0017 OLD) # or NEW
+	cmake_policy(SET CMP0017 NEW)
   ENDIF()
 endif (COMMAND cmake_policy)
 
@@ -177,6 +177,9 @@ endif(WITH_QT5)
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
+if (APPLE)
+	INCLUDE_DIRECTORIES(/usr/X11/include)
+endif (APPLE) 
 
 # Find GLEW (for OpenGL-1.5 and OpenGL extensions)
 #find_package(GLEW)

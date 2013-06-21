@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.47.3 - 18/06/2013 - (git master version)"
+#define MEPP_VERSION "v0.48 - 21/06/2013 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -48,6 +48,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	// Components
 	dockComponents = new QDockWidget(tr(" Components (right-click)"), this);
+	dockComponents->setObjectName("dockComponents");
 	dockComponents->setMinimumWidth(m_dockComponents_MinimumWidth);
 	inner = new QMainWindow(dockComponents);
 	inner->setWindowFlags(Qt::Widget); // <---------
@@ -58,6 +59,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	// DirView
 	dockDirView = new QDockWidget(tr(" Directory view"), this);
+	dockDirView->setObjectName("dockDirView");
 	dockDirView->setMinimumWidth(m_dockDirView_MinimumWidth);
 	this->addDockWidget(Qt::RightDockWidgetArea, dockDirView);
 
