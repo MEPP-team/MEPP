@@ -177,7 +177,7 @@ file(
 )
 
 if (WITH_QT5)
-	set( MOC_FILES "" ) # because CMAKE_AUTOMOC is ON
+	qt5_wrap_cpp( MOC_FILES ${hxx_header_files} ../../../mepp/mepp_action.hxx )
 	qt5_wrap_ui( UI_FILES ${all_ui_files} ../../../mepp/mainwindow.ui )
 else(WITH_QT5) 
 	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} ../../../mepp/mepp_action.hxx )

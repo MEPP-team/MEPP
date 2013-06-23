@@ -21,7 +21,7 @@ class mepp_component_Boolean_Operations_plugin :
 {
 	Q_OBJECT
 	Q_INTERFACES(mepp_component_plugin_interface);
-#if QT_VERSION >= 0x050000
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 	Q_PLUGIN_METADATA(IID "mepp_component_Boolean_Operations_plugin")
 #endif
 
