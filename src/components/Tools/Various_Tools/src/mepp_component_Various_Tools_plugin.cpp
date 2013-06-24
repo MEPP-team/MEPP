@@ -230,7 +230,7 @@ void mepp_component_Various_Tools_plugin::Triangulate()
 	QApplication::restoreOverrideCursor();
 }
 
-#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(mepp_component_Various_Tools_plugin, mepp_component_Various_Tools_plugin);
 #endif
 

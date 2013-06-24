@@ -1329,7 +1329,7 @@ void mainwindow::on_actionAbout_QGLViewer_triggered()
 	aboutQGLViewer->aboutQGLViewer();
 }
 
-void mainwindow::popupAboutBox(QString title, QString html_resource_name)
+/*void mainwindow::popupAboutBox(QString title, QString html_resource_name)
 {
 	QFile about_CGAL(html_resource_name);
 	about_CGAL.open(QIODevice::ReadOnly);
@@ -1339,7 +1339,7 @@ void mainwindow::popupAboutBox(QString title, QString html_resource_name)
 				 QMessageBox::Ok,
 				 this);
 	mb.exec();
-}
+}*/
 
 void mainwindow::on_actionAbout_CGAL_triggered()
 {
