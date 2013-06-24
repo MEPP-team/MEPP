@@ -1,33 +1,60 @@
-# - Find Xerces-C
-# Find the Xerces-C includes and library
-#
-#  XERCESC_INCLUDE_DIR - Where to find xercesc include sub-directory.
-#  XERCESC_LIBRARIES   - List of libraries when using Xerces-C.
-#  XERCESC_FOUND       - True if Xerces-C found.
+
+# Set variables in Cmake.  Use the user set environment variables
+# If these are not set, then they will simply be ignored.
 
 
-IF (XERCESC_INCLUDE_DIR)
-  # Already in cache, be silent
-  SET(XERCESC_FIND_QUIETLY TRUE)
-ENDIF (XERCESC_INCLUDE_DIR)
-
-FIND_PATH(XERCESC_INCLUDE_DIR xercesc/util/XercesVersion.hpp)
-
-SET(XERCESC_NAMES xerces-c xerces-c_2 xerces-c_3)
-FIND_LIBRARY(XERCESC_LIBRARY NAMES ${XERCESC_NAMES})
-
-# Handle the QUIETLY and REQUIRED arguments and set XERCESC_FOUND to
-# TRUE if all listed variables are TRUE.
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(
-  XERCESC DEFAULT_MSG
-  XERCESC_LIBRARY XERCESC_INCLUDE_DIR
+# try to find the header
+FIND_PATH(XERCESC_INCLUDE_DIR xercesc/parsers/SAXParser.hpp # or maybe better ? -> xercesc/util/XercesVersion.hpp
+  ${XERCESC_ROOT_DIR}/include
+  $ENV{XERCES_INC_DIR}
+  /usr/include
+  /usr/local/include
 )
 
-IF(XERCESC_FOUND)
-  SET( XERCESC_LIBRARIES ${XERCESC_LIBRARY} )
-ELSE(XERCESC_FOUND)
-  SET( XERCESC_LIBRARIES )
-ENDIF(XERCESC_FOUND)
+# Find the release library
+FIND_LIBRARY(XERCESC_LIBRARY_RELEASE
+	NAMES xerces-c xerces-c_3 xerces-c_2
+	PATHS
+	  ${XERCESC_ROOT_DIR}/lib
+	  $ENV{XERCES_LIB_DIR}
+	  /usr/lib
+	  /usr/local/lib
+	DOC "The name of the xerces-c library"
+)
 
-MARK_AS_ADVANCED( XERCESC_LIBRARY XERCESC_INCLUDE_DIR )
+# Find the debug library
+FIND_LIBRARY(XERCESC_LIBRARY_DEBUG
+	NAMES xerces-cd xerces-c_3D xerces-c_2D
+	PATHS
+	  ${XERCESC_ROOT_DIR}/lib
+	  $ENV{XERCES_LIB_DIR}
+	  /usr/lib
+	  /usr/local/lib
+	DOC "The name of the xerces-c library"
+)
+
+
+# See if anything was found.
+if(XERCESC_LIBRARY_RELEASE)
+  if(XERCESC_LIBRARY_DEBUG)
+    set(XERCESC_LIBRARIES_ optimized ${XERCESC_LIBRARY_RELEASE} debug ${XERCESC_LIBRARY_DEBUG})
+  else()
+    set(XERCESC_LIBRARIES_ ${XERCESC_LIBRARY_RELEASE})
+  endif()
+
+  set(XERCESC_LIBRARIES ${XERCESC_LIBRARIES_} CACHE FILEPATH "The xerces-c library")
+endif()
+
+IF(XERCESC_INCLUDE_DIR AND XERCESC_LIBRARIES)
+   SET(XERCESC_FOUND TRUE)
+ENDIF(XERCESC_INCLUDE_DIR AND XERCESC_LIBRARIES)
+ 	
+IF (XERCESC_FOUND)
+  IF (NOT XERCESC_FIND_QUIETLY)
+    MESSAGE (STATUS "Found Xerces-C: ${XERCESC_LIBRARIES}")
+  ENDIF (NOT XERCESC_FIND_QUIETLY)
+ELSE (XERCESC_FOUND)
+  IF (XERCESC_FIND_REQUIRED)
+    MESSAGE(FATAL_ERROR "Could not find Xerces-C")
+  ENDIF (XERCESC_FIND_REQUIRED)
+ENDIF (XERCESC_FOUND)

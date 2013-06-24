@@ -224,6 +224,8 @@ void mepp_component_Curvature_plugin::OnDisplayMaxDir()
 	QApplication::restoreOverrideCursor();
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(mepp_component_Curvature_plugin, mepp_component_Curvature_plugin);
+#endif
 
 #endif

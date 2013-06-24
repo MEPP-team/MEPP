@@ -695,6 +695,8 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extracti
 	}
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(mepp_component_Compression_Valence_plugin, mepp_component_Compression_Valence_plugin);
+#endif
 
 #endif

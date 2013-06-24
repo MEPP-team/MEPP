@@ -15,6 +15,10 @@
 #pragma GCC diagnostic warning "-Wuninitialized"
 #endif
 
+#if QT_VERSION >= 0x050000
+#include <QtWidgets>
+#endif
+
 #include "ui_mainwindow.h"
 
 #include "viewer.hxx"
@@ -387,7 +391,7 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 * \param title dialog box title.
 		 * \param html_resource_name an html file.
 		 */
-		void popupAboutBox(QString title, QString html_resource_name);
+		//void popupAboutBox(QString title, QString html_resource_name);
 		/*!
 		 * \fn on_actionAbout_CGAL_triggered()
 		 * \brief Open about CGAL dialog box (from menu).

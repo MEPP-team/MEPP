@@ -1,15 +1,22 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - July 2012
-IF(APPLE)
+# Martial TOLA - June 2013
+IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
-    cmake_minimum_required(VERSION 2.6)
+	cmake_minimum_required(VERSION 2.6)
 endif(APPLE)
+
+if (WITH_QT5)
+	cmake_minimum_required(VERSION 2.8.9) # because 2.8.8 has a bug with QT5_USE_MODULES 
+endif(WITH_QT5)
+
+# Find includes in corresponding build directories
+#set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
   IF(POLICY CMP0017)
-	cmake_policy(SET CMP0017 OLD) # or NEW
+	cmake_policy(SET CMP0017 NEW)
   ENDIF()
 endif (COMMAND cmake_policy)
 
@@ -50,20 +57,20 @@ FOREACH (MEPP_COMPONENT ${mepp_components})
 	
 	OPTION(BUILD_${MEPP_COMPONENT_NAME} "Build ${MEPP_COMPONENT_NAME} " ON)
 	if (BUILD_${MEPP_COMPONENT_NAME})
-	  ADD_SUBDIRECTORY(${MEPP_COMPONENT_DIR})
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_define.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_include.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_facet.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_halfedge.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_vertex.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_polyhedron.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_${MEPP_SHORT_COMPONENT_NAME}.h)  
+		ADD_SUBDIRECTORY(${MEPP_COMPONENT_DIR})
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_define.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_include.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_facet.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_${MEPP_SHORT_COMPONENT_NAME}.h)
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_halfedge.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_${MEPP_SHORT_COMPONENT_NAME}.h)
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_vertex.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_${MEPP_SHORT_COMPONENT_NAME}.h)
+		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_polyhedron.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_${MEPP_SHORT_COMPONENT_NAME}.h)  
 	else (BUILD_${MEPP_COMPONENT_NAME})
 		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_${MEPP_SHORT_COMPONENT_NAME}.h)
-	  FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_${MEPP_SHORT_COMPONENT_NAME}.h)
+		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_${MEPP_SHORT_COMPONENT_NAME}.h)
+		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_${MEPP_SHORT_COMPONENT_NAME}.h)
+		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_${MEPP_SHORT_COMPONENT_NAME}.h)
+		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_${MEPP_SHORT_COMPONENT_NAME}.h)
+		FILE( REMOVE ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_${MEPP_SHORT_COMPONENT_NAME}.h)
 	endif (BUILD_${MEPP_COMPONENT_NAME})
 ENDFOREACH(MEPP_COMPONENT)
 
@@ -87,162 +94,245 @@ Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMA
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
-# Find CGAL
-find_package(CGAL COMPONENTS)
-include( ${CGAL_USE_FILE} )
+# Find CGAL libraries
+FIND_PACKAGE(CGAL COMPONENTS Core)
+IF(CGAL_FOUND)
+	INCLUDE(${CGAL_USE_FILE})
+	MESSAGE(STATUS "Found CGAL: ${CGAL_LIBRARIES}")
+	MESSAGE(STATUS "Found CGAL 3RD PARTY LIBRARIES: ${CGAL_3RD_PARTY_LIBRARIES}")
+ELSE(CGAL_FOUND)
+	MESSAGE(FATAL_ERROR "CGAL not found. Please set CGAL_DIR.")
+ENDIF(CGAL_FOUND)
 
-# Find OpenMesh
-#find_package (OpenMesh)
-#if (NOT OPENMESH_FOUND)
-#	message (FATAL_ERROR "OpenMesh not found!")
-#endif ()
+# Find OpenMesh library
+#if (OPENMESH_DIR)
+#  set( ENV{OPENMESH_DIR} ${OPENMESH_DIR} )
+#endif()
+#find_package(OpenMesh)
+#if(OPENMESH_FOUND)
+#  include_directories(${OPENMESH_INCLUDE_DIR})
+#else(OPENMESH_FOUND)
+#  message(FATAL_ERROR "OpenMesh not found. Please set OPENMESH_DIR.")
+#endif(OPENMESH_FOUND)
 
-# Find Qt4 itself
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+# Find QT4/QT5 libraries
+if (WITH_QT5)
+  # QT5 Handling
+  if(DEFINED ENV{QT5_DIR})
+    set( QT5_DIR $ENV{QT5_DIR} )
+  endif()
+  SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${QT5_DIR})
+
+  # Instruct CMake to run moc automatically when needed
+  set(CMAKE_AUTOMOC ON)
+
+  FIND_PACKAGE(Qt5Core)
+  if(${Qt5Core_FOUND})
+    message(STATUS "--> Qt5Core found.")
+    FIND_PACKAGE(Qt5Widgets)
+    if(${Qt5Widgets_FOUND})
+      message(STATUS "--> Qt5Widgets found.")
+      FIND_PACKAGE(Qt5Xml)
+      if(${Qt5Xml_FOUND})
+	message(STATUS "--> Qt5Xml found.")
+	FIND_PACKAGE(Qt5OpenGL)
+	if(${Qt5OpenGL_FOUND})
+	  message(STATUS "--> Qt5OpenGL found.")
+	  if (WITH_QT3D)
+	    FIND_PACKAGE(Qt53D)
+	    if(${Qt53D_FOUND})
+	      message(STATUS "--> Qt53D found.")
+	    else(${Qt53D_FOUND})
+	      message(FATAL_ERROR "Qt53D not found.")
+	    endif(${Qt53D_FOUND})
+	  endif(WITH_QT3D)
+	else(${Qt5OpenGL_FOUND})
+	  message(FATAL_ERROR "Qt5OpenGL not found.")
+	endif(${Qt5OpenGL_FOUND})
+      else(${Qt5Xml_FOUND})
+	message(FATAL_ERROR "Qt5Xml not found.")
+      endif(${Qt5Xml_FOUND})
+    else(${Qt5Widgets_FOUND})
+      message(FATAL_ERROR "Qt5Widgets not found.")
+    endif(${Qt5Widgets_FOUND})
+  else(${Qt5Core_FOUND})
+    message(FATAL_ERROR "Qt5Core not found. Please set QT5_DIR.")
+  endif(${Qt5Core_FOUND})
+else(WITH_QT5)
+  # QT4 Handling
+  if (QTDIR)
+    set( ENV{QTDIR} ${QTDIR} )
+  endif()
+  set( QT_USE_QTMAIN   TRUE )
+  set( QT_USE_QTXML    TRUE )
+  set( QT_USE_QTOPENGL  TRUE )
+  FIND_PACKAGE(Qt4)
+  if(QT4_FOUND)
+    INCLUDE(${QT_USE_FILE})
+  else(QT4_FOUND)
+    message(FATAL_ERROR "Qt4 not found. Please set QTDIR.")
+  endif(QT4_FOUND)
+endif(WITH_QT5)
 
 # Find OpenGL
-find_package(OpenGL)
-if (APPLE)	#cmake . -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+if (APPLE)
 	INCLUDE_DIRECTORIES(/usr/X11/include)
-endif (APPLE)
+endif (APPLE) 
 
 # Find GLEW (for OpenGL-1.5 and OpenGL extensions)
-find_package(GLEW)
+#find_package(GLEW)
 
 # Find QGLViewer
-if (QT4_FOUND)
-  include(${QT_USE_FILE})
-  find_package(QGLViewer)
-endif (QT4_FOUND)
-
-if (WIN32)
-	set(QTDIR $ENV{QTDIR} )
-	set(DEV_DIRECTORY ${QTDIR}/.. )
-endif (WIN32)
+if (QGLVIEWERROOT)
+  set( ENV{QGLVIEWERROOT} ${QGLVIEWERROOT} )
+endif()
+find_package(QGLViewer)
+if(QGLVIEWER_FOUND)
+  include_directories(${QGLVIEWER_INCLUDE_DIR})
+else(QGLVIEWER_FOUND)
+  message(FATAL_ERROR "QGLViewer not found. Please set QGLVIEWERROOT.")
+endif(QGLVIEWER_FOUND)
 
 # Find XercesC
 if (WIN32)
-	# Hint to included XercesC resources
-	SET(XERCESC_ROOT ${DEV_DIRECTORY}/contrib/xerces-c)
-	SET(XML_PARSER_INSTALL_FILES ${XERCESC_ROOT}/bin/xerces-c_3_1.dll)
-	SET(XERCESC_INCLUDE_DIR ${XERCESC_ROOT}/include CACHE PATH "Include path of XercesC library")
-	SET(XERCESC_LIBRARY ${XERCESC_ROOT}/lib/xerces-c_3.lib CACHE FILEPATH  "XercesC library" )
+	if (WITH_QT5)
+	else(WITH_QT5)
+			SET(XERCESC_ROOT_DIR ${CGAL_DIR}/../contrib/xerces-c) #very bad: temporary, for compatibility with previous Mepp binary kits
+	endif(WITH_QT5)
 endif (WIN32)
 find_package(XercesC)
 if (XERCESC_FOUND)
 	set (XML_PARSER_INCLUDE_DIR ${XERCESC_INCLUDE_DIR})
-	set (XML_PARSER_LIBRARY ${XERCESC_LIBRARY})
+	set (XML_PARSER_LIBRARY ${XERCESC_LIBRARIES})
+else(XERCESC_FOUND)
+  message(FATAL_ERROR "XercesC not found. Please set XERCESC_ROOT_DIR.")
 endif(XERCESC_FOUND)
 
 # Find FFmpeg
+if (FFMPEG_DIR)
+  set( ENV{FFMPEG_DIR} ${FFMPEG_DIR} )
+endif()
 find_package(FFmpeg)
 if (FFMPEG_FOUND)
-	ADD_DEFINITIONS("-DWITH_FFMPEG ")
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_FFMPEG")
+else(FFMPEG_FOUND)
+  message(STATUS "FFmpeg (optional) not found. Please set FFMPEG_DIR.")
+endif(FFMPEG_FOUND)
+
+
+include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+  
+include_directories ( ${XML_PARSER_INCLUDE_DIR} )
+  
+if (OPENMESH_FOUND)
+	include_directories ( ${OPENMESH_INCLUDE_DIR} )
+endif (OPENMESH_FOUND)
+  
+if (GLEW_FOUND)
+	include_directories ( ${GLEW_INCLUDE_PATH} )
+else(GLEW_FOUND)
+	#    message(STATUS "NOTICE: GLEW library is not found. VBO rendering will not be available.")
+endif(GLEW_FOUND)
+  
+if (FFMPEG_FOUND)
+	include_directories ( ${FFMPEG_INCLUDE_DIRS} )
 endif (FFMPEG_FOUND)
 
-if (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
+file(
+	GLOB_RECURSE
+	hxx_header_files
+	src/mepp/*.hxx
+)
+	
+file(
+	GLOB_RECURSE
+	all_ui_files
+	src/mepp/*.ui
+)
 
-  find_package(Boost)
-
-  include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
-  
-  include_directories ( ${XML_PARSER_INCLUDE_DIR} )
-  
-  if (OPENMESH_FOUND)
-	include_directories ( ${OPENMESH_INCLUDE_DIR} )
-  endif (OPENMESH_FOUND)
-  
-  if (GLEW_FOUND)
-    include_directories ( ${GLEW_INCLUDE_PATH} )
-  else(GLEW_FOUND)
-    message(STATUS "NOTICE: GLEW library is not found. VBO rendering will not be available.")
-  endif(GLEW_FOUND)
-  
-	if (FFMPEG_FOUND)
-		include_directories ( ${FFMPEG_INCLUDE_DIRS} )
-	endif (FFMPEG_FOUND)
-
-	file(
-		GLOB_RECURSE
-		hxx_header_files
-		src/mepp/*.hxx
-	)
+if (WITH_QT5)
+	set( MOC_FILES "" ) # because CMAKE_AUTOMOC is ON
+	qt5_wrap_ui( UI_FILES ${all_ui_files} )
+	qt5_add_resources( RESOURCE_FILES src/mepp/mepp.qrc )
+else(WITH_QT5) 
 	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} )
-	
-	file(
-		GLOB_RECURSE
-		all_ui_files
-		src/mepp/*.ui
-	)
 	qt4_wrap_ui( UI_FILES ${all_ui_files} )
-	
 	qt4_add_resources( RESOURCE_FILES src/mepp/mepp.qrc )
+endif(WITH_QT5)
 	
-	# Configuration de l'exécutable
-	file(
-		GLOB_RECURSE
-		source_files
-		src/mepp/*
-	)
+# Configuration de l'exécutable
+file(
+	GLOB_RECURSE
+	source_files
+	src/mepp/*
+)
 	
-	# For Windows set the ico file with the rc file
-	IF(WIN32)
-		SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.rc)
-	ENDIF(WIN32)
+# For Windows set the ico file with the rc file
+IF(WIN32)
+	SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.rc)
+ENDIF(WIN32)
 	
-	# For Apple set the icns file containing icons
-	IF(APPLE)
-	  # set how it shows up in the Info.plist file
-	  SET(MACOSX_BUNDLE_ICON_FILE ${PRJ_NAME}.icns) 
-	  # set where in the bundle to put the icns file
-	  SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-	  # include the icns file in the target
-	  SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.icns)
-	ENDIF(APPLE)
+# For Apple set the icns file containing icons
+IF(APPLE)
+	# set how it shows up in the Info.plist file
+	SET(MACOSX_BUNDLE_ICON_FILE ${PRJ_NAME}.icns) 
+	# set where in the bundle to put the icns file
+	SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+	# include the icns file in the target
+	SET(source_files ${source_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/Pictures/${PRJ_NAME}.icns)
+ENDIF(APPLE)
 	
-	add_executable(
-		${PRJ_NAME} MACOSX_BUNDLE WIN32
-		${source_files}
-		${MOC_FILES}
-		${UI_FILES}
-		${RESOURCE_FILES}
-	)
+add_executable(
+	${PRJ_NAME} MACOSX_BUNDLE WIN32
+	${source_files}
+	${MOC_FILES}
+	${UI_FILES}
+	${RESOURCE_FILES}
+)
+
+if (WITH_QT5)
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_QT5")
+endif(WITH_QT5)
+
+SET_TARGET_PROPERTIES(${PRJ_NAME} PROPERTIES COMPILE_DEFINITIONS "${my_COMPILE_DEFINITIONS}")
 	
-	# Configuration de l'édition de liens
-	# Link with Qt libraries
+# Configuration de l'édition de liens
+# Link with Qt libraries
+if (WITH_QT5)
+	QT5_USE_MODULES( ${PRJ_NAME} Widgets Xml OpenGL )
+else(WITH_QT5)
 	target_link_libraries( ${PRJ_NAME} ${QT_LIBRARIES} )
+endif(WITH_QT5)
 	
-	# Link with CGAL
-	target_link_libraries( ${PRJ_NAME} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+# Link with CGAL
+target_link_libraries( ${PRJ_NAME} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 	
-	# Link with libQGLViewer, OpenGL
-	target_link_libraries( ${PRJ_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+# Link with libQGLViewer, OpenGL
+target_link_libraries( ${PRJ_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 	
-	# Link with XercesC
-	target_link_libraries( ${PRJ_NAME} ${XML_PARSER_LIBRARY} ) 
+# Link with XercesC
+target_link_libraries( ${PRJ_NAME} ${XML_PARSER_LIBRARY} ) 
 	
-	# Link with OpenMesh
-	if (OPENMESH_FOUND)
-		target_link_libraries( ${PRJ_NAME} ${OPENMESH_LIBRARY} )
-	endif (OPENMESH_FOUND)
+# Link with OpenMesh
+if (OPENMESH_FOUND)
+	target_link_libraries( ${PRJ_NAME} ${OPENMESH_LIBRARIES} )
+endif (OPENMESH_FOUND)
 	
-	if (GLEW_FOUND)
-		target_link_libraries( ${PRJ_NAME} ${GLEW_LIBRARIES} )
-	endif(GLEW_FOUND)
+if (GLEW_FOUND)
+	target_link_libraries( ${PRJ_NAME} ${GLEW_LIBRARIES} )
+endif(GLEW_FOUND)
 	
-	if (FFMPEG_FOUND)
-		target_link_libraries( ${PRJ_NAME} ${FFMPEG_LIBRARIES} )
-	endif (FFMPEG_FOUND)
-	
-	#Documentation
-	#option(BUILD_doc_${PRJ_NAME} "Build Doxygen documentation for ${PRJ_NAME}" ON)
-	#if(BUILD_doc_${PRJ_NAME})
-	  include(TargetDoc)
-	#endif(BUILD_doc_${PRJ_NAME})
+if (FFMPEG_FOUND)
+	target_link_libraries( ${PRJ_NAME} ${FFMPEG_LIBRARIES} )
+endif (FFMPEG_FOUND)
+
+#Documentation
+#option(BUILD_doc_${PRJ_NAME} "Build Doxygen documentation for ${PRJ_NAME}" ON)
+#if(BUILD_doc_${PRJ_NAME})
+	include(TargetDoc)
+#endif(BUILD_doc_${PRJ_NAME})
 
 
 IF(WIN32)
@@ -338,32 +428,3 @@ IF(APPLE)
 	# Now the installation stuff : end
 	#--------------------------------------------------------------------------------
 ENDIF(APPLE)
-
-	
-else (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)
-
-  set(MEPP_MISSING_DEPS "")
-
-  if (NOT CGAL_FOUND)
-    set(MEPP_MISSING_DEPS "the CGAL library, ${MEPP_MISSING_DEPS}")
-  endif ()
-
-  if (NOT QT4_FOUND)
-    set(MEPP_MISSING_DEPS "Qt4, ${MEPP_MISSING_DEPS}")
-  endif ()
-
-  if (NOT OPENGL_FOUND)
-    set(MEPP_MISSING_DEPS "OpenGL, ${MEPP_MISSING_DEPS}")
-  endif ()
-
-  if (NOT QGLVIEWER_FOUND)
-    set(MEPP_MISSING_DEPS "QGLViewer, ${MEPP_MISSING_DEPS}")
-  endif ()
-  
-  if (NOT XERCESC_FOUND)
-    set(MEPP_MISSING_DEPS "Xerces-C++, ${MEPP_MISSING_DEPS}")
-  endif ()
-
-  message(FATAL_ERROR "ERROR: this software requires ${MEPP_MISSING_DEPS}and will not be compiled.")
-
-endif (CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND XERCESC_FOUND)

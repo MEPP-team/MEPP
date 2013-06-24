@@ -7,9 +7,13 @@
 #ifndef _MSC_VER
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
-#include <QtGui/QDialog>
+#include <QtGui>
 #ifndef _MSC_VER
 #pragma GCC diagnostic warning "-Wuninitialized"
+#endif
+
+#if QT_VERSION >= 0x050000
+#include <QtWidgets>
 #endif
 
 #include "ui_dialSettings_Various_Processing_Translation.h"

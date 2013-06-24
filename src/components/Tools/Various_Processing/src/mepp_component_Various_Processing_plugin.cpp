@@ -424,6 +424,8 @@ void mepp_component_Various_Processing_plugin::SurfaceSimplification()
 	QApplication::restoreOverrideCursor();
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(mepp_component_Various_Processing_plugin, mepp_component_Various_Processing_plugin);
+#endif
 
 #endif

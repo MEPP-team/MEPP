@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.47.2 - 23/04/2013 - (git master version)"
+#define MEPP_VERSION "v0.48 - 21/06/2013 - (git master version)"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -48,6 +48,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	// Components
 	dockComponents = new QDockWidget(tr(" Components (right-click)"), this);
+	dockComponents->setObjectName("dockComponents");
 	dockComponents->setMinimumWidth(m_dockComponents_MinimumWidth);
 	inner = new QMainWindow(dockComponents);
 	inner->setWindowFlags(Qt::Widget); // <---------
@@ -58,6 +59,7 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 
 	// DirView
 	dockDirView = new QDockWidget(tr(" Directory view"), this);
+	dockDirView->setObjectName("dockDirView");
 	dockDirView->setMinimumWidth(m_dockDirView_MinimumWidth);
 	this->addDockWidget(Qt::RightDockWidgetArea, dockDirView);
 
@@ -463,6 +465,8 @@ void mainwindow::writeSettings()
 
 	settings.setValue("dockComponents_MinimumWidth", m_dockComponents_MinimumWidth);
 	settings.setValue("dockDirView_MinimumWidth", m_dockDirView_MinimumWidth);
+
+	settings.setValue("state", saveState());
 	settings.endGroup();
 }
 
@@ -484,6 +488,9 @@ void mainwindow::readSettings()
 
 	m_dockComponents_MinimumWidth = settings.value("dockComponents_MinimumWidth", 220).toInt(); if (m_dockComponents_MinimumWidth < 1) m_dockComponents_MinimumWidth=220;
 	m_dockDirView_MinimumWidth = settings.value("dockDirView_MinimumWidth", 260).toInt(); if (m_dockDirView_MinimumWidth < 1) m_dockDirView_MinimumWidth=260;
+
+	if(!settings.value("state").isNull())
+		restoreState(settings.value("state").toByteArray());
 	settings.endGroup();
 }
 
@@ -1322,7 +1329,7 @@ void mainwindow::on_actionAbout_QGLViewer_triggered()
 	aboutQGLViewer->aboutQGLViewer();
 }
 
-void mainwindow::popupAboutBox(QString title, QString html_resource_name)
+/*void mainwindow::popupAboutBox(QString title, QString html_resource_name)
 {
 	QFile about_CGAL(html_resource_name);
 	about_CGAL.open(QIODevice::ReadOnly);
@@ -1332,7 +1339,7 @@ void mainwindow::popupAboutBox(QString title, QString html_resource_name)
 				 QMessageBox::Ok,
 				 this);
 	mb.exec();
-}
+}*/
 
 void mainwindow::on_actionAbout_CGAL_triggered()
 {
@@ -1698,8 +1705,8 @@ void mainwindow::on_actionScreenshot_sequence_triggered()
 
 			if (actionScreenshot_sequence->isChecked())
                         {
-				bitrate = QInputDialog::getInteger(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);                   
-                                if (ok) fps = QInputDialog::getInteger(this, tr("Select fps"), tr("Frames per second:"), fps, 3, 25, 1, &ok);
+				bitrate = QInputDialog::getInt(this, tr("Select bitrate"), tr("Bitrate (Ko):"), bitrate, 200, 19700, 1000, &ok);                   
+                                if (ok) fps = QInputDialog::getInt(this, tr("Select fps"), tr("Frames per second:"), fps, 3, 25, 1, &ok);
                                 if (ok) actionScreenshot_sequence->setChecked(true);
                         }
 
@@ -1762,7 +1769,7 @@ void mainwindow::on_actionParams_triggered()
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
 		bool ok;
-		int res = QInputDialog::getInteger(this, tr("Select fps"), tr("Fps:"), viewer->getFps(), 1, 60, 1, &ok);
+		int res = QInputDialog::getInt(this, tr("Select fps"), tr("Fps:"), viewer->getFps(), 1, 60, 1, &ok);
 
 		if (ok)
 			viewer->setFps(res);

@@ -1,6 +1,8 @@
 #ifndef HEADER_MEPP_COMPONENT_CANONICAL_PLUGIN_INTERFACE_H
 #define HEADER_MEPP_COMPONENT_CANONICAL_PLUGIN_INTERFACE_H
 
+#include <QtGlobal> // important, for QT_VERSION
+
 #include <QObject>
 
 #include <mepp_config.h>
@@ -17,6 +19,9 @@ class mepp_component_Canonical_plugin :
 {
 	Q_OBJECT
 	Q_INTERFACES(mepp_component_plugin_interface);
+#if QT_VERSION >= 0x050000
+	Q_PLUGIN_METADATA(IID "mepp_component_Canonical_plugin")
+#endif
 
 	public:
 		mepp_component_Canonical_plugin() : mepp_component_plugin_interface() {}

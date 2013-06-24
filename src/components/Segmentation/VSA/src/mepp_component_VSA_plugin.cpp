@@ -103,6 +103,8 @@ void mepp_component_VSA_plugin::FaceLabelsToColorMap()
 	QApplication::restoreOverrideCursor();
 }
 
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(mepp_component_VSA_plugin, mepp_component_VSA_plugin);
+#endif
 
 #endif
