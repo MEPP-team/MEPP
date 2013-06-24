@@ -150,7 +150,7 @@ if (FFMPEG_DIR)
 endif()
 find_package(FFmpeg)
 if (FFMPEG_FOUND)
-	ADD_DEFINITIONS("-DWITH_FFMPEG ")
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_FFMPEG")
 else(FFMPEG_FOUND)
   message(STATUS "FFmpeg (optional) not found. Please set FFMPEG_DIR.")
 endif(FFMPEG_FOUND)
@@ -203,6 +203,12 @@ add_library(
 	${MOC_FILES}
 	${UI_FILES}
 )
+
+if (WITH_QT5)
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_QT5")
+endif(WITH_QT5)
+
+SET_TARGET_PROPERTIES(${COMPONENT_NAME} PROPERTIES COMPILE_DEFINITIONS "${my_COMPILE_DEFINITIONS}")
 
 # Configuration de l'édition de liens
 # Link with Qt libraries

@@ -216,7 +216,7 @@ if (FFMPEG_DIR)
 endif()
 find_package(FFmpeg)
 if (FFMPEG_FOUND)
-	ADD_DEFINITIONS("-DWITH_FFMPEG ")
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_FFMPEG")
 else(FFMPEG_FOUND)
   message(STATUS "FFmpeg (optional) not found. Please set FFMPEG_DIR.")
 endif(FFMPEG_FOUND)
@@ -291,6 +291,12 @@ add_executable(
 	${UI_FILES}
 	${RESOURCE_FILES}
 )
+
+if (WITH_QT5)
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_QT5")
+endif(WITH_QT5)
+
+SET_TARGET_PROPERTIES(${PRJ_NAME} PROPERTIES COMPILE_DEFINITIONS "${my_COMPILE_DEFINITIONS}")
 	
 # Configuration de l'édition de liens
 # Link with Qt libraries
@@ -322,12 +328,6 @@ if (FFMPEG_FOUND)
 	target_link_libraries( ${PRJ_NAME} ${FFMPEG_LIBRARIES} )
 endif (FFMPEG_FOUND)
 
-set(my_COMPILE_DEFINITIONS "")
-if (WITH_QT5)
-  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_QT5")
-endif(WITH_QT5)
-SET_TARGET_PROPERTIES(${PRJ_NAME} PROPERTIES COMPILE_DEFINITIONS "${my_COMPILE_DEFINITIONS}")
-	
 #Documentation
 #option(BUILD_doc_${PRJ_NAME} "Build Doxygen documentation for ${PRJ_NAME}" ON)
 #if(BUILD_doc_${PRJ_NAME})
