@@ -1,10 +1,5 @@
 # This is the CMake script for using component(s) inside a MEPP component
-# Martial TOLA - Juin 2010
-cmake_minimum_required(VERSION 2.4.5)
+# Martial TOLA - June 2013
 
-if (COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif (COMMAND cmake_policy)
-
-# Ici, on utilise le composant Curvature (par exemple)
+# Here (if uncommented), we use the Curvature component (for example)
 #set( use_components ../../Analysis/Curvature/src/Curvature_Component.cpp ../../Analysis/Curvature/src/extract_Vpropres.cpp )
