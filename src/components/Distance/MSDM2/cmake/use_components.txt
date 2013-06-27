@@ -1,5 +1,5 @@
 # This is the CMake script for using component(s) inside a MEPP component
 # Martial TOLA - June 2013
 
-# Here (if uncommented), we use the Curvature component (for example)
+# Here we use the Curvature component
 set( use_components ../../Analysis/Curvature/src/Curvature_Component.cpp ../../Analysis/Curvature/src/extract_Vpropres.cpp )
