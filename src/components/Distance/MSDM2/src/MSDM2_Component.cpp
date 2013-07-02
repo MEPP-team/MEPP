@@ -215,14 +215,8 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
         //double C1=1; // MT
         //double C2=1; // MT
         //double C3=0.5; // MT
-	#ifdef _MSC_VER
-			double fact1=(fabs(moyenne1-moyenne2))/(max(moyenne1,moyenne2)+1);
-			double fact2=(fabs(variance1-variance2))/(max(variance1,variance2)+1);
-			
-	#else
 			double fact1=(fabs(moyenne1-moyenne2))/(std::max(moyenne1,moyenne2)+1);
 			double fact2=(fabs(variance1-variance2))/(std::max(variance1,variance2)+1);
-	#endif
 			double fact3=(fabs(variance1*variance2-covariance))/(variance1*variance2+1);
 			
 			pVertex->MSDM2_Local+=pow((pow(fact1,1)+pow(fact2,1)+Param*pow(fact3,1))/(2.+Param),1./1.);

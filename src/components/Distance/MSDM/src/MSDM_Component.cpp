@@ -427,13 +427,8 @@ double MSDM_Component::ProcessCovariance_PerVertex(Vertex* pVertex,double moyenn
 			double angleRad;
 			
 			////minkowsky
-#ifdef _MSC_VER
-			double fact1=(fabs(MoyX-MoyY))/(max(MoyX,MoyY)+1);
-			double fact2=(fabs(SigX-SigY))/(max(SigX,SigY)+1);
-#else
 			double fact1=(fabs(MoyX-MoyY))/(std::max(MoyX,MoyY)+1);
 			double fact2=(fabs(SigX-SigY))/(std::max(SigX,SigY)+1);
-#endif
 			double fact3=(fabs(SigX*SigY-SigXY))/(SigX*SigY+1);
 		
 			angleRad=pow((pow(fact1,3)+pow(fact2,3)+Param*pow(fact3,3))/(2.+Param),1./3.);

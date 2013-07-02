@@ -372,20 +372,11 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				free(VectPro);
 				free(Valpro);
 
-
-#ifdef _MSC_VER
-			MinNrmMinCurvature=min(MinNrmMinCurvature,pVertex->KminCurv);
-			MaxNrmMinCurvature=max(MaxNrmMinCurvature,pVertex->KminCurv);
-
-			MinNrmMaxCurvature=min(MinNrmMaxCurvature,pVertex->KmaxCurv);
-			MaxNrmMaxCurvature=max(MaxNrmMaxCurvature,pVertex->KmaxCurv);
-#else
 			MinNrmMinCurvature=CGAL::min(MinNrmMinCurvature,pVertex->KminCurv);
 			MaxNrmMinCurvature=CGAL::max(MaxNrmMinCurvature,pVertex->KminCurv);
 
 			MinNrmMaxCurvature=CGAL::min(MinNrmMaxCurvature,pVertex->KmaxCurv);
 			MaxNrmMaxCurvature=CGAL::max(MaxNrmMaxCurvature,pVertex->KmaxCurv);
-#endif
 
   }
 

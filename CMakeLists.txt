@@ -84,12 +84,12 @@ endif (WIN32)
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/mepp_config.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/mepp_config.h)
 
-Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_define h)
-Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_include h)
-Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_facet h)
-Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_halfedge h)
-Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_vertex h)
-Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_polyhedron h)
+Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_define h)
+Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_include_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_include h)
+Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_facet_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_facet h)
+Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_halfedge_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_halfedge h)
+Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_vertex_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_vertex h)
+Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_polyhedron_ ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include/polyhedron_enrichment_polyhedron h)
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
@@ -285,7 +285,7 @@ IF(APPLE)
 ENDIF(APPLE)
 	
 add_executable(
-	${PRJ_NAME} MACOSX_BUNDLE WIN32
+	${PRJ_NAME} MACOSX_BUNDLE
 	${source_files}
 	${MOC_FILES}
 	${UI_FILES}
@@ -335,11 +335,17 @@ endif (FFMPEG_FOUND)
 #endif(BUILD_doc_${PRJ_NAME})
 
 
+if (WITH_QT5)
+	if( NOT DEFINED QT_PLUGINS_DIR )
+		set( QT_PLUGINS_DIR "${QT5_DIR}/plugins/" )
+	endif( NOT DEFINED QT_PLUGINS_DIR )
+endif(WITH_QT5)
+
 IF(WIN32)
  #--------------------------------------------------------------------------------
  # Copy Qt plugins to 'Debug and Release' directories and configure qt.conf file
  #--------------------------------------------------------------------------------
- file (GLOB qtplugin_dirs RELATIVE  "${QT_PLUGINS_DIR}"  "${QT_PLUGINS_DIR}/imageformats*"  )
+ file (GLOB qtplugin_dirs RELATIVE  "${QT_PLUGINS_DIR}"  "${QT_PLUGINS_DIR}/imageformats*"  "${QT_PLUGINS_DIR}/platforms*"  )
  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Debug/QtPlugins" )
  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Release/QtPlugins" )
  foreach (qtplugin ${qtplugin_dirs})
@@ -378,6 +384,7 @@ IF(APPLE)
 	# Install needed Qt plugins by copying directories from the qt installation
 	# One can cull what gets copied by using 'REGEX "..." EXCLUDE'
 	INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+	INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/platforms" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
 
 	#--------------------------------------------------------------------------------
 	# install a qt.conf file

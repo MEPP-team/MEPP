@@ -634,7 +634,7 @@ void mainwindow::updateMenus()
 	actionEdge_color->setEnabled(hasMdiChild);
 	actionFace_color->setEnabled(hasMdiChild);
 
-	actionMaterial->setEnabled(!actionTexture_Mode->isChecked()); //actionMaterial->setEnabled(hasMdiChild);
+	actionMaterial->setEnabled( hasMdiChild && (!actionTexture_Mode->isChecked()) ); //actionMaterial->setEnabled(hasMdiChild);
 	// color options
 
 	// show options
