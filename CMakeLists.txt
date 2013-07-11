@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - June 2013
+# Martial TOLA - July 2013
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -17,6 +17,9 @@ if (COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
   IF(POLICY CMP0017)
 	cmake_policy(SET CMP0017 NEW)
+  ENDIF()
+  IF(POLICY CMP0020)
+	cmake_policy(SET CMP0020 NEW)
   ENDIF()
 endif (COMMAND cmake_policy)
 
