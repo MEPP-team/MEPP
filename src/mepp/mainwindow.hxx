@@ -390,14 +390,8 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		 */
 		void on_actionAbout_QGLViewer_triggered();
 
-		/*!
-		 * \fn popupAboutBox(QString title, QString html_resource_name)
-		 * \brief Popup an about dialog box.
-		 *
-		 * \param title dialog box title.
-		 * \param html_resource_name an html file.
-		 */
 		//void popupAboutBox(QString title, QString html_resource_name);
+
 		/*!
 		 * \fn on_actionAbout_CGAL_triggered()
 		 * \brief Open about CGAL dialog box (from menu).
