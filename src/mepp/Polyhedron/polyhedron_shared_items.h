@@ -12,7 +12,11 @@
 #endif
 
 //#include <GL/glew.h>
-#include <GL/glu.h>
+#ifdef __APPLE__
+#  include <OpenGL/glu.h>
+#else
+#  include <GL/glu.h>
+#endif
 
 #include <QGLViewer/vec.h>
 #include <QGLViewer/quaternion.h>
@@ -20,7 +24,7 @@
 #include <fstream>
 #include <list>
 
-#include <CGAL/IO/Polyhedron_VRML_2_ostream.h> // for vrml writing
+//#include <CGAL/IO/Polyhedron_VRML_2_ostream.h> // for vrml writing
 
 // For OFF Loading
 #include "Polyhedron_OFF_CGALImporter.h"
@@ -743,7 +747,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		// superimpose vertices
 		virtual void superimpose_spheres(bool glList, double scale)
 		{
-			GLUquadricObj* pQuadric = gluNewQuadric();
+			//GLUquadricObj* pQuadric = gluNewQuadric();
 			::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
 			for (Vertex_iterator pVertex = this->vertices_begin(); pVertex !=  this->vertices_end(); pVertex++)
@@ -769,7 +773,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				::glPopMatrix();
 			}
 
-			gluDeleteQuadric(pQuadric);
+			//gluDeleteQuadric(pQuadric);
 		}
 
 		// Render normals
@@ -818,13 +822,13 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
         // write in vrml file format (WRL).
 		void write_vrml(string output_name)
 		{
-			std::ofstream stream(output_name.c_str());
+			/*std::ofstream stream(output_name.c_str());
 
 			CGAL::VRML_2_ostream out(stream);
             out << (*this);
 
 			stream.flush();
-			stream.close();
+			stream.close();*/
 		}
 
 		void write_x3d(string output_name, bool write_color)
