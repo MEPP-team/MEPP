@@ -516,6 +516,9 @@ class Viewer : public QGLViewer
 			double xmax, ymax, zmax;
 			bool first = true;
 
+			xmin = ymin = zmin = 0.;
+			xmax = ymax = zmax = 0.;
+
 			setSceneRadius(1.0);
 			setSceneCenter(qglviewer::Vec(0.0, 0.0, 0.0));
 			camera()->setZNearCoefficient(0.005f);
