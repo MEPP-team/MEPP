@@ -560,11 +560,15 @@ class mainwindow : public QMainWindow, /*private*/public Ui::mainwindow
 		void on_actionPaste_viewpoint_triggered();
 
 		/*!
+		 * \fn on_actionShow_entire_scene_triggered()
+		 * \brief Set camera position and orientation to see the whole scene in Space mode (from menu).
+		 */
+		void on_actionShow_entire_scene_triggered();
+		/*!
 		 * \fn on_actionCenter_all_objects_triggered()
 		 * \brief Center all meshes in space mode (from menu).
 		 */
 		void on_actionCenter_all_objects_triggered();
-
 		/*!
 		 * \fn on_actionCouplingRotations_triggered()
 		 * \brief Coupling rotation of meshes (from menu).

@@ -1,24 +1,28 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012
+// Year: 2010-2011-2012-2013
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion' or '10.8 Mountain Lion') :
-------------------------------------------------------------------------------------------------------------
+How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion' or '10.9 Mavericks') :
+------------------------------------------------------------------------------------------------------------------------------
 
 1a) starting from Mac OS X '10.8 Mountain Lion', X11 is no longer part of the system, you must install in this case XQuartz:
 http://xquartz.macosforge.org/
+NOTE: ---> this is not useful under Mac OS X '10.9 Mavericks'
 
 1b) install Xcode:
 http://developer.apple.com/xcode/
 
----> with recent version of Xcode (for example > 4.3.x) you need then to install the 'Command Line Tools' for Xcode.
+---> for Xcode version >= 4.3 but < 5.0, you need then to install the 'Command Line Tools' for Xcode.
 You can install them from inside Xcode's Download preferences. Finally, you also need to do that command:
 sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+NOTE: ---> under Mac OS X '10.9 Mavericks', the installation of the 'Command Line Tools' are now done with the following command:
+xcode-select --install
 
 2) install Java Developer Package for Mac OS X
 https://connect.apple.com/
+NOTE: ---> this is not useful under Mac OS X '10.9 Mavericks'
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -26,10 +30,13 @@ https://connect.apple.com/
 I highly recommend Homebrew, stronger and faster during the installation because there is sometimes "Bottle" (binary package)
 
 3a) install Homebrew (http://mxcl.github.com/homebrew/):
-ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
 ---> update Homebrew: 
 brew update
+
+---> optional:
+brew tap homebrew/science
 
 ---> install this packages with Homebrew:
 brew install cgal
@@ -38,11 +45,18 @@ brew install libqglviewer
 brew install glew
 brew install doxygen graphviz xerces-c
 brew install ffmpeg
+brew install assimp
 
 ---> it may be necessary to create this link for libQGLViewer (here 2.3.15 is an example...)
 sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
+NOTE: ---> under Mac OS X '10.9 Mavericks', you must perform the following two commands:
+sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers
+sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AGL.framework/Headers /System/Library/Frameworks/AGL.framework/Headers
+
+
 or
+
 
 3b) install MacPorts:
 http://www.macports.org/install.php

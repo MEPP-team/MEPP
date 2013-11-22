@@ -20,6 +20,13 @@
 
 #include <fstream>
 
+#ifdef WITH_ASSIMP
+	// assimp include files
+	#include <assimp/Importer.hpp>	// OO version Header !
+	#include <assimp/postprocess.h>
+	#include <assimp/scene.h>
+#endif
+
 #include "viewer.hxx"
 
 Scene::Scene()
@@ -32,6 +39,92 @@ Scene::~Scene()
 {
 	m_polyhedrons.clear();
 }
+
+#ifdef WITH_ASSIMP
+int Scene::add_meshes_with_assimp(QString filename, Viewer* viewer)
+{
+	int res = 0;
+
+	// read from stream
+	std::ifstream stream(filename.toStdString().c_str());
+	if (!stream)
+		return -1;
+	stream.close();
+
+	// create an instance of the Importer class
+	Assimp::Importer importer;
+
+	// the Assimp scene object
+	aiScene* scene = (aiScene*)importer.ReadFile(filename.toStdString(), aiProcess_JoinIdenticalVertices);
+
+	if (!scene)
+		return -2;
+
+	unsigned int nbMesh= scene->mNumMeshes;
+
+	for (unsigned int meshIndex = 0; meshIndex < nbMesh; meshIndex++)
+	{
+		aiMesh* mesh = scene->mMeshes[meshIndex];
+
+		PolyhedronPtr polyhedron_ptr(new Polyhedron());
+		res = polyhedron_ptr->load_mesh_assimp(mesh);
+
+		if (!res)
+		{
+			if (get_nb_polyhedrons()>0)
+			{
+				PolyhedronPtr p = get_polyhedron();
+				//if (!p->empty())
+				{
+					viewer->camera()->setPosition(p->pInitialCameraPosition);
+					viewer->camera()->setOrientation(p->pInitialCameraOrientation);
+				}
+			}
+
+			if (!polyhedron_ptr->empty())
+			{
+				polyhedron_ptr->compute_bounding_box();
+
+				polyhedron_ptr->compute_normals();
+				polyhedron_ptr->compute_type();
+
+				(void)polyhedron_ptr->calc_nb_components();
+				(void)polyhedron_ptr->calc_nb_boundaries();
+			}
+
+			add_polyhedron(polyhedron_ptr);
+			set_current_polyhedron(get_nb_polyhedrons()-1);
+
+			setcurrentFile( QString("%1: %2").arg(filename).arg(meshIndex+1) );
+			setVisible(true);
+
+			if (get_nb_polyhedrons()>1)
+				m_loadType = Space;
+
+			// if mode Space
+			todoIfModeSpace(viewer, viewer->getYStep());
+
+			viewer->showAllScene();
+
+			if (nbMesh>1)
+			{
+#if QT_VERSION < 0x050000
+				viewer->recreateListsAndUpdateGL();
+#else
+				viewer->show();
+#endif
+			}
+		}
+		else
+			return -3;
+
+		if (nbMesh>1)
+			viewer->showAllSceneForSpaceMode();
+	}
+
+	return 0;
+}
+#endif
 
 int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* viewer)
 {
@@ -74,6 +167,10 @@ int Scene::add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* 
 				res = polyhedron_ptr->load_mesh_ply(filename.toStdString());
 			else if (ext == "x3d")
 				res = polyhedron_ptr->load_mesh_x3d(filename.toStdString());
+#ifdef WITH_ASSIMP
+			else if (ext == "dae" || ext == "3ds" || ext == "lwo" )
+				return add_meshes_with_assimp(filename, viewer);
+#endif
 			else
 				res = 1;
 		}

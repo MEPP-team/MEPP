@@ -39,6 +39,17 @@ class Scene
 		 * \return 0 if loading is ok.
 		 */
 		int add_mesh(QString filename, int loadType, typeFuncOpenSave f, Viewer* viewer);
+#ifdef WITH_ASSIMP
+		/*!
+		 * \fn int add_meshes_with_assimp(QString filename, Viewer* viewer)
+		 * \brief Open and load meshes in a viewer with assimp library (if the file contain more than one mesh the load mode is set to Space)
+		 *
+		 * \param filename the mesh filename.
+		 * \param viewer the viewer.
+		 * \return 0 if loading is ok.
+		 */
+		int add_meshes_with_assimp(QString filename, Viewer* viewer);
+#endif
 		/*!
 		 * \fn todoIfModeSpace(Viewer* viewer, double ystep)
 		 * \brief Do everything we need for the space mode after a mesh loading (adding frame...).

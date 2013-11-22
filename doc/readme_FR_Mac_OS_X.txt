@@ -1,24 +1,28 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012
+// Year: 2010-2011-2012-2013
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion' ou '10.8 Mountain Lion') :
----------------------------------------------------------------------------------------------------------------------
+Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion' ou '10.9 Mavericks') :
+---------------------------------------------------------------------------------------------------------------------------------------
 
 1a) A partir de Mac OS X '10.8 Mountain Lion', X11 ne fait plus partie intégrante du système, vous devez donc dans ce cas installer à la place XQuartz:
 http://xquartz.macosforge.org/
+NOTE: ---> cela n'est pas utile sous Mac OS X '10.9 Mavericks'
 
 1b) installer Xcode:
 http://developer.apple.com/xcode/
 
----> avec une version récente de Xcode (par exemple > 4.3.x), vous devez aussi installer les 'outils en ligne de commande' pour Xcode.
+---> pour une version de Xcode >= 4.3 mais < 5.0, vous devez aussi installer les 'outils en ligne de commande' pour Xcode.
 Vous pouvez les installer à l'intérieur de Xcode (Download preferences). Vous aurez aussi également besoin d'éxécuter cette commande:
 sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+NOTE: ---> sous Mac OS X '10.9 Mavericks', l'installation des 'outils en ligne de commande' se fait désormais avec la commande suivante:
+xcode-select --install
 
 2) installer Java Developer Package for Mac OS X
 https://connect.apple.com/
+NOTE: ---> cela n'est pas utile sous Mac OS X '10.9 Mavericks'
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -26,10 +30,13 @@ https://connect.apple.com/
 Je vous recommande fortement Homebrew, plus puissant et plus rapide lors de l'installation car disposant notamment parfois de "Bottle" (paquet binaire)
 
 3a) installer Homebrew (http://mxcl.github.com/homebrew/):
-ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
 ---> mettre à jour Homebrew: 
 brew update
+
+---> facultatif:
+brew tap homebrew/science
 
 ---> installer les paquets suivants avec Homebrew:
 brew install cgal
@@ -38,11 +45,18 @@ brew install libqglviewer
 brew install glew
 brew install doxygen graphviz xerces-c
 brew install ffmpeg
+brew install assimp
 
 ---> il vous sera peut-être utile de créer ce lien pour libqglviewer (attention ici, 2.3.15 est un exemple...)
 sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
+NOTE: ---> sous Mac OS X '10.9 Mavericks', il vous faudra exécuter les 2 commandes suivantes:
+sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers
+sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AGL.framework/Headers /System/Library/Frameworks/AGL.framework/Headers
+
+
 ou
+
 
 3b) installer MacPorts:
 http://www.macports.org/install.php
@@ -51,12 +65,12 @@ http://www.macports.org/install.php
 sudo port -v selfupdate
 
 ---> installer les paquets suivants avec MacPorts:
-sudo port install cgal				(assez long, <= 1 heure)
-sudo port install qt4-mac			(très long, environ 2-3 heures)
-sudo port install libQGLViewer			(très rapide, quelques minutes)
-sudo port install glew				(très très rapide, quelques secondes)
+sudo port install cgal												(assez long, <= 1 heure)
+sudo port install qt4-mac											(très long, environ 2-3 heures)
+sudo port install libQGLViewer								(très rapide, quelques minutes)
+sudo port install glew												(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
-sudo port install ffmpeg			(très rapide, quelques minutes)
+sudo port install ffmpeg											(très rapide, quelques minutes)
 
 ---> puis:
 sudo port install python_select

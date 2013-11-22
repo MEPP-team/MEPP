@@ -1,19 +1,20 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012
+// Year: 2010-2011-2012-2013
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
------------------------------------------------------------------------------------------------------
-(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10 or 13.04 / Debian 6 :
------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04 or 13.10 / Debian 6 :
+------------------------------------------------------------------------------------------------------------
 
-1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10 or 13.04 / Debian 6
+1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04 or 13.10 / Debian 6
 2) update distribution and packages:
 sudo apt-get update
 3) install new packages:
-sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev
+sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev libassimp-dev
 sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-dev
+NOTE: ---> from Ubuntu 13.10 libqglviewer-qt4-dev package is renamed to libqglviewer-dev
 
 -------------------------------------------
 Depending on your Ubuntu / Debian version :
@@ -70,6 +71,20 @@ or
 
 under Ubuntu 13.04* (The Raring Ringtail), activate qt4 because by default qt5 is now active:
 sudo apt-get install qt4-default
+
+or
+
+under Ubuntu 13.10* (The Saucy Salamander), activate qt4 because by default qt5 is now active:
+sudo apt-get install qt4-default
+and create 2 links:
+ cd /usr/lib
+if Linux 32 bit
+ sudo ln -s i386-linux-gnu/libboost_thread.so libboost_thread.so
+ sudo ln -s i386-linux-gnu/libboost_system.so libboost_system.so
+if Linux 64 bit
+ sudo ln -s x86_64-linux-gnu/libboost_thread.so libboost_thread.so
+ sudo ln -s x86_64-linux-gnu/libboost_system.so libboost_system.so
+
 
 * to reinstall the standard GNOME desktop : sudo apt-get install gnome-panel
   to reinstall the Synaptic application :   sudo apt-get install synaptic

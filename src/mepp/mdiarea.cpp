@@ -65,7 +65,11 @@ void MdiArea::dropEvent(QDropEvent *event)
 		QFileInfo fi(urls[i].toLocalFile());
 		QString ext = fi.suffix();
 
-		if ((ext.toLower()=="off") || (ext.toLower()=="obj") || (ext.toLower()=="smf") || (ext.toLower()=="ply") || (ext.toLower()=="x3d"))
+		if ( (ext.toLower()=="off") || (ext.toLower()=="obj") || (ext.toLower()=="smf") || (ext.toLower()=="ply") || (ext.toLower()=="x3d")
+#ifdef WITH_ASSIMP
+				|| (ext.toLower()=="dae") || (ext.toLower()=="3ds") || (ext.toLower()=="lwo")
+#endif
+				)
 		{
 			if (m_mw->activeMdiChild() == 0)
 				res = m_mw->loadFile(urls[i].toLocalFile(), Normal, NULL);

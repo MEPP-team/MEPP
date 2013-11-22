@@ -333,6 +333,7 @@
    <addaction name="actionCopy_viewpoint"/>
    <addaction name="actionPaste_viewpoint"/>
    <addaction name="separator"/>
+   <addaction name="actionShow_entire_scene"/>
    <addaction name="actionCenter_all_objects"/>
    <addaction name="actionCouplingRotations"/>
    <addaction name="separator"/>
@@ -755,6 +756,10 @@
    </property>
   </action>
   <action name="actionShow_entire_scene">
+   <property name="icon">
+    <iconset resource="mepp.qrc">
+     <normaloff>:/icons/Pictures/Icons/_ShowAll.png</normaloff>:/icons/Pictures/Icons/_ShowAll.png</iconset>
+   </property>
    <property name="text">
     <string>Show entire scene</string>
    </property>

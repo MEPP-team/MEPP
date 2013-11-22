@@ -1,6 +1,6 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012
+// Year: 2010-2011-2012-2013
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -30,8 +30,8 @@ http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/sp1/VC-Compiler-KB25
 http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_v01.rar (646 Mo)
 et décompresser l'archive dans le répertoire de votre choix (exemple: C:\dev - Attention, ne pas utiliser un chemin 'exotique' du type "Documents and Settings\$USER$\My ...\My ...")
 
-2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg):
-http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_ffmpeg_addon.rar (8 Mo)
+2b) récupérer la mise à jour des dépendances du projet MEPP (support vidéo ffmpeg, assimp et zlib):
+http://download.gforge.liris.cnrs.fr/meppbin/windows/vs2010/MEPP/mepp_prebuilt_binaries_vs2010_x64_addon_v02.rar (13 Mo)
 et décompresser l'archive dans le même répertoire que ci-dessus (si besoin, répondre oui pour écraser des fichiers)
 
 3a) positionner 3 variables d’environnement (menu « Poste de travail » -> bouton droit -> Propriétés -> onglet « Avancé » -> bouton « Variables d’environnement » (en bas) -> puis dans la partie « Variables système » (en bas):

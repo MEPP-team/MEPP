@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.48 - 30/06/2013"
+#define MEPP_VERSION "v0.49.1 - 22/11/2013"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -66,6 +66,9 @@ mainwindow::mainwindow(QMainWindow *parent) : QMainWindow(parent)
 		model = new QFileSystemModel;
 		QStringList filters;
 		filters << "*.off" << "*.obj" << "*.smf" << "*.ply" << "*.x3d";  // extensions
+#ifdef WITH_ASSIMP
+		filters << "*.dae" << "*.3ds" << "*.lwo";  // extensions (WITH_ASSIMP)
+#endif
 		model->setNameFilters(filters);
 		model->setNameFilterDisables(false);
 
@@ -653,6 +656,7 @@ void mainwindow::updateMenus()
 	actionCopy_viewpoint->setEnabled(hasMdiChild);
 	actionPaste_viewpoint->setEnabled(hasMdiChild && viewpointCopied);
 
+	actionShow_entire_scene->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space);
 	actionCenter_all_objects->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space);
 	actionCouplingRotations->setEnabled(hasMdiChild && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space);
 
@@ -904,7 +908,11 @@ void mainwindow::actionOpen_slot(QString title, QString typeFiles, int loadType,
 }
 void mainwindow::on_actionOpen_triggered()
 {
+#ifdef WITH_ASSIMP
+    actionOpen_slot(tr("Open Mesh File(s)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d);;3DS files (*.3ds);;DAE files (*.dae);;LWO files (*.lwo);;ALL files (*.*)"), Normal, NULL);
+#else
     actionOpen_slot(tr("Open Mesh File(s)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d);;ALL files (*.*)"), Normal, NULL);
+#endif
 }
 
 void mainwindow::actionOpen_space_slot(QString title, QString typeFiles, typeFuncOpenSave f)
@@ -937,7 +945,11 @@ void mainwindow::actionOpen_space_slot(QString title, QString typeFiles, typeFun
 }
 void mainwindow::on_actionOpen_space_triggered()
 {
+#ifdef WITH_ASSIMP
+	actionOpen_space_slot(tr("Open Mesh File(s) (space)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d);;3DS files (*.3ds);;DAE files (*.dae);;LWO files (*.lwo)"), NULL);
+#else
 	actionOpen_space_slot(tr("Open Mesh File(s) (space)"), tr("OFF Files (*.off);;OBJ files (*.obj);;SMF files (*.smf);;PLY files (*.ply);;X3D files (*.x3d)"), NULL);
+#endif
 }
 
 void mainwindow::actionOpen_time_slot(QString title, QString typeFiles, typeFuncOpenSave f)
@@ -1655,6 +1667,19 @@ void mainwindow::on_actionPaste_viewpoint_triggered()
 	}
 }
 
+void mainwindow::on_actionShow_entire_scene_triggered()
+{
+	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space)
+		((Viewer *)activeMdiChild())->centerAllObjects(false); // MT 7/10
+
+	if (activeMdiChild() != 0)
+	{
+		((Viewer *)activeMdiChild())->camera()->setPosition(qglviewer::Vec(0.f, 0.f, 0.f));
+		((Viewer *)activeMdiChild())->camera()->setOrientation(qglviewer::Quaternion(0, 0, 0, 1)); // identity Quaternion
+
+		((Viewer *)activeMdiChild())->showAllSceneForSpaceMode();
+	}
+}
 void mainwindow::on_actionCenter_all_objects_triggered()
 {
 	if (activeMdiChild() != 0 && ((Viewer *)activeMdiChild())->getScenePtr()->get_loadType() == Space)

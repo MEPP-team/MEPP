@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a MEPP component
-# Martial TOLA - July 2013
+# Martial TOLA - November 2013
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -158,8 +158,14 @@ else(FFMPEG_FOUND)
   message(STATUS "FFmpeg (optional) not found. Please set FFMPEG_DIR.")
 endif(FFMPEG_FOUND)
 
-
-include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+# Find ASSIMP
+find_package(ASSIMP)
+if(ASSIMP_FOUND)
+  include_directories(${ASSIMP_INCLUDE_PATH})
+  set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_ASSIMP")
+else(ASSIMP_FOUND)
+  message(STATUS "ASSIMP (optional) not found. Please set ASSIMP_ROOT_DIR.")
+endif(ASSIMP_FOUND)
 
 include_directories ( ${XML_PARSER_INCLUDE_DIR} )
 
@@ -226,6 +232,11 @@ target_link_libraries( ${COMPONENT_NAME} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBR
 
 # Link with libQGLViewer, OpenGL
 target_link_libraries( ${COMPONENT_NAME} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
+# Link with ASSIMP
+if(ASSIMP_FOUND)
+	target_link_libraries( ${COMPONENT_NAME} ${ASSIMP_LIBRARY} ) 
+endif(ASSIMP_FOUND)
 
 # Link with XercesC
 target_link_libraries( ${COMPONENT_NAME} ${XML_PARSER_LIBRARY} )

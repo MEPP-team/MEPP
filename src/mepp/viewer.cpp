@@ -1420,7 +1420,11 @@ void Viewer::MEPPcontextMenuEvent(QMouseEvent *event)
 		QAction *action;
 		for (int p=0; p<scene_ptr->get_nb_polyhedrons(); p++)
 		{
-			action = menu_pid.addAction(tr("%1 - %2 (pid: %3)").arg(p+1, 3).arg(scene_ptr->userFriendlyCurrentFile(p)).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
+			if (scene_ptr->get_polyhedron(p)->pShow)
+				action = menu_pid.addAction(tr("%1 - %2 (pid: %3)").arg(p+1, 3).arg(scene_ptr->userFriendlyCurrentFile(p)).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
+			else
+				action = menu_pid.addAction(tr("%1 - %2 (pid: %3) - [HIDDEN]").arg(p+1, 3).arg(scene_ptr->userFriendlyCurrentFile(p)).arg((qlonglong)(scene_ptr->get_polyhedron(p).get()), 0, 16));
+				
 			if (scene_ptr->get_loadType()!=Normal)
 			{
 				action->setCheckable(true);

@@ -48,6 +48,11 @@
 #include "Polyhedron_X3D_CGALImporter.h"
 #include "X3D_old.h"
 
+#ifdef WITH_ASSIMP
+	// For ASSIMP Loading
+	#include "Polyhedron_ASSIMP_CGALImporter.h"
+#endif
+
 // For Polyhedron copy
 #include "Polyhedron_Copy.h"
 
@@ -1267,6 +1272,21 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			return 0;
 		}
+
+#ifdef WITH_ASSIMP
+		int load_mesh_assimp(aiMesh* mesh)
+		{
+			// build the polyhedron
+			Builder_dae<HalfedgeDS> poly_builder(mesh);
+			this->delegate(poly_builder);
+			if (poly_builder.loadedSucess) {				
+				m_has_texture_coordinates = poly_builder.hasTextureCoordinates();
+				return 0;
+			}
+			else
+				return -1;
+		}
+#endif
 
         void triangulate()
         {

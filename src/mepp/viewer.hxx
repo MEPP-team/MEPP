@@ -507,6 +507,58 @@ class Viewer : public QGLViewer
 		}
 
 		/*!
+		 * \fn showAllSceneForSpaceMode()
+		 * \brief Set camera position and orientation to see the whole scene in Space mode.
+		 */
+		void showAllSceneForSpaceMode()
+		{
+			double xmin, ymin, zmin;
+			double xmax, ymax, zmax;
+			bool first = true;
+
+			setSceneRadius(1.0);
+			setSceneCenter(qglviewer::Vec(0.0, 0.0, 0.0));
+			camera()->setZNearCoefficient(0.005f);
+			camera()->setZClippingCoefficient(sqrt(3.0));
+
+			int nbMesh = qMin(scene_ptr->get_nb_polyhedrons(), get_nb_frames());
+			for (int i=0; i<nbMesh; i++)
+			{
+				if (!scene_ptr->get_polyhedron(i)->empty())
+				{
+					if (first)
+					{
+						xmin = to_double(scene_ptr->get_polyhedron(i)->xmin());
+						ymin = to_double(scene_ptr->get_polyhedron(i)->ymin());
+						zmin = to_double(scene_ptr->get_polyhedron(i)->zmin());
+
+						xmax = to_double(scene_ptr->get_polyhedron(i)->xmax());
+						ymax = to_double(scene_ptr->get_polyhedron(i)->ymax());
+						zmax = to_double(scene_ptr->get_polyhedron(i)->zmax());
+
+						first=false;
+					}
+					else
+					{
+						if (scene_ptr->get_polyhedron(i)->xmin() < xmin) xmin = scene_ptr->get_polyhedron(i)->xmin();
+						if (scene_ptr->get_polyhedron(i)->ymin() < ymin) ymin = scene_ptr->get_polyhedron(i)->ymin();
+						if (scene_ptr->get_polyhedron(i)->zmin() < zmin) zmin = scene_ptr->get_polyhedron(i)->zmin();
+
+						if (scene_ptr->get_polyhedron(i)->xmax() > xmax) xmax = scene_ptr->get_polyhedron(i)->xmax();
+						if (scene_ptr->get_polyhedron(i)->ymax() > ymax) ymax = scene_ptr->get_polyhedron(i)->ymax();
+						if (scene_ptr->get_polyhedron(i)->zmax() > zmax) zmax = scene_ptr->get_polyhedron(i)->zmax();
+					}
+				}
+			}
+			
+			if (!first)
+			{
+				setSceneBoundingBox(qglviewer::Vec(xmin,ymin,zmin), qglviewer::Vec(xmax,ymax,zmax));
+				showEntireScene();
+			}
+		}
+
+		/*!
 		 * \fn centerAllObjects(bool forcePosition=true)
 		 * \brief Center all objects in Space mode.
 		 *
