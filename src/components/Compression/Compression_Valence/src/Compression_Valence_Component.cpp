@@ -5140,7 +5140,7 @@ int Compression_Valence_Component::GetResolutionChange(Polyhedron *_pMesh, float
 	MinX = MinY = 1000;
 	MaxX = MaxY = 0;
 	GLdouble *model ;  GLdouble *proj ;  GLint *view;
-	view  = new int[4096];
+	view  = new GLint[4096];
 	model = new double[4096];
 	proj  = new double[4096];
 	glGetIntegerv (GL_VIEWPORT, view);

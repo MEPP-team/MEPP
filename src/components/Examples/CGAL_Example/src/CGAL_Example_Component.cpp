@@ -195,7 +195,7 @@ void CGAL_Example_Component::GetClickedVertices(PolyhedronPtr pMesh, double x, d
 	//wxString statusString;
 	GLdouble *model ;  GLdouble *proj ;  GLint *view;
 
-	view=new int[4096];
+	view=new GLint[4096];
 	model=new double[4096];
 	proj=new double[4096];
 
