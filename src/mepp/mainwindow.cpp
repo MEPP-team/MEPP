@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.49.1 - 22/11/2013"
+#define MEPP_VERSION "v0.49.2 - 11/03/2014"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -1175,13 +1175,13 @@ void mainwindow::on_actionOpen_texture_triggered()
 	{
 		Viewer *viewer = qobject_cast<Viewer *>(activeMdiChild()); // avoid bug under Linux
 
-#ifdef __linux__
-		if (!actionTexture_Mode->isChecked()) // here because of a problem under Linux otherwise
+//#ifdef __linux__
+		if (!actionTexture_Mode->isChecked()) // here because of a problem under Linux otherwise (11/03/2014 : problem with qt 5.2 too...)
 		{
 			actionTexture_Mode->setChecked(true);
 			on_actionTexture_Mode_triggered();
 		}
-#endif
+//#endif
 
 		QString selectedFilter = tr("PNG Files (*.png)");
 		QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Texture File"),
@@ -1326,7 +1326,7 @@ void mainwindow::on_actionAbout_triggered()
 			"<b>MEPP</b><br>"
 			"<br>"
 			"3D MEsh Processing Platform<br>"
-			"LIRIS M2DISCO (c) 2010-2012<br>"
+			"LIRIS M2DISCO (c) 2010-2014<br>"
 			"<br>"
 			"Martial TOLA<br>"
 			"<br>"

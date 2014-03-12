@@ -1,5 +1,5 @@
 # This is the CMake script for compiling a MEPP component
-# Martial TOLA - November 2013
+# Martial TOLA - March 2014
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -250,3 +250,20 @@ endif (FFMPEG_FOUND)
 #if(BUILD_doc_${COMPONENT_NAME})
   include(TargetDoc)
 #endif(BUILD_doc_${COMPONENT_NAME})
+
+# Install the library
+IF(NOT APPLE)
+	INSTALL(TARGETS ${COMPONENT_NAME} 
+		LIBRARY DESTINATION . COMPONENT ${COMPONENT_NAME}
+		RUNTIME DESTINATION . COMPONENT ${COMPONENT_NAME}
+	)
+
+	if (WIN32) # Release
+		SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}.exe")
+		SET(DIRS ${QT_LIBRARY_DIRS}) # directories to look for dependencies
+		INSTALL(CODE "
+		   include(BundleUtilities)
+		   fixup_bundle(\"${APPS}\" \"${CMAKE_BINARY_DIR}/Release/${COMPONENT_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"${DIRS}\")
+		   " COMPONENT ${PRJ_NAME})
+	endif (WIN32)
+ENDIF(NOT APPLE)

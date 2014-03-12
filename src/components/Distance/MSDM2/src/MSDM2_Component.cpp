@@ -301,7 +301,7 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
 		for(Vertex_iterator	pVertex	=	polyhedron_ptr->vertices_begin();pVertex!= polyhedron_ptr->vertices_end();pVertex++)
 		{
 			double kmax=pVertex->KmaxCurv*coef;
-			double kmin=pVertex->KminCurv*coef;
+			double kmin=fabs(pVertex->KminCurv*coef);
 
 			pVertex->KmaxCurv=(kmax+kmin)/2.;
 

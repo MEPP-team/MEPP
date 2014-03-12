@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - November 2013
+# Martial TOLA - March 2014
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -23,17 +23,20 @@ if (COMMAND cmake_policy)
   ENDIF()
 endif (COMMAND cmake_policy)
 
-# Configuration du projet
+# Project configuration
 set(PRJ_NAME mepp)
+set(PRJ_VERSION 0.49.2) # TODO
 project( ${PRJ_NAME} )
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy")
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(DOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
 #------------------------------------------------------------------------------
 # Specific compiler options
+#------------------------------------------------------------------------------
+# Clang (export CXX=clang++ CC=clang)
 #------------------------------------------------------------------------------
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
@@ -347,7 +350,7 @@ endif (FFMPEG_FOUND)
 
 if (WITH_QT5)
 	if( NOT DEFINED QT_PLUGINS_DIR )
-		set( QT_PLUGINS_DIR "${QT5_DIR}/plugins/" )
+		set( QT_PLUGINS_DIR "${QT5_DIR}/plugins" )
 	endif( NOT DEFINED QT_PLUGINS_DIR )
 endif(WITH_QT5)
 
@@ -359,53 +362,65 @@ IF(WIN32)
  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Debug/QtPlugins" )
  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/Release/QtPlugins" )
  foreach (qtplugin ${qtplugin_dirs})
-	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Debug/QtPlugins/")
-	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Release/QtPlugins/")
+	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Debug/QtPlugins")
+	file(COPY "${QT_PLUGINS_DIR}/${qtplugin}" DESTINATION "${CMAKE_BINARY_DIR}/Release/QtPlugins")
  endforeach ()
  file(WRITE "@CMAKE_BINARY_DIR@/Debug/qt.conf" "[Paths]\nPlugins = QtPlugins")
  file(WRITE "@CMAKE_BINARY_DIR@/Release/qt.conf" "[Paths]\nPlugins = QtPlugins")
 ENDIF(WIN32)
 
-IF(APPLE)
+
 	#--------------------------------------------------------------------------------
 	# Now the installation stuff : http://www.cmake.org/Wiki/BundleUtilitiesExample
 	#--------------------------------------------------------------------------------
-	SET(plugin_dest_dir bin)
-	SET(qtconf_dest_dir bin)
-	SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}")
+	SET(plugin_dest_dir .)
+	SET(qtconf_dest_dir .)
+	SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}")
 	IF(APPLE)
 		SET(plugin_dest_dir ${PRJ_NAME}.app/Contents/MacOS)
 		SET(qtconf_dest_dir ${PRJ_NAME}.app/Contents/Resources)
 		SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}.app")
 	ENDIF(APPLE)
 	IF(WIN32)
-		SET(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PRJ_NAME}.exe")
+		SET(APPS "\${CMAKE_INSTALL_PREFIX}/${PRJ_NAME}.exe")
 	ENDIF(WIN32)
 		
 	#--------------------------------------------------------------------------------
 	# Install the application, on Apple, the bundle is at the root of the
-	# install tree, and on other platforms it'll go into the bin directory.
+	# install tree, and on other platforms it'll go to the same directory.
 	INSTALL(TARGETS ${PRJ_NAME} 
-	BUNDLE DESTINATION . COMPONENT Runtime
-	RUNTIME DESTINATION bin COMPONENT Runtime
+		BUNDLE DESTINATION . COMPONENT ${PRJ_NAME}
+		RUNTIME DESTINATION . COMPONENT ${PRJ_NAME}
 	)
 
 	#--------------------------------------------------------------------------------
 	# Install needed Qt plugins by copying directories from the qt installation
 	# One can cull what gets copied by using 'REGEX "..." EXCLUDE'
-	INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+	INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${plugin_dest_dir}/plugins COMPONENT ${PRJ_NAME})
 	if (WITH_QT5)
-		INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/platforms" DESTINATION ${plugin_dest_dir}/plugins COMPONENT Runtime)
+		INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/platforms" DESTINATION ${plugin_dest_dir}/plugins COMPONENT ${PRJ_NAME})
 	endif(WITH_QT5)
+
+	# OSG plugins
+	if(OPENSCENEGRAPH_FOUND)
+		INCLUDE(BundleOSGPlugins)
+		install_osg_plugins( osg_plugins )
+		MESSAGE( STATUS "OSG plugins: " ${osg_plugins} )
+	endif(OPENSCENEGRAPH_FOUND)
 
 	#--------------------------------------------------------------------------------
 	# install a qt.conf file
 	# this inserts some cmake code into the install script to write the file
 	INSTALL(CODE "
-	file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"[Paths]\nPlugins = MacOS/plugins\")
-	" COMPONENT Runtime)
+		file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"[Paths]\nPlugins = plugins\")
+		" COMPONENT ${PRJ_NAME})
+	IF(APPLE)
+		INSTALL(CODE "
+			file(WRITE \"\${CMAKE_INSTALL_PREFIX}/${qtconf_dest_dir}/qt.conf\" \"[Paths]\nPlugins = MacOS/plugins\")
+			" COMPONENT ${PRJ_NAME})
+	ENDIF(APPLE)
 
-	# install qt_menu.nib
+	# install qt_menu.nib (APPLE)
 	IF(APPLE)
 		IF(EXISTS ${QT_LIBRARY_DIR}/Resources/qt_menu.nib)
 			INSTALL(CODE "execute_process(COMMAND cp -R \"${QT_LIBRARY_DIR}/Resources/qt_menu.nib\" \"${qtconf_dest_dir}\"
@@ -432,18 +447,36 @@ IF(APPLE)
 	# Note that the image plugins depend on QtSvg and QtXml, and it got those copied
 	# over.
 	INSTALL(CODE "
-	file(GLOB_RECURSE QTPLUGINS
-	\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/libcomponent_*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
-	include(BundleUtilities)
-	fixup_bundle(\"${APPS}\" \"\${QTPLUGINS}\" \"${DIRS}\")
-	" COMPONENT Runtime)
+		file(GLOB_RECURSE PLUGINS
+		\"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/plugins/*${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/osgPlugins-${OPENSCENEGRAPH_VERSION}/osgdb_*${CMAKE_SHARED_LIBRARY_SUFFIX}\" \"\${CMAKE_INSTALL_PREFIX}/${plugin_dest_dir}/*component_*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+		include(BundleUtilities)
+		fixup_bundle(\"${APPS}\" \"\${PLUGINS}\" \"${DIRS}\")
+		" COMPONENT ${PRJ_NAME})
+
+	# CPack Configuration
+	set(CPACK_PACKAGE_NAME ${PRJ_NAME})
+	set(CPACK_PACKAGE_VERSION ${PRJ_VERSION})
+	set(CPACK_PACKAGE_VENDOR "Liris / CNRS")
+	#set(CPACK_PACKAGE_DESCRIPTION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/README)
+	#set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/licence_gpl_v3.txt)
 
 	# To Create a package, one can run "cpack -G DragNDrop CPackConfig.cmake" on Mac OS X
 	# where CPackConfig.cmake is created by including CPack
 	# And then there's ways to customize this as well
-	#set(CPACK_BINARY_DRAGNDROP ON)
-	#include(CPack)
+	IF(APPLE)
+		set(CPACK_BINARY_DRAGNDROP ON)
+		set(CPACK_BINARY_TGZ "OFF")
+		set(CPACK_BINARY_STGZ "OFF")
+		set(CPACK_BINARY_PACKAGEMAKER "OFF")
+		include(CPack)
+	ENDIF(APPLE)
+
+	IF(WIN32)
+		set(CPACK_GENERATOR "NSIS64")
+		set(CPACK_NSIS_MENU_LINKS "${PRJ_NAME}" "${PRJ_NAME}")
+		#MESSAGE( STATUS "PRJ_NAME: " ${PRJ_NAME} )
+		include(CPack)
+	ENDIF(WIN32)
 	#--------------------------------------------------------------------------------
 	# Now the installation stuff : end
 	#--------------------------------------------------------------------------------
-ENDIF(APPLE)

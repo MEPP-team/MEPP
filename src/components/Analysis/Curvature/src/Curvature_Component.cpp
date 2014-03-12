@@ -311,12 +311,12 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 			if(!NoValPro)
 			{
 				//  Call the Jacovi subroutine
-				for (int u=0;u<4;u++)
+				/*for (int u=0;u<4;u++)
 					for (int v=0;v<4;v++)
 					{
 						Valpro[u][v]=fabs(Valpro[u][v]);
 
-					}
+					}*/
 				EigSrt(Valpro,VectPro,3);
 				Vector VKmaxCurv(VectPro[1][2],VectPro[2][2],VectPro[3][2]);
 				Vector VKminCurv(VectPro[1][1],VectPro[2][1],VectPro[3][1]);
@@ -348,9 +348,17 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				pVertex->VKmaxCurv=VKmaxCurv;
 				pVertex->VKminCurv=VKminCurv;
 
-				pVertex->KmaxCurv=Valpro[1][1];
-				pVertex->KminCurv=Valpro[2][2];
-
+				if(Valpro[1][1]>0)
+				{
+					pVertex->KmaxCurv=Valpro[1][1];
+					pVertex->KminCurv=Valpro[2][2];
+				}
+				else
+				{
+					pVertex->KmaxCurv=-Valpro[1][1];
+					pVertex->KminCurv=-Valpro[2][2];
+				}
+				
 
 				
 			}
@@ -362,7 +370,7 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 					pVertex->KminCurv=0;
 			}
 
-			for (int i=0;i<(3);i++)
+			for (int i=0;i<(4);i++)
 				{
 					free(CovMat[i]);
 					free(VectPro[i]);
@@ -372,11 +380,11 @@ void Curvature_Component::principal_curvature(PolyhedronPtr pMesh,bool IsGeod,do
 				free(VectPro);
 				free(Valpro);
 
-			MinNrmMinCurvature=CGAL::min(MinNrmMinCurvature,pVertex->KminCurv);
-			MaxNrmMinCurvature=CGAL::max(MaxNrmMinCurvature,pVertex->KminCurv);
+			MinNrmMinCurvature=CGAL::min<double>(MinNrmMinCurvature,pVertex->KminCurv);
+			MaxNrmMinCurvature=CGAL::max<double>(MaxNrmMinCurvature,pVertex->KminCurv);
 
-			MinNrmMaxCurvature=CGAL::min(MinNrmMaxCurvature,pVertex->KmaxCurv);
-			MaxNrmMaxCurvature=CGAL::max(MaxNrmMaxCurvature,pVertex->KmaxCurv);
+			MinNrmMaxCurvature=CGAL::min<double>(MinNrmMaxCurvature,pVertex->KmaxCurv);
+			MaxNrmMaxCurvature=CGAL::max<double>(MaxNrmMaxCurvature,pVertex->KmaxCurv);
 
   }
 

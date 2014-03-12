@@ -137,7 +137,7 @@ int ValPro(int N,double **A,double ER,int IM,double**U,double **AD)  {
         K=I;
 	    P=D[I][I];
 	    for (J=I+1; J<N+1; J++)
-		  if (D[J][J] >= P)  {
+		  if (fabs(D[J][J]) >= fabs(P))  {
 	        K=J;
 	        P=D[J][J];
 		  }
