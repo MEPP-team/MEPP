@@ -571,6 +571,38 @@ void mepp_component_CGAL_Example_plugin::step9()
 	QApplication::restoreOverrideCursor();
 }
 
+void mepp_component_CGAL_Example_plugin::step10()
+{
+	// active viewer
+	if (mw->activeMdiChild() != 0)
+	{
+		Viewer* viewer = (Viewer *)mw->activeMdiChild();
+		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+
+		// step 10.1
+		QStringList files;
+		files << "C:\\tmp\\kip_vt.png"; // sample texture file
+		polyhedron_ptr->set_textures(files);
+
+		// step 10.2
+		if (!( mw->actionTexture_Mode->isChecked() ))
+		{
+			mw->actionTexture_Mode->setChecked(true);
+
+			viewer->setTexture(mw->actionTexture_Mode->isChecked()); mw->actionMaterial->setEnabled(!( mw->actionTexture_Mode->isChecked()) );
+			mw->actionVertex_Color->setChecked(viewer->getVertex_Color());
+			mw->actionFace_Color->setChecked(viewer->getFace_Color());
+		}
+		
+		// step 10.3
+		viewer->recreateListsAndUpdateGL();
+
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+	}
+
+	QApplication::restoreOverrideCursor();
+}
+
 void mepp_component_CGAL_Example_plugin::example()
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);

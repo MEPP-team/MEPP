@@ -178,7 +178,9 @@ class Viewer : public QGLViewer
 		 *
 		 * \param mat_name the name of the current material (Silver, Gold, Jade, Light blue, Emerald, Polished silver, Chrome, Copper, Polished gold, Pewter, Obsidian, Black plastic, Polished bronze, Polished copper, Pearl, Ruby, Turquoise, Brass, None).
 		 */
-		void change_material(string mat_name);
+		//void change_material(string mat_name);
+		#include "material.h"
+
 		/*!
 		 * \fn string get_material()
 		 * \brief Get the current material.
@@ -306,7 +308,8 @@ class Viewer : public QGLViewer
 
 				glDisable(GL_TEXTURE_2D);
 			}
-			recreateListsAndUpdateGL(); }
+			recreateListsAndUpdateGL();
+		}
 		/*!
 		 * \fn getTexture
 		 * \brief return true if viewing mesh(es) in texture mode is active.
