@@ -582,8 +582,9 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			// texture
 			if (use_texture && has_texture())
 			{
-				//int r = (double)rand() / (RAND_MAX + 1) * (m_texture_array.size());
 				int r = 0;
+				//r = rand() % m_texture_array.size();
+
 				GLuint id = m_texture_array[r].m_id;
 				QString name = m_texture_array[r].m_name;
 
