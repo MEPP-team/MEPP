@@ -105,6 +105,16 @@ public:
 
                     B.end_facet();
 
+					 Halfedge_handle new_h = facet->halfedge();
+					 Halfedge_handle old_h = pFacet->halfedge();
+					 do
+                    {
+						new_h->texture_coordinates(old_h->texture_coordinates(0), old_h->texture_coordinates(1));						
+						new_h = new_h->next();
+						old_h = old_h->next();
+					
+                    } while (old_h != pFacet->halfedge());
+
                     facet->color(pFacet->color(0), pFacet->color(1), pFacet->color(2)); // MT: add color
 		}
 		CGAL_assertion(!B.check_unconnected_vertices());

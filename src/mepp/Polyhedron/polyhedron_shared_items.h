@@ -223,11 +223,17 @@ class MEPP_Common_Halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tv
 		// option for edge superimposing
 		bool m_control_edge;
 
+		// texture coordinates : AJOUT Laurent Chevalier
+		float m_texture_coordinates[2];
+
 	public:
 		// life cycle
 		MEPP_Common_Halfedge()
 		{
 			m_control_edge = true;
+
+			// texture coordinates : AJOUT Laurent Chevalier
+			texture_coordinates(0.0f, 0.0f);
 		}
 
 		// tag
@@ -241,6 +247,10 @@ class MEPP_Common_Halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tv
 		Normal_3& normal() { return m_normal; }
 		const Normal_3& normal() const { return m_normal; }
 #endif
+
+		// texture coordinates : AJOUT Laurent Chevalier
+		float texture_coordinates(int index) { return m_texture_coordinates[index]; }
+		void texture_coordinates(float u, float v) { m_texture_coordinates[0] = u; m_texture_coordinates[1] = v; }
 
 		// control edge
 		bool& control_edge()  { return m_control_edge; }
@@ -343,6 +353,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 		vector<Texture> m_texture_array;
 
+		bool m_use_halfedge_texture_coordinates;
+
 	public:
 		// life cycle
 		MEPP_Common_Polyhedron()
@@ -351,6 +363,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			m_pure_triangle = false;
 			m_has_color = false;
 			m_has_texture_coordinates = false;
+			m_use_halfedge_texture_coordinates = false;
 
 			// MT
 			m_nb_components = 0;
@@ -647,8 +660,16 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				// texture
 				if (use_texture && has_texture())
 				{
-					float s = pHalfedge->vertex()->texture_coordinates(0);
-					float t = pHalfedge->vertex()->texture_coordinates(1);
+					float s,t;
+					if ( use_halfedge_texture_coordinates() ) {
+						s = pHalfedge->texture_coordinates(0);
+						t = pHalfedge->texture_coordinates(1);
+					} else
+					{
+						s = pHalfedge->vertex()->texture_coordinates(0);
+						t = pHalfedge->vertex()->texture_coordinates(1);
+					}
+
 					::glTexCoord2f(s, t);
 				}
 
@@ -1179,6 +1200,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			Builder_obj<HalfedgeDS> builder(filename);
 			this->delegate(builder);
+			m_has_texture_coordinates = builder.hasTextureCoordinates();
+			m_use_halfedge_texture_coordinates = m_has_texture_coordinates;
 
 			return 0;
 		}
@@ -1281,7 +1304,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			Builder_dae<HalfedgeDS> poly_builder(mesh);
 			this->delegate(poly_builder);
 			if (poly_builder.loadedSucess) {				
-				m_has_texture_coordinates = poly_builder.hasTextureCoordinates();
+				m_has_texture_coordinates = poly_builder.hasTextureCoordinates();				
 				return 0;
 			}
 			else
@@ -1302,29 +1325,33 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
                 }
                 f2++;
 
-                if (!(f->is_triangle()))
-                {
-                    int num = (int)(f->facet_degree() - 3);
-                    Halfedge_handle h = f->halfedge();
+              if (!(f->is_triangle()))
+				{					
+				int num = (int)(f->facet_degree() - 3);
+				Halfedge_handle h = f->halfedge();				
 
-                    h = this->make_hole(h);
+				h = this->make_hole(h);
 
-                    Halfedge_handle g = h->next();
-                    g = g->next();
+				Halfedge_handle g = h->next();
+				g = g->next();
+				Halfedge_handle new_he = this->add_facet_to_border (h, g);
+				new_he->texture_coordinates(h->texture_coordinates(0),h->texture_coordinates(1));
+				new_he->opposite()->texture_coordinates(g->texture_coordinates(0),g->texture_coordinates(1));
 
-                    g = this->add_facet_to_border (h, g);
+				num--;
+				while (num != 0)
+				{
+					g = g->opposite();
+					g = g->next();				
+					Halfedge_handle new_he = this->add_facet_to_border (h, g);		
+					new_he->texture_coordinates(h->texture_coordinates(0),h->texture_coordinates(1));
+					new_he->opposite()->texture_coordinates(g->texture_coordinates(0),g->texture_coordinates(1));
+			
+					num--;
+				}
 
-                    num--;
-                    while (num != 0)
-                    {
-                        g = g->opposite();
-                        g = g->next();
-                        g = this->add_facet_to_border (h, g);
-                        num--;
-                    }
-
-                    this->fill_hole(h);
-                }
+				this->fill_hole(h);
+			}
 
             } while (true);
 
@@ -1334,6 +1361,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 		void set_textures(QStringList files)
 		{
+			// MT : not required ???
 			for (unsigned int i = 0; i < m_texture_array.size(); i++)
 			{
 				if ( m_texture_array[i].m_id > 0 )
@@ -1354,6 +1382,25 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 					m_texture_array.push_back(texture);
 				}
+			}
+		}
+
+		void set_textures(vector<Texture> textures)
+		{
+			// MT : not required ???
+			for (unsigned int i = 0; i < m_texture_array.size(); i++)
+			{
+				if ( m_texture_array[i].m_id > 0 )
+					glDeleteTextures(1, &m_texture_array[i].m_id);
+			}
+
+			m_texture_array.clear();
+
+			for (unsigned int i = 0; i < textures.size(); i++) // MT add unsigned
+			{
+				Texture texture = textures[i];			
+				texture.m_id = convertTextureToGLFormat(texture.m_data);
+				m_texture_array.push_back(texture);				
 			}
 		}
 
@@ -1404,7 +1451,17 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		  return tex_id_;
 		}
 
-		bool has_texture()
+		inline void use_halfedge_texture_coordinates(bool value)
+		{
+			 m_use_halfedge_texture_coordinates = value;
+		}
+
+		inline bool use_halfedge_texture_coordinates()
+		{
+			return ( m_use_halfedge_texture_coordinates );
+		}
+
+		inline bool has_texture()
 		{
 			return (m_texture_array.size() > 0);
 		}
@@ -1485,12 +1542,17 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		void copy_textures(const MEPP_Common_Polyhedron* mesh)
 		{
 			m_has_texture_coordinates = mesh->m_has_texture_coordinates;
+			m_use_halfedge_texture_coordinates = mesh->m_use_halfedge_texture_coordinates;
 
 			m_texture_array = mesh->m_texture_array;
 			for (unsigned int i = 0; i < m_texture_array.size(); i++)
 				m_texture_array[i].m_id = convertTextureToGLFormat(m_texture_array[i].m_data);
 		}
 
+		Texture get_texture( int index )
+		{			
+			return m_texture_array[index];		
+		}	
 	protected:
 		void GetPos(int indexe, std::vector<int> &position, const std::vector<float> &texture_coordinate_target) 
 		{

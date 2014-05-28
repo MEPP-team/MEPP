@@ -25,7 +25,7 @@ endif (COMMAND cmake_policy)
 
 # Project configuration
 set(PRJ_NAME mepp)
-set(PRJ_VERSION 0.49.2) # TODO
+set(PRJ_VERSION 0.50.3) # TODO
 project( ${PRJ_NAME} )
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy")
 
