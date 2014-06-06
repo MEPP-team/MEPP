@@ -9,6 +9,7 @@
 
 //#include <GL/glew.h>
 #include <QGLViewer/qglviewer.h>
+#include <QGLViewer/manipulatedFrame.h> // fix for QGLViewer 2.5.2
 
 //#include <QtGui/QCloseEvent>
 #if QT_VERSION >= 0x050000
