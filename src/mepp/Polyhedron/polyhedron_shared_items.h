@@ -1325,33 +1325,35 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
                 }
                 f2++;
 
-              if (!(f->is_triangle()))
+				if (!(f->is_triangle()))
 				{					
-				int num = (int)(f->facet_degree() - 3);
-				Halfedge_handle h = f->halfedge();				
+					int num = (int)(f->facet_degree() - 3);
+					Halfedge_handle h = f->halfedge();				
 
-				h = this->make_hole(h);
+					h = this->make_hole(h);
 
-				Halfedge_handle g = h->next();
-				g = g->next();
-				Halfedge_handle new_he = this->add_facet_to_border (h, g);
-				new_he->texture_coordinates(h->texture_coordinates(0),h->texture_coordinates(1));
-				new_he->opposite()->texture_coordinates(g->texture_coordinates(0),g->texture_coordinates(1));
-
-				num--;
-				while (num != 0)
-				{
-					g = g->opposite();
-					g = g->next();				
-					Halfedge_handle new_he = this->add_facet_to_border (h, g);		
+					Halfedge_handle g = h->next();
+					g = g->next();
+					Halfedge_handle new_he = this->add_facet_to_border (h, g);
 					new_he->texture_coordinates(h->texture_coordinates(0),h->texture_coordinates(1));
 					new_he->opposite()->texture_coordinates(g->texture_coordinates(0),g->texture_coordinates(1));
-			
-					num--;
-				}
+					g=new_he;
 
-				this->fill_hole(h);
-			}
+					num--;
+					while (num != 0)
+					{
+						g = g->opposite();
+						g = g->next();				
+						Halfedge_handle new_he = this->add_facet_to_border (h, g);		
+						new_he->texture_coordinates(h->texture_coordinates(0),h->texture_coordinates(1));
+						new_he->opposite()->texture_coordinates(g->texture_coordinates(0),g->texture_coordinates(1));
+						g=new_he;
+			
+						num--;
+					}
+
+					this->fill_hole(h);
+				}
 
             } while (true);
 
