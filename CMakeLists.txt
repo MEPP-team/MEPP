@@ -47,6 +47,14 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif( ${CMAKE_BUILD_TYPE} MATCHES "Debug" )
 endif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 #------------------------------------------------------------------------------
+# MSVC
+#------------------------------------------------------------------------------
+# /MP for multiple compilation units (cl.exe) ; without any value, it is set automatically depending on your number of main threads
+# If you are compiling on Windows, the preprocessor symbols 'min' or 'max' are defined. Do #define NOMINMAX to prevent windows.h from defining these symbols.
+if(MSVC)
+	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /D \"NOMINMAX\"")
+endif()
+#----------------------------------------------------------------------------
 
 file(
 	GLOB_RECURSE
