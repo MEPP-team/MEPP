@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - March 2014
+# Martial TOLA - June 2014
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -273,7 +273,7 @@ if (WITH_QT5)
 	qt5_wrap_ui( UI_FILES ${all_ui_files} )
 	qt5_add_resources( RESOURCE_FILES src/mepp/mepp.qrc )
 else(WITH_QT5) 
-	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} )
+	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED )
 	qt4_wrap_ui( UI_FILES ${all_ui_files} )
 	qt4_add_resources( RESOURCE_FILES src/mepp/mepp.qrc )
 endif(WITH_QT5)
