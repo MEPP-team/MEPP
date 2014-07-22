@@ -1361,7 +1361,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			this->compute_type();
         }
 
-		void set_textures(QStringList files)
+		void set_textures(QStringList files, bool with_gl_context=true)
 		{
 			// MT : not required ???
 			for (unsigned int i = 0; i < m_texture_array.size(); i++)
@@ -1380,14 +1380,15 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				bool load_sucess = texture.m_data.load(texture.m_name);
 				if (load_sucess)
 				{
-					texture.m_id = convertTextureToGLFormat(texture.m_data);
+					if (with_gl_context)
+						texture.m_id = convertTextureToGLFormat(texture.m_data);
 
 					m_texture_array.push_back(texture);
 				}
 			}
 		}
 
-		void set_textures(vector<Texture> textures)
+		void set_textures(vector<Texture> textures, bool with_gl_context=true)
 		{
 			// MT : not required ???
 			for (unsigned int i = 0; i < m_texture_array.size(); i++)
@@ -1400,8 +1401,9 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 
 			for (unsigned int i = 0; i < textures.size(); i++) // MT add unsigned
 			{
-				Texture texture = textures[i];			
-				texture.m_id = convertTextureToGLFormat(texture.m_data);
+				Texture texture = textures[i];
+				if (with_gl_context)
+					texture.m_id = convertTextureToGLFormat(texture.m_data);
 				m_texture_array.push_back(texture);				
 			}
 		}

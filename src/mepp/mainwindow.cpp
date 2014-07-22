@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.50.4 - 12/06/2014"
+#define MEPP_VERSION "v0.50.7 - 22/07/2014"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -256,6 +256,7 @@ bool mainwindow::initPlugin(QObject* obj, int nu_plugin)
 	plugin->mToolBar->addWidget(pLabel);
 	QLabel *pLabelEmpty = new QLabel("");
 	plugin->mToolBar->addWidget(pLabelEmpty);
+	plugin->mToolBar->setStyleSheet("border: 0px;");
 
 	Q_FOREACH (QAction* action, plugin->actions())
 	{
