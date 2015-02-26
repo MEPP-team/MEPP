@@ -166,7 +166,8 @@ void mepp_component_CGAL_Example_plugin::OnMouseLeftDown(QMouseEvent *event)
 			{
 				PolyhedronPtr new_polyhedron_ptr(new Polyhedron(*(viewer->getScenePtr()->get_polyhedron())));
 
-				component_ptr->GetClickedVertices(viewer->getScenePtr()->get_polyhedron(), event->x(), event->y(), 10);
+				string sInfoVertex = component_ptr->GetClickedVertices(viewer->getScenePtr()->get_polyhedron(), event->x(), event->y(), 10);
+				mw->statusBar()->showMessage(QString::fromStdString(sInfoVertex));
 				viewer->recreateListsAndUpdateGL();
 				SleeperThread::msleep(300);
 
@@ -179,7 +180,8 @@ void mepp_component_CGAL_Example_plugin::OnMouseLeftDown(QMouseEvent *event)
 			}
 			else if (viewer->getScenePtr()->get_loadType() == Normal)
 			{
-				component_ptr->GetClickedVertices(viewer->getScenePtr()->get_polyhedron(), event->x(), event->y(), 10);
+				string sInfoVertex = component_ptr->GetClickedVertices(viewer->getScenePtr()->get_polyhedron(), event->x(), event->y(), 10);
+				mw->statusBar()->showMessage(QString::fromStdString(sInfoVertex));
 				viewer->recreateListsAndUpdateGL();
 			}
 		}
@@ -195,7 +197,7 @@ void mepp_component_CGAL_Example_plugin::OnMouseLeftUp(QMouseEvent *event)
 
 		if (doesExistComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr)) // important !!!
 		{
-			mw->statusBar()->showMessage(tr("mepp_component_CGAL_Example_plugin: OnMouseLeftUp"), 1000);
+			//mw->statusBar()->showMessage(tr("mepp_component_CGAL_Example_plugin: OnMouseLeftUp"), 1000);
 		}
 	}
 }
@@ -598,6 +600,22 @@ void mepp_component_CGAL_Example_plugin::step10()
 		viewer->recreateListsAndUpdateGL();
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
+	}
+
+	QApplication::restoreOverrideCursor();
+}
+
+void mepp_component_CGAL_Example_plugin::step11()
+{
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+
+	// active viewer
+	if (mw->activeMdiChild() != 0)
+	{
+		Viewer* viewer = (Viewer *)mw->activeMdiChild();
+		PolyhedronPtr polyhedron_ptr = viewer->getScenePtr()->get_polyhedron();
+
+		CGAL_Example_ComponentPtr component_ptr = findOrCreateComponentForViewer<CGAL_Example_ComponentPtr, CGAL_Example_Component>(viewer, polyhedron_ptr);
 	}
 
 	QApplication::restoreOverrideCursor();

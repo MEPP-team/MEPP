@@ -36,6 +36,7 @@ class mepp_component_CGAL_Example_plugin :
 			delete actionStep_4; delete actionStep_5; delete actionStep_6;
 			delete actionStep_7; delete actionStep_8; delete actionStep_9;
 			delete actionStep_10;
+			delete actionStep_11;
 		}
 
 		void init(mainwindow* mainWindow, QList<QMdiSubWindow *> lw)
@@ -92,6 +93,10 @@ class mepp_component_CGAL_Example_plugin :
 			actionStep_10 = new QAction(tr("Sample to load texture file from this component"), this);
 			if (actionStep_10)
 				connect(actionStep_10, SIGNAL(triggered()), this, SLOT(step10()));
+
+			actionStep_11 = new QAction(tr("Init for picking vertex"), this);
+			if (actionStep_11)
+				connect(actionStep_11, SIGNAL(triggered()), this, SLOT(step11()));
 			// fin --- actions ---
 		}
 
@@ -112,7 +117,9 @@ class mepp_component_CGAL_Example_plugin :
 										<< NULL			// menu separator
 										<< actionStep_9
 										<< NULL			// menu separator
-										<< actionStep_10;
+										<< actionStep_10
+										<< NULL			// menu separator
+										<< actionStep_11;
 		}	
 		
 		virtual void pre_draw();
@@ -146,6 +153,7 @@ class mepp_component_CGAL_Example_plugin :
 		void step8();
 		void step9();
 		void step10();
+		void step11();
 
 	private:
 		QAction *actionExample;
@@ -155,6 +163,7 @@ class mepp_component_CGAL_Example_plugin :
 		QAction *actionStep_7, *actionStep_8;
 		QAction *actionStep_9;
 		QAction *actionStep_10;
+		QAction *actionStep_11;
 };
 
 #endif

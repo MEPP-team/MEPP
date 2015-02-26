@@ -413,8 +413,13 @@ void Various_Processing_Component::Simplification (Polyhedron *pMesh, int target
 	/*int r =*/ CGAL::Surface_mesh_simplification::edge_collapse
             (*surface
             ,stop
-            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*surface))
-                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,*surface))
+#if (CGAL_VERSION_NR >= CGAL_VERSION_NUMBER(4,5,0))
+            ,CGAL::vertex_index_map(get(CGAL::vertex_external_index, *surface))
+                  .halfedge_index_map(get(CGAL::halfedge_external_index, *surface))
+#else
+            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index, *surface))
+                  .edge_index_map(boost::get(CGAL::edge_external_index, *surface))
+#endif
             );
 
 	pMesh->compute_type();

@@ -32,7 +32,7 @@ class CGAL_Example_Component :
 		double round(double num);
 		long ColourDistance(unsigned char r1, unsigned char g1, unsigned char b1, unsigned char r2, unsigned char g2, unsigned char b2);
 
-		void GetClickedVertices(PolyhedronPtr pMesh, double x, double y, int tolerance);
+		string GetClickedVertices(PolyhedronPtr pMesh, double x, double y, int tolerance);
 
 	// from IHM
 	private:

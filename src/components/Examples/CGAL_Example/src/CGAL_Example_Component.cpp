@@ -190,9 +190,8 @@ void CGAL_Example_Component::CreateTetrahedron(PolyhedronPtr pMesh)
 	}
 }
 
-void CGAL_Example_Component::GetClickedVertices(PolyhedronPtr pMesh, double x, double y, int tolerance)
+string CGAL_Example_Component::GetClickedVertices(PolyhedronPtr pMesh, double x, double y, int tolerance)
 {
-	//wxString statusString;
 	GLdouble *model ;  GLdouble *proj ;  GLint *view;
 
 	view=new GLint[4096];
@@ -207,6 +206,9 @@ void CGAL_Example_Component::GetClickedVertices(PolyhedronPtr pMesh, double x, d
 
 	GLdouble wx ; GLdouble wy ; GLdouble wz;
 
+	char szInfoVertex[256]; // temp
+	string sInfoVertex="";
+
 	int vertexID=0;
 	for (Vertex_iterator pVertex = pMesh->vertices_begin(); pVertex!= pMesh->vertices_end(); pVertex++)
 	{
@@ -217,8 +219,10 @@ void CGAL_Example_Component::GetClickedVertices(PolyhedronPtr pMesh, double x, d
 		{
 			pVertex->color(1., 0., 0.);
 
-			/*statusString.Printf(_T("Vertex: %u  -  (%f, %f, %f)"), vertexID, pVertex->point().x(), pVertex->point().y(), pVertex->point().z());
-			pFrame->set_status_message(statusString);*/
+			sprintf(szInfoVertex, "Vertex: %u  -  (%lf, %lf, %lf)", vertexID, pVertex->point().x(), pVertex->point().y(), pVertex->point().z());
+			sInfoVertex.assign(szInfoVertex);
+
+			//break;
 		}
 		vertexID++;
 	}
@@ -226,5 +230,7 @@ void CGAL_Example_Component::GetClickedVertices(PolyhedronPtr pMesh, double x, d
 	delete[]view;
 	delete[]model;
 	delete[]proj;
+
+	return sInfoVertex;
 }
 #endif
