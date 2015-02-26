@@ -79,7 +79,7 @@ sudo python_select pythonXX (ex.: python27)
 ///////////////////////////////////////////////////////////////////////////
 
 4a) compile Mepp with CMake and Makefile:
-go into MEPP.git/MEPP folder, then,
+go into MEPP.git (ou/or MEPP.svn)/MEPP folder, then,
  - mkdir build; cd build
  - for a Release version: "cmake .." then make
  - for a Debug version: "cmake .. -DCMAKE_BUILD_TYPE=Debug" (2 times for taking into account of debug mode) then make
@@ -97,7 +97,7 @@ But fortunately Qt Creator can import directly CMakeLists.txt to generate Qt Cre
 So, in order to generate Qt Creator projects (.pro), here's the how-to under Qt Creator:
 
 Open a file and choose at the bottom 'CMake project file'
-then choose CMakeLists.txt in MEPP.git/MEPP folder (warning, not MEPP.git/MEPP/src folder !) then click on 'next'
+then choose CMakeLists.txt in MEPP.git (ou/or MEPP.svn)/MEPP folder (warning, not MEPP.git (ou/or MEPP.svn)/MEPP/src folder !) then click on 'next'
 then in 'Arguments' field put -DCMAKE_BUILD_TYPE=Debug for generate Qt Creator projects (.pro) in Debug mode
 or nothing for generate Qt Creator projects (.pro) in Release mode.
 If need set the CMake path: /opt/local/bin/cmake

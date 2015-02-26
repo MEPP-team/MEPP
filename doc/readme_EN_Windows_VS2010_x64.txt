@@ -1,6 +1,6 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013
+// Year: 2010-2011-2012-2013-2014-2015
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -54,13 +54,13 @@ In this case, it is necessary to change the order of your PATH variable and set 
 3c) reboot to taking into account of the environment variables above
 
 4) use CMake-gui (in C:\dev\_cmake-2.8.3.20110118_\bin)
- - set the field "Where is the source code" with C:\MEPP.git\MEPP (warning, not C:\MEPP.git\MEPP\src !)
- - set the field "Where to build the binaries" with C:\MEPP.git\MEPP\build
+ - set the field "Where is the source code" with C:\MEPP.git (ou/or MEPP.svn)\MEPP (warning, not C:\MEPP.git (ou/or MEPP.svn)\MEPP\src !)
+ - set the field "Where to build the binaries" with C:\MEPP.git (ou/or MEPP.svn)\MEPP\build
  - click on Configure (bottom left) and choose for 'Generator': "Visual Studio 10 Win64" (warning, not to be mistaken with "Visual Studio 10")
  - activate/deactivate the components you want or not (see the upper lines of the form "BUILD_component_componentname", for example: BUILD_component_Curvature)
  - click on Configure (bottom left) again
  - click on Generate (bottom left)
- - open with Visual Studio the mepp.sln generated solution which is in C:\MEPP.git\MEPP\build then compile Mepp
+ - open with Visual Studio the mepp.sln generated solution which is in C:\MEPP.git (ou/or MEPP.svn)\MEPP\build then compile Mepp
  - on the "sub-project" mepp, do a "right-click" and choose "Set as startup project"
  
 Note: warning, by default the project compiles in Debug mode but you can switch to Release mode if you wish.
