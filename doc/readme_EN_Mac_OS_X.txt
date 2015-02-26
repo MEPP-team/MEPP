@@ -1,11 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013
+// Year: 2010-2011-2012-2013-2014-2015
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion' or '10.9 Mavericks') :
-------------------------------------------------------------------------------------------------------------------------------
+How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks' or '10.10 Yosemite') :
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 1a) starting from Mac OS X '10.8 Mountain Lion', X11 is no longer part of the system, you must install in this case XQuartz:
 http://xquartz.macosforge.org/
@@ -22,15 +22,15 @@ xcode-select --install
 
 2) install Java Developer Package for Mac OS X
 https://connect.apple.com/
-NOTE: ---> this is not useful under Mac OS X '10.9 Mavericks'
+NOTE: ---> this is not useful under Mac OS X '10.9 Mavericks' and Mac OS X '10.10 Yosemite'
 
 ///////////////////////////////////////////////////////////////////////////
 
 3) use Homebrew (3a) or MacPorts (3b)
 I highly recommend Homebrew, stronger and faster during the installation because there is sometimes "Bottle" (binary package)
 
-3a) install Homebrew (http://mxcl.github.com/homebrew/):
-ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+3a) install Homebrew (http://brew.sh/):
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 ---> update Homebrew: 
 brew update
@@ -50,7 +50,7 @@ brew install assimp
 ---> it may be necessary to create this link for libQGLViewer (here 2.3.15 is an example...)
 sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
-NOTE: ---> under Mac OS X '10.9 Mavericks', you must perform the following two commands:
+NOTE: ---> under Mac OS X '10.9 Mavericks' only, you must perform the following two commands:
 sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers
 sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/AGL.framework/Headers /System/Library/Frameworks/AGL.framework/Headers
 

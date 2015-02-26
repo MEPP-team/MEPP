@@ -1,14 +1,14 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013
+// Year: 2010-2011-2012-2013-2014-2015
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-------------------------------------------------------------------------------------------------------------
-(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04 or 13.10 / Debian 6 :
-------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 or 14.10 / Debian 6 :
+--------------------------------------------------------------------------------------------------------------------------
 
-1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04 or 13.10 / Debian 6
+1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 or 14.10 / Debian 6
 2) update distribution and packages:
 sudo apt-get update
 3) install new packages:
@@ -84,6 +84,16 @@ if Linux 32 bit
 if Linux 64 bit
  sudo ln -s x86_64-linux-gnu/libboost_thread.so libboost_thread.so
  sudo ln -s x86_64-linux-gnu/libboost_system.so libboost_system.so
+
+or
+
+under Ubuntu 14.04* (The Trusty Tahr), activate qt4 because by default qt5 is now active:
+sudo apt-get install qt4-default
+
+or
+
+under Ubuntu 14.10* (The Utopic Unicorn), activate qt4 because by default qt5 is now active:
+sudo apt-get install qt4-default
 
 
 * to reinstall the standard GNOME desktop : sudo apt-get install gnome-panel

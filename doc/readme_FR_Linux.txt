@@ -1,14 +1,14 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013
+// Year: 2010-2011-2012-2013-2014-2015
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
----------------------------------------------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04 ou 13.10 / Debian 6 :
----------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 ou 14.10 / Debian 6 :
+-----------------------------------------------------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04 ou 13.10 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 ou 14.10 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
@@ -84,6 +84,16 @@ si Linux 32 bit
 si Linux 64 bit
  sudo ln -s x86_64-linux-gnu/libboost_thread.so libboost_thread.so
  sudo ln -s x86_64-linux-gnu/libboost_system.so libboost_system.so
+
+ou
+
+sous Ubuntu 14.04* (The Trusty Tahr - le tahr sûr), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
+
+ou
+
+sous Ubuntu 14.10* (The Utopic Unicorn - la licorne utopique), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
 
 
 * pour réinstaller le bureau GNOME classique : sudo apt-get install gnome-panel
