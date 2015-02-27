@@ -24,7 +24,7 @@ void mepp_component_Boolean_Operations_plugin::New_Position()
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
-		float x, y, z;
+		double x, y, z;
 		double a, b, c, w;
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		
