@@ -24,7 +24,11 @@ void mepp_component_Boolean_Operations_plugin::New_Position()
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
+#if QGLVIEWER_VERSION < 0x020600
+		float x, y, z;
+#else
 		double x, y, z;
+#endif
 		double a, b, c, w;
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
 		
