@@ -26,6 +26,8 @@
 
 //#include <CGAL/IO/Polyhedron_VRML_2_ostream.h> // for vrml writing
 
+#include "CGAL/exceptions.h"
+
 // For OFF Loading
 #include "Polyhedron_OFF_CGALImporter.h"
 
@@ -1182,8 +1184,28 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			}
 			stream.close();
 
-			OFF_CGALImporter<HalfedgeDS, Point> poly_builder(filename);
-			this->delegate(poly_builder);
+			try
+			{
+				OFF_CGALImporter<HalfedgeDS, Point> poly_builder(filename);
+				this->delegate(poly_builder);
+
+				if (!this->is_valid())
+				{
+					throw CGAL::Assertion_exception("", "", "", 0, "");
+				}
+			}
+			catch(const CGAL::Assertion_exception&)
+			{
+				std::string _msg = "load_mesh_off: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -4;
+			}
+			catch(...)
+			{
+				std::string _msg = "load_mesh_off: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -5;
+			}
 
 			return 0;
 		}
@@ -1198,10 +1220,31 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			}
 			stream.close();
 
-			Builder_obj<HalfedgeDS> builder(filename);
-			this->delegate(builder);
-			m_has_texture_coordinates = builder.hasTextureCoordinates();
-			m_use_halfedge_texture_coordinates = m_has_texture_coordinates;
+			try
+			{
+				Builder_obj<HalfedgeDS> builder(filename);
+				this->delegate(builder);
+
+				m_has_texture_coordinates = builder.hasTextureCoordinates();
+				m_use_halfedge_texture_coordinates = m_has_texture_coordinates;
+
+				if (!this->is_valid())
+				{
+					throw CGAL::Assertion_exception("", "", "", 0, "");
+				}
+			}
+			catch(const CGAL::Assertion_exception&)
+			{
+				std::string _msg = "load_mesh_obj: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -4;
+			}
+			catch(...)
+			{
+				std::string _msg = "load_mesh_obj: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -5;
+			}
 
 			return 0;
 		}
@@ -1216,9 +1259,29 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			}
 			stream.close();
 
-			// build the polyhedron
-			Builder_smf<HalfedgeDS> poly_builder(filename);
-			this->delegate(poly_builder);
+			try
+			{
+				// build the polyhedron
+				Builder_smf<HalfedgeDS> poly_builder(filename);
+				this->delegate(poly_builder);
+
+				if (!this->is_valid())
+				{
+					throw CGAL::Assertion_exception("", "", "", 0, "");
+				}
+			}
+			catch(const CGAL::Assertion_exception&)
+			{
+				std::string _msg = "load_mesh_smf: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -4;
+			}
+			catch(...)
+			{
+				std::string _msg = "load_mesh_smf: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -5;
+			}
 
 			return 0;
 		}
@@ -1233,10 +1296,30 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			}
 			stream.close();
 
-			// build the polyhedron
-			Builder_ply<HalfedgeDS> poly_builder(filename);
-			this->delegate(poly_builder);
-			m_has_texture_coordinates = poly_builder.hasTextureCoordinates();
+			try
+			{
+				// build the polyhedron
+				Builder_ply<HalfedgeDS> poly_builder(filename);
+				this->delegate(poly_builder);
+				m_has_texture_coordinates = poly_builder.hasTextureCoordinates();
+
+				if (!this->is_valid())
+				{
+					throw CGAL::Assertion_exception("", "", "", 0, "");
+				}
+			}
+			catch(const CGAL::Assertion_exception&)
+			{
+				std::string _msg = "load_mesh_ply: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -4;
+			}
+			catch(...)
+			{
+				std::string _msg = "load_mesh_ply: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -5;
+			}
 
 			return 0;
 		}
@@ -1247,8 +1330,28 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			X3DMeshExtractor parser;
 			parser.load(filename, ifsdata);
 
-			X3D_CGALImporter<HalfedgeDS, Point> poly_builder(&(ifsdata.vertex), &(ifsdata.face));
-			this->delegate(poly_builder);
+			try
+			{
+				X3D_CGALImporter<HalfedgeDS, Point> poly_builder(&(ifsdata.vertex), &(ifsdata.face));
+				this->delegate(poly_builder);
+
+				if (!this->is_valid())
+				{
+					throw CGAL::Assertion_exception("", "", "", 0, "");
+				}
+			}
+			catch(const CGAL::Assertion_exception&)
+			{
+				std::string _msg = "load_mesh_x3d: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -4;
+			}
+			catch(...)
+			{
+				std::string _msg = "load_mesh_x3d: error loading " + filename;
+				//throw std::exception(_msg.c_str());
+				return -5;
+			}
 
 			if (ifsdata.colorMode == COLOR_PER_FACE)
 			{
@@ -1266,7 +1369,6 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				}
 
 				this->has_color(true);
-
 			}
 			else if (ifsdata.colorMode == COLOR_PER_VERTEX)
 			{
@@ -1303,12 +1405,14 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			// build the polyhedron
 			Builder_dae<HalfedgeDS> poly_builder(mesh);
 			this->delegate(poly_builder);
-			if (poly_builder.loadedSucess) {				
+
+			if (poly_builder.loadedSucess)
+			{				
 				m_has_texture_coordinates = poly_builder.hasTextureCoordinates();				
 				return 0;
 			}
 			else
-				return -1;
+				return -4;
 		}
 #endif
 

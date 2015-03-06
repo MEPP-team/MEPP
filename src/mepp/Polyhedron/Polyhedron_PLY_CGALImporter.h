@@ -54,7 +54,16 @@ public:
         Builder builder(hds,true);
         builder.begin_surface(3,1,6);
             
-		this->initialize();
+		try
+		{
+			this->initialize();
+		}
+		catch(...)
+		{
+			std::string _msg = "Builder_ply::operator()";
+			throw std::exception(_msg.c_str());
+		}
+
 		// Correction of orientation
 		//CORRECT_CGAL_STRUCTURE Structure_Corrector(&Vertices_position, &Vertices_color, &Facets);		
 		//Facets = *(Structure_Corrector.Correct_Facet_Orientation());
@@ -75,11 +84,18 @@ public:
 
 private:
 	void initialize()
-	{		
-		Import_PLY(this->m_filename.c_str(), &mesh);
+	{
+		try
+		{
+			Import_PLY(this->m_filename.c_str(), &mesh);
+		}
+		catch(...)
+		{
+			std::string _msg = "Builder_ply::initialize: error Import_PLY " + m_filename;
+			throw std::exception(_msg.c_str());
+		}
 		
 		int Number_vertices = (int)this->mesh.mVertices.size();
-
 		
 		int Number_faces = (int)this->mesh.mIndices.size()/3;
 		
@@ -123,9 +139,7 @@ private:
 			}
 			Facets.push_back(Temp_facet);
 			//builder.end_facet();
-		}		
-
-
+		}
 	}    
 
 	void construct(Builder &builder)

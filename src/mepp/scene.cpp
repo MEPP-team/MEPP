@@ -116,7 +116,7 @@ int Scene::add_meshes_with_assimp(QString filename, Viewer* viewer)
 			}
 		}
 		else
-			return -3;
+			return res;
 
 		if (nbMesh>1)
 			viewer->showAllSceneForSpaceMode();

@@ -6,7 +6,7 @@
  */
 #include "mainwindow.hxx"
 
-#define MEPP_VERSION "v0.50.8 - 26/02/2015"
+#define MEPP_VERSION "v0.51.0 - 06/03/2015"
 
 #ifndef CGAL_VERSION_STR
 #define CGAL_xstr(s) #s
@@ -841,6 +841,14 @@ int mainwindow::loadFile(const QString &fileName, int loadType, typeFuncOpenSave
 			QMessageBox::warning(this, APPLICATION,
 									   tr("Error while loading file: \"%1\".").
 									   arg(fileName));
+		else if (res==-4)
+			QMessageBox::warning(this, APPLICATION,
+									   tr("Error while building polyhedron from file: \"%1\". Maybe it's a non-manifold mesh or something like that ?").
+									   arg(fileName));
+		else if (res==-5)
+			QMessageBox::warning(this, APPLICATION,
+									   tr("Error while importing file: \"%1\".").
+									   arg(fileName));
 	}
 
 	QApplication::restoreOverrideCursor();
@@ -876,6 +884,14 @@ int mainwindow::addFile(Viewer *viewer, const QString &fileName, int loadType, t
 		if (res==-1)
 			QMessageBox::warning(this, APPLICATION,
 									   tr("Error while loading file: \"%1\".").
+									   arg(fileName));
+		else if (res==-4)
+			QMessageBox::warning(this, APPLICATION,
+									   tr("Error while building polyhedron from file: \"%1\". Maybe it's a non-manifold mesh or something like that ?").
+									   arg(fileName));
+		else if (res==-5)
+			QMessageBox::warning(this, APPLICATION,
+									   tr("Error while importing file: \"%1\".").
 									   arg(fileName));
 	}
 
