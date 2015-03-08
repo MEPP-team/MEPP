@@ -61,7 +61,7 @@ public:
 		catch(...)
 		{
 			std::string _msg = "Builder_ply::operator()";
-			throw std::exception(_msg.c_str());
+			throw std::runtime_error(_msg);
 		}
 
 		// Correction of orientation
@@ -69,7 +69,7 @@ public:
 		//Facets = *(Structure_Corrector.Correct_Facet_Orientation());
 
 		this->construct(builder);
-        builder.end_surface();
+		builder.end_surface();
 		
 		if (builder.check_unconnected_vertices())
 		{
@@ -92,7 +92,7 @@ private:
 		catch(...)
 		{
 			std::string _msg = "Builder_ply::initialize: error Import_PLY " + m_filename;
-			throw std::exception(_msg.c_str());
+			throw std::runtime_error(_msg);
 		}
 		
 		int Number_vertices = (int)this->mesh.mVertices.size();
