@@ -189,7 +189,7 @@ if (WITH_QT5)
 	set( MOC_FILES "" ) # because CMAKE_AUTOMOC is ON
 	qt5_wrap_ui( UI_FILES ${all_ui_files} ../../../mepp/mainwindow.ui )
 else(WITH_QT5) 
-	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} ../../../mepp/mepp_action.hxx OPTIONS -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED )
+	qt4_wrap_cpp( MOC_FILES ${hxx_header_files} ../../../mepp/mepp_action.hxx OPTIONS -DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED )
 	qt4_wrap_ui( UI_FILES ${all_ui_files} ../../../mepp/mainwindow.ui )
 endif(WITH_QT5)
 
