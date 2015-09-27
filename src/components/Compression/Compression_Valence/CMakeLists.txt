@@ -213,6 +213,9 @@ file(
 	src/*
 )
 set( source_files ${source_files} ../../../mepp/mepp_action.hxx )
+#if (APPLE)
+  set_source_files_properties(src/Compression_Valence_Component.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+#endif (APPLE)
 
 add_library(
 	${COMPONENT_NAME}
