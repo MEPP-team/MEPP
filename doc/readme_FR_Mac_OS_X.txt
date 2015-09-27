@@ -4,25 +4,28 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks' ou '10.10 Yosemite') :
----------------------------------------------------------------------------------------------------------------------------------------------------------
+Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks', '10.10 Yosemite' ou '10.11 El Capitan') :
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 1a) A partir de Mac OS X '10.8 Mountain Lion', X11 ne fait plus partie intégrante du système, vous devez donc dans ce cas installer à la place XQuartz:
 http://xquartz.macosforge.org/
-NOTE: ---> cela n'est pas utile sous Mac OS X '10.9 Mavericks'
+
+---> avec une version récente de Homebrew (cf. point 3 ci-dessous), vous pouvez aussi installer XQuartz avec Homebrew Cask:
+brew install Caskroom/cask/xquartz
 
 1b) installer Xcode:
-http://developer.apple.com/xcode/
+http://developer.apple.com/xcode/ ou via l'App Store
 
 ---> pour une version de Xcode >= 4.3 mais < 5.0, vous devez aussi installer les 'outils en ligne de commande' pour Xcode.
 Vous pouvez les installer à l'intérieur de Xcode (Download preferences). Vous aurez aussi également besoin d'éxécuter cette commande:
 sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
-NOTE: ---> sous Mac OS X '10.9 Mavericks', l'installation des 'outils en ligne de commande' se fait désormais avec la commande suivante:
+
+---> à partir de Mac OS X '10.9 Mavericks', l'installation des 'outils en ligne de commande' se fait désormais avec la commande suivante:
 xcode-select --install
 
 2) installer Java Developer Package for Mac OS X
 https://connect.apple.com/
-NOTE: ---> cela n'est pas utile sous Mac OS X '10.9 Mavericks' et Mac OS X '10.10 Yosemite'
+NOTE: ---> cela n'est pas utile à partir de Mac OS X '10.9 Mavericks'
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,8 +50,10 @@ brew install doxygen graphviz xerces-c
 brew install ffmpeg
 brew install assimp
 
----> il vous sera peut-être utile de créer ce lien pour libqglviewer (attention ici, 2.3.15 est un exemple...)
-sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
+brew install python
+
+---> il vous sera peut-être utile de créer ce lien pour libqglviewer (attention ici, 2.6.1 est un exemple...)
+sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.1/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
 NOTE: ---> sous Mac OS X '10.9 Mavericks' uniquement, il vous faudra exécuter les 2 commandes suivantes:
 sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers
@@ -67,7 +72,7 @@ sudo port -v selfupdate
 ---> installer les paquets suivants avec MacPorts:
 sudo port install cgal												(assez long, <= 1 heure)
 sudo port install qt4-mac											(très long, environ 2-3 heures)
-sudo port install libQGLViewer								(très rapide, quelques minutes)
+sudo port install libQGLViewer										(très rapide, quelques minutes)
 sudo port install glew												(très très rapide, quelques secondes)
 sudo port install doxygen graphviz xercesc3
 sudo port install ffmpeg											(très rapide, quelques minutes)

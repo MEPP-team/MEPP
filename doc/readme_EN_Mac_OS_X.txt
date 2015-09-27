@@ -4,25 +4,28 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks' or '10.10 Yosemite') :
-------------------------------------------------------------------------------------------------------------------------------------------------
+How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks', '10.10 Yosemite' or '10.11 El Capitan') :
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 1a) starting from Mac OS X '10.8 Mountain Lion', X11 is no longer part of the system, you must install in this case XQuartz:
 http://xquartz.macosforge.org/
-NOTE: ---> this is not useful under Mac OS X '10.9 Mavericks'
+
+---> with recent version of Homebrew (see point 3 below), you can also install XQuartz with Homebrew Cask:
+brew install Caskroom/cask/xquartz
 
 1b) install Xcode:
-http://developer.apple.com/xcode/
+http://developer.apple.com/xcode/ or with the App Store
 
 ---> for Xcode version >= 4.3 but < 5.0, you need then to install the 'Command Line Tools' for Xcode.
 You can install them from inside Xcode's Download preferences. Finally, you also need to do that command:
 sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
-NOTE: ---> under Mac OS X '10.9 Mavericks', the installation of the 'Command Line Tools' are now done with the following command:
+
+---> from and after Mac OS X '10.9 Mavericks', the installation of the 'Command Line Tools' are now done with the following command:
 xcode-select --install
 
 2) install Java Developer Package for Mac OS X
 https://connect.apple.com/
-NOTE: ---> this is not useful under Mac OS X '10.9 Mavericks' and Mac OS X '10.10 Yosemite'
+NOTE: ---> this is not useful from and after Mac OS X '10.9 Mavericks'
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,8 +50,10 @@ brew install doxygen graphviz xerces-c
 brew install ffmpeg
 brew install assimp
 
----> it may be necessary to create this link for libQGLViewer (here 2.3.15 is an example...)
-sudo ln -s "/usr/local/Cellar/libqglviewer/2.3.15/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
+brew install python
+
+---> it may be necessary to create this link for libQGLViewer (here 2.6.1 is an example...)
+sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.1/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
 NOTE: ---> under Mac OS X '10.9 Mavericks' only, you must perform the following two commands:
 sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers
