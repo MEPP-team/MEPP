@@ -214,7 +214,7 @@ file(
 )
 set( source_files ${source_files} ../../../mepp/mepp_action.hxx )
 if (APPLE)
-  set_source_files_properties(src/CGAL_Example_Component.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+  set_source_files_properties(src/${MEPP_COMPONENT_NAME}_Component.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
 endif (APPLE)
 
 add_library(
