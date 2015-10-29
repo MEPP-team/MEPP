@@ -4,17 +4,18 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
------------------------------------------------------------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 ou 14.10 / Debian 6 :
------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04 ou 15.10 / Debian 6 :
+-------------------------------------------------------------------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 ou 14.10 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04 ou 15.10 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
 sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev libassimp-dev
 sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-dev
-NOTE: ---> à partir d'Ubuntu 13.10 le paquet libqglviewer-qt4-dev est renommé en libqglviewer-dev
+NOTE1: ---> à partir d'Ubuntu 13.10 le paquet libqglviewer-qt4-dev est renommé en libqglviewer-dev
+NOTE2: ---> à partir d'Ubuntu 15.10 le paquet libqglviewer-qt4-dev est renommé en libqglviewer-dev-qt4
 
 -----------------------------------------
 Suivant votre version d'Ubuntu / Debian :
@@ -93,6 +94,16 @@ sudo apt-get install qt4-default
 ou
 
 sous Ubuntu 14.10* (The Utopic Unicorn - la licorne utopique), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
+
+ou
+
+sous Ubuntu 15.04* (The Vivid Vervet - le singe vervet vif), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
+
+ou
+
+sous Ubuntu 15.10* (The Wily Werewolf, le loup-garou rusé), activer qt4 car par défaut qt5 est désormais actif:
 sudo apt-get install qt4-default
 
 

@@ -4,17 +4,18 @@
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
---------------------------------------------------------------------------------------------------------------------------
-(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 or 14.10 / Debian 6 :
---------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+(A) How-to for Mepp under Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04 or 15.10 / Debian 6 :
+----------------------------------------------------------------------------------------------------------------------------------------
 
-1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04 or 14.10 / Debian 6
+1) install Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04 or 15.10 / Debian 6
 2) update distribution and packages:
 sudo apt-get update
 3) install new packages:
 sudo apt-get install subversion libcgal-dev qtcreator libqglviewer-qt4-dev g++ cmake-gui libglew-dev doxygen graphviz libxerces-c-dev libassimp-dev
 sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-dev
-NOTE: ---> from Ubuntu 13.10 libqglviewer-qt4-dev package is renamed to libqglviewer-dev
+NOTE1: ---> from Ubuntu 13.10 libqglviewer-qt4-dev package is renamed to libqglviewer-dev
+NOTE2: ---> from Ubuntu 15.10 libqglviewer-qt4-dev package is renamed to libqglviewer-dev-qt4
 
 -------------------------------------------
 Depending on your Ubuntu / Debian version :
@@ -93,6 +94,16 @@ sudo apt-get install qt4-default
 or
 
 under Ubuntu 14.10* (The Utopic Unicorn), activate qt4 because by default qt5 is now active:
+sudo apt-get install qt4-default
+
+or
+
+sous Ubuntu 15.04* (The Vivid Vervet), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
+
+or
+
+sous Ubuntu 15.10* (The Wily Werewolf), activer qt4 car par défaut qt5 est désormais actif:
 sudo apt-get install qt4-default
 
 
