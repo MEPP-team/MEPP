@@ -98,12 +98,12 @@ sudo apt-get install qt4-default
 
 or
 
-sous Ubuntu 15.04* (The Vivid Vervet), activer qt4 car par défaut qt5 est désormais actif:
+under Ubuntu 15.04* (The Vivid Vervet), activate qt4 because by default qt5 is now active:
 sudo apt-get install qt4-default
 
 or
 
-sous Ubuntu 15.10* (The Wily Werewolf), activer qt4 car par défaut qt5 est désormais actif:
+under Ubuntu 15.10* (The Wily Werewolf), activate qt4 because by default qt5 is now active:
 sudo apt-get install qt4-default
 
 
