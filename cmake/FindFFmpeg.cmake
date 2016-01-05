@@ -1,4 +1,5 @@
 IF(WIN32)
+IF(USE_FFMPEG)
 
 # Locate ffmpeg
 # This module defines
@@ -164,4 +165,5 @@ ELSE ()
 
 ENDIF()
 
+ENDIF()
 ENDIF()

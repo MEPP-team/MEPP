@@ -51,6 +51,8 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 message("Build type : ${CMAKE_BUILD_TYPE}")
 
+OPTION(USE_FFMPEG "Use FFmpeg (only on windows)" OFF)
+
 #------------------------------------------------------------------------------
 # Specific compiler options
 #------------------------------------------------------------------------------
@@ -251,7 +253,7 @@ find_package(FFmpeg)
 if (FFMPEG_FOUND)
   set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_FFMPEG")
 else(FFMPEG_FOUND)
-  message(STATUS "FFmpeg (optional) not found. Please set FFMPEG_DIR.")
+  message(STATUS "FFmpeg (optional) (but only on windows) not found. Please set FFMPEG_DIR and set USE_FFMPEG variable to ON.")
 endif(FFMPEG_FOUND)
 
 # Find ASSIMP
