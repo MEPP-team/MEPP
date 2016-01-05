@@ -43,6 +43,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(DOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
+# set Release as default build target
+if (NOT CMAKE_BUILD_TYPE)
+  set (CMAKE_BUILD_TYPE Release CACHE STRING
+      "Choose the type of build, options are: Debug, Release."
+      FORCE)
+endif ()
+message("Build type : ${CMAKE_BUILD_TYPE}")
+
 #------------------------------------------------------------------------------
 # Specific compiler options
 #------------------------------------------------------------------------------
@@ -197,6 +205,7 @@ else(WITH_QT5)
     message(FATAL_ERROR "Qt4 not found. Please set QTDIR.")
   endif(QT4_FOUND)
 endif(WITH_QT5)
+message("Qt version used : ${QTDIR}")
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
