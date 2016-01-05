@@ -43,6 +43,16 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 set(DOC_DIR ${CMAKE_CURRENT_BINARY_DIR}/doc)
 
+# set Release as default build target
+if (NOT CMAKE_BUILD_TYPE)
+  set (CMAKE_BUILD_TYPE Release CACHE STRING
+      "Choose the type of build, options are: Debug, Release."
+      FORCE)
+endif ()
+message("Build type : ${CMAKE_BUILD_TYPE}")
+
+OPTION(USE_FFMPEG "Use FFmpeg (only on windows)" OFF)
+
 #------------------------------------------------------------------------------
 # Specific compiler options
 #------------------------------------------------------------------------------
@@ -197,6 +207,7 @@ else(WITH_QT5)
     message(FATAL_ERROR "Qt4 not found. Please set QTDIR.")
   endif(QT4_FOUND)
 endif(WITH_QT5)
+message("Qt version used : ${QTDIR}")
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
@@ -242,7 +253,7 @@ find_package(FFmpeg)
 if (FFMPEG_FOUND)
   set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_FFMPEG")
 else(FFMPEG_FOUND)
-  message(STATUS "FFmpeg (optional) not found. Please set FFMPEG_DIR.")
+  message(STATUS "FFmpeg (optional) (but only on windows) not found. Please set FFMPEG_DIR and set USE_FFMPEG variable to ON.")
 endif(FFMPEG_FOUND)
 
 # Find ASSIMP
