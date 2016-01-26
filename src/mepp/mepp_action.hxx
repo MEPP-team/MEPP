@@ -7,9 +7,13 @@
 #ifndef HEADER_MEPP_ACTION
 #define HEADER_MEPP_ACTION
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+
 #include <QObject>
 
 #include "./Polyhedron/polyhedron.h"
+
+#endif
 
 /*! 
  * \class mepp_action

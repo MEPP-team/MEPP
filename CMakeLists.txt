@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - June 2014
+# Martial TOLA - January 2016
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -35,7 +35,7 @@ endif (COMMAND cmake_policy)
 
 # Project configuration
 set(PRJ_NAME mepp)
-set(PRJ_VERSION 0.51.2) # TODO
+set(PRJ_VERSION 0.51.3) # TODO
 project( ${PRJ_NAME} )
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy_${PRJ_VERSION}")
 

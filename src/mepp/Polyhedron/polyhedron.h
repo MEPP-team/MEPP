@@ -6,7 +6,9 @@
 #ifndef HEADER_POLYHEDRON
 #define HEADER_POLYHEDRON
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include <boost/shared_ptr.hpp>
+#endif
 
 // for typeFuncOpenSave
 #include <QString>

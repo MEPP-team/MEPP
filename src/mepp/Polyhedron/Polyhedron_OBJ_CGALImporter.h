@@ -1,4 +1,3 @@
-
 #ifndef OBJ_CGALIMPORTER_H
 #define OBJ_CGALIMPORTER_H
 
@@ -6,8 +5,10 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <cstdio>
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/formatter.hpp>
+#endif
 
 #include "Correct_CGAL_Structure.h"
 

@@ -7,6 +7,8 @@
 #ifndef HEADER_MDIAREA
 #define HEADER_MDIAREA
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+
 #ifndef _MSC_VER
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
@@ -16,6 +18,8 @@
 #endif
 
 #include <QDragEnterEvent>
+
+#endif
 
 class mainwindow;
 

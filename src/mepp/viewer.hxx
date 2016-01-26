@@ -7,6 +7,8 @@
 #ifndef HEADER_VIEWER
 #define HEADER_VIEWER
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+
 //#include <GL/glew.h>
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/manipulatedFrame.h> // fix for QGLViewer 2.5.2
@@ -24,6 +26,8 @@
 
 #ifdef WITH_FFMPEG
 #include "QTFFmpegWrapper/QVideoEncoder.h"
+#endif
+
 #endif
 
 /*! 

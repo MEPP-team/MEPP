@@ -7,6 +7,8 @@
 #ifndef HEADER_MEPP_COMPONENT_PLUGIN_INTERFACE_H
 #define HEADER_MEPP_COMPONENT_PLUGIN_INTERFACE_H
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+
 #include <QList>
 #include <QtPlugin>
 
@@ -16,6 +18,9 @@ class QMdiSubWindow;
 #include "mainwindow.hxx"
 
 #include "mepp_component.h"
+
+#endif
+
 typedef boost::shared_ptr<mepp_component> mepp_componentPtr;
 
 using namespace qglviewer; // for draw_link

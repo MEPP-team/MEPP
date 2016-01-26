@@ -13,6 +13,8 @@
 	#endif
 #endif
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+
 #ifndef _MSC_VER
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
@@ -29,6 +31,8 @@
 
 #include "viewer.hxx"
 #include "mepp_action.hxx"
+
+#endif
 
 class mepp_component_plugin_interface;
 
