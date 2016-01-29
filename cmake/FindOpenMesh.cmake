@@ -17,7 +17,8 @@ FIND_PATH(OPENMESH_INCLUDE_DIR OpenMesh/Core/Mesh/PolyMeshT.hh
                 /usr/include 
                 /opt/local/include
 				/opt/include
-                $ENV{OPENMESH_DIR}/include 
+				$ENV{OPENMESH_DIR}/src
+                $ENV{OPENMESH_DIR}/include
                 )
 
 IF (OPENMESH_INCLUDE_DIR)
