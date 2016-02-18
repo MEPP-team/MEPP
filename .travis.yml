@@ -1,28 +1,54 @@
 language: cpp
 
+os:
+  - linux
+  - osx
+
+sudo: required # need by trusty
+dist: trusty
+
 compiler:
   - gcc
   - clang
+
+cache: apt # this feature is available only for private repositories
 
 env:
   - BTYPE="-DCMAKE_BUILD_TYPE=Debug"
   - BTYPE="-DCMAKE_BUILD_TYPE=Release"
 
-before_script:
-  - sudo apt-get update
-  - sudo apt-get -qq install libboost-program-options-dev libboost-system-dev libgmp-dev libcgal-dev libqglviewer-qt4-dev libglew-dev libxerces-c-dev > apt_install
-  - wget http://sourceforge.net/projects/assimp/files/assimp-3.0/assimp--3.0.1270-source-only.zip
-  - unzip assimp--3.0.1270-source-only.zip
-  - cd assimp--3.0.1270-source-only
-  - mkdir build_release
-  - cd build_release
-  - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_RULE_MESSAGES=OFF > cmake_output_release
-  - make > make_release 2> make_release_err
-  - sudo make install > make_install_release
-  - cd ..
-  - cd ..
+#-------------------------------------------------------------------
+# matrix details :
+#
+#   - 2x gcc    under Linux trusty 14.04 LTS    (debug and release)
+#   - 2x clang  under Linux trusty 14.04 LTS    (debug and release)
+#
+#   - 2x clang  under OS X with Apple LLVM      (debug and release)
+#-------------------------------------------------------------------
+matrix:
+  fast_finish: true
+  exclude:
+    - os: osx
+      compiler: gcc
+
+addons:
+  apt:
+    packages:
+      - libqt4-dev
+      - libqglviewer-dev
+      - libxerces-c-dev
+      - libassimp-dev
+      - doxygen
+      - graphviz
+
+install:
+  - cmake --version
+#
+# osx :
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt libqglviewer xerces-c assimp doxygen graphviz; fi
 
 script:
-  - cmake . $BTYPE
-  - cmake . $BTYPE
+  - mkdir build && cd build && cmake .. $BTYPE
   - make
+#  - make test

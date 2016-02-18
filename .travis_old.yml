@@ -1,0 +1,28 @@
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+env:
+  - BTYPE="-DCMAKE_BUILD_TYPE=Debug"
+  - BTYPE="-DCMAKE_BUILD_TYPE=Release"
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get -qq install libboost-program-options-dev libboost-system-dev libgmp-dev libcgal-dev libqglviewer-qt4-dev libglew-dev libxerces-c-dev > apt_install
+  - wget http://sourceforge.net/projects/assimp/files/assimp-3.0/assimp--3.0.1270-source-only.zip
+  - unzip assimp--3.0.1270-source-only.zip
+  - cd assimp--3.0.1270-source-only
+  - mkdir build_release
+  - cd build_release
+  - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -DCMAKE_RULE_MESSAGES=OFF > cmake_output_release
+  - make > make_release 2> make_release_err
+  - sudo make install > make_install_release
+  - cd ..
+  - cd ..
+
+script:
+  - cmake . $BTYPE
+  - cmake . $BTYPE
+  - make
