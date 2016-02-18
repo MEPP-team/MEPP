@@ -48,6 +48,7 @@ install:
 #
 # osx :
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink libqglviewer; fi # ---> unlink (old) libqglviewer
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt libqglviewer xerces-c assimp doxygen graphviz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew ln -s /usr/local/Cellar/libqglviewer/2.6.1/lib/QGLViewer.framework ~/Library/Frameworks/QGLViewer.framework; fi
 
