@@ -34,6 +34,8 @@ matrix:
 addons:
   apt:
     packages:
+      - libboost-dev
+      - libcgal-dev
       - libqt4-dev
       - libqglviewer-dev
       - libxerces-c-dev
