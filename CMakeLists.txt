@@ -1,5 +1,5 @@
 # This is the CMake script for compiling MEPP
-# Martial TOLA - January 2016
+# Martial TOLA - February 2016
 IF(APPLE) #cmake .. -DCMAKE_C_FLAGS='-arch x86_64 -arch i386'
 	cmake_minimum_required(VERSION 2.8)
 else(APPLE)
@@ -21,6 +21,10 @@ if (COMMAND cmake_policy)
   IF(POLICY CMP0020)
 	cmake_policy(SET CMP0020 NEW)
   ENDIF(POLICY CMP0020)
+
+  if(POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW) # https://cmake.org/cmake/help/v3.0/policy/CMP0042.html
+  endif(POLICY CMP0042)
 
   if(POLICY CMP0043)
 	cmake_policy(SET CMP0043 OLD)
@@ -74,6 +78,12 @@ endif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 if(MSVC)
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /D \"NOMINMAX\"")
 endif()
+#----------------------------------------------------------------------------
+# APPLE OS X
+#----------------------------------------------------------------------------
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH ON) # see cmake POLICY CMP0042
+endif(APPLE)
 #----------------------------------------------------------------------------
 
 file(
@@ -129,7 +139,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
 # Find CGAL libraries
-set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Prevent CGAL to override CMAKE flags") # TODO -> put in all CMakeLists.txt in /src/components
+set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Prevent CGAL to override CMAKE flags")
 FIND_PACKAGE(CGAL COMPONENTS Core)
 IF(CGAL_FOUND)
 	INCLUDE(${CGAL_USE_FILE})
@@ -254,7 +264,7 @@ find_package(FFmpeg)
 if (FFMPEG_FOUND)
   set(my_COMPILE_DEFINITIONS ${my_COMPILE_DEFINITIONS} ";WITH_FFMPEG")
 else(FFMPEG_FOUND)
-  message(STATUS "FFmpeg (optional) (but only on windows) not found. Please set FFMPEG_DIR and set USE_FFMPEG variable to ON.")
+  message(STATUS "FFmpeg (optional) (but only on windows) not found. Please first set USE_FFMPEG variable to ON and then set FFMPEG_DIR.")
 endif(FFMPEG_FOUND)
 
 # Find ASSIMP
