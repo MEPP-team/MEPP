@@ -26,7 +26,9 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Null_matrix.h>
 
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include <boost/optional/optional.hpp>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
