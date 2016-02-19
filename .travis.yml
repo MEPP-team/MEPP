@@ -52,6 +52,6 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.1/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
 
 script:
-  - mkdir build && cd build && cmake .. $BTYPE
+  - mkdir build && cd build && cmake .. $BTYPE && cmake .. $BTYPE
   - make
 #  - make test
