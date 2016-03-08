@@ -39,7 +39,7 @@ endif (COMMAND cmake_policy)
 
 # Project configuration
 set(PRJ_NAME mepp)
-set(PRJ_VERSION 0.51.3) # TODO
+set(PRJ_VERSION 0.52.0) # TODO
 project( ${PRJ_NAME} )
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy_${PRJ_VERSION}")
 
@@ -77,6 +77,9 @@ endif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 # If you are compiling on Windows, the preprocessor symbols 'min' or 'max' are defined. Do #define NOMINMAX to prevent windows.h from defining these symbols.
 if(MSVC)
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /D \"NOMINMAX\"")
+
+	set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
+	set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS _SCL_SECURE_NO_WARNINGS)
 endif()
 #----------------------------------------------------------------------------
 # APPLE OS X
@@ -242,12 +245,6 @@ else(QGLVIEWER_FOUND)
 endif(QGLVIEWER_FOUND)
 
 # Find XercesC
-if (WIN32)
-	if (WITH_QT5)
-	else(WITH_QT5)
-			SET(XERCESC_ROOT_DIR ${CGAL_DIR}/../contrib/xerces-c) #very bad: temporary, for compatibility with previous Mepp binary kits
-	endif(WITH_QT5)
-endif (WIN32)
 find_package(XercesC)
 if (XERCESC_FOUND)
 	set (XML_PARSER_INCLUDE_DIR ${XERCESC_INCLUDE_DIR})
