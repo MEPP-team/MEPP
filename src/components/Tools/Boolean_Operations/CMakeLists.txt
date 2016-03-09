@@ -157,12 +157,6 @@ else(QGLVIEWER_FOUND)
 endif(QGLVIEWER_FOUND)
 
 # Find XercesC
-if (WIN32)
-	if (WITH_QT5)
-	else(WITH_QT5)
-			SET(XERCESC_ROOT_DIR ${CGAL_DIR}/../contrib/xerces-c) #very bad: temporary, for compatibility with previous Mepp binary kits
-	endif(WITH_QT5)
-endif (WIN32)
 find_package(XercesC)
 if (XERCESC_FOUND)
 	set (XML_PARSER_INCLUDE_DIR ${XERCESC_INCLUDE_DIR})
