@@ -80,6 +80,10 @@ if(MSVC)
 
 	set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
 	set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS _SCL_SECURE_NO_WARNINGS)
+
+	if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "17") # 17 = vs2012
+		include( "${CMAKE_SOURCE_DIR}/cmake/msvc/kit.cmake" )
+	endif()
 endif()
 #----------------------------------------------------------------------------
 # APPLE OS X

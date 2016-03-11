@@ -32,7 +32,9 @@ find_library(IQA_LIBRARIES
              /usr/local/lib
              /sw/lib
              /opt/local/lib
-             ${IQA_DIR}
+			 ${IQA_DIR}/lib/release
+			 ${IQA_DIR}/lib
+             ${IQA_DIR}			 
              ENV LD_LIBRARY_PATH
              ENV LIBRARY_PATH
              PATH_SUFFIXES iqa
