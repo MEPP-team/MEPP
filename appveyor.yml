@@ -40,6 +40,8 @@ init:
 #  - dir C:\Libraries
 #  - dir C:\Qt
 #  - dir C:\Qt\5.5
+  - dir C:\Libraries\boost_1_59_0
+  - dir C:\Libraries\boost_1_59_0\lib
 #  - set PATH=%QT5_DIR%\bin;%PATH%
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
