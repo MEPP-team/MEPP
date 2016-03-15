@@ -40,7 +40,7 @@ init:
 #  - dir C:\Libraries
 #  - dir C:\Qt
 #  - dir C:\Qt\5.5
-  - dir C:\Libraries\boost_1_59_0
+#  - dir C:\Libraries\boost_1_59_0
 #  - set PATH=%QT5_DIR%\bin;%PATH%
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
@@ -68,7 +68,7 @@ before_build:
   - IF %CACHE%==FALSE mkdir %KIT_ROOT%
   - IF %CACHE%==FALSE cd %KIT_ROOT%
 # boost
-  - ren C:\Libraries\boost_1_59_0\lib64-msvc-14.0 lib
+  - IF %CACHE%==FALSE ren C:\Libraries\boost_1_59_0\lib64-msvc-14.0 lib
 # CGAL
   - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z
   - IF %CACHE%==FALSE 7z x CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
