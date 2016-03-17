@@ -11,11 +11,7 @@ endif()
 
 set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.7)
 
-#set(QTDIR				${MSVC_KIT_ROOT}/Qt/qt-4.8.7-x64-msvc2015)
-#set(QGLVIEWERROOT		${MSVC_KIT_ROOT}/libQGLViewer/libQGLViewer-2.6.3-qt-4.8.7)
-
 set(WITH_QT5			TRUE)
-#set(QT5_DIR				${MSVC_KIT_ROOT}/Qt/Qt5.4.2/5.4/msvc2013_64_opengl)
 set(QGLVIEWERROOT		${MSVC_KIT_ROOT}/libQGLViewer/libQGLViewer-2.6.3-qt-5.4.2)
 
 set(XERCESC_ROOT_DIR	${MSVC_KIT_ROOT}/xerces-c-3.1.2)
