@@ -11,8 +11,6 @@ endif()
 
 set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.7)
 
-set(QTDIR				${MSVC_KIT_ROOT}/Qt/qt-4.8.7-x64-msvc2015)
-
 #set(WITH_QT5			TRUE)
 
 if(WITH_QT5)
