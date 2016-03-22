@@ -38,9 +38,9 @@ init:
 #  - msbuild /version
 #  - cmake --version
 #  - dir C:\Libraries
+#  - dir C:\Libraries\boost_1_59_0
 #  - dir C:\Qt
 #  - dir C:\Qt\5.5
-#  - dir C:\Libraries\boost_1_59_0
 #  - set PATH=%QT5_DIR%\bin;%PATH%
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
@@ -73,8 +73,8 @@ before_build:
   - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z
   - IF %CACHE%==FALSE 7z x CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
 # libQGLViewer
-  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.4.2.rar
-  - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-5.4.2.rar > nul
+  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar
+  - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar > nul
 # xerces-c
   - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/redo/xerces-c-3.1.2.rar
   - IF %CACHE%==FALSE 7z x xerces-c-3.1.2.rar > nul
