@@ -70,19 +70,19 @@ before_build:
 # boost
   - ren C:\Libraries\boost_1_59_0\lib64-msvc-14.0 lib
 # CGAL
-  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z
   - IF %CACHE%==FALSE 7z x CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
 # libQGLViewer
-  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar > nul
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar
   - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar > nul
 # xerces-c
-  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/redo/xerces-c-3.1.2.rar > nul
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/redo/xerces-c-3.1.2.rar
   - IF %CACHE%==FALSE 7z x xerces-c-3.1.2.rar > nul
 # assimp
-  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/redo/assimp-3.2.rar > nul
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/redo/assimp-3.2.rar
   - IF %CACHE%==FALSE 7z x assimp-3.2.rar > nul
 # ffmpeg
-  - IF %CACHE%==FALSE curl -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/contrib.rar > nul
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/contrib.rar
   - IF %CACHE%==FALSE 7z x contrib.rar > nul
 #
   - cd %APPVEYOR_BUILD_FOLDER%
