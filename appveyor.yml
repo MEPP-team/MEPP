@@ -73,8 +73,8 @@ before_build:
   - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z
   - IF %CACHE%==FALSE 7z x CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
 # libQGLViewer
-  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar
-  - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-5.4.2-vs2013.rar > nul
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.6.0.rar
+  - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-5.6.0.rar > nul
 # xerces-c
   - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/redo/xerces-c-3.1.2.rar
   - IF %CACHE%==FALSE 7z x xerces-c-3.1.2.rar > nul
