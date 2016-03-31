@@ -59,7 +59,7 @@ configuration:
 
 # scripts to run before build
 before_build:
-  - IF EXIST %KIT_ROOT% SET CACHE=TRUE
+#  - IF EXIST %KIT_ROOT% SET CACHE=TRUE
 #
   - echo %CACHE%
   - IF %CACHE%==FALSE echo CACHE_IS_FALSE
