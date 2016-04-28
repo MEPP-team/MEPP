@@ -13,12 +13,7 @@ os: Visual Studio 2015
 
 # environment variables
 environment:
-#  BOOST_ROOT: C:\Libraries\boost_1_59_0
-#
-#  QT5_DIR: C:\Qt\5.4\msvc2013_64_opengl
   QT5_DIR: C:\Qt\5.6\msvc2015_64
-#
-#  CONFIG_QGL: Release
 #
   KIT_ROOT: C:\local_vs2015_64
 
@@ -41,7 +36,6 @@ init:
 #  - dir C:\Libraries\boost_1_59_0
 #  - dir C:\Qt
 #  - dir C:\Qt\5.6
-#  - set PATH=%QT5_DIR%\bin;%PATH%
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
 
@@ -91,4 +85,5 @@ before_build:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - msbuild /m MEPP.sln # /m is ignored ? (but not really important because the VM has only one processor !)
+#  - msbuild /m MEPP.sln
+  - msbuild MEPP.sln # /m IS responsible for random crashes of Qt MOC !!!
