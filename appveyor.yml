@@ -36,7 +36,7 @@ init:
 #  - dir C:\Libraries\boost_1_59_0
 #  - dir C:\Qt
 #  - dir C:\Qt\5.6
-  - %QT5_DIR%\bin\qmake --version
+  - C:\Qt\5.6\msvc2015_64\bin\qmake --version
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
 
