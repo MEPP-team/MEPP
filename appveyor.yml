@@ -36,6 +36,7 @@ init:
 #  - dir C:\Libraries\boost_1_59_0
 #  - dir C:\Qt
 #  - dir C:\Qt\5.6
+  - qmake --version
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
 
@@ -85,5 +86,5 @@ before_build:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-#  - msbuild /m MEPP.sln
-  - msbuild MEPP.sln # /m IS responsible for random crashes of Qt MOC !!!
+  - msbuild /m MEPP.sln
+#  - msbuild MEPP.sln # /m IS responsible for random crashes of Qt MOC !!!
