@@ -27,9 +27,9 @@ matrix:
 #  allow_failures:
 
 # build cache to preserve files/folders between builds
-cache:
+#cache:
 # - %KIT_ROOT% # don't work !?
-  - C:\local_vs2015_64
+#  - C:\local_vs2015_64 # cached folder size cannot exceed 500 MB, so OFF for the moment...
 
 # scripts that are called at very beginning, before repo cloning
 init:
