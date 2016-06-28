@@ -16,6 +16,10 @@ environment:
   QT5_DIR: C:\Qt\5.6\msvc2015_64
 #
   KIT_ROOT: C:\local_vs2015_64
+#
+  matrix:
+  - B_USE_QT5:  OFF  # so we use Qt4 here for UI
+  - B_USE_QT5:  ON
 
 # this is how to allow failing jobs in the matrix
 matrix:
@@ -68,7 +72,13 @@ before_build:
 # CGAL
   - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z
   - IF %CACHE%==FALSE 7z x CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
-# libQGLViewer
+# Qt4
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/qt-4.8.7-x64-msvc2015.7z
+  - IF %CACHE%==FALSE 7z x qt-4.8.7-x64-msvc2015.7z > nul
+# libQGLViewer (for Qt 4.8.7)
+  - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-4.8.7.rar
+  - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-4.8.7.rar > nul
+# libQGLViewer (for Qt 5.6.0)
   - IF %CACHE%==FALSE curl -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/libQGLViewer-2.6.3-qt-5.6.0.rar
   - IF %CACHE%==FALSE 7z x libQGLViewer-2.6.3-qt-5.6.0.rar > nul
 # xerces-c
@@ -82,7 +92,7 @@ before_build:
   - IF %CACHE%==FALSE 7z x contrib.rar > nul
 #
   - cd %APPVEYOR_BUILD_FOLDER%
-  - cmake . -G"Visual Studio 14 2015 Win64" -DMSVC_KIT_ROOT=%KIT_ROOT%
+  - cmake . -G"Visual Studio 14 2015 Win64" -DMSVC_KIT_ROOT=%KIT_ROOT% -DWITH_QT5=%B_USE_QT5%
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
