@@ -8,8 +8,8 @@ sudo: required # need by trusty
 dist: trusty
 
 compiler:
-  - gcc
   - clang
+  - gcc
 
 cache: apt # this feature is available only for private repositories
 
