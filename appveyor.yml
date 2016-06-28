@@ -15,7 +15,7 @@ os: Visual Studio 2015
 environment:
   QT5_DIR: C:\Qt\5.6\msvc2015_64
 #
-  KIT_ROOT: C:\local_vs2015_64
+  KIT_ROOT: C:/local_vs2015_64
 #
 #  matrix:
 #  - B_USE_QT5:  OFF  # so we use Qt4 here for UI
