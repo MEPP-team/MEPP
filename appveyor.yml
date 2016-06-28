@@ -15,11 +15,11 @@ os: Visual Studio 2015
 environment:
   QT5_DIR: C:\Qt\5.6\msvc2015_64
 #
-  KIT_ROOT: C:\\local_vs2015_64
+  KIT_ROOT: C:\\local_vs2015_64 # why \\ for Qt4 ? !
 #
-#  matrix:
-#  - B_USE_QT5:  OFF  # so we use Qt4 here for UI
-#  - B_USE_QT5:  ON
+  matrix:
+  - B_USE_QT5:  OFF  # so we use Qt4 here for UI
+  - B_USE_QT5:  ON
 
 # this is how to allow failing jobs in the matrix
 matrix:
@@ -92,7 +92,7 @@ before_build:
   - IF %CACHE%==FALSE 7z x contrib.rar > nul
 #
   - cd %APPVEYOR_BUILD_FOLDER%
-  - cmake . -G"Visual Studio 14 2015 Win64" -DMSVC_KIT_ROOT=%KIT_ROOT%
+  - cmake . -G"Visual Studio 14 2015 Win64" -DMSVC_KIT_ROOT=%KIT_ROOT% -DWITH_QT5=%B_USE_QT5%
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
