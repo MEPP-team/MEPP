@@ -11,7 +11,7 @@ endif()
 
 set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.7)
 
-#set(WITH_QT5			TRUE)
+set(WITH_QT5			TRUE)
 
 if(WITH_QT5)
 	# with qt5
