@@ -15,7 +15,7 @@ set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.7)
 
 if(WITH_QT5)
 	# with qt5
-	set(QT5_DIR			${MSVC_KIT_ROOT}/Qt/Qt5.6.0/5.6/msvc2015_64)
+	#QT5_DIR			see appveyor
 	set(QGLVIEWERROOT	${MSVC_KIT_ROOT}/libQGLViewer/libQGLViewer-2.6.3-qt-5.6.0)
 else(WITH_QT5)
 	# with qt4

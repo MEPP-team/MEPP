@@ -9,7 +9,8 @@
 #---------------------------------#
 
 # Operating system (build VM template)
-os: Visual Studio 2015
+#os: Visual Studio 2015
+os: Previous Visual Studio 2015
 
 # environment variables
 environment:
