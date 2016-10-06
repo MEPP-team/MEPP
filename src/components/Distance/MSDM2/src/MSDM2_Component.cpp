@@ -222,8 +222,8 @@ void MSDM2_Component::ComputeStatistics(Vertex* pVertex, double Param,
 			pVertex->MSDM2_Local+=pow((pow(fact1,1)+pow(fact2,1)+Param*pow(fact3,1))/(2.+Param),1./1.);
 
 
-	delete tab_wi1;
-	delete tab_wi2;
+	delete[] tab_wi1;
+	delete[] tab_wi2;
 }
 
 

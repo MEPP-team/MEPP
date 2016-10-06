@@ -642,8 +642,8 @@ bool Check_Geometric_Metric(const Halfedge_handle &h,const int &type,const unsig
 		check = true;
 
 	// tp free memory.
-	delete Points;
-	delete Vectors;
+	delete[] Points;
+	delete[] Vectors;
 
 	return check;
 }
