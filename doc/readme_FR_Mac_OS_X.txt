@@ -1,11 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013-2014-2015
+// Year: 2010-2011-2012-2013-2014-2015-2016
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks', '10.10 Yosemite' ou '10.11 El Capitan') :
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Marche à suivre pour Mepp sous Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks', '10.10 Yosemite', '10.11 El Capitan' ou '10.12 Sierra') :
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 1a) A partir de Mac OS X '10.8 Mountain Lion', X11 ne fait plus partie intégrante du système, vous devez donc dans ce cas installer à la place XQuartz:
 http://xquartz.macosforge.org/
@@ -33,7 +33,7 @@ NOTE: ---> cela n'est pas utile à partir de Mac OS X '10.9 Mavericks'
 Je vous recommande fortement Homebrew, plus puissant et plus rapide lors de l'installation car disposant notamment parfois de "Bottle" (paquet binaire)
 
 3a) installer Homebrew (http://brew.sh/):
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 ---> mettre à jour Homebrew: 
 brew update
@@ -43,7 +43,7 @@ brew tap homebrew/science
 
 ---> installer les paquets suivants avec Homebrew:
 brew install cgal
-brew install qt
+brew install qt (sous '10.12 Sierra' : brew install cartr/qt4/qt)
 brew install libqglviewer
 brew install glew
 brew install doxygen graphviz xerces-c
@@ -52,8 +52,8 @@ brew install assimp
 
 brew install python
 
----> il vous sera peut-être utile de créer ce lien pour libqglviewer (attention ici, 2.6.1 est un exemple...)
-sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.1/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
+---> il vous sera peut-être utile de créer ce lien pour libqglviewer (attention ici, 2.6.3 est un exemple...)
+sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
 NOTE: ---> sous Mac OS X '10.9 Mavericks' uniquement, il vous faudra exécuter les 2 commandes suivantes:
 sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers

@@ -1,11 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013-2014-2015
+// Year: 2010-2011-2012-2013-2014-2015-2016
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
-How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks', '10.10 Yosemite' or '10.11 El Capitan') :
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+How-to for Mepp under Mac OS X ('10.5 Leopard'*, '10.6 Snow Leopard', '10.7 Lion', '10.8 Mountain Lion', '10.9 Mavericks', '10.10 Yosemite', '10.11 El Capitan' or '10.12 Sierra') :
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 1a) starting from Mac OS X '10.8 Mountain Lion', X11 is no longer part of the system, you must install in this case XQuartz:
 http://xquartz.macosforge.org/
@@ -33,7 +33,7 @@ NOTE: ---> this is not useful from and after Mac OS X '10.9 Mavericks'
 I highly recommend Homebrew, stronger and faster during the installation because there is sometimes "Bottle" (binary package)
 
 3a) install Homebrew (http://brew.sh/):
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 ---> update Homebrew: 
 brew update
@@ -43,7 +43,7 @@ brew tap homebrew/science
 
 ---> install this packages with Homebrew:
 brew install cgal
-brew install qt
+brew install qt (under '10.12 Sierra' : brew install cartr/qt4/qt)
 brew install libqglviewer
 brew install glew
 brew install doxygen graphviz xerces-c
@@ -52,8 +52,8 @@ brew install assimp
 
 brew install python
 
----> it may be necessary to create this link for libQGLViewer (here 2.6.1 is an example...)
-sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.1/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
+---> it may be necessary to create this link for libQGLViewer (here 2.6.3 is an example...)
+sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 
 NOTE: ---> under Mac OS X '10.9 Mavericks' only, you must perform the following two commands:
 sudo ln -s /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks/OpenGL.framework/Headers /System/Library/Frameworks/OpenGL.framework/Headers
