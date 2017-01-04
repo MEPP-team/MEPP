@@ -58,7 +58,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal48/cgal.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cgal; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then travis_wait 180 brew install cartr/qt4/qt; fi # 180 because we want 90 but 2 jobs in // !
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then travis_wait 100 brew install cartr/qt4/qt; fi # but, travis_wait, in fact : https://github.com/travis-ci/docs-travis-ci-com/pull/439 :-(
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install homebrew/boneyard/libqglviewer; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install xerces-c assimp doxygen graphviz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
