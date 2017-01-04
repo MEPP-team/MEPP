@@ -58,7 +58,8 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal48/cgal.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cgal; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt homebrew/boneyard/libqglviewer xerces-c assimp doxygen graphviz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cartr/qt4/qt; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install homebrew/boneyard/libqglviewer xerces-c assimp doxygen graphviz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
 #
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake --version; fi
