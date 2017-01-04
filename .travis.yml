@@ -55,17 +55,18 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
 # ---> because we want cgal48 under osx !!!
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink cgal; fi # ---> unlink cgal >= v4.9 which is now ALREADY installed by default !
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal48/cgal.rb; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal48/cgal.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cgal; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cartr/qt4/qt; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install homebrew/boneyard/libqglviewer xerces-c assimp doxygen graphviz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install homebrew/boneyard/libqglviewer; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install xerces-c assimp doxygen graphviz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
 #
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake --version; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info cmake; fi
 #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew switch cmake 3.0.2; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /tmp; wget https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/cmake-3.4.3-Darwin-x86_64.tar.gz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /tmp; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/cmake-3.4.3-Darwin-x86_64.tar.gz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar zxvf cmake-3.4.3-Darwin-x86_64.tar.gz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
 
