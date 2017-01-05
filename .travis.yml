@@ -58,9 +58,17 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cgal; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then travis_wait 100 brew install cartr/qt4/qt; fi # but, travis_wait -> in fact : https://github.com/travis-ci/docs-travis-ci-com/pull/439 :-( -> so force Sierra for cartr/qt4 !
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install homebrew/boneyard/libqglviewer; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install xerces-c assimp doxygen graphviz; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
+#  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install homebrew/boneyard/libqglviewer; fi
+#  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/Cellar/libqglviewer/2.6.3/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /tmp; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/src/libQGLViewer-2.6.3.tar.gz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar zxvf libQGLViewer-2.6.3.tar.gz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd libQGLViewer-2.6.3/QGLViewer; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then qmake -spec macx-g++; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo make install; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo ln -s "/usr/local/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
 #
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake --version; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info cmake; fi
