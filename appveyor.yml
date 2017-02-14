@@ -13,6 +13,8 @@ os: Visual Studio 2015
 
 # environment variables
 environment:
+  BOOST_ROOT: C:\Libraries\boost_1_59_0
+#
   QT5_DIR: C:\Qt\5.6\msvc2015_64
 #
   KIT_ROOT: C:\\local_vs2015_64 # why \\ for Qt4 ? !
@@ -70,8 +72,8 @@ before_build:
 # boost
   - ren C:\Libraries\boost_1_59_0\lib64-msvc-14.0 lib
 # CGAL
-  - IF %CACHE%==FALSE curl -k --connect-timeout 60 --max-time 600 -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z
-  - IF %CACHE%==FALSE 7z x CGAL-4.7__boost-1.59.0-AppVeyor_V3.7z > nul
+  - IF %CACHE%==FALSE curl -k --connect-timeout 60 --max-time 600 -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/CGAL-4.9.7z
+  - IF %CACHE%==FALSE 7z x CGAL-4.9.7z > nul
 # Qt4
   - IF %CACHE%==FALSE curl -k --connect-timeout 60 --max-time 600 -s -O https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/packages/clean/qt-4.8.7-x64-msvc2015.7z
   - IF %CACHE%==FALSE 7z x qt-4.8.7-x64-msvc2015.7z > nul

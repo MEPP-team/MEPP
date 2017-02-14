@@ -9,7 +9,9 @@ endif()
 
 ###
 
-set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.7)
+#BOOST_ROOT				see appveyor
+
+set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.9)
 
 #set(WITH_QT5			TRUE)
 

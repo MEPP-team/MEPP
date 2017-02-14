@@ -39,7 +39,7 @@ endif (COMMAND cmake_policy)
 
 # Project configuration
 set(PRJ_NAME mepp)
-set(PRJ_VERSION 0.52.0) # TODO
+set(PRJ_VERSION 0.52.1) # TODO
 project( ${PRJ_NAME} )
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${PRJ_NAME}_deploy_${PRJ_VERSION}")
 
@@ -106,7 +106,11 @@ FOREACH (MEPP_COMPONENT ${mepp_components})
 	
 	message(STATUS "FIND MEPP_COMPONENT_DIR: ${MEPP_COMPONENT_DIR}")
 	
-	OPTION(BUILD_${MEPP_COMPONENT_NAME} "Build ${MEPP_COMPONENT_NAME} " ON)
+	if ("${MEPP_COMPONENT_NAME}" STREQUAL "component_MSDM2") # component_MSDM2 not working with cgal >= 4.9
+		OPTION(BUILD_${MEPP_COMPONENT_NAME} "Build ${MEPP_COMPONENT_NAME} " OFF)
+	else()
+		OPTION(BUILD_${MEPP_COMPONENT_NAME} "Build ${MEPP_COMPONENT_NAME} " ON)
+	endif()
 	if (BUILD_${MEPP_COMPONENT_NAME})
 		ADD_SUBDIRECTORY(${MEPP_COMPONENT_DIR})
 		CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/mepp/_enrichment_.in/polyhedron_enrichment_define.h.in ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/h.tmp/polyhedron_enrichment_define_${MEPP_SHORT_COMPONENT_NAME}.h)
@@ -144,6 +148,12 @@ Execute_process(COMMAND ${BASH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/${CAT} ${CMA
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
+
+# Find Boost
+find_package(Boost)
+if(Boost_FOUND)
+	include_directories(${Boost_INCLUDE_DIRS})
+endif(Boost_FOUND)
 
 # Find CGAL libraries
 set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Prevent CGAL to override CMAKE flags")

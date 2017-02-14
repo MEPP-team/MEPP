@@ -9,7 +9,9 @@ endif()
 
 ###
 
-set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.7)
+set(BOOST_ROOT			${MSVC_KIT_ROOT}/boost_1_59_0)
+
+set(CGAL_DIR			${MSVC_KIT_ROOT}/CGAL-4.9)
 
 #set(WITH_QT5			TRUE)
 

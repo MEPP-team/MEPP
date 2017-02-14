@@ -64,6 +64,12 @@ set(LIBRARY_OUTPUT_PATH ../../../../${plugin_dest_dir})
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/src/mepp )
 
+# Find Boost
+find_package(Boost)
+if(Boost_FOUND)
+	include_directories(${Boost_INCLUDE_DIRS})
+endif(Boost_FOUND)
+
 # Find CGAL libraries
 set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Prevent CGAL to override CMAKE flags")
 FIND_PACKAGE(CGAL COMPONENTS Core)
