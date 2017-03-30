@@ -28,7 +28,7 @@ addons:
       secure: 10e96e51e8bdd717674a3f888b7d0ef74111694e
 
 script:
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug; fi
   - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
   - sonar-scanner
 
