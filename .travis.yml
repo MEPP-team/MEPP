@@ -80,7 +80,7 @@ install:
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir build && cd build && cmake .. $BTYPE; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir build && cd build && /tmp/cmake-3.4.3-Darwin-x86_64/CMake.app/Contents/bin/cmake .. $BTYPE; fi
-  - make
+  - make -j 3
 #  - make test
 #
 # osx only (add qt5 after qt4 in the same job) :
@@ -88,5 +88,5 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt5; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd ..; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then mkdir build_osx_qt5 && cd build_osx_qt5 && /tmp/cmake-3.4.3-Darwin-x86_64/CMake.app/Contents/bin/cmake .. $BTYPE -DWITH_QT5=YES -DQT5_DIR=/usr/local/opt/qt5; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make -j 3; fi
 #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make test; fi
