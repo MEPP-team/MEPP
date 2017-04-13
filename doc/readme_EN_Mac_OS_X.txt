@@ -1,6 +1,6 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013-2014-2015-2016
+// Year: 2010-2011-2012-2013-2014-2015-2016-2017
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
@@ -43,8 +43,8 @@ brew tap homebrew/science
 
 ---> install this packages with Homebrew:
 brew install cgal
-brew install qt (under '10.12 Sierra' : brew install cartr/qt4/qt)
-brew install libqglviewer
+brew install cartr/qt4/qt-legacy-formula
+cd /tmp; wget --no-check-certificate https://github.com/GillesDebunne/libQGLViewer/archive/v2.6.3.tar.gz; tar zxvf libQGLViewer-2.6.3.tar.gz; cd libQGLViewer-2.6.3/QGLViewer; qmake -spec macx-g++; make; sudo make install; sudo ln -s "/usr/local/lib/QGLViewer.framework" "/Library/Frameworks/QGLViewer.framework"
 brew install glew
 brew install doxygen graphviz xerces-c
 brew install ffmpeg
