@@ -1,14 +1,14 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 // Author: Martial TOLA
-// Year: 2010-2011-2012-2013-2014-2015-2016
+// Year: 2010-2011-2012-2013-2014-2015-2016-2017
 // CNRS-Lyon, LIRIS UMR 5205
 ///////////////////////////////////////////////////////////////////////////
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------
-(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04, 15.10, 16.04 ou 16.10 / Debian 6 :
----------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(A) Marche à suivre pour Mepp sous Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04, 15.10, 16.04, 16.10 ou 17.04 / Debian 6 :
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04, 15.10, 16.04 ou 16.10 / Debian 6
+1) installer Ubuntu 9.10, 10.04, 10.10, 11.04, 11.10, 12.04, 12.10, 13.04, 13.10, 14.04, 14.10, 15.04, 15.10, 16.04, 16.10 ou 17.04 / Debian 6
 2) faire la mise à jour de la distribution et des paquets déjà installés:
 sudo apt-get update
 3) installer les paquets suivants:
@@ -18,7 +18,7 @@ sudo apt-get install libavcodec-dev libavformat-dev libavdevice-dev libswscale-d
 NOTE1: ---> à partir d'Ubuntu 13.10 le paquet libqglviewer-qt4-dev est renommé en libqglviewer-dev
 NOTE2: ---> à partir d'Ubuntu 15.10 le paquet libqglviewer-qt4-dev est renommé en libqglviewer-dev-qt4
 
-NOTE3: ---> pour Ubuntu 16.04 (plus ce problème avec Ubuntu 16.10...) le paquet libcgal-qt5-dev est nécessaire (pas normal, problème avec le paquet CGAL !)
+NOTE3: ---> pour Ubuntu 16.04 (plus ce problème avec Ubuntu >= 16.10...) le paquet libcgal-qt5-dev est nécessaire (pas normal, problème avec le paquet CGAL !)
 
 -----------------------------------------
 Suivant votre version d'Ubuntu / Debian :
@@ -117,6 +117,11 @@ sudo apt-get install qt4-default
 ou
 
 sous Ubuntu 16.10* (The Yakkety Yak, le yak bavard), activer qt4 car par défaut qt5 est désormais actif:
+sudo apt-get install qt4-default
+
+ou
+
+sous Ubuntu 17.04* (The Zesty Zapus, le zapus plaisant), activer qt4 car par défaut qt5 est désormais actif:
 sudo apt-get install qt4-default
 
 
