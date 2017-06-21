@@ -41,6 +41,7 @@ addons:
       - libboost-dev
       - libcgal-dev
       - libqt4-dev
+      - libqt4-opengl-dev
       - libqglviewer-dev
       - libxerces-c-dev
       - libassimp-dev
