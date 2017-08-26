@@ -3,27 +3,27 @@
 # Once done this will define
 #
 # ASSIMP_FOUND
-# ASSIMP_INCLUDE_PATH
+# ASSIMP_INCLUDE_DIR
 # ASSIMP_LIBRARY
 #
 
-IF (WIN32)
-	FIND_PATH( ASSIMP_INCLUDE_PATH assimp/scene.h
+IF (WIN32 AND NOT "${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
+	FIND_PATH( ASSIMP_INCLUDE_DIR assimp/scene.h
 		${ASSIMP_ROOT_DIR}/include
 		DOC "The directory where assimp/scene.h resides")
 
     FIND_LIBRARY( ASSIMP_LIBRARY
         NAMES assimp ASSIMP assimp
         PATHS
-        ${ASSIMP_ROOT_DIR}/lib
+        ${ASSIMP_ROOT_DIR}/lib/x32
         DOC "The ASSIMP library")
-ELSE (WIN32)
-	FIND_PATH( ASSIMP_INCLUDE_PATH assimp/scene.h
+ELSE (WIN32 AND NOT "${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
+	FIND_PATH( ASSIMP_INCLUDE_DIR assimp/scene.h
 		/usr/include
 		/usr/local/include
 		/sw/include
 		/opt/local/include
-		${ASSIMP_ROOT_DIR}/include
+		$ENV{ASSIMP_ROOT_DIR}/include
 		DOC "The directory where assimp/scene.h resides")
 
 	FIND_LIBRARY( ASSIMP_LIBRARY
@@ -35,13 +35,15 @@ ELSE (WIN32)
 		/usr/local/lib
 		/sw/lib
 		/opt/local/lib
-		${ASSIMP_ROOT_DIR}/lib
+		$ENV{ASSIMP_ROOT_DIR}/lib/x64
 		DOC "The ASSIMP library")
-ENDIF (WIN32)
+ENDIF (WIN32 AND NOT "${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
 
 SET(ASSIMP_FOUND "NO")
-IF (ASSIMP_INCLUDE_PATH AND ASSIMP_LIBRARY)
+IF (ASSIMP_INCLUDE_DIR AND ASSIMP_LIBRARY)
 	SET(ASSIMP_LIBRARIES ${ASSIMP_LIBRARY})
 	SET(ASSIMP_FOUND "YES")
 	MESSAGE(STATUS "Found ASSIMP: ${ASSIMP_LIBRARY}")
-ENDIF (ASSIMP_INCLUDE_PATH AND ASSIMP_LIBRARY)
+ELSE (ASSIMP_INCLUDE_DIR AND ASSIMP_LIBRARY)
+	MESSAGE(STATUS "Could not find Assimp")
+ENDIF (ASSIMP_INCLUDE_DIR AND ASSIMP_LIBRARY)
