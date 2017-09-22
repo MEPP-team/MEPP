@@ -20,6 +20,7 @@
 
 #include <time.h>
 
+
 #define COLOR_NUMBER 10000
 #define USE_COLOR_METRIC
 #define AC_BUFFER 1024 * 10000
@@ -101,6 +102,11 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 	Res += "\n";
 	Res += QString("Calculation time : ");
 	Res += QString("%1 seconds \n").arg(float(timer.time()), 3, 'f', 2);
+
+	//ELO+beg
+	std::cout << Res.toStdString() << std::endl;
+	//ELO+end
+
 	return Res;
 }
 
@@ -123,6 +129,9 @@ void Compression_Valence_Component::Global_Initialization(Polyhedron & _pMesh,
 	// Quantization of each component
 	this->Quantization(_pMesh);
 }	
+
+
+//#define DBG_Multiple_Components_Initialization
 
 void Compression_Valence_Component::Multiple_Components_Initialization(Polyhedron & _pMesh, 
 																	   int const  & _Qbit)
@@ -174,7 +183,8 @@ void Compression_Valence_Component::Multiple_Components_Initialization(Polyhedro
 
 				Halfedge_around_facet_circulator pHalfedge = F->facet_begin();
 				Halfedge_around_facet_circulator end = pHalfedge;
-				
+				pHalfedge->vertex_degree()			;
+
 				CGAL_For_all(pHalfedge, end)
 				{
 					// tag the vertex to its corresponding component number
@@ -328,7 +338,53 @@ void Compression_Valence_Component::Multiple_Components_Initialization(Polyhedro
 		this->ColorChildcellIndex.push_back(li);
 		this->ColorEncoderIndex.push_back(li);
 	}
+
+	//TODO-elo-DBG
+#ifdef DBG_Multiple_Components_Initialization
+	{
+		std::cout << "DBG " << "--- function " << __func__ << std::endl;
+		std::cout << "DBG " << "this->NumberComponents=" << this->NumberComponents << std::endl;
+
+		{
+			std::cout << "DBG " << "vertex->Seed_Edge=" << std::endl;
+
+			for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+			{
+				std::cout << "DBG   " << pVertex->Seed_Edge << std::endl;
+			}
+		}
+
+		{
+			std::cout << "DBG " << "vertex->Component_Number=" << std::endl;
+
+			for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+			{
+				std::cout << "DBG   " << pVertex->Component_Number << std::endl;
+			}
+		}
+
+		{
+			std::cout << "DBG " << "face->tag=" << std::endl;
+
+			for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
+			{
+				std::cout << "DBG   " << pFacet->tag() << std::endl;
+			}
+		}
+
+		{
+			std::cout << "DBG " << "face->Component_Number=" << std::endl;
+
+			for (Facet_iterator pFacet = _pMesh.facets_begin(); pFacet != _pMesh.facets_end(); pFacet++)
+			{
+				std::cout << "DBG   " << pFacet->Component_Number << std::endl;
+			}
+		}
+	}
+#endif
 }
+
+//#define DBG_Quantization
 
 /*
 	Description : Quantize all vertices so that the new positions 
@@ -375,9 +431,26 @@ void Compression_Valence_Component::Quantization(Polyhedron & _pMesh)
 							     this->ymin[Component_ID] + (Qy + 0.5) * this->Quantization_Step[Component_ID],
 							     this->zmin[Component_ID] + (Qz + 0.5) * this->Quantization_Step[Component_ID]);		
 	}
+
+#ifdef DBG_Quantization
+	//TODO-elo-DBG
+	{
+		std::cout << "DBG " << "--- function " << __func__ << std::endl;
+
+		{
+			std::cout << "DBG " << __func__ << " " << "vertex->point()=" << std::endl;
+
+			for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+			{
+				std::cout << "DBG " << __func__ << " " << pVertex->point().x() << " " << pVertex->point().y() << " " << pVertex->point().z() << std::endl;
+			}
+		}
+	}
+#endif
 }
 
 
+//#define DBG_Color_Initialization
 
 // this->ColorArray -> contains all initial colors present in the input mesh.
 void Compression_Valence_Component::Color_Initialization(Polyhedron &_pMesh)
@@ -506,6 +579,35 @@ void Compression_Valence_Component::Color_Initialization(Polyhedron &_pMesh)
 
 		}	
 	}
+
+	//TODO-elo-DBG
+#ifdef DBG_Color_Initialization
+	{
+		std::cout << "DBG " << "--- function " << __func__ << std::endl;
+		std::cout << "DBG " << "this->IsColored=" << this->IsColored << std::endl;
+		std::cout << "DBG " << "this->IsOneColor=" << this->IsOneColor << std::endl;
+
+		if( this->IsColored )
+		{
+			std::cout << "DBG " << "vertex->color()=" << std::endl;
+
+			for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+			{
+				std::cout << "DBG   " << pVertex->color(0) << " " << pVertex->color(1) << " " << pVertex->color(2) << std::endl;
+			}
+		}
+
+		if ((this->IsColored) && (!this->IsOneColor))
+		{
+			std::cout << "DBG " << "vertex->color_int()=" << std::endl;
+
+			for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+			{
+				std::cout << "DBG   " << pVertex->color_int(0) << " " << pVertex->color_int(1) << " " << pVertex->color_int(2) << std::endl;
+			}
+		}
+	}
+#endif
 }
 
 
@@ -732,6 +834,8 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh,
 						else
 							Continue = true;	
 					}
+					//TODO-elo  the file Operation_order.txt doesn't seem to be read anywhere ;
+					//TODO-elo  maybe this is for debugging ?
 					FILE * Operation_order = fopen("Operation_order.txt", "a");
 					fprintf(Operation_order, "Component_ID = %d    Operation = %d \n", Component_ID, Operation_choice);
 					fclose(Operation_order);
@@ -757,6 +861,79 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh,
 
 }
 
+#if 1  //DBG-ELO+beg
+void print_halfedge(const std::string& title, const Halfedge_handle& h)
+{
+	Vertex_handle vtarget = h->vertex();
+	Vertex_handle vsource = h->opposite()->vertex();
+
+	Point3d psource = vsource->point();
+	Point3d ptarget = vtarget->point();
+
+	std::cout << title << " :" << std::endl;
+	std::cout << "  psource = " << psource.x() << ", " << psource.y() << ", " << psource.z() << std::endl;
+	std::cout << "  ptarget = " << ptarget.x() << ", " << ptarget.y() << ", " << ptarget.z() << std::endl;
+
+	bool is_border_edge = h->is_border();
+	std::cout << "  is_border = " << std::boolalpha << is_border_edge << std::endl;
+}
+
+void print_vertex(const std::string& title, const Vertex_handle& v)
+{
+	Point3d p = v->point();
+	std::cout << title << " = " << p.x() << ", " << p.y() << ", " << p.z() << std::endl;
+}
+
+std::string vertex_to_string(const Vertex_handle& v)
+{
+	Point3d p = v->point();
+	std::ostringstream s;
+	s << "(" << p.x() << ", " << p.y() << ", " << p.z() << ")";
+	return s.str();
+}
+
+std::string halfedge_to_string(const Halfedge_handle& h)
+{
+	Vertex_handle vtarget = h->vertex();
+	Vertex_handle vsource = h->opposite()->vertex();
+
+	std::ostringstream s;
+	s << vertex_to_string(vsource) << "->" << vertex_to_string(vtarget);
+	return s.str();
+}
+
+bool v_inf_to_v(const Vertex_handle& v1, const Vertex_handle& v2)
+{
+	Point3d p1 = v1->point();
+	Point3d p2 = v2->point();
+
+	if( p1.x() < p2.x() )
+		return true;
+	else if( (p1.x() == p2.x()) && (p1.y() < p2.y()))
+		return true;
+	else if( (p1.x() == p2.x()) && (p1.y() == p2.y()) && (p1.z() < p2.z()))
+		return true;
+	else
+		return false;
+}
+
+std::string edge_to_string(const Halfedge_handle& h)
+{
+	Vertex_handle vtarget = h->vertex();
+	Vertex_handle vsource = h->opposite()->vertex();
+
+	std::ostringstream s;
+	if( v_inf_to_v(vsource, vtarget) )
+		s << vertex_to_string(vsource) << "->" << vertex_to_string(vtarget);
+	else
+		s << vertex_to_string(vtarget) << "->" << vertex_to_string(vsource);
+
+	return s.str();
+}
+#endif //DBG-ELO+end
+
+//#define DEBUG_Decimation_Conquest
+
 // Description : This function select a set of independent vertices to be removed
 int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 													   const bool    Normal_flipping,
@@ -766,6 +943,15 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 													   const int   & Forget_value,
 													   const int   & Component_ID)
 {	
+#ifdef DBG_Decimation_Conquest //TODO-elo-rm-dbg 
+	static unsigned int Decimation_Conquest_call_cnt = 0;
+	Decimation_Conquest_call_cnt++;
+	std::cout << "Decimation_Conquest_call_cnt = " << Decimation_Conquest_call_cnt << std::endl;
+#endif
+
+		Point3d Points[4];
+		CGAL::volume(Points[0],Points[1],Points[3],Points[2]);
+
 	
 	// Calculate mean color and meah area for color metric
 	double Max_color, Mean_color;
@@ -790,6 +976,10 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 		hi++;
 
 	Halfedge_handle First_halfedge = &(*(hi));
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+	std::cout << "marker #1" << std::endl; //TODO-elo-rm-dbg
+	print_halfedge("First_halfedge", First_halfedge); //DBG-elo+
+#endif
 	
 	// Two vertices of seed edge are flaged CONQUERED
 	First_halfedge->vertex()->Vertex_Flag = CONQUERED;
@@ -805,9 +995,18 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 	Halfedge_handle h; // The current gate
 	
 	/// Main loop
+	int loop_counter = 0; //TODO-elo-rm-dbg
 	while(!Halfedges.empty())
 	{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+		std::cout << "marker #2" << std::endl; //TODO-elo-rm-dbg
+		std::cout << "loop " << ++loop_counter << std::endl; //TODO-elo-rm-dbg
+#endif
+
 		h = Halfedges.front();
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+		print_halfedge("h #2", h); //TODO-elo-rm-DBG
+#endif
 		Halfedges.pop();		
 		
 		unsigned type = 0; // define type of retriangulation		
@@ -816,17 +1015,31 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 
 		if (h->is_border() == true)
 			continue;		
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+		std::cout << "marker #3" << std::endl; //TODO-elo-rm-dbg
+		std::cout << "(h->next()->vertex()->Vertex_Flag == FREE)" << (h->next()->vertex()->Vertex_Flag == FREE) << std::endl; //TODO-elo-rm-dbg
+		std::cout << "(valence >= 3)" << (valence >= 3) << std::endl; //TODO-elo-rm-dbg
+		std::cout << "(valence <= 4)" << (valence <= 4) << std::endl; //TODO-elo-rm-dbg
+		std::cout << "(Is_Border_Vertex(h->next()) == true)" << (Is_Border_Vertex(h->next()) == true) << std::endl; //TODO-elo-rm-dbg
+#endif
 		
 		// if its front face is not tagged CONQUERED nor TO_BE_REMOVED, do nothing!!
 		if ((h->facet()->Facet_Flag == CONQUERED) || (h->facet()->Facet_Flag == TO_BE_REMOVED))
+		{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			std::cout << "marker #4" << std::endl; //TODO-elo-rm-dbg
+#endif
 			continue;
-
+		}
 		// if its front vertex is free and has a valence <= 6 and it is not a border vertex.
 		else if ( (h->next()->vertex()->Vertex_Flag == FREE) && 
 				  (valence >= 3) && 
 				  (valence <= 6) && 
 				  (!Is_Border_Vertex(h->next())))
 		{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			std::cout << "marker #5" << std::endl; //TODO-elo-rm-dbg
+#endif
 
 			type = Find_Type(h, valence);
 			
@@ -859,6 +1072,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 			if(this->IsColored)
 				Is_Color_Too_Important = this->Error_Projected_Surface(_pMesh, h, Component_ID, Mean_color, Mean_area);
 			#endif
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			std::cout << "Is_Color_Too_Important = " << Is_Color_Too_Important << std::endl; //TODO-elo-rm-dbg
+#endif
 
 			// remove the front vertex if its removal does not viloate the manifold property and some metrics			
 			bool Check_all_condition = false;
@@ -868,6 +1084,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 
 			if (Check_all_condition) // All conditions are good. -> Remove the center vertex.
 			{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << "marker #6" << std::endl; //TODO-elo-rm-dbg
+#endif
 
 				//increase number of vertices and symbols
 				Number_vertices++;
@@ -905,6 +1124,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 				Point_Int BC = Change_Real_Int(Barycenter, Component_ID);
 
 				// remove the front vertex
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				print_halfedge("remove vertex", g->next()); //TODO-elo-rm-DBG
+#endif
 				_pMesh.erase_center_vertex(g->next()); 
 
 				g = h;
@@ -962,6 +1184,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 			// Conditions are not satisfied -> NULL CODE
 			else 
 			{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << "marker #7" << std::endl; //TODO-elo-rm-dbg
+#endif
 				// Enter symbol 'NULL PATCH' into the list of symbols
 				this->InterConnectivity.push_front(4);
 
@@ -1003,10 +1228,16 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 				  (valence <= 4) && 
 				  (Is_Border_Vertex(h->next()) == true))
 		{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			std::cout << "marker #8" << std::endl; //TODO-elo-rm-dbg
+#endif
 			/*****    conditions of vertex removal (based on area) will be added    *****/
 			/*****    conditions of vertex removal (based on area) will be added    *****/		
 
 			type = Find_Type(h, valence);
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			print_halfedge("h #8", h); //TODO-elo-rm-DBG
+#endif
 			
 			Halfedge_handle g = h;
 			
@@ -1018,21 +1249,42 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 					
 			
 			// To find first border edge.
+			//print_halfedge("g #8", g); //TODO-elo-rm-DBG
+			//print_halfedge("g->next() #8", g->next()); //TODO-elo-rm-DBG
+			//print_vertex("g->next()->vertex() #8", g->next()->vertex()); //TODO-elo-rm-DBG
+			//print_halfedge("g->next()->vertex()->vertex_begin() #8", &(*(g->next()->vertex()->vertex_begin()))); //TODO-elo-rm-DBG
 			Halfedge_around_vertex_circulator Hvc = g->next()->vertex()->vertex_begin();
 			Halfedge_around_vertex_circulator Hvc_end = Hvc;
 			
 			int Number_neighboring_border_vertices = 0;
 			CGAL_For_all(Hvc, Hvc_end)
 			{				
+				//std::cout << "marker #8.1" << std::endl; //TODO-elo-rm-dbg
+				//print_halfedge("Hvc", &(*Hvc)); //TODO-elo-rm-DBG
+				//print_halfedge("opposite(*Hvc, _pMesh)", Hvc->opposite()); //TODO-elo-rm-DBG
+				//std::cout << "Is_Border_Vertex(opposite(*Hvc, _pMesh), _pMesh)" << std::boolalpha << Is_Border_Vertex(Hvc->opposite()) << std::endl; //TODO-elo-rm-DBG
+				//std::cout << "CGAL::is_border_edge(*Hvc, _pMesh)" << std::boolalpha << Hvc->is_border() << std::endl; //TODO-elo-rm-DBG
+
+
 				if (Is_Border_Vertex(Hvc->opposite()))
+				{
+					//std::cout << "marker #8.1.1" << std::endl; //TODO-elo-rm-dbg
 					Number_neighboring_border_vertices++;					
+				}
 				
 				if (Hvc->is_border())
+				{
+					//std::cout << "marker #8.1.2" << std::endl; //TODO-elo-rm-dbg
 					First_border_edge = Hvc;
+				}
 			}					
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			print_halfedge("First_border_edge", First_border_edge); //TODO-elo-rm-DBG
+			std::cout << "Number_neighboring_border_vertices = " << Number_neighboring_border_vertices << std::endl; //TODO-elo-rm-dbg
+#endif
 			
 			if (Number_neighboring_border_vertices > 2)
-				Check_border_structure = false;	
+				Check_border_structure = false;
 				
 			if (Is_Manifold_Property_Violated(g, type, valence))
 				Check_border_structure = false;
@@ -1040,11 +1292,16 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 			// Test if we are not in the case of a mesh pimple.
 			if (Check_border_structure)
 			{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << "marker #9" << std::endl; //TODO-elo-rm-dbg
+				print_halfedge("First_border_edge", First_border_edge); //TODO-elo-rm-DBG
+#endif
 				// Get the two patch border vertices.
 				Vertex_handle vh1 = First_border_edge->next()->vertex();
 				Vertex_handle vh2 = First_border_edge->opposite()->vertex();
 				Halfedge_around_vertex_circulator vh_it = vh1->vertex_begin();
 				Halfedge_around_vertex_circulator vh_it_end = vh_it;
+				//print_halfedge("vh_it", &(*vh_it)); //TODO-elo-rm-DBG
 
 				// Test if the two patch border vertices are not connected
 				// by an edge.
@@ -1056,6 +1313,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 						break;
 					}
 				}
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << "Check_border_structure = " << std::boolalpha << Check_border_structure << std::endl; //TODO-elo-rm-dbg
+#endif
 			}			
 
 
@@ -1101,6 +1361,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 			// Structure of triangles is good -> decimation.
 			if (Check_border_structure) 
 			{	
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << "marker #10" << std::endl; //TODO-elo-rm-dbg
+#endif
 				Number_vertices++;
 				Number_symbol++;
 				
@@ -1129,10 +1392,16 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 				}
 				
 				Border_edges.push_back(g->opposite());
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				print_halfedge("Border_edges.push_back 1", g->opposite()); //TODO-elo-rm-dbg
+#endif
 				for (int i = 0; i < (valence - 2); i++)
 				{
 					g = g->prev()->opposite()->prev();	
 					Border_edges.push_back(g->opposite());													
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+					print_halfedge("Border_edges.push_back 2", g->opposite()); //TODO-elo-rm-dbg
+#endif
 				}		
 
 				for (int i = 0; i < (valence - 1); i++)
@@ -1141,14 +1410,35 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 					Temp = Temp->opposite();
 					
 					CGAL_assertion(!Temp->is_border());
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << "remove face" << std::endl; //TODO-elo-rm-dbg
+#endif
 					_pMesh.erase_facet(Temp);
 				}
 								
 				if (valence == 3)
 				{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << "marker #11" << std::endl; //TODO-elo-rm-dbg
+#endif
 					Halfedge_handle Retriangulation_edge = Border_edges[valence - 2]->opposite()->prev();
 					
 					// One triangle has to be created to smooth the mesh boundary					
+					
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+					{
+						Facet_handle dbg_elo_f = Retriangulation_edge->facet();
+						bool is_border_Retriangulation_edge = 
+							(Retriangulation_edge->facet() == NULL);
+						bool is_border_Retriangulation_edge2 = Retriangulation_edge->is_border();
+
+						print_halfedge("Border_edges[valence - 2]", Border_edges[valence - 2]);
+						print_halfedge("Retriangulation_edge", Retriangulation_edge);
+					}
+					//DBG-elo+ end
+					std::cout << "add face" << std::endl; //TODO-elo-rm-dbg
+#endif //DBG-ELO+end
+					
 					_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());					
 										
 					Halfedge_handle Input_gate = Border_edges[Number_jump]->opposite();					
@@ -1218,6 +1508,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 				
 				else if (valence == 4)
 				{		
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << "marker #12" << std::endl; //TODO-elo-rm-dbg
+#endif
 					Halfedge_handle Retriangulation_edge = Border_edges[valence - 2]->opposite()->prev();					
 					
 					if (   ( (Number_jump == 0) && ((type == 5) || (type == 8)) ) ||
@@ -1225,9 +1518,15 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 						   ( (Number_jump == 2) && ((type == 5) || (type == 8)) )  )
 
 					{						
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+						std::cout << "add face" << std::endl; //TODO-elo-rm-dbg
+#endif
 						_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[1]->opposite());
 						Border_edges[1]->opposite()->facet()->Facet_Flag = CONQUERED;						
 
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+						std::cout << "add face" << std::endl; //TODO-elo-rm-dbg
+#endif
 						_pMesh.add_facet_to_border(Retriangulation_edge, Border_edges[0]->opposite());
 						Border_edges[0]->opposite()->facet()->Facet_Flag = CONQUERED;						
 					}
@@ -1236,10 +1535,16 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 								( (Number_jump == 1) && ((type == 5) || (type == 8)) ) ||
 								( (Number_jump == 2) && ((type == 6) || (type == 7)) )  )
 					{												
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+						std::cout << "add face" << std::endl; //TODO-elo-rm-dbg
+#endif
 						_pMesh.add_facet_to_border(Border_edges[2]->opposite(), Border_edges[0]->opposite());
 						Border_edges[1]->opposite()->facet()->Facet_Flag = CONQUERED;						
 						Halfedge_handle Temp_border = Border_edges[2]->opposite()->next();
 						
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+						std::cout << "add face" << std::endl; //TODO-elo-rm-dbg
+#endif
 						_pMesh.add_facet_to_border(Retriangulation_edge, Temp_border);
 						Border_edges[2]->opposite()->facet()->Facet_Flag = CONQUERED;						
 					}					
@@ -1336,6 +1641,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 
 			else // Border vertex can not be removed
 			{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << "marker #13" << std::endl; //TODO-elo-rm-dbg
+#endif
 				Number_symbol++;
 				this->InterConnectivity.push_front(4);
 				
@@ -1377,6 +1685,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 		// if its front face sholud be labelled as NULL PATCH		
 		else
 		{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+			std::cout << "marker #14" << std::endl; //TODO-elo-rm-dbg
+#endif
 			// Enter symbol 'NULL PATCH' into the list of symbols
 			this->InterConnectivity.push_front(4);
 			Number_symbol++;
@@ -1416,6 +1727,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 	}	
 	if ((this->IsColored) && (!this->IsOneColor))
 	{		
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+		std::cout << "marker #15" << std::endl; //TODO-elo-rm-dbg
+#endif
 		while(!this->InterVertexColor.empty())
 		{
 			Color_Unit Col = this->InterVertexColor.front();
@@ -1427,6 +1741,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 	// We put all symbols in the main container which is this->Connectivity
 	while(!InterConnectivity.empty())
 	{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+		std::cout << "marker #16" << std::endl; //TODO-elo-rm-dbg
+#endif
 		int Symbol = InterConnectivity.front();
 		InterConnectivity.pop_front();
 		this->Connectivity[Component_ID].push_front(Symbol);
@@ -1435,6 +1752,9 @@ int Compression_Valence_Component::Decimation_Conquest(Polyhedron  & _pMesh,
 	// same operation than connectivity.
 	while(!InterGeometry.empty())
 	{
+#ifdef DEBUG_Decimation_Conquest //TODO-elo-rm-dbg 
+		std::cout << "marker #17" << std::endl; //TODO-elo-rm-dbg
+#endif
 		Point_Int Geo = InterGeometry.front();
 		InterGeometry.pop_front();
 		this->Geometry[Component_ID].push_front(Geo);
@@ -2011,11 +2331,18 @@ void Compression_Valence_Component::Un_Regulation(Polyhedron &_pMesh, Arithmetic
 
 
 
+#define DBG_Un_Decimation_Conquest
+
 // Description : Decoding function of decimation conquest
 void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _pMesh, 
 														   Arithmetic_Codec & Decoder,
 														   const int        & Component_ID)
 {
+#ifdef DBG_Un_Decimation_Conquest  //TODO-elo-dbg
+	static unsigned int Un_Decimation_Conquest_call_cnt = 0;
+	std::cout << "__func__" << "  Un_Decimation_Conquest_call_cnt = " << ++Un_Decimation_Conquest_call_cnt << std::endl;
+#endif
+
 	Init(_pMesh);
 	
 	int Number_connectivity_symbols;
@@ -2084,10 +2411,42 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 
 	Halfedge_handle h;	
 
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+	int dbg_loop_counter = 0;
+#endif
+
 	while(!Halfedges.empty())
 	{
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+		std::cout << __func__ << "  marker #2" << "  loop " << ++dbg_loop_counter << std::endl;
+		std::cout << __func__ << "  Halfedges.size()=" << Halfedges.size() << std::endl;
+#if 0
+		if( Un_Decimation_Conquest_call_cnt == 2 )
+		{
+			std::cout << __func__ << "  Halfedges:" << std::endl;
+			int dbg_he_cnt = 0;
+			std::queue<Halfedge_handle> dbg_tmp_queue = Halfedges;
+			while( ! dbg_tmp_queue.empty() )
+			{
+				dbg_he_cnt++;
+				std::stringstream ss;
+				ss << "Halfedge #" << dbg_he_cnt << " = " << std::endl;
+				Halfedge_handle dbg_h = dbg_tmp_queue.front();
+				dbg_tmp_queue.pop();
+				print_halfedge(ss.str(), dbg_h);
+
+			}
+		}
+#endif
+#endif
+
 		h = Halfedges.front();
 		Halfedges.pop();
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+		if( Un_Decimation_Conquest_call_cnt == 2 )
+			print_halfedge("h", h);
+#endif
 
 		unsigned int valence = 0,type = 0; // define type of retriangulation
 
@@ -2112,6 +2471,14 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 			Vector normal = Normal_Patch(pass, valence);
 			Vector T2 = CGAL::NULL_VECTOR;
 			Vector T1 = Calculate_T1_T2(h,normal, T2);			
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+#if 0
+			std::cout << __func__ << "  marker PM#0.5" << "  Un_Decimation_Conquest_call_cnt " << Un_Decimation_Conquest_call_cnt << "  loop " << dbg_loop_counter << std::endl;
+			std::cout << __func__ << "  normal=" << normal[0] << " " << normal[1] << " " << normal[2] << std::endl;
+			std::cout << __func__ << "  T1=" << T1[0] << " " << T1[1] << " " << T1[2] << std::endl;
+			std::cout << __func__ << "  T2=" << T2[0] << " " << T2[1] << " " << T2[2] << std::endl;
+#endif
+#endif
 			
 			if (T1 == CGAL::NULL_VECTOR)
 			{				
@@ -2140,6 +2507,10 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 			//Check_Validity = false;// * * * * * * * * * * *////
 			if (Check_Validity == false)
 			{
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg
+				if( Un_Decimation_Conquest_call_cnt == 9 && dbg_loop_counter == 1044 )
+					bool dbg_dummy = true; // just to be able to set a breakpoint
+#endif
 				g = h;
 				Halfedge_handle pass = h;
 				
@@ -2235,6 +2606,10 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 				
 				g = _pMesh.create_center_vertex(g);
 				g->vertex()->point() = Center_vertex;
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << __func__ << "  marker PM#1" << "  loop " << dbg_loop_counter << std::endl;
+				std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+#endif
 
 				g->vertex()->Region_Number = Selected_region;				
 
@@ -2288,6 +2663,12 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->next()->vertex()->color(RGB[0], RGB[1], RGB[2]);
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << __func__ << "  marker #3" << "  loop " << dbg_loop_counter << std::endl;
+					std::cout << __func__ << "  vertex=" << vertex_to_string(g->next()->vertex()) << std::endl;
+					std::cout << __func__ << "  Color=" << RGB[0] << " " << RGB[1] << " " << RGB[2] << std::endl;
+#endif
 				
 					//#endif
 				}
@@ -2295,6 +2676,12 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 				{
 					g = h->next();
 					g->vertex()->color(this->OnlyColor[0], this->OnlyColor[1], this->OnlyColor[2]);
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << __func__ << "  marker #4" << "  loop " << dbg_loop_counter << std::endl;
+					std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+					std::cout << __func__ << "  Color=" << this->OnlyColor[0] << " " << this->OnlyColor[1] << " " << this->OnlyColor[2] << std::endl;
+#endif
 				}
 
 			}
@@ -2399,6 +2786,10 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 				// g points the new vertex
 				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[1]->opposite());
 				g->vertex()->point() = Center_vertex;
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << __func__ << "  marker PM#2" << "  loop " << dbg_loop_counter << std::endl;
+				std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+#endif
 				g->vertex()->Vertex_Flag = CONQUERED;
 
 				//#ifdef PREDICTION_METHOD
@@ -2418,12 +2809,24 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->vertex()->color(RGB[0], RGB[1], RGB[2]);
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << __func__ << "  marker #5" << "  loop " << dbg_loop_counter << std::endl;
+					std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+					std::cout << __func__ << "  Color=" << RGB[0] << " " << RGB[1] << " " << RGB[2] << std::endl;
+#endif
 				}
 				//#endif
 				
 				if ((this->IsColored) && (this->IsOneColor))
 				{
 					g->vertex()->color(this->OnlyColor[0],this->OnlyColor[1],this->OnlyColor[2]);
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << __func__ << "  marker #6" << "  loop " << dbg_loop_counter << std::endl;
+					std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+					std::cout << __func__ << "  Color=" << this->OnlyColor[0] << " " << this->OnlyColor[1] << " " << this->OnlyColor[2] << std::endl;
+#endif
 				}
 
 
@@ -2564,6 +2967,10 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 				Halfedge_handle Prev_edge = Border_edges[2]->opposite()->prev();
 				g = _pMesh.add_vertex_and_facet_to_border(Prev_edge, Border_edges[2]->opposite());
 				g->vertex()->point() = Center_vertex;				
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+				std::cout << __func__ << "  marker PM#3" << "  loop " << dbg_loop_counter << std::endl;
+				std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+#endif
 					
 				//#ifdef PREDICTION_METHOD
 				Color_Unit CV;
@@ -2593,11 +3000,23 @@ void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _p
 					LAB_To_RGB(LAB[0], LAB[1], LAB[2], RGB);
 
 					g->vertex()->color(RGB[0], RGB[1], RGB[2]);
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << __func__ << "  marker #7" << "  loop " << dbg_loop_counter << std::endl;
+					std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+					std::cout << __func__ << "  Color=" << RGB[0] << " " << RGB[1] << " " << RGB[2] << std::endl;
+#endif
 				}
 				//#endif
 				if ((this->IsColored) && (this->IsOneColor))
 				{
 					g->vertex()->color(this->OnlyColor[0],this->OnlyColor[1],this->OnlyColor[2]);
+
+#ifdef DBG_Un_Decimation_Conquest //TODO-elo-rm-dbg 
+					std::cout << __func__ << "  marker #8" << "  loop " << dbg_loop_counter << std::endl;
+					std::cout << __func__ << "  vertex=" << vertex_to_string(g->vertex()) << std::endl;
+					std::cout << __func__ << "  Color=" << this->OnlyColor[0] << " " << this->OnlyColor[1] << " " << this->OnlyColor[2] << std::endl;
+#endif
 				}
 				Prev_edge = Prev_edge->next();
 				_pMesh.add_facet_to_border(Prev_edge, Border_edges[1]->opposite());
@@ -3056,7 +3475,16 @@ void Compression_Valence_Component::Simplification(Polyhedron  & _pMesh,
 			{
 				unsigned Initial_number_vertices = _pMesh.size_of_vertices();
 
+#ifdef DBG_Simplification
+				std::cout << "in " << __func__ << ", before Decimation_Conquest, num_vertices(_pMesh) = " << _pMesh.size_of_vertices() << std::endl; //TODO-elo-rm-dbg
+#endif
+
 				this->Decimation_Conquest(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Component_ID);				
+
+#ifdef DBG_Simplification
+				std::cout << "in " << __func__ << ", after Decimation_Conquest, num_vertices(_pMesh) = " << _pMesh.size_of_vertices() << std::endl; //TODO-elo-rm-dbg
+#endif
+
 				this->Regulation(_pMesh, Normal_flipping, Use_metric, Metric_thread, Use_forget_metric, Forget_value, Component_ID);				
 
 				int Diff_number_vertices = _pMesh.size_of_vertices() - Initial_number_vertices;
@@ -3450,6 +3878,8 @@ void Compression_Valence_Component::Compression(Polyhedron     & _pMesh,
 }
 
 
+//#define DEBUG_Calculate_Edge_Color_Difference
+//#define DEBUG_Calculate_Edge_Color_Difference_VERBOSE
 
 void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron & _pMesh, 
 																	const int & _Component_ID, 
@@ -3457,6 +3887,21 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 																	double & _Mean_color,
 																	int & Number_of_vertices)
 {	
+#ifdef DEBUG_Calculate_Edge_Color_Difference //TODO-elo-rm-dbg 
+	static unsigned int Calculate_Edge_Color_Difference_call_cnt = 0; //TODO-elo-rm-dbg 
+	Calculate_Edge_Color_Difference_call_cnt++;
+	char dbg_call_cnt_str[50];
+	snprintf(dbg_call_cnt_str, sizeof(dbg_call_cnt_str)-1, "%d", Calculate_Edge_Color_Difference_call_cnt);
+	std::string dbg_header = std::string("in ") + std::string(__func__) + std::string(", call_cnt=") + std::string(dbg_call_cnt_str);
+	std::cout << dbg_header << ", this->C0_Min = " << this->C0_Min << std::endl; //TODO-elo-rm-dbg
+	std::cout << dbg_header << ", this->C1_Min = " << this->C1_Min << std::endl; //TODO-elo-rm-dbg
+	std::cout << dbg_header << ", this->C2_Min = " << this->C2_Min << std::endl; //TODO-elo-rm-dbg
+	for(Vertex_iterator vi = _pMesh.vertices_begin(); vi != _pMesh.vertices_end(); ++vi)
+	{
+		std::cout << dbg_header << ", vertex_Seed_Edge = " << vi->Seed_Edge << std::endl; //TODO-elo-rm-dbg
+		std::cout << dbg_header << ", vertex_color_int = " << vi->color_int(0) << "," << vi->color_int(1) << "," << vi->color_int(2) << std::endl; //TODO-elo-rm-dbg
+	}
+#endif
 
 	float C0_min = this->C0_Min;
 	float C1_min = this->C1_Min;
@@ -3473,12 +3918,18 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 	{
 		Color_small_step = this->Color_Quantization_Step * pow(2.0, this->NumberColorQuantization[_Component_ID]);	
 	}
+#ifdef DEBUG_Calculate_Edge_Color_Difference //TODO-elo-rm-dbg 
+	std::cout << dbg_header << ", Color_small_step = " << Color_small_step << std::endl; //TODO-elo-rm-dbg
+#endif
 
 	// To find first points to start the conquest.	
 	Halfedge_iterator hi = _pMesh.halfedges_begin();	
 	
 	while((hi->vertex()->Seed_Edge != 2*_Component_ID) || (hi->opposite()->vertex()->Seed_Edge != 2*_Component_ID+1))
 		hi++;
+#ifdef DEBUG_Calculate_Edge_Color_Difference //TODO-elo-rm-dbg 
+	print_halfedge("in Calculate_Edge_Color_Difference, *hi = ", hi); //TODO-elo-rm-DBG
+#endif
 
 	// Vertex_Flag est donnee free a tous les sommets
 	for (Vertex_iterator pVert = _pMesh.vertices_begin(); pVert != _pMesh.vertices_end(); pVert++)
@@ -3501,27 +3952,55 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 	double L_min =  5000, A_min =  5000, B_min =  5000;
 	double L_max = -5000, A_max = -5000, B_max = -5000;
 
+	unsigned int while_loop_cnt = 0; 
 	while(!vertices.empty())
 	{
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+		std::cout << dbg_header << ", while_loop_cnt = " << ++while_loop_cnt << std::endl; //TODO-elo-rm-dbg
+		std::cout << dbg_header << ", vertices.size = " << vertices.size() << std::endl; //TODO-elo-rm-dbg
+#endif
 		Vertex * v = vertices.front();
 		vertices.pop();		
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+		print_vertex("in Calculate_Edge_Color_Difference, pop v = ", v); //TODO-elo-rm-DBG
+#endif
 		
 		if (v->Vertex_Flag == CONQUERED)
+		{
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+			//std::cout << "in " << __func__ << "_mark_#1" << std::endl; //TODO-elo-rm-dbg
+#endif
 			continue;		
+		}
 		else
 		{			
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+			//std::cout << "in " << __func__ << "_mark_#2" << std::endl; //TODO-elo-rm-dbg
+			std::vector<std::string> dbg_diff_per_he;
+#endif
 			v->Vertex_Flag = CONQUERED;	
 			v->Vertex_Number = Count_vertices;			
 						
 			Halfedge_around_vertex_circulator hvc = v->vertex_begin();
 			Halfedge_around_vertex_circulator phvc = hvc;			
 			
+			int neighbour_cnt = 0;//TODO-elo-rm  
 			double Mean = 0.0;
 			int Count = 0;
 			CGAL_For_all(hvc, phvc)
 			{
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+				//print_halfedge("in Calculate_Edge_Color_Difference, *hvc = ", hvc); //TODO-elo-rm-DBG
+				//if( vertex_to_string(v) == "(0.000483196, 0.0101471, 0.714355)")
+				//{
+					//std::cout << "in " << __func__ << ", v=" << vertex_to_string(v) << "  neighbour=" << ++neighbour_cnt << "  v0=" << vertex_to_string(hvc->vertex()) << "  v1=" << vertex_to_string(hvc->opposite()->vertex()) << "  Vertex_Flag=" << (hvc->opposite()->vertex()->Vertex_Flag == FREE) << std::endl; //TODO-elo-rm-dbg
+				//}
+#endif
 				if(hvc->opposite()->vertex()->Vertex_Flag == FREE)
 				{
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+					//std::cout << "in " << __func__ << "_mark_#3" << std::endl; //TODO-elo-rm-dbg
+#endif
 					Color_Unit Color_0, Color_1;
 					Color_0.c0 = hvc->vertex()->color_int(0);
 					Color_0.c1 = hvc->vertex()->color_int(1);
@@ -3575,30 +4054,64 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 					}
 
 					diff = sqrt(diff);
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+					//std::cout << "in " << __func__ << ", v0 = " << vertex_to_string(hvc->vertex()) << "  v1 = " << vertex_to_string(hvc->opposite()->vertex()) << "  diff = " << diff << std::endl; //TODO-elo-rm-dbg
+					char dbg_buffer[20];
+					snprintf(dbg_buffer, sizeof(dbg_buffer), "%f", diff);
+					dbg_diff_per_he.push_back(edge_to_string(&(*hvc)) + "  diff=" + dbg_buffer);
+#endif
 					
 					Mean += diff;
 					Count++;
+
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+					//if( vertex_to_string(v) == "(0.000483196, 0.0101471, 0.714355)")
+					//{
+						//std::cout << "in " << __func__ << ", v=" << vertex_to_string(v) << "  v0=" << vertex_to_string(hvc->vertex()) << "  v1=" << vertex_to_string(hvc->opposite()->vertex()) << "  diff=" << diff << "  Mean=" << Mean << "  Count=" << Count << std::endl; //TODO-elo-rm-dbg
+					//}
+#endif
 				}
 			}
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+			//std::cout << "in " << __func__ << ", Mean = " << Mean << std::endl; //TODO-elo-rm-dbg
+			//std::cout << "in " << __func__ << ", Count = " << Count << std::endl; //TODO-elo-rm-dbg
+			for(int i = 0; i < dbg_diff_per_he.size(); i++)
+				std::cout << dbg_header << "  " << dbg_diff_per_he[i] << " Count=" << Count << std::endl;
+#endif
 			
 			if (Count != 0)
 			{
 				Mean /= Count;
 				Mean_color += Mean;
 			}
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+			std::cout << dbg_header << ", v = " << vertex_to_string(v) << "  Mean = " << Mean << std::endl; //TODO-elo-rm-dbg
+			std::cout << dbg_header << ", v = " << vertex_to_string(v) << "  Mean_color = " << Mean_color << std::endl; //TODO-elo-rm-dbg
+#endif
 
 			Halfedge_around_vertex_circulator h = v->vertex_begin();			
 			Halfedge_around_vertex_circulator h2 = h;
 			CGAL_For_all(h,h2)
 			{
+#ifdef DEBUG_Calculate_Edge_Color_Difference_VERBOSE
+				//print_halfedge("in Calculate_Edge_Color_Difference, *h = ", h); //TODO-elo-rm-DBG
+#endif
 				if (h->opposite()->vertex()->Vertex_Flag == FREE)
+				{
+#ifdef DEBUG_Calculate_Edge_Color_Difference //TODO-elo-rm-dbg 
+					std::cout << dbg_header << ", v = " << vertex_to_string(v) << "  push vertex " << vertex_to_string(&(*(h->opposite()->vertex()))) << std::endl; //TODO-elo-rm-dbg
+#endif
 					vertices.push(&(*(h->opposite()->vertex())));
+				}
 			}
 
 			//increment number of vertices;
 			Count_vertices++;
 		}
 	}
+#ifdef DEBUG_Calculate_Edge_Color_Difference //TODO-elo-rm-dbg 
+	std::cout << dbg_header << ", after while loop Mean_color = " << Mean_color << std::endl; //TODO-elo-rm-dbg
+#endif
 
 	Max_color = (L_max - L_min) * (L_max - L_min) + 
 		        (A_max - A_min) * (A_max - A_min) + 
@@ -3608,6 +4121,17 @@ void Compression_Valence_Component::Calculate_Edge_Color_Difference(Polyhedron &
 	_Max_color = Max_color;
 	_Mean_color = 3 * Mean_color / Count_vertices;
 	Number_of_vertices = Count_vertices;
+
+#ifdef DEBUG_Calculate_Edge_Color_Difference //TODO-elo-rm-dbg 
+	for(Vertex_iterator vi = _pMesh.vertices_begin(); vi != _pMesh.vertices_end(); ++vi)
+	{
+		std::cout << dbg_header << ", Vertex_Flag = " << vi->Vertex_Flag << std::endl; //TODO-elo-rm-dbg
+		std::cout << dbg_header << ", Vertex_Number = " << vi->Vertex_Number << std::endl; //TODO-elo-rm-dbg
+	}
+	std::cout << dbg_header << ", _Mean_color = " << _Mean_color << std::endl; //TODO-elo-rm-dbg
+	std::cout << dbg_header << ", _Max_color = " << _Max_color << std::endl; //TODO-elo-rm-dbg
+	std::cout << dbg_header << ", Number_of_vertices = " << Number_of_vertices << std::endl; //TODO-elo-rm-dbg
+#endif
 }
 
 // Differentes histogrammes pour chaque couleur.
@@ -4728,6 +5252,8 @@ QString Compression_Valence_Component::Decompress_Init(Polyhedron &_pMesh)//, un
 }
 
 
+#define DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+
 // Description : To decode step by step - show intermediate meshes
 int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &_pMesh, const char* File_Name)
 {		
@@ -4740,13 +5266,46 @@ int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &_pMesh, cons
 				int Operation = Decoder.get_bits(2);
 				if (Operation == 0)
 				{
+#ifdef DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+					std::cout << "DBG in " << __func__ << "  Decompress_count=" << this->Decompress_count << "  Component_ID=" << Component_ID << "  Operation=" << Operation << std::endl;
+					DBG_print_mesh_geometry(_pMesh, "before Un_Regulation");
+					DBG_print_mesh_vertexcolor(_pMesh, "before Un_Regulation");
+#endif
+
 					this->Un_Regulation(_pMesh, Decoder, Component_ID);					
+
+#ifdef DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+					DBG_print_mesh_geometry(_pMesh, "after Un_Regulation");
+					DBG_print_mesh_vertexcolor(_pMesh, "after Un_Regulation");
+#endif
+
 					this->Un_Decimation_Conquest(_pMesh, Decoder, Component_ID);
+
+#ifdef DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+					DBG_print_mesh_geometry(_pMesh, "after Un_Decimation_Conquest");
+					DBG_print_mesh_vertexcolor(_pMesh, "after Un_Decimation_Conquest");
+#endif
 				}
 				else if (Operation == 1)
+				{
 					this->Augment_Geometry_Quantization_Precision(_pMesh, Decoder, Component_ID);		
+
+#ifdef DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+					std::cout << "DBG in " << __func__ << "  Decompress_count=" << this->Decompress_count << "  Component_ID=" << Component_ID << "  Operation=" << Operation << std::endl;
+					DBG_print_mesh_geometry(_pMesh, "after Augment_Geometry_Quantization_Precision");
+					DBG_print_mesh_vertexcolor(_pMesh, "after Augment_Geometry_Quantization_Precision");
+#endif
+				}
 				else if (Operation == 2)
+				{
 					this->Augment_Color_Quantization_Precision(_pMesh, Decoder, Component_ID);				
+
+#ifdef DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+					std::cout << "DBG in " << __func__ << "  Decompress_count=" << this->Decompress_count << "  Component_ID=" << Component_ID << "  Operation=" << Operation << std::endl;
+					DBG_print_mesh_geometry(_pMesh, "after Augment_Color_Quantization_Precision");
+					DBG_print_mesh_vertexcolor(_pMesh, "after Augment_Color_Quantization_Precision");
+#endif
+				}
 			}
 		}			
 	}	
@@ -10273,6 +10832,8 @@ void Compression_Valence_Component::JCW_Un_Decimation_For_Region_Detection(Polyh
 	}	
 }
 
+//#define DEBUG_Error_Projected_Surface
+
 // Error metric which measures importance of color and geometry for each vertex.
 // Used to prevent removal of the visually important vertex.
 bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron            &  _pMesh, 
@@ -10417,14 +10978,27 @@ bool Compression_Valence_Component::Error_Projected_Surface(Polyhedron          
 	// Mean color is obtained using number of vertices.
 	// X 3.0 cause we should use the number of edges.
 	double Relative_color_distance = Color_distance / Mean_color * 3.0;
+#ifdef DEBUG_Error_Projected_Surface
+	std::cout << "Color_distance  = " << Color_distance << std::endl; //TODO-elo-rm-dbg
+	std::cout << "Mean_color  = " << Mean_color << std::endl; //TODO-elo-rm-dbg
+	std::cout << "Relative_color_distance = " << Relative_color_distance << std::endl; //TODO-elo-rm-dbg
+#endif
 	
 	// Averaged area of triangles of patch
 	double Area_per_triangle = Patch_area / double(Valence);
 	Area_per_triangle *= pow(((double)10.0/(double)this->HighestLengthBB[_Component_ID]), 2.0);
 
 	double Relative_geo_distance = Area_per_triangle / Mean_area; 
+#ifdef DEBUG_Error_Projected_Surface
+	std::cout << "Area_per_triangle  = " << Area_per_triangle << std::endl; //TODO-elo-rm-dbg
+	std::cout << "Mean_area  = " << Mean_area << std::endl; //TODO-elo-rm-dbg
+	std::cout << "Relative_geo_distance = " << Relative_geo_distance << std::endl; //TODO-elo-rm-dbg
+#endif
 
 	double Global_distance = (Relative_color_distance) * (Relative_geo_distance);
+#ifdef DEBUG_Error_Projected_Surface
+	std::cout << "Global_distance = " << Global_distance << std::endl; //TODO-elo-rm-dbg
+#endif
 
 	if(Global_distance > 0.5)
 		return true;
@@ -11264,15 +11838,29 @@ void Compression_Valence_Component::Decompression_Coarser_From_File(Polyhedron &
 		this->Current_level = this->Decompress_Each_Step(pMesh, this->File_name.c_str());
 }
 
+
+#define DBG_Decompression_All_From_File //TODO-elo-rm-dbg
+
 void Compression_Valence_Component::Decompression_All_From_File(Polyhedron &pMesh)
 {
 	if (this->Process_level == 0)
 		Write_Info(pMesh);
 	while(this->Current_level != this->Total_layer)
 	{
+#ifdef DBG_Decompression_All_From_File //TODO-elo-rm-dbg
+		std::cout << "DBG in " << __func__ << "  Current_level=" << this->Current_level << std::endl;
+		DBG_print_mesh_geometry(pMesh, "loop begin");
+		DBG_print_mesh_vertexcolor(pMesh, "loop begin");
+#endif
+
 		this->Current_level = this->Decompress_Each_Step(pMesh, this->File_name.c_str());
 		this->Process_level++;
 		Write_Info(pMesh);
+
+#ifdef DBG_Decompression_All_From_File //TODO-elo-rm-dbg
+		DBG_print_mesh_geometry(pMesh, "loop end");
+		DBG_print_mesh_vertexcolor(pMesh, "loop end");
+#endif
 	}
 }
 
@@ -11437,5 +12025,33 @@ QString Compression_Valence_Component::Show_Text(void)
 	string += this->Message;
 	return string;
 }
+
+
+//ELO+ debugging
+
+void Compression_Valence_Component::DBG_print_mesh_geometry(/*const*/ Polyhedron& _pMesh, const std::string& header)
+{
+	std::cout << header << "  mesh-geometry:" << std::endl;
+
+	size_t count = 0;
+	for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+	{
+		count++;
+		std::cout << "V#" << count << " point: " << pVertex->point().x() << " " << pVertex->point().y() << " " << pVertex->point().z() << std::endl;
+	}
+}
+
+void Compression_Valence_Component::DBG_print_mesh_vertexcolor(/*const*/ Polyhedron& _pMesh, const std::string& header)
+{
+	std::cout << header << "  mesh-vertexcolor:" << std::endl;
+
+	size_t count = 0;
+	for (Vertex_iterator pVertex = _pMesh.vertices_begin(); pVertex != _pMesh.vertices_end(); pVertex++)
+	{
+		count++;
+		std::cout << "V#" << count << " color: " << pVertex->color(0) << " " << pVertex->color(1) << " " << pVertex->color(2) << std::endl;
+	}
+}
+
 
 #endif

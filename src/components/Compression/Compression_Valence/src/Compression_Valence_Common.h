@@ -760,6 +760,8 @@ inline Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const V
 }
 
 
+#define DBG_Inverse_Frenet_Rotation
+
 /**
  \fn	Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,
  		const Vector &T2,const Vector &normal)
@@ -776,6 +778,11 @@ inline Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const V
 
 inline Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,const Vector &T2,const Vector &normal)
 {
+#ifdef DBG_Inverse_Frenet_Rotation //TODO-elo-rm-dbg 
+	static unsigned int dbg_Inverse_Frenet_Rotation_call_cnt = 0;		
+	std::cout << __func__ << "  call #" << ++dbg_Inverse_Frenet_Rotation_call_cnt << std::endl;
+#endif
+
 	Matrix R(T1.x(),T2.x(),normal.x(),T1.y(),T2.y(),normal.y(),T1.z(),T2.z(),normal.z());
 	Matrix M = R;
 
@@ -883,6 +890,14 @@ inline Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &
 	for (int i=14;i>-1;i--)
 	{
 		m_inter = S[i];
+
+#ifdef DBG_Inverse_Frenet_Rotation //TODO-elo-rm-dbg
+		if( dbg_Inverse_Frenet_Rotation_call_cnt == 1596 )
+		{
+			std::cout << __func__ << "  mark #1" << "  i=" << i << "  u=" << u << "  m_inter=" << m_inter.Get(0,0) << " " << m_inter.Get(1,0) << " " << m_inter.Get(2,0) << " " << m_inter.Get(0,1) << " " << m_inter.Get(1,1) << " " << m_inter.Get(2,1) << " " << m_inter.Get(0,2) << " " << m_inter.Get(1,2) << " " << m_inter.Get(2,2) << std::endl;
+		}
+#endif
+
 		u =  -1 * m_inter * u;		
 
 		int x = 0, y = 0, z = 0;
@@ -890,13 +905,34 @@ inline Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &
 		y = -ceil(u.y() - 0.5);
 		z = -ceil(u.z() - 0.5);
 
+#ifdef DBG_Inverse_Frenet_Rotation //TODO-elo-rm-dbg
+		if( dbg_Inverse_Frenet_Rotation_call_cnt == 1596 )
+		{
+			std::cout << __func__ << "  mark #2" << "  i=" << i << "  u=" << u << "  x=" << x << "  y=" << y << "  z=" << z << std::endl;
+		}
+#endif
+
 		u = Vector((double)x, (double)y, (double)z);		
+
+#ifdef DBG_Inverse_Frenet_Rotation //TODO-elo-rm-dbg
+		if( dbg_Inverse_Frenet_Rotation_call_cnt == 1596 )
+		{
+			std::cout << __func__ << "  mark #3" << "  i=" << i << "  u=" << u << std::endl;
+		}
+#endif
 	}
 	
 	Point_Int Dist;
 	Dist.x = (int)u.x();
 	Dist.y = (int)u.y();
 	Dist.z = (int)u.z();
+
+#ifdef DBG_Inverse_Frenet_Rotation //TODO-elo-rm-dbg
+	if( dbg_Inverse_Frenet_Rotation_call_cnt == 1596 )
+	{
+		std::cout << __func__ << "  mark #4" << "  Dist=" << Dist.x << " " << Dist.y << " " << Dist.z << std::endl;
+	}
+#endif
 	
 	delete []S;
 	return Dist;
@@ -1578,6 +1614,7 @@ Point3d Barycenter_Patch_Before_Removal(const Halfedge_handle & h)
 	return Point3d(x,y,z);
 }
 
+//#define DEBUG_Retriangulation
 
 /**
  \fn	void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch,
@@ -1637,6 +1674,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 			g->next()->vertex()->Vertex_Sign = MINUS;
 
 		h = h->prev();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h, g); 
 		
 		h->facet()->Component_Number = Component_ID;
@@ -1658,6 +1698,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 			g->next()->vertex()->Vertex_Sign = PLUS;
 
 		g = g->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 		
 		h->facet()->Component_Number = Component_ID;
@@ -1682,6 +1725,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 
 		h = h->prev();
 
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 		
 		h->facet()->Component_Number = Component_ID;
@@ -1692,6 +1738,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		
 		g = h->next()->next();
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 		
 		h->facet()->Component_Number = Component_ID;
@@ -1718,6 +1767,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = h;
 		h = h->prev()->prev();
 
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);	
 
 		h->facet()->Component_Number = Component_ID;
@@ -1730,6 +1782,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		g = h->next();
 		h = h->prev();		
 
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 		
 		h->facet()->Component_Number = Component_ID;
@@ -1755,6 +1810,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 			g->next()->next()->vertex()->Vertex_Sign = MINUS;
 
 		g = g->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1766,6 +1824,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		g = h->next()->next();
 		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1793,6 +1854,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 			g->next()->next()->next()->vertex()->Vertex_Sign = MINUS;
 
 		h = h->prev();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1804,6 +1868,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		
 		
 		g = h->next()->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1815,6 +1882,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		
 		g = h->next()->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1843,6 +1913,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 
 
 		g = g->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1854,6 +1927,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 
 		g = h->next()->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
@@ -1865,6 +1941,9 @@ void Retriangulation(Polyhedron &pMesh, const Halfedge_handle & ch, const unsign
 		h->opposite()->facet()->normal() = Triangle_Normal(h->opposite());
 		
 		g = h->next()->next();		
+#ifdef DEBUG_Retriangulation
+		std::cout << "split face" << std::endl; //TODO-elo-rm-dbg
+#endif
 		h = pMesh.split_facet(h,g);
 
 		h->facet()->Component_Number = Component_ID;
