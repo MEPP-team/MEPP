@@ -85,6 +85,19 @@ class OFF_CGALImporter : public CGAL::Modifier_base<HDS>
 			file >> num_faces;
 			file >> s;
 
+			//ELO+beg
+			// skip lines beginning with '#'
+			char tmp_next_char = 0;
+			getline(file, s); // get end of current line
+			file.get(tmp_next_char); // get 1st char of next line
+			while( tmp_next_char == '#' )
+			{
+				getline(file, s); // get end of current line
+				file.get(tmp_next_char); // get 1st char of next line
+			}
+			file.unget(); // put back the last read char on stream
+			//ELO+end
+
             CGAL::Polyhedron_incremental_builder_3<HDS> builder(hds, true);
 
 			builder.begin_surface((int)num_vert, (int)num_faces);
