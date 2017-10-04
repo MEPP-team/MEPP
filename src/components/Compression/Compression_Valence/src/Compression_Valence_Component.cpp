@@ -42,6 +42,10 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 													const bool       _Adaptive_quantization,
 													const bool       _Is_bijection_selected)												
 {	
+	std::cout << std::hexfloat;
+	DBG_print_mesh_geometry(_pMesh);
+	DBG_print_mesh_vertexcolor(_pMesh);
+
 	Timer timer;
 	timer.start();	
 
@@ -105,6 +109,8 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 
 	//ELO+beg
 	std::cout << Res.toStdString() << std::endl;
+	DBG_print_mesh_geometry(_pMesh);
+	DBG_print_mesh_vertexcolor(_pMesh);
 	//ELO+end
 
 	return Res;
@@ -3445,6 +3451,8 @@ void Compression_Valence_Component::Calculate_Geometry_Color_Offset_Range()
 //	delete Temp;
 //}
 
+
+#define DBG_Simplification
 
 void Compression_Valence_Component::Simplification(Polyhedron  & _pMesh,
 									   const int   & NVertices, 
@@ -11974,6 +11982,7 @@ void Compression_Valence_Component::Write_Info(Polyhedron &_pMesh)
 		CLevel = this->Current_level;
 		Number_vertices = (int)_pMesh.size_of_vertices();
 	}
+
 
 	unsigned Current_file_size = this->Calculate_Current_File_Size();
 
