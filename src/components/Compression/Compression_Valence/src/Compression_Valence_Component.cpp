@@ -28,6 +28,9 @@
 const int MINIMUM_PREDICTION_NUMBER = 3;
 const int LIMIT_NUMBER = 50;
 
+
+//#define DBG_Main_Function
+
 QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 													const char *     _Input_File_Name,
 													const char*      _File_Name,
@@ -42,9 +45,11 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 													const bool       _Adaptive_quantization,
 													const bool       _Is_bijection_selected)												
 {	
-	std::cout << std::hexfloat;
+#ifdef DBG_Main_Function
+	//std::cout << std::hexfloat;
 	DBG_print_mesh_geometry(_pMesh);
 	DBG_print_mesh_vertexcolor(_pMesh);
+#endif
 
 	Timer timer;
 	timer.start();	
@@ -109,8 +114,10 @@ QString Compression_Valence_Component::Main_Function(Polyhedron     & _pMesh,
 
 	//ELO+beg
 	std::cout << Res.toStdString() << std::endl;
+#ifdef DBG_Main_Function
 	DBG_print_mesh_geometry(_pMesh);
 	DBG_print_mesh_vertexcolor(_pMesh);
+#endif
 	//ELO+end
 
 	return Res;
@@ -2337,7 +2344,7 @@ void Compression_Valence_Component::Un_Regulation(Polyhedron &_pMesh, Arithmetic
 
 
 
-#define DBG_Un_Decimation_Conquest
+//#define DBG_Un_Decimation_Conquest
 
 // Description : Decoding function of decimation conquest
 void Compression_Valence_Component::Un_Decimation_Conquest(Polyhedron       & _pMesh, 
@@ -3452,7 +3459,7 @@ void Compression_Valence_Component::Calculate_Geometry_Color_Offset_Range()
 //}
 
 
-#define DBG_Simplification
+//#define DBG_Simplification
 
 void Compression_Valence_Component::Simplification(Polyhedron  & _pMesh,
 									   const int   & NVertices, 
@@ -5260,7 +5267,7 @@ QString Compression_Valence_Component::Decompress_Init(Polyhedron &_pMesh)//, un
 }
 
 
-#define DBG_Decompress_Each_Step //TODO-elo-rm-dbg
+//#define DBG_Decompress_Each_Step //TODO-elo-rm-dbg
 
 // Description : To decode step by step - show intermediate meshes
 int Compression_Valence_Component::Decompress_Each_Step(Polyhedron &_pMesh, const char* File_Name)
@@ -11847,10 +11854,14 @@ void Compression_Valence_Component::Decompression_Coarser_From_File(Polyhedron &
 }
 
 
-#define DBG_Decompression_All_From_File //TODO-elo-rm-dbg
+//#define DBG_Decompression_All_From_File //TODO-elo-rm-dbg
 
 void Compression_Valence_Component::Decompression_All_From_File(Polyhedron &pMesh)
 {
+	// start time measurement
+	Timer timer;
+	timer.start();
+
 	if (this->Process_level == 0)
 		Write_Info(pMesh);
 	while(this->Current_level != this->Total_layer)
@@ -11870,6 +11881,11 @@ void Compression_Valence_Component::Decompression_All_From_File(Polyhedron &pMes
 		DBG_print_mesh_vertexcolor(pMesh, "loop end");
 #endif
 	}
+
+	// stop time measurement
+	timer.stop();
+	std::cout << "Calculation time for decompressing layers 2 to N: " << (float)timer.time() << " seconds" << std::endl;
+	std::cout << "(Loading .p3d and decompressing layer 1 is not taken into account)" << std::endl;
 }
 
 void Compression_Valence_Component::JCW_Decompression_From_File(Polyhedron &_pMesh)

@@ -760,7 +760,7 @@ inline Point_Int Frenet_Rotation(const Point_Int &Dist, const Vector &T1,const V
 }
 
 
-#define DBG_Inverse_Frenet_Rotation
+//#define DBG_Inverse_Frenet_Rotation
 
 /**
  \fn	Point_Int Inverse_Frenet_Rotation(const Point_Int &Frenet, const Vector &T1,
