@@ -751,7 +751,7 @@ void Compression_Valence_Component::Adaptive_Quantization(Polyhedron  & _pMesh,
 		
 		_pMesh.compute_normals();
 
-		fclose(Operation_order);
+		//ELO-bugfix  fclose(Operation_order);
 	}
 
 
