@@ -11363,8 +11363,11 @@ void Compression_Valence_Component::Write_Info(Polyhedron &_pMesh)
 	if (this->Process_level == 0)
 	{
 		this->Dec_File_Info = this->File_name;
-		size_t point = this->Dec_File_Info.find('.');
-		this->Dec_File_Info.replace(point+1,3,"txt");
+		//ELO note:
+		//  the following 2 lines sometimes produce illegal file names
+		//ELO-  size_t point = this->Dec_File_Info.find('.');
+		//ELO-  this->Dec_File_Info.replace(point+1,3,"txt");
+		(this->Dec_File_Info).append(".infos.txt"); //ELO+
 
 		this->Dec_Info = fopen(this->Dec_File_Info.c_str(),"w");
 	}
