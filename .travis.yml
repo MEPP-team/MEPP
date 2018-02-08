@@ -8,7 +8,8 @@ sudo: required # need by trusty
 dist: trusty
 group: deprecated-2017Q4
 
-osx_image: xcode8.3 # Xcode 8.3.3 under Sierra (OS X 10.12)
+osx_image: xcode9.2 # Xcode 9.2 under Sierra (OS X 10.12) # -> for now not under High Sierra (OS X 10.13) <-
+#osx_image: xcode8.3 # Xcode 8.3.3 under Sierra (OS X 10.12)
 #osx_image: xcode7.3 # Xcode 7.3.1 under El Capitan (OS X 10.11)
 #osx_image: xcode6.4 # Xcode 6.4 under Yosemite (OS X 10.10)
 
@@ -58,7 +59,7 @@ install:
 # ---> because we want cgal48 under osx !!!
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info cgal; fi # to show cgal version
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink cgal; fi # ---> unlink cgal >= v4.9 which is now ALREADY installed by default !
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal48/cgal.rb; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal491/cgal.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cgal; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then travis_wait 100 brew install cartr/qt4/qt-legacy-formula; fi # but, travis_wait -> in fact : https://github.com/travis-ci/docs-travis-ci-com/pull/439 :-( -> so force Sierra for cartr/qt4 !
