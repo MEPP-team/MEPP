@@ -56,9 +56,9 @@ install:
 #
 # osx :
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-# ---> because we want cgal48 under osx !!!
+# ---> because we want cgal48 or cgal49 under osx !!!
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew info cgal; fi # to show cgal version
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink cgal; fi # ---> unlink cgal >= v4.9 which is now ALREADY installed by default !
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew unlink cgal; fi # ---> unlink cgal > v4.9
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula; mv cgal.rb cgal.rb.old; wget --no-check-certificate https://download.gforge.liris.cnrs.fr/meppbin/travis-osx/Formula/cgal491/cgal.rb; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd $TRAVIS_BUILD_DIR; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install cgal; fi
