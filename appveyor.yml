@@ -45,6 +45,7 @@ init:
   - C:\Qt\5.6\msvc2015_64\bin\qmake --version
   - set APPVEYOR=TRUE
   - set CACHE=FALSE
+  - set APPVEYOR_BUILD_WORKER_CLOUD=pro-lw # switch to "LiquidWeb Central US" (Michigan) instead of "Rackspace San Antonio" (Texas) AppVeyor datacenter/servers -> solution for curl errors 28 and 56  
 
 #---------------------------------#
 #       build configuration       #
