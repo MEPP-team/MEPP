@@ -26,9 +26,13 @@
 #include "Compression_Valence_Component.h"
 typedef boost::shared_ptr<Compression_Valence_Component> Compression_Valence_ComponentPtr;
 
+//#define DBG_TRACE_FUNCTION_CALL
+
 void mepp_component_Compression_Valence_plugin::OnCompress()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	//QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	// active viewer
@@ -136,7 +140,9 @@ void mepp_component_Compression_Valence_plugin::OnCompress()
 
 int mepp_component_plugin_interface::load_file_from_component(PolyhedronPtr polyhedron_ptr, QString filename, Viewer* viewer)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// here your code
 	mepp_component_Compression_Valence_plugin *mepp_component_plugin = NULL;
 	for (int i=0; i<viewer->lplugin.size(); ++i) {
@@ -161,13 +167,17 @@ int mepp_component_plugin_interface::load_file_from_component(PolyhedronPtr poly
 }
 void mepp_component_Compression_Valence_plugin::load_P3D_file()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	emit(mw->get_mainwindowActionOpen()->doSendParamsOpen(tr("Open P3D File - from Valence"), tr("P3D files (*.p3d)"), Specific, mepp_component_plugin_interface::load_file_from_component));
 }
 
 void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
@@ -230,7 +240,9 @@ void mepp_component_Compression_Valence_plugin::OnMouseLeftUp(QMouseEvent *event
 
 void mepp_component_Compression_Valence_plugin::OnMouseRightUp(QMouseEvent *event)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
@@ -275,7 +287,9 @@ void mepp_component_Compression_Valence_plugin::OnMouseRightUp(QMouseEvent *even
 
 void mepp_component_Compression_Valence_plugin::OnMouseWheel(QWheelEvent *event)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	if (mw->activeMdiChild() != 0)
 	{
 		Viewer* viewer = (Viewer *)mw->activeMdiChild();
@@ -295,7 +309,9 @@ void mepp_component_Compression_Valence_plugin::OnMouseWheel(QWheelEvent *event)
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	Timer timer;
 	timer.start();
 
@@ -348,7 +364,9 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_all()
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_one_level()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 
 	if (mw->activeMdiChild() != 0)
 	{
@@ -364,7 +382,9 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_one_level()
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_precedent_level()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 
 	if (mw->activeMdiChild() != 0)
 	{
@@ -380,7 +400,9 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_precedent_level()
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_level()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -457,7 +479,9 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_go_to_specific_leve
 
 void mepp_component_Compression_Valence_plugin::OnDecompress_mesh_sequence_on_off()
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -492,7 +516,9 @@ void mepp_component_Compression_Valence_plugin::OnDecompress_mesh_sequence_on_of
 }
 void mepp_component_Compression_Valence_plugin::ShowText(void)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -510,7 +536,9 @@ void mepp_component_Compression_Valence_plugin::ShowText(void)
 
 void mepp_component_Compression_Valence_plugin::OnJCW(void)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{		
@@ -593,7 +621,9 @@ void mepp_component_Compression_Valence_plugin::OnJCW(void)
 
 void mepp_component_Compression_Valence_plugin::OnJCWdecompress(void)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
@@ -653,7 +683,9 @@ void mepp_component_Compression_Valence_plugin::OnJCWdecompress(void)
 
 void mepp_component_Compression_Valence_plugin::OnJCWdecompress_without_extraction(void)
 {
+#ifdef DBG_TRACE_FUNCTION_CALL
 	std::cout << "entering " << __PRETTY_FUNCTION__ << std::endl;
+#endif
 	// active viewer
 	if (mw->activeMdiChild() != 0)
 	{
