@@ -1672,6 +1672,13 @@ class Compression_Valence_Component :
 		FILE *Dec_Info; ///< File to write information of decompression for IHM
 		//int Writing_level; ///< Level of 
 		string Dec_File_Info; ///< File name to write decompression information for IHM
+	
+	//ELO+ begin
+	public:
+		void DBG_print_mesh_geometry(/*const*/ Polyhedron& _pMesh, const std::string& header = std::string());
+		void DBG_print_mesh_vertexcolor(/*const*/ Polyhedron& _pMesh, const std::string& header = std::string());
+		
+	//ELO+ end
 };
 
 #endif
