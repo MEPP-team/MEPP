@@ -11,11 +11,11 @@
 
  1. Download (mandatory) the ['core' binary kit (LIRIS host)](https://download.gforge.liris.cnrs.fr/meppbin/windows/vs2015/MEPP/kits/MEPP1_local_vs2015_64.7z) that delivers CMake, Doxygen, Graphviz, Boost, CGAL, Xerces, Qt et libQGLViewer for `VS2015_64` (download size 511 Mo, installation size ~4.5 Go)
 
- 2. Extract CMake 3.4.3 from 'path_to\local_vs2015_64\\\_utils_\cmake-3.4.3-win32-x86.zip'
+ 2. Extract CMake 3.4.3 from 'path_to\local_vs2015_64\_utils_\cmake-3.4.3-win32-x86.zip'
 
  3. Set a new user environment variable 'MSVC_KIT_ROOT' to 'path_to/local_vs2015_64' (beware of the directory separator, it must be '/' here)
 
- 4. Add ';path_to\local_vs2015_64\\\_bin_' to the PATH system environment variable, just after the Windows system paths, but before any other path, in order to avoid a library version conflict; beware of the ';' path separator
+ 4. Add ';path_to\local_vs2015_64\_bin_' to the PATH system environment variable, just after the Windows system paths, but before any other path, in order to avoid a library version conflict; beware of the ';' path separator
 
 ### Building stage
 
