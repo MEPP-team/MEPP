@@ -34,3 +34,10 @@
  - Click "Generate"
 
  - Open ".../MEPP/build/MEPP.sln" solution with MSVC 2015, select 'Release' mode, then generate the 'ALL_BUILD' target
+ 
+ ### Special handling to activate MSDM2
+ 
+ - Prior to run cmake-gui.exe, change "CGAL-4.9" into "CGAL-4.7" (line 14) in the file \MEPP\cmake\msvc\kit_vs2015-64_v01.cmake.
+  
+ - Check "BUILD_Component_MSDM2" in the cmake-gui panel.
+
