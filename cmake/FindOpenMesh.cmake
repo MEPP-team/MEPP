@@ -17,7 +17,9 @@ FIND_PATH(OPENMESH_INCLUDE_DIR OpenMesh/Core/Mesh/PolyMeshT.hh
                 /usr/include 
                 /opt/local/include
 				/opt/include
-				$ENV{OPENMESH_DIR}/src
+				${OPENMESH_DIR}/src
+				${OPENMESH_DIR}/include
+		$ENV{OPENMESH_DIR}/src
                 $ENV{OPENMESH_DIR}/include
                 )
 
@@ -43,7 +45,7 @@ ENDIF (OPENMESH_INCLUDE_DIR)
 
 if(OPENMESH_LIBRARY_RELEASE)
   if(OPENMESH_LIBRARY_DEBUG)
-    set(OPENMESH_LIBRARIES_ optimized ${OPENMESH_LIBRARY_RELEASE} debug ${OPENMESH_LIBRARY_DEBUG})
+    set(OPENMESH_LIBRARIES_ optimized ${OPENMESH_CORE_LIBRARY_RELEASE} optimized ${OPENMESH_TOOLS_LIBRARY_RELEASE} debug ${OPENMESH_CORE_LIBRARY_DEBUG} debug ${OPENMESH_TOOLS_LIBRARY_DEBUG})
   else()
     set(OPENMESH_LIBRARIES_ ${OPENMESH_LIBRARY_RELEASE})
   endif()
